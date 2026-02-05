@@ -1057,9 +1057,9 @@ class SPDLearnBenchmark:
         epochs = overrides.get("max_epochs", self.config.training.max_epochs)
         optimizer = overrides.get("optimizer", "AdamW")
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Evaluating: {model_name}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"Training config: lr={lr}, max_epochs={epochs}, optimizer={optimizer}")
 
         fold_results = []

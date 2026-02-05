@@ -224,7 +224,7 @@ for class_idx, class_name in enumerate(["Class 0", "Class 1"]):
 
     # Plot first 5 channels
     for ch in range(min(5, X.shape[1])):
-        ax.plot(X[sample_idx, ch, :], alpha=0.7, label=f"Ch {ch+1}")
+        ax.plot(X[sample_idx, ch, :], alpha=0.7, label=f"Ch {ch + 1}")
 
     ax.set_xlabel("Time samples")
     ax.set_ylabel("Signal amplitude")
@@ -280,7 +280,7 @@ mdm.fit(X_cov_train, y_train)
 y_pred_mdm = mdm.predict(X_cov_test)
 acc_mdm = accuracy_score(y_test, y_pred_mdm)
 results["MDM"] = acc_mdm
-print(f"MDM: {acc_mdm*100:.2f}%")
+print(f"MDM: {acc_mdm * 100:.2f}%")
 
 # Tangent Space + LDA
 ts_lda = make_pipeline(TangentSpace(metric="riemann"), LinearDiscriminantAnalysis())
@@ -288,7 +288,7 @@ ts_lda.fit(X_cov_train, y_train)
 y_pred_ts_lda = ts_lda.predict(X_cov_test)
 acc_ts_lda = accuracy_score(y_test, y_pred_ts_lda)
 results["TS + LDA"] = acc_ts_lda
-print(f"TS + LDA: {acc_ts_lda*100:.2f}%")
+print(f"TS + LDA: {acc_ts_lda * 100:.2f}%")
 
 # Tangent Space + Logistic Regression
 ts_lr = make_pipeline(
@@ -298,7 +298,7 @@ ts_lr.fit(X_cov_train, y_train)
 y_pred_ts_lr = ts_lr.predict(X_cov_test)
 acc_ts_lr = accuracy_score(y_test, y_pred_ts_lr)
 results["TS + LR"] = acc_ts_lr
-print(f"TS + LR: {acc_ts_lr*100:.2f}%")
+print(f"TS + LR: {acc_ts_lr * 100:.2f}%")
 
 ######################################################################
 # Channel Selection for Deep Learning
@@ -711,7 +711,7 @@ clf_mlp.fit(X_ts_train_sel.astype(np.float32), y_train)
 y_pred_mlp = clf_mlp.predict(X_ts_test_sel.astype(np.float32))
 acc_mlp = accuracy_score(y_test, y_pred_mlp)
 results["TS + MLP"] = acc_mlp
-print(f"\nTS + MLP Test Accuracy: {acc_mlp*100:.2f}%")
+print(f"\nTS + MLP Test Accuracy: {acc_mlp * 100:.2f}%")
 
 
 ######################################################################
@@ -821,7 +821,7 @@ clf_spdnet.fit(X_cov_train_sel.astype(np.float32), y_train)
 y_pred_spdnet = clf_spdnet.predict(X_cov_test_sel.astype(np.float32))
 acc_spdnet = accuracy_score(y_test, y_pred_spdnet)
 results["SPDNet"] = acc_spdnet
-print(f"\nSPDNet Test Accuracy: {acc_spdnet*100:.2f}%")
+print(f"\nSPDNet Test Accuracy: {acc_spdnet * 100:.2f}%")
 
 ######################################################################
 # Training TSMNet with Data Augmentation
@@ -920,7 +920,7 @@ clf_tsmnet.fit(X_aug.astype(np.float32), y_ts_aug)
 y_pred_tsmnet = clf_tsmnet.predict(X_test_sel.astype(np.float32))
 acc_tsmnet = accuracy_score(y_test, y_pred_tsmnet)
 results["TSMNet"] = acc_tsmnet
-print(f"\nTSMNet Test Accuracy: {acc_tsmnet*100:.2f}%")
+print(f"\nTSMNet Test Accuracy: {acc_tsmnet * 100:.2f}%")
 
 ######################################################################
 # Results Comparison
@@ -970,7 +970,7 @@ print("\n" + "-" * 50)
 print(f"{'Method':<20} {'Accuracy':>15}")
 print("-" * 50)
 for method, acc in results.items():
-    print(f"{method:<20} {acc*100:>14.2f}%")
+    print(f"{method:<20} {acc * 100:>14.2f}%")
 print("-" * 50)
 
 ######################################################################
@@ -991,7 +991,7 @@ for ax, (name, y_pred) in zip(axes, predictions.items()):
     ConfusionMatrixDisplay.from_predictions(
         y_test, y_pred, ax=ax, cmap="Blues", display_labels=["Class 0", "Class 1"]
     )
-    ax.set_title(f"{name}\nAcc: {accuracy_score(y_test, y_pred)*100:.1f}%")
+    ax.set_title(f"{name}\nAcc: {accuracy_score(y_test, y_pred) * 100:.1f}%")
 
 plt.suptitle("Confusion Matrices", fontweight="bold", fontsize=14)
 plt.tight_layout()
@@ -1088,7 +1088,7 @@ n_sim_channels = 20  # Moderate dimensionality
 n_sim_classes = 2  # Binary classification (make_gaussian_blobs limitation)
 
 print(
-    f"Generating {n_sim_samples*2} samples, {n_sim_channels} channels, {n_sim_classes} classes..."
+    f"Generating {n_sim_samples * 2} samples, {n_sim_channels} channels, {n_sim_classes} classes..."
 )
 
 # Create SPD matrices with moderate separation (challenging but learnable)
@@ -1139,7 +1139,7 @@ mdm_sim.fit(X_sim_cov_train, y_sim_train)
 y_pred_mdm_sim = mdm_sim.predict(X_sim_cov_test)
 acc_mdm_sim = accuracy_score(y_sim_test, y_pred_mdm_sim)
 results_sim["MDM"] = acc_mdm_sim
-print(f"MDM Accuracy: {acc_mdm_sim*100:.2f}%")
+print(f"MDM Accuracy: {acc_mdm_sim * 100:.2f}%")
 
 ######################################################################
 # Baseline: TS + LR on Simulated Data
@@ -1152,7 +1152,7 @@ ts_lr_sim.fit(X_sim_cov_train, y_sim_train)
 y_pred_ts_lr_sim = ts_lr_sim.predict(X_sim_cov_test)
 acc_ts_lr_sim = accuracy_score(y_sim_test, y_pred_ts_lr_sim)
 results_sim["TS + LR"] = acc_ts_lr_sim
-print(f"TS + LR Accuracy: {acc_ts_lr_sim*100:.2f}%")
+print(f"TS + LR Accuracy: {acc_ts_lr_sim * 100:.2f}%")
 
 ######################################################################
 # SPDNet on Simulated Data
@@ -1196,7 +1196,7 @@ clf_spdnet_sim.fit(X_sim_cov_train.astype(np.float32), y_sim_train)
 y_pred_spdnet_sim = clf_spdnet_sim.predict(X_sim_cov_test.astype(np.float32))
 acc_spdnet_sim = accuracy_score(y_sim_test, y_pred_spdnet_sim)
 results_sim["SPDNet"] = acc_spdnet_sim
-print(f"\nSPDNet Accuracy: {acc_spdnet_sim*100:.2f}%")
+print(f"\nSPDNet Accuracy: {acc_spdnet_sim * 100:.2f}%")
 
 ######################################################################
 # TSMNet on Simulated Data
@@ -1242,7 +1242,7 @@ clf_tsmnet_sim.fit(X_sim_train.astype(np.float32), y_sim_train)
 y_pred_tsmnet_sim = clf_tsmnet_sim.predict(X_sim_test.astype(np.float32))
 acc_tsmnet_sim = accuracy_score(y_sim_test, y_pred_tsmnet_sim)
 results_sim["TSMNet"] = acc_tsmnet_sim
-print(f"\nTSMNet Accuracy: {acc_tsmnet_sim*100:.2f}%")
+print(f"\nTSMNet Accuracy: {acc_tsmnet_sim * 100:.2f}%")
 
 ######################################################################
 # Results Summary
@@ -1256,7 +1256,7 @@ print(f"{'Method':<20} {'Accuracy':>15}")
 print("-" * 50)
 for method, acc in results_sim.items():
     marker = " <-- BEST" if acc == max(results_sim.values()) else ""
-    print(f"{method:<20} {acc*100:>14.2f}%{marker}")
+    print(f"{method:<20} {acc * 100:>14.2f}%{marker}")
 print("-" * 50)
 print(f"{'Condition number':<20} {np.mean(cond_sim):>15.2f}")
 print(f"{'Train size':<20} {len(y_sim_train):>15}")
@@ -1312,7 +1312,7 @@ print(f"""
 COMPARISON: Controlled Simulation vs Real BCI Data
 
 SIMULATION (This section):
-- Best method: {best_method} ({best_acc*100:.1f}%)
+- Best method: {best_method} ({best_acc * 100:.1f}%)
 - Deep learning WORKS because:
   * Train and test from same distribution
   * Well-conditioned covariances (cond ~{np.mean(cond_sim):.0f})

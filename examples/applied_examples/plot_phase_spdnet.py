@@ -154,7 +154,7 @@ model = PhaseSPDNet(
 print("PhaseSPDNet Configuration:")
 print(f"  Original channels: {n_chans}")
 print(f"  Embedding order: {order}")
-print(f"  Time lag: {lag} samples ({lag/250*1000:.1f} ms)")
+print(f"  Time lag: {lag} samples ({lag / 250 * 1000:.1f} ms)")
 print(f"  Embedded channels: {n_chans * order}")
 print("  Subspace dimension: 22")
 print("\nModel Architecture:")
@@ -199,7 +199,7 @@ test_idx = meta.query("session == '1test'").index.to_numpy()
 
 print(f"\nData shape: {X.shape}")
 print(
-    f"After embedding: ({X.shape[0]}, {n_chans * order}, {X.shape[2] - (order-1)*lag})"
+    f"After embedding: ({X.shape[0]}, {n_chans * order}, {X.shape[2] - (order - 1) * lag})"
 )
 print(f"Training samples: {len(train_idx)}")
 print(f"Test samples: {len(test_idx)}")
@@ -238,11 +238,11 @@ y_pred_test = clf.predict(X[test_idx])
 train_acc = accuracy_score(y[train_idx], y_pred_train)
 test_acc = accuracy_score(y[test_idx], y_pred_test)
 
-print(f"\n{'='*50}")
+print(f"\n{'=' * 50}")
 print(f"Results for Subject {subject_id}")
-print(f"{'='*50}")
-print(f"Train Accuracy: {train_acc*100:.2f}%")
-print(f"Test Accuracy:  {test_acc*100:.2f}%")
+print(f"{'=' * 50}")
+print(f"Train Accuracy: {train_acc * 100:.2f}%")
+print(f"Test Accuracy:  {test_acc * 100:.2f}%")
 
 ######################################################################
 # Visualizing Results
@@ -279,7 +279,7 @@ ax3 = axes[2]
 cm = confusion_matrix(y[test_idx], y_pred_test)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=le.classes_)
 disp.plot(ax=ax3, cmap="Blues", values_format="d")
-ax3.set_title(f"Confusion Matrix\nAccuracy: {test_acc*100:.1f}%", fontsize=14)
+ax3.set_title(f"Confusion Matrix\nAccuracy: {test_acc * 100:.1f}%", fontsize=14)
 
 plt.tight_layout()
 plt.show()

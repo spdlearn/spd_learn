@@ -640,8 +640,8 @@ def plot_domain_shift_comprehensive(
         marker="s",
         s=40,
     )
-    ax1.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
-    ax1.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax1.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax1.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
     ax1.set_title("Domain Distribution", fontweight="bold")
     ax1.legend()
     ax1.grid(True, alpha=0.3)
@@ -661,8 +661,8 @@ def plot_domain_shift_comprehensive(
             marker="o",
             s=40,
         )
-    ax2.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
-    ax2.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax2.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax2.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
     ax2.set_title("Source Domain (by class)", fontweight="bold")
     ax2.legend()
     ax2.grid(True, alpha=0.3)
@@ -680,8 +680,8 @@ def plot_domain_shift_comprehensive(
             marker="s",
             s=40,
         )
-    ax3.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
-    ax3.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax3.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax3.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
     ax3.set_title("Target Domain (by class)", fontweight="bold")
     ax3.legend()
     ax3.grid(True, alpha=0.3)
@@ -1089,7 +1089,7 @@ def plot_confusion_matrices(
                 )
 
         acc = accuracy_score(y_true, y_pred)
-        ax.set_title(f"{method_name}\nAcc: {acc*100:.1f}%", fontweight="bold")
+        ax.set_title(f"{method_name}\nAcc: {acc * 100:.1f}%", fontweight="bold")
 
     plt.suptitle("Confusion Matrices - Target Domain", fontsize=14, fontweight="bold")
     plt.tight_layout()
@@ -1136,7 +1136,7 @@ print(f"{'Source Accuracy':<25} {source_acc * 100:>10.2f}%")
 
 # Find best method
 best_method = max(results.keys(), key=lambda k: results[k]["accuracy"])
-print(f"\nBest method: {best_method} ({results[best_method]['accuracy']*100:.2f}%)")
+print(f"\nBest method: {best_method} ({results[best_method]['accuracy'] * 100:.2f}%)")
 
 ######################################################################
 # Accuracy Comparison Bar Chart
@@ -1205,7 +1205,7 @@ def plot_accuracy_comparison(
         color="blue",
         linestyle=":",
         alpha=0.7,
-        label=f"Source Acc ({source_acc*100:.1f}%)",
+        label=f"Source Acc ({source_acc * 100:.1f}%)",
     )
 
     ax.set_ylabel("Target Accuracy (%)", fontsize=12)

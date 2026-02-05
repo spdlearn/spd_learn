@@ -179,11 +179,11 @@ y_pred_test = clf.predict(X[test_idx])
 train_acc = accuracy_score(y[train_idx], y_pred_train)
 test_acc = accuracy_score(y[test_idx], y_pred_test)
 
-print(f"\n{'='*50}")
+print(f"\n{'=' * 50}")
 print(f"Results for Subject {subject_id}")
-print(f"{'='*50}")
-print(f"Train Accuracy: {train_acc*100:.2f}%")
-print(f"Test Accuracy:  {test_acc*100:.2f}%")
+print(f"{'=' * 50}")
+print(f"Train Accuracy: {train_acc * 100:.2f}%")
+print(f"Test Accuracy:  {test_acc * 100:.2f}%")
 
 ######################################################################
 # Visualizing Results

@@ -333,7 +333,9 @@ n_changed = changed_mask.sum()
 n_total = len(y_test)
 
 print(f"\nPrediction changes under attack (epsilon={epsilon}):")
-print(f"  Changed predictions: {n_changed}/{n_total} ({100*n_changed/n_total:.1f}%)")
+print(
+    f"  Changed predictions: {n_changed}/{n_total} ({100 * n_changed / n_total:.1f}%)"
+)
 
 # Confusion between clean and adversarial
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
@@ -345,13 +347,13 @@ from sklearn.metrics import ConfusionMatrixDisplay
 ConfusionMatrixDisplay.from_predictions(
     y_test, clean_preds, ax=axes[0], cmap="Blues", colorbar=False
 )
-axes[0].set_title(f"Clean Predictions\n(Accuracy: {initial_accuracy*100:.1f}%)")
+axes[0].set_title(f"Clean Predictions\n(Accuracy: {initial_accuracy * 100:.1f}%)")
 
 # Adversarial predictions
 ConfusionMatrixDisplay.from_predictions(
     y_test, adv_preds, ax=axes[1], cmap="Oranges", colorbar=False
 )
-axes[1].set_title(f"Adversarial Predictions\n(Accuracy: {adv_accuracy*100:.1f}%)")
+axes[1].set_title(f"Adversarial Predictions\n(Accuracy: {adv_accuracy * 100:.1f}%)")
 
 plt.tight_layout()
 plt.show()

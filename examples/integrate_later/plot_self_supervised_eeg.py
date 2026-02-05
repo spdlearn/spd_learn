@@ -380,7 +380,7 @@ for epoch in range(n_epochs):
 
     if (epoch + 1) % 10 == 0:
         print(
-            f"Epoch {epoch+1:3d} | Loss: {avg_loss:.4f} | Correlation: {avg_corr:.4f}"
+            f"Epoch {epoch + 1:3d} | Loss: {avg_loss:.4f} | Correlation: {avg_corr:.4f}"
         )
 
 # %%
@@ -483,7 +483,7 @@ print("Downstream Classification Results")
 print("=" * 50)
 print(f"Random initialization accuracy:  {random_acc:.4f}")
 print(f"Pretrained (SSL) accuracy:       {pretrained_acc:.4f}")
-print(f"Improvement:                     {(pretrained_acc - random_acc)*100:+.2f}%")
+print(f"Improvement:                     {(pretrained_acc - random_acc) * 100:+.2f}%")
 
 # %%
 # Visualize Feature Space

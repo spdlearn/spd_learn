@@ -218,12 +218,12 @@ source_acc = accuracy_score(y_source, y_pred_source)
 y_pred_target_no_adapt = clf.predict(X_target)
 target_acc_no_adapt = accuracy_score(y_target, y_pred_target_no_adapt)
 
-print(f"\n{'='*50}")
+print(f"\n{'=' * 50}")
 print("Results WITHOUT Domain Adaptation")
-print(f"{'='*50}")
-print(f"Source Domain Accuracy: {source_acc*100:.2f}%")
-print(f"Target Domain Accuracy: {target_acc_no_adapt*100:.2f}%")
-print(f"Performance Drop: {(source_acc - target_acc_no_adapt)*100:.2f}%")
+print(f"{'=' * 50}")
+print(f"Source Domain Accuracy: {source_acc * 100:.2f}%")
+print(f"Target Domain Accuracy: {target_acc_no_adapt * 100:.2f}%")
+print(f"Performance Drop: {(source_acc - target_acc_no_adapt) * 100:.2f}%")
 
 ######################################################################
 # Domain Adaptation via SPDBatchNormMeanVar
@@ -489,8 +489,8 @@ def plot_domain_shift_comprehensive(
         marker="s",
         s=40,
     )
-    ax1.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
-    ax1.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax1.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax1.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
     ax1.set_title("Domain Distribution", fontweight="bold")
     ax1.legend()
     ax1.grid(True, alpha=0.3)
@@ -510,8 +510,8 @@ def plot_domain_shift_comprehensive(
             marker="o",
             s=40,
         )
-    ax2.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
-    ax2.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax2.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax2.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
     ax2.set_title("Source Domain (by class)", fontweight="bold")
     ax2.legend()
     ax2.grid(True, alpha=0.3)
@@ -529,8 +529,8 @@ def plot_domain_shift_comprehensive(
             marker="s",
             s=40,
         )
-    ax3.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
-    ax3.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax3.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax3.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
     ax3.set_title("Target Domain (by class)", fontweight="bold")
     ax3.legend()
     ax3.grid(True, alpha=0.3)
@@ -635,15 +635,15 @@ y_pred_target_adapted = predict_with_domain_specific_bn(underlying_model, X_targ
 target_acc_adapted = accuracy_score(y_target, y_pred_target_adapted)
 improvement = target_acc_adapted - target_acc_no_adapt
 
-print(f"\n{'='*50}")
+print(f"\n{'=' * 50}")
 print("Results WITH Domain Adaptation")
-print(f"{'='*50}")
-print(f"Target Accuracy (No Adaptation):   {target_acc_no_adapt*100:.2f}%")
-print(f"Target Accuracy (With Adaptation): {target_acc_adapted*100:.2f}%")
+print(f"{'=' * 50}")
+print(f"Target Accuracy (No Adaptation):   {target_acc_no_adapt * 100:.2f}%")
+print(f"Target Accuracy (With Adaptation): {target_acc_adapted * 100:.2f}%")
 if improvement >= 0:
-    print(f"Improvement: +{improvement*100:.2f}%")
+    print(f"Improvement: +{improvement * 100:.2f}%")
 else:
-    print(f"Improvement: {improvement*100:.2f}%")
+    print(f"Improvement: {improvement * 100:.2f}%")
 
 ######################################################################
 # Domain Adaptation with SKADA
@@ -729,8 +729,8 @@ coral_pipeline.fit(X_combined, y_combined, sample_domain=sample_domain)
 y_pred_coral = coral_pipeline.predict(features_target)
 coral_acc = accuracy_score(y_target, y_pred_coral)
 
-print(f"CORAL Accuracy: {coral_acc*100:.2f}%")
-print(f"Improvement over baseline: {(coral_acc - target_acc_no_adapt)*100:+.2f}%")
+print(f"CORAL Accuracy: {coral_acc * 100:.2f}%")
+print(f"Improvement over baseline: {(coral_acc - target_acc_no_adapt) * 100:+.2f}%")
 results["CORAL"] = coral_acc
 
 ######################################################################
@@ -753,8 +753,8 @@ sa_clf.fit(X_combined, y_combined, sample_domain=sample_domain)
 y_pred_sa = sa_clf.predict(features_target)
 sa_acc = accuracy_score(y_target, y_pred_sa)
 
-print(f"Subspace Alignment Accuracy: {sa_acc*100:.2f}%")
-print(f"Improvement over baseline: {(sa_acc - target_acc_no_adapt)*100:+.2f}%")
+print(f"Subspace Alignment Accuracy: {sa_acc * 100:.2f}%")
+print(f"Improvement over baseline: {(sa_acc - target_acc_no_adapt) * 100:+.2f}%")
 results["Subspace Alignment"] = sa_acc
 
 ######################################################################
@@ -779,8 +779,8 @@ try:
     y_pred_ot = ot_clf.predict(features_target)
     ot_acc = accuracy_score(y_target, y_pred_ot)
 
-    print(f"Entropic OT Accuracy: {ot_acc*100:.2f}%")
-    print(f"Improvement over baseline: {(ot_acc - target_acc_no_adapt)*100:+.2f}%")
+    print(f"Entropic OT Accuracy: {ot_acc * 100:.2f}%")
+    print(f"Improvement over baseline: {(ot_acc - target_acc_no_adapt) * 100:+.2f}%")
     results["Entropic OT"] = ot_acc
 except Exception as e:
     print(f"Entropic OT failed: {e}")
@@ -797,16 +797,16 @@ print(f"{'Method':<25} {'Accuracy':>12} {'vs Baseline':>14}")
 print("-" * 55)
 for method, acc in results.items():
     if method == "No Adaptation":
-        print(f"{method:<25} {acc*100:>10.2f}% {'-':>14}")
+        print(f"{method:<25} {acc * 100:>10.2f}% {'-':>14}")
     else:
         imp = acc - target_acc_no_adapt
-        print(f"{method:<25} {acc*100:>10.2f}% {imp*100:>+12.2f}%")
+        print(f"{method:<25} {acc * 100:>10.2f}% {imp * 100:>+12.2f}%")
 print("-" * 55)
 print("Chance level: 25.00% (4 classes)")
 
 # Find best method
 best_method = max(results.keys(), key=lambda k: results[k])
-print(f"\nBest method: {best_method} ({results[best_method]*100:.2f}%)")
+print(f"\nBest method: {best_method} ({results[best_method] * 100:.2f}%)")
 
 ######################################################################
 # Visualizing Results
@@ -830,7 +830,7 @@ ax1.axhline(
     color="blue",
     linestyle=":",
     alpha=0.5,
-    label=f"Source ({source_acc*100:.1f}%)",
+    label=f"Source ({source_acc * 100:.1f}%)",
 )
 
 # Add value labels
@@ -885,8 +885,8 @@ ax3.scatter(
     marker="s",
     s=30,
 )
-ax3.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)", fontsize=12)
-ax3.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)", fontsize=12)
+ax3.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)", fontsize=12)
+ax3.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)", fontsize=12)
 ax3.set_title("Feature Space (PCA)", fontsize=14)
 ax3.legend(fontsize=10)
 ax3.grid(True, alpha=0.3)

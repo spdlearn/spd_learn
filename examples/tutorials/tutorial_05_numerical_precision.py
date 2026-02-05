@@ -337,7 +337,7 @@ def train_model(
 
         if verbose and (epoch + 1) % 20 == 0:
             print(
-                f"  Epoch {epoch+1}: Loss={history['train_loss'][-1]:.4f}, "
+                f"  Epoch {epoch + 1}: Loss={history['train_loss'][-1]:.4f}, "
                 f"Train={history['train_acc'][-1]:.1f}%, Test={test_acc:.1f}%"
             )
 

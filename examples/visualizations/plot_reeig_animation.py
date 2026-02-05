@@ -104,7 +104,7 @@ colors = plt.cm.coolwarm(np.linspace(0.2, 0.8, n_matrices))
 print(f"Threshold epsilon = {epsilon}")
 for i, (inp, out) in enumerate(zip(eigval_sets, eigval_sets)):
     clamped = np.maximum(inp, epsilon)
-    print(f"Matrix {i+1}: {inp} -> {clamped}")
+    print(f"Matrix {i + 1}: {inp} -> {clamped}")
 
 ######################################################################
 # Static Visualization

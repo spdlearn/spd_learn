@@ -209,12 +209,12 @@ train_acc = accuracy_score(y[train_idx], y_pred_train)
 test_acc = accuracy_score(y[test_idx], y_pred_test)
 test_bal_acc = balanced_accuracy_score(y[test_idx], y_pred_test)
 
-print(f"\n{'='*50}")
+print(f"\n{'=' * 50}")
 print(f"Results for Subject {subject_id}")
-print(f"{'='*50}")
-print(f"Train Accuracy:    {train_acc*100:.2f}%")
-print(f"Test Accuracy:     {test_acc*100:.2f}%")
-print(f"Test Balanced Acc: {test_bal_acc*100:.2f}%")
+print(f"{'=' * 50}")
+print(f"Train Accuracy:    {train_acc * 100:.2f}%")
+print(f"Test Accuracy:     {test_acc * 100:.2f}%")
+print(f"Test Balanced Acc: {test_bal_acc * 100:.2f}%")
 
 ######################################################################
 # Visualizing Learned Wavelets
@@ -236,7 +236,7 @@ bandwidth_hz = 2 ** np.abs(fwhm_learned)
 print("\nLearned Wavelet Parameters:")
 print("-" * 40)
 for i, (f, bw) in enumerate(zip(foi_hz, bandwidth_hz)):
-    print(f"Wavelet {i+1}: Center = {f:.1f} Hz, Bandwidth = {bw:.1f} Hz")
+    print(f"Wavelet {i + 1}: Center = {f:.1f} Hz, Bandwidth = {bw:.1f} Hz")
 
 # Plot wavelet frequencies
 fig, ax = plt.subplots(figsize=(10, 4))

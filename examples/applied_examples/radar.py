@@ -392,7 +392,7 @@ labels_image = y.reshape(h_ds, w_ds)
 unique, counts = np.unique(y, return_counts=True)
 print("\nCluster distribution:")
 for cluster, count in zip(unique, counts):
-    print(f"  Cluster {cluster}: {count} pixels ({count/len(y)*100:.1f}%)")
+    print(f"  Cluster {cluster}: {count} pixels ({count / len(y) * 100:.1f}%)")
 
 ######################################################################
 # Visualizing Clustering Results
@@ -476,7 +476,7 @@ for cluster_idx in range(n_clusters):
             bins=30,
             alpha=0.6,
             color=colors[eig_idx],
-            label=f"λ{eig_idx+1}",
+            label=f"λ{eig_idx + 1}",
         )
     ax.set_xlabel("Eigenvalue", fontsize=9)
     ax.set_ylabel("Count", fontsize=9)
@@ -526,8 +526,8 @@ clf_mdm.fit(X_train, y_train)
 y_pred_mdm = clf_mdm.predict(X_test)
 acc_mdm = accuracy_score(y_test, y_pred_mdm)
 bal_acc_mdm = balanced_accuracy_score(y_test, y_pred_mdm)
-print(f"    MDM Accuracy: {acc_mdm*100:.2f}%")
-print(f"    MDM Balanced Accuracy: {bal_acc_mdm*100:.2f}%")
+print(f"    MDM Accuracy: {acc_mdm * 100:.2f}%")
+print(f"    MDM Balanced Accuracy: {bal_acc_mdm * 100:.2f}%")
 
 # Tangent Space + Logistic Regression
 print("\n[2] Training Tangent Space + LR classifier...")
@@ -539,8 +539,8 @@ clf_ts.fit(X_train, y_train)
 y_pred_ts = clf_ts.predict(X_test)
 acc_ts = accuracy_score(y_test, y_pred_ts)
 bal_acc_ts = balanced_accuracy_score(y_test, y_pred_ts)
-print(f"    TS+LR Accuracy: {acc_ts*100:.2f}%")
-print(f"    TS+LR Balanced Accuracy: {bal_acc_ts*100:.2f}%")
+print(f"    TS+LR Accuracy: {acc_ts * 100:.2f}%")
+print(f"    TS+LR Balanced Accuracy: {bal_acc_ts * 100:.2f}%")
 
 ######################################################################
 # SPDNet for Radar Classification
@@ -586,8 +586,8 @@ clf_spd.fit(X_train, y_train)
 y_pred_spd = clf_spd.predict(X_test)
 acc_spd = accuracy_score(y_test, y_pred_spd)
 bal_acc_spd = balanced_accuracy_score(y_test, y_pred_spd)
-print(f"\nSPDNet Accuracy: {acc_spd*100:.2f}%")
-print(f"SPDNet Balanced Accuracy: {bal_acc_spd*100:.2f}%")
+print(f"\nSPDNet Accuracy: {acc_spd * 100:.2f}%")
+print(f"SPDNet Balanced Accuracy: {bal_acc_spd * 100:.2f}%")
 
 ######################################################################
 # Classification Maps
@@ -624,7 +624,7 @@ for ax, (name, pred_map, acc) in zip(
     ],
 ):
     im = ax.imshow(pred_map, cmap="tab10", aspect="auto")
-    ax.set_title(f"{name}\nAccuracy: {acc*100:.1f}%", fontsize=12, fontweight="bold")
+    ax.set_title(f"{name}\nAccuracy: {acc * 100:.1f}%", fontsize=12, fontweight="bold")
     ax.set_xlabel("Range")
     ax.set_ylabel("Azimuth")
     plt.colorbar(im, ax=ax, label="Class")
@@ -664,7 +664,7 @@ print(f"\n{'Method':<20} {'Accuracy':<15} {'Balanced Acc':<15}")
 print("-" * 50)
 for method, metrics in results.items():
     print(
-        f"{method:<20} {metrics['accuracy']*100:>6.2f}%        {metrics['balanced_accuracy']*100:>6.2f}%"
+        f"{method:<20} {metrics['accuracy'] * 100:>6.2f}%        {metrics['balanced_accuracy'] * 100:>6.2f}%"
     )
 
 ######################################################################

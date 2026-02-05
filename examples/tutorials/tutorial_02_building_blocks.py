@@ -180,7 +180,7 @@ fig, axes = plt.subplots(1, 3, figsize=(15, 4))
 ax1 = axes[0]
 time = np.arange(n_times)
 for i in range(3):
-    ax1.plot(time, raw_signals[0, i, :].numpy(), label=f"Channel {i+1}", alpha=0.8)
+    ax1.plot(time, raw_signals[0, i, :].numpy(), label=f"Channel {i + 1}", alpha=0.8)
 ax1.set_xlabel("Time samples")
 ax1.set_ylabel("Amplitude")
 ax1.set_title("Raw Signal (3 channels)", fontsize=12, fontweight="bold")

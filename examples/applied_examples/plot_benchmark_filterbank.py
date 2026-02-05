@@ -113,7 +113,7 @@ filters = [
 print(f"Number of frequency bands: {len(filters)}")
 print("Frequency bands (Hz):")
 for i, (low, high) in enumerate(filters):
-    print(f"  Band {i+1}: {low}-{high} Hz")
+    print(f"  Band {i + 1}: {low}-{high} Hz")
 
 ######################################################################
 # Setting up the Paradigm
@@ -229,9 +229,9 @@ def evaluate_subject(subject: int) -> dict:
     dict
         Dictionary containing accuracy scores and predictions.
     """
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print(f"Evaluating Subject {subject}")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
 
     # Cache configuration for faster repeated runs
     cache_config = dict(
@@ -276,8 +276,8 @@ def evaluate_subject(subject: int) -> dict:
     test_acc = accuracy_score(y[test_idx], y_pred_test)
 
     print(f"\nResults for Subject {subject}:")
-    print(f"  Train Accuracy: {train_acc*100:.2f}%")
-    print(f"  Test Accuracy:  {test_acc*100:.2f}%")
+    print(f"  Train Accuracy: {train_acc * 100:.2f}%")
+    print(f"  Test Accuracy:  {test_acc * 100:.2f}%")
 
     return {
         "subject": subject,
@@ -365,7 +365,7 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
 disp.plot(ax=ax, cmap="Blues", values_format="d")
 ax.set_title(
     f"Confusion Matrix - Subject {subject_id}\n"
-    f"Test Accuracy: {results['test_acc']*100:.2f}%",
+    f"Test Accuracy: {results['test_acc'] * 100:.2f}%",
     fontsize=14,
 )
 plt.tight_layout()

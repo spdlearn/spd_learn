@@ -287,7 +287,7 @@ sphinx_gallery_conf = {
     ),
     # Last cell in generated notebooks
     "last_notebook_cell": (
-        "# Cleanup\n" "import matplotlib.pyplot as plt\n" "plt.close('all')\n"
+        "# Cleanup\nimport matplotlib.pyplot as plt\nplt.close('all')\n"
     ),
 }
 

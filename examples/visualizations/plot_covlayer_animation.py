@@ -324,9 +324,7 @@ def animate(frame):
         progress = (frame - pause_frames) / n_frames
         window_end = int(window_size + progress * (n_times - window_size))
         window_start = max(0, window_end - window_size)
-        phase = (
-            f"Computing covariance (t={window_start/fs:.1f}s to {window_end/fs:.1f}s)"
-        )
+        phase = f"Computing covariance (t={window_start / fs:.1f}s to {window_end / fs:.1f}s)"
         show_cov = True
     else:
         # Final state

@@ -97,7 +97,7 @@ ax1 = axes[0]
 time_points = min(100, ts[0].shape[0])
 n_rois_show = 10
 for i in range(n_rois_show):
-    ax1.plot(ts[0][:time_points, i], alpha=0.7, label=f"ROI {i+1}")
+    ax1.plot(ts[0][:time_points, i], alpha=0.7, label=f"ROI {i + 1}")
 ax1.set_xlabel("Time (TRs)")
 ax1.set_ylabel("BOLD Signal")
 ax1.set_title("Sample fMRI Time-Series\n(10 ROIs)", fontweight="bold")

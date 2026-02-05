@@ -114,9 +114,9 @@ def test_module_parameters_on_device(module_name, device):
     mandatory_param = mandatory_parameters_per_module.get(module_name, {})
     module = module_class(device=device, dtype=dtype, **mandatory_param)
     for name, param in module.named_parameters():
-        assert (
-            param.device.type == device
-        ), f"Parameter '{name}' is on {param.device} but expected {device}"
+        assert param.device.type == device, (
+            f"Parameter '{name}' is on {param.device} but expected {device}"
+        )
 
 
 # Optionally, test that all submodules’ parameters are on the expected device.
@@ -133,9 +133,9 @@ def test_module_submodules_on_device(module_name, device):
     module = module_class(device=device, dtype=dtype, **mandatory_param)
     for submodule in module.modules():
         for name, param in submodule.named_parameters(recurse=False):
-            assert (
-                param.device.type == device
-            ), f"Submodule parameter '{name}' in {submodule} is on {param.device} but expected {device}"
+            assert param.device.type == device, (
+                f"Submodule parameter '{name}' in {submodule} is on {param.device} but expected {device}"
+            )
 
 
 # Optionally, test that all buffers are on the expected device.
@@ -151,9 +151,9 @@ def test_module_buffers_on_device(module_name, device):
 
     module = module_class(device=device, dtype=dtype, **mandatory_param)
     for name, buffer in module.named_buffers():
-        assert (
-            buffer.device.type == device
-        ), f"Buffer '{name}' is on {buffer.device} but expected {device}"
+        assert buffer.device.type == device, (
+            f"Buffer '{name}' is on {buffer.device} but expected {device}"
+        )
 
 
 @pytest.mark.parametrize(

@@ -328,9 +328,9 @@ for fold_idx in range(len(dataset_list)):
     y_train = np.array(list(SliceDataset(train_set, 1)))
     y_test = np.array(list(SliceDataset(test_set, 1)))
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Fold {fold_idx + 1}: Test on {dataset_names[fold_idx]}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(
         f"Train: {len(train_set)} samples from {[n for j, n in enumerate(dataset_names) if j != fold_idx]}"
     )

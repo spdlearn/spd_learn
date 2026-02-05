@@ -72,12 +72,12 @@ def test_output_shapes(in_feat, out_feat, shape):
         out_feat,
         out_feat,
     )  # Adjusted for BiMap's dimensional behavior
-    assert (
-        output.shape == expected_shape
-    ), f"Failed for {in_feat}→{out_feat} with input {shape}"
-    assert (
-        output_use.shape == expected_shape
-    ), f"Failed for {in_feat}→{out_feat} with input {shape}"
+    assert output.shape == expected_shape, (
+        f"Failed for {in_feat}→{out_feat} with input {shape}"
+    )
+    assert output_use.shape == expected_shape, (
+        f"Failed for {in_feat}→{out_feat} with input {shape}"
+    )
 
 
 @pytest.mark.parametrize(
@@ -109,9 +109,9 @@ def test_output_shapes_depth(in_feat, out_feat, shape):
 
     # Verify output shape matches expected dimensions
     expected_shape = shape[:-2] + (out_feat, out_feat)
-    assert (
-        output_use.shape == expected_shape
-    ), f"Failed for {in_feat}→{out_feat} with input {shape}"
+    assert output_use.shape == expected_shape, (
+        f"Failed for {in_feat}→{out_feat} with input {shape}"
+    )
 
 
 def test_spd_property_preservation():
@@ -172,9 +172,9 @@ def test_structural_mathematical_properties():
         torch.eye(out_feat - in_feat),
         msg="Lower-right block should be identity",
     )
-    assert torch.allclose(
-        off_diag, torch.zeros_like(off_diag)
-    ), "Off-diagonal blocks should be zero"
+    assert torch.allclose(off_diag, torch.zeros_like(off_diag)), (
+        "Off-diagonal blocks should be zero"
+    )
 
     # Test case 2: X = zero matrix
     X_zero = torch.zeros(1, in_feat, in_feat)
@@ -259,9 +259,9 @@ def test_dimension_validation():
     with pytest.raises(ValueError) as excinfo:
         BiMapIncreaseDim(5, 3)  # Invalid: 3 < 5
 
-    assert "Output features must be >= input features" in str(
-        excinfo.value
-    ), "Should raise error for out_features < in_features"
+    assert "Output features must be >= input features" in str(excinfo.value), (
+        "Should raise error for out_features < in_features"
+    )
 
 
 @pytest.mark.parametrize("order", [1, 2, 3])
@@ -282,9 +282,9 @@ def test_delay_order(order, lag):
         expected_shape = (batch_size, n_chans, n_times)
     else:
         expected_shape = (batch_size, n_chans * order, n_times - (order * lag))
-    assert (
-        output.shape == expected_shape
-    ), f"Failed for {order}→{lag} with input {x.shape}"
+    assert output.shape == expected_shape, (
+        f"Failed for {order}→{lag} with input {x.shape}"
+    )
 
 
 @pytest.mark.parametrize(
@@ -377,18 +377,26 @@ def test_bimap_orthogonality_property(
     is_close_to_identity = torch.allclose(WtW, identity_m, atol=atol)
 
     if check_property:
-        assert is_close_to_identity, f"Orthogonality (W^T W = I) check failed for {desc_detail}. Dist: {torch.dist(WtW, identity_m)}"
+        assert is_close_to_identity, (
+            f"Orthogonality (W^T W = I) check failed for {desc_detail}. Dist: {torch.dist(WtW, identity_m)}"
+        )
     else:
         # For Kaiming init (non-parametrized), it should generally *not* be orthogonal
         if init == "kaiming_uniform":
-            assert not is_close_to_identity, f"Kaiming init (non-param) unexpectedly produced orthogonal matrix for {desc_detail}"
+            assert not is_close_to_identity, (
+                f"Kaiming init (non-param) unexpectedly produced orthogonal matrix for {desc_detail}"
+            )
         # Special case: Orthogonal init with n < m -> W W^T = I (orthonormal rows)
         elif init == "orthogonal" and n_eff < m:
             identity_n = torch.eye(n_eff, device=device, dtype=dtype)
             WWt = W_to_check @ W_to_check.mT  # Shape (n_eff, n_eff)
             is_WWt_identity = torch.allclose(WWt, identity_n, atol=atol)
-            assert is_WWt_identity, f"Orthogonality (W W^T = I) check failed for {desc_detail} (n<m case). Dist: {torch.dist(WWt, identity_n)}"
-            assert not is_close_to_identity, f"Orthogonality (W^T W = I) check unexpectedly passed for {desc_detail} (n<m case)"
+            assert is_WWt_identity, (
+                f"Orthogonality (W W^T = I) check failed for {desc_detail} (n<m case). Dist: {torch.dist(WWt, identity_n)}"
+            )
+            assert not is_close_to_identity, (
+                f"Orthogonality (W^T W = I) check unexpectedly passed for {desc_detail} (n<m case)"
+            )
         else:
             # Should not happen based on current logic, but good practice
             pytest.fail(
@@ -459,9 +467,9 @@ def test_bimap_gradient_flow(
         grad = layer.weight.grad
 
     assert grad is not None, f"Gradient is None for {desc}"
-    assert not torch.allclose(
-        grad, torch.zeros_like(grad)
-    ), f"Gradient is all zeros for {desc}"
+    assert not torch.allclose(grad, torch.zeros_like(grad)), (
+        f"Gradient is all zeros for {desc}"
+    )
     assert grad.shape == layer.weight.shape, f"Gradient shape mismatch for {desc}"
 
 

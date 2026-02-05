@@ -312,7 +312,7 @@ learning_rate = 1e-4  # CRITICAL: Use low learning rate
 
 # Device selection
 device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"\n{'='*60}")
+print(f"\n{'=' * 60}")
 print("Training Configuration")
 print("=" * 60)
 print(f"Device: {device}")
@@ -425,9 +425,9 @@ results["SPDNet"] = {
     "history": clf_spdnet.history,
 }
 
-print(f"Train Accuracy: {results['SPDNet']['train_acc']*100:.2f}%")
-print(f"Test Accuracy:  {results['SPDNet']['test_acc']*100:.2f}%")
-print(f"Test Balanced:  {results['SPDNet']['test_bal_acc']*100:.2f}%")
+print(f"Train Accuracy: {results['SPDNet']['train_acc'] * 100:.2f}%")
+print(f"Test Accuracy:  {results['SPDNet']['test_acc'] * 100:.2f}%")
+print(f"Test Balanced:  {results['SPDNet']['test_bal_acc'] * 100:.2f}%")
 
 ######################################################################
 # Training TSMNet
@@ -464,9 +464,9 @@ results["TSMNet"] = {
     "history": clf_tsmnet.history,
 }
 
-print(f"Train Accuracy: {results['TSMNet']['train_acc']*100:.2f}%")
-print(f"Test Accuracy:  {results['TSMNet']['test_acc']*100:.2f}%")
-print(f"Test Balanced:  {results['TSMNet']['test_bal_acc']*100:.2f}%")
+print(f"Train Accuracy: {results['TSMNet']['train_acc'] * 100:.2f}%")
+print(f"Test Accuracy:  {results['TSMNet']['test_acc'] * 100:.2f}%")
+print(f"Test Balanced:  {results['TSMNet']['test_bal_acc'] * 100:.2f}%")
 
 ######################################################################
 # Training EEGSPDNet
@@ -502,9 +502,9 @@ results["EEGSPDNet"] = {
     "history": clf_eegspdnet.history,
 }
 
-print(f"Train Accuracy: {results['EEGSPDNet']['train_acc']*100:.2f}%")
-print(f"Test Accuracy:  {results['EEGSPDNet']['test_acc']*100:.2f}%")
-print(f"Test Balanced:  {results['EEGSPDNet']['test_bal_acc']*100:.2f}%")
+print(f"Train Accuracy: {results['EEGSPDNet']['train_acc'] * 100:.2f}%")
+print(f"Test Accuracy:  {results['EEGSPDNet']['test_acc'] * 100:.2f}%")
+print(f"Test Balanced:  {results['EEGSPDNet']['test_bal_acc'] * 100:.2f}%")
 
 ######################################################################
 # Visualization of Results
@@ -601,7 +601,7 @@ cm = confusion_matrix(y[test_idx], results[best_model]["y_pred"])
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=le.classes_)
 disp.plot(ax=ax5, cmap="Blues", values_format="d")
 ax5.set_title(
-    f"Best: {best_model}\nTest Acc: {results[best_model]['test_acc']*100:.1f}%",
+    f"Best: {best_model}\nTest Acc: {results[best_model]['test_acc'] * 100:.1f}%",
     fontsize=12,
     fontweight="bold",
 )
@@ -612,9 +612,9 @@ ax6.axis("off")
 summary_text = "Results Summary\n" + "=" * 30 + "\n\n"
 for model in sorted_models:
     summary_text += f"{model}:\n"
-    summary_text += f"  Train: {results[model]['train_acc']*100:.1f}%\n"
-    summary_text += f"  Test:  {results[model]['test_acc']*100:.1f}%\n"
-    summary_text += f"  Balanced: {results[model]['test_bal_acc']*100:.1f}%\n\n"
+    summary_text += f"  Train: {results[model]['train_acc'] * 100:.1f}%\n"
+    summary_text += f"  Test:  {results[model]['test_acc'] * 100:.1f}%\n"
+    summary_text += f"  Balanced: {results[model]['test_bal_acc'] * 100:.1f}%\n\n"
 summary_text += "=" * 30 + "\n"
 summary_text += "Chance level: 25.0%"
 ax6.text(
@@ -681,7 +681,7 @@ def evaluate_cross_session(model_class, model_kwargs, subjects=[1, 2, 3]):
         y_pred = clf.predict(X_subj[test_idx_subj])
         acc = accuracy_score(y_subj[test_idx_subj], y_pred)
         accuracies.append(acc)
-        print(f"  Subject {subj}: {acc*100:.2f}%")
+        print(f"  Subject {subj}: {acc * 100:.2f}%")
 
     return {"mean": np.mean(accuracies), "std": np.std(accuracies), "all": accuracies}
 
@@ -698,7 +698,7 @@ spdnet_cv = evaluate_cross_session(
     },
     subjects=[1],  # Reduced for documentation build speed (was [1, 2, 3])
 )
-print(f"\nSPDNet: {spdnet_cv['mean']*100:.1f}% +/- {spdnet_cv['std']*100:.1f}%")
+print(f"\nSPDNet: {spdnet_cv['mean'] * 100:.1f}% +/- {spdnet_cv['std'] * 100:.1f}%")
 
 ######################################################################
 # Troubleshooting Tips

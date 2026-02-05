@@ -56,6 +56,6 @@ def test_delay_order(order, lag):
 
     # Verify output shape matches expected dimensions
     expected_shape = (2, n_outputs)
-    assert (
-        output.shape == expected_shape
-    ), f"Failed for {order}→{lag} with input {x.shape}"
+    assert output.shape == expected_shape, (
+        f"Failed for {order}→{lag} with input {x.shape}"
+    )

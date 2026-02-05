@@ -240,7 +240,7 @@ def animate(frame):
         )
 
     fig.suptitle(
-        f"The Swelling Effect: Why LogEig is Essential\nPath Progress: {t*100:.0f}%",
+        f"The Swelling Effect: Why LogEig is Essential\nPath Progress: {t * 100:.0f}%",
         fontsize=16,
         fontweight="bold",
     )

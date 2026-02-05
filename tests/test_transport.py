@@ -160,9 +160,9 @@ def test_geodesic_distance_proportional_to_t(geodesic_fn, distance_fn):
         G_t = geodesic_fn(A, B, t)
         d_t = distance_fn(A, G_t)
         expected = t * d_total
-        assert torch.allclose(
-            d_t, expected, rtol=0.15, atol=1e-6
-        ), f"At t={t}: d(A, gamma(t))={d_t.item():.4f}, expected={expected.item():.4f}"
+        assert torch.allclose(d_t, expected, rtol=0.15, atol=1e-6), (
+            f"At t={t}: d(A, gamma(t))={d_t.item():.4f}, expected={expected.item():.4f}"
+        )
 
 
 @pytest.mark.parametrize("t", [0.25, 0.5, 0.75])
@@ -332,9 +332,9 @@ def test_parallel_transport_airm_preserves_inner_product():
     V_transported = parallel_transport_airm(V, P, Q)
     inner_Q = airm_inner_product(U_transported, V_transported, Q)
 
-    assert torch.allclose(
-        inner_P, inner_Q, rtol=1e-5, atol=1e-6
-    ), f"Inner product not preserved: at P={inner_P.item():.6f}, at Q={inner_Q.item():.6f}"
+    assert torch.allclose(inner_P, inner_Q, rtol=1e-5, atol=1e-6), (
+        f"Inner product not preserved: at P={inner_P.item():.6f}, at Q={inner_Q.item():.6f}"
+    )
 
 
 def test_parallel_transport_airm_roundtrip():
@@ -346,9 +346,9 @@ def test_parallel_transport_airm_roundtrip():
     V_to_Q = parallel_transport_airm(V, P, Q)
     V_back = parallel_transport_airm(V_to_Q, Q, P)
 
-    assert torch.allclose(
-        V, V_back, atol=1e-5
-    ), f"Roundtrip failed: max diff = {(V - V_back).abs().max().item():.2e}"
+    assert torch.allclose(V, V_back, atol=1e-5), (
+        f"Roundtrip failed: max diff = {(V - V_back).abs().max().item():.2e}"
+    )
 
 
 def test_parallel_transport_airm_linearity():
@@ -461,9 +461,9 @@ def test_schild_ladder_approximates_airm_for_small_vectors():
     V_schild = schild_ladder(V, P, Q, n_steps=10)
 
     rel_error = (V_airm - V_schild).norm() / V_airm.norm()
-    assert (
-        rel_error < 0.05
-    ), f"Schild ladder error too large for small V: {rel_error:.2%}"
+    assert rel_error < 0.05, (
+        f"Schild ladder error too large for small V: {rel_error:.2%}"
+    )
 
 
 def test_schild_ladder_preserves_symmetry():
