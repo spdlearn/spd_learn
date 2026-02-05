@@ -1,0 +1,1488 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api';</script>
+    <link rel="canonical" href="https://spdlearn.org/api.html" />
+    <link rel="icon" href="_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="spd_learn.functional.matrix_log" href="generated/functional/spd_learn.functional.matrix_log.html" />
+    <link rel="prev" title="References" href="references.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">API Reference</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
+<p><a class="reference internal" href="#module-spd_learn" title="spd_learn"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn</span></code></a>:</p>
+<p id="module-spd_learn">SPD Learn: Deep Learning on Riemannian Manifolds.</p>
+<p>A pure PyTorch library for Symmetric Positive Definite (SPD) matrix learning.</p>
+<p>SPD Learn follows a <strong>functional-first</strong> design philosophy: low-level operations
+are implemented as pure functions in <a class="reference internal" href="#module-spd_learn.functional" title="spd_learn.functional"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.functional</span></code></a>, which are
+then wrapped into stateful layers in <a class="reference internal" href="#module-spd_learn.modules" title="spd_learn.modules"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.modules</span></code></a>, and finally
+composed into complete architectures in <a class="reference internal" href="#module-spd_learn.models" title="spd_learn.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.models</span></code></a>.</p>
+<nav class="contents local" id="api-sections">
+<p class="topic-title">API Sections</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#functional" id="id3">Functional</a></p>
+<ul>
+<li><p><a class="reference internal" href="#core-matrix-operations" id="id4">Core Matrix Operations</a></p></li>
+<li><p><a class="reference internal" href="#covariance-estimation" id="id5">Covariance Estimation</a></p></li>
+<li><p><a class="reference internal" href="#regularization" id="id6">Regularization</a></p></li>
+<li><p><a class="reference internal" href="#riemannian-metrics" id="id7">Riemannian Metrics</a></p></li>
+<li><p><a class="reference internal" href="#parallel-transport" id="id8">Parallel Transport</a></p></li>
+<li><p><a class="reference internal" href="#vectorization-utilities" id="id9">Vectorization Utilities</a></p></li>
+<li><p><a class="reference internal" href="#dropout" id="id10">Dropout</a></p></li>
+<li><p><a class="reference internal" href="#autograd-helpers" id="id11">Autograd Helpers</a></p></li>
+<li><p><a class="reference internal" href="#batch-normalization-operations" id="id12">Batch Normalization Operations</a></p></li>
+<li><p><a class="reference internal" href="#bilinear-operations" id="id13">Bilinear Operations</a></p></li>
+<li><p><a class="reference internal" href="#wavelet-operations" id="id14">Wavelet Operations</a></p></li>
+<li><p><a class="reference internal" href="#numerical-stability" id="id15">Numerical Stability</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#modules" id="id16">Modules</a></p>
+<ul>
+<li><p><a class="reference internal" href="#covariance-layer" id="id17">Covariance Layer</a></p></li>
+<li><p><a class="reference internal" href="#matrix-eigen-operations" id="id18">Matrix Eigen-Operations</a></p></li>
+<li><p><a class="reference internal" href="#manifold-parametrization" id="id19">Manifold Parametrization</a></p></li>
+<li><p><a class="reference internal" href="#bilinear-mappings" id="id20">Bilinear Mappings</a></p></li>
+<li><p><a class="reference internal" href="#batch-normalization" id="id21">Batch Normalization</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id22">Regularization</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id23">Dropout</a></p></li>
+<li><p><a class="reference internal" href="#residual-connections" id="id24">Residual Connections</a></p></li>
+<li><p><a class="reference internal" href="#signal-processing" id="id25">Signal Processing</a></p></li>
+<li><p><a class="reference internal" href="#utilities" id="id26">Utilities</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#models" id="id27">Models</a></p>
+<ul>
+<li><p><a class="reference internal" href="#model-selection-guide" id="id28">Model Selection Guide</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#initialization" id="id29">Initialization</a></p>
+<ul>
+<li><p><a class="reference internal" href="#functions" id="id30">Functions</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="functional">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Functional</a><a class="headerlink" href="#functional" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-spd_learn.functional" title="spd_learn.functional"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.functional</span></code></a>:</p>
+<p id="module-spd_learn.functional">Functional API for SPD matrix operations.</p>
+<p>This module provides differentiable operations for Symmetric Positive Definite (SPD)
+matrices, organized into:</p>
+<ul class="simple">
+<li><p><strong>Core operations</strong>: Matrix logarithm, exponential, power, square root</p></li>
+<li><p><strong>Metrics</strong>: Riemannian metrics (AIRM, Log-Euclidean, Bures-Wasserstein, Log-Cholesky)</p></li>
+<li><p><strong>Transport</strong>: Parallel transport operations</p></li>
+<li><p><strong>Covariance</strong>: Covariance estimation functions</p></li>
+<li><p><strong>Regularization</strong>: Covariance regularization utilities</p></li>
+<li><p><strong>Vectorization</strong>: Batch vectorization and (un)vectorization helpers</p></li>
+<li><p><strong>Numerical</strong>: Numerical stability configuration</p></li>
+</ul>
+<p>This module provides low-level functions for operations on tensors, particularly
+those representing SPD matrices or elements in related manifolds. These functions
+form the core computational backend for the layers in <a class="reference internal" href="#module-spd_learn.modules" title="spd_learn.modules"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.modules</span></code></a>
+and models in <a class="reference internal" href="#module-spd_learn.models" title="spd_learn.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.models</span></code></a>.</p>
+<section id="core-matrix-operations">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Core Matrix Operations</a><a class="headerlink" href="#core-matrix-operations" title="Link to this heading">#</a></h3>
+<p>Basic matrix operations commonly used in Riemannian geometry, such as matrix
+logarithm, exponential, power functions, and utilities for ensuring symmetry
+or clamping eigenvalues.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_log.html#spd_learn.functional.matrix_log" title="spd_learn.functional.matrix_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_log</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix logarithm of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_exp.html#spd_learn.functional.matrix_exp" title="spd_learn.functional.matrix_exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_exp</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix exponential of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_softplus.html#spd_learn.functional.matrix_softplus" title="spd_learn.functional.matrix_softplus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_softplus</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix (scaled) SoftPlus of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_inv_softplus.html#spd_learn.functional.matrix_inv_softplus" title="spd_learn.functional.matrix_inv_softplus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_inv_softplus</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix inverse (scaled) SoftPlus of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.softplus.html#spd_learn.functional.softplus" title="spd_learn.functional.softplus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">softplus</span></code></a>(s)</p></td>
+<td><p>Scaled SoftPlus function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.inv_softplus.html#spd_learn.functional.inv_softplus" title="spd_learn.functional.inv_softplus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inv_softplus</span></code></a>(s)</p></td>
+<td><p>Inverse of the scaled SoftPlus function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_power.html#spd_learn.functional.matrix_power" title="spd_learn.functional.matrix_power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_power</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Computes the matrix power.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_sqrt.html#spd_learn.functional.matrix_sqrt" title="spd_learn.functional.matrix_sqrt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_sqrt</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix square root.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_inv_sqrt.html#spd_learn.functional.matrix_inv_sqrt" title="spd_learn.functional.matrix_inv_sqrt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_inv_sqrt</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Inverse matrix square root.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.matrix_sqrt_inv.html#spd_learn.functional.matrix_sqrt_inv" title="spd_learn.functional.matrix_sqrt_inv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matrix_sqrt_inv</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix square root and inverse matrix square root.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.clamp_eigvals.html#spd_learn.functional.clamp_eigvals" title="spd_learn.functional.clamp_eigvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clamp_eigvals</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Rectification of the eigenvalues of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.abs_eigvals.html#spd_learn.functional.abs_eigvals" title="spd_learn.functional.abs_eigvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abs_eigvals</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Absolute value of the eigenvalues of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.ensure_sym.html#spd_learn.functional.ensure_sym" title="spd_learn.functional.ensure_sym"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_sym</span></code></a>(matrix)</p></td>
+<td><p>Ensures that a matrix is symmetric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/functional/spd_learn.functional.orthogonal_polar_factor.html#spd_learn.functional.orthogonal_polar_factor" title="spd_learn.functional.orthogonal_polar_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orthogonal_polar_factor</span></code></a>(W)</p></td>
+<td><p>Compute the orthogonal polar factor of a matrix.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="covariance-estimation">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Covariance Estimation</a><a class="headerlink" href="#covariance-estimation" title="Link to this heading">#</a></h3>
+<p>Functions for computing various types of covariance matrices from input data.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/covariance_functional/spd_learn.functional.covariance.html#spd_learn.functional.covariance" title="spd_learn.functional.covariance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">covariance</span></code></a>(input)</p></td>
+<td><p>Computes the covariance matrix of multivariate data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/covariance_functional/spd_learn.functional.sample_covariance.html#spd_learn.functional.sample_covariance" title="spd_learn.functional.sample_covariance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_covariance</span></code></a>(input)</p></td>
+<td><p>Computes the sample covariance matrix of multivariate data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/covariance_functional/spd_learn.functional.real_covariance.html#spd_learn.functional.real_covariance" title="spd_learn.functional.real_covariance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">real_covariance</span></code></a>(X)</p></td>
+<td><p>Computes the real-valued covariance matrix of time series data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/covariance_functional/spd_learn.functional.cross_covariance.html#spd_learn.functional.cross_covariance" title="spd_learn.functional.cross_covariance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_covariance</span></code></a>(X)</p></td>
+<td><p>Computes the real-valued cross-frequency covariance matrix.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="regularization">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Regularization</a><a class="headerlink" href="#regularization" title="Link to this heading">#</a></h3>
+<p>Functional regularization utilities for covariance matrices.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/regularization_functional/spd_learn.functional.trace_normalization.html#spd_learn.functional.trace_normalization" title="spd_learn.functional.trace_normalization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_normalization</span></code></a>(covariances[, epsilon])</p></td>
+<td><p>Performs trace normalization on a batch of covariance matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/regularization_functional/spd_learn.functional.ledoit_wolf.html#spd_learn.functional.ledoit_wolf" title="spd_learn.functional.ledoit_wolf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ledoit_wolf</span></code></a>(covariances, shrinkage, ...)</p></td>
+<td><p>Applies Ledoit-Wolf shrinkage to a batch of covariance matrices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/regularization_functional/spd_learn.functional.shrinkage_covariance.html#spd_learn.functional.shrinkage_covariance" title="spd_learn.functional.shrinkage_covariance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shrinkage_covariance</span></code></a>(X, alpha, n_chans[, ...])</p></td>
+<td><p>Apply shrinkage regularization to covariance matrices.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="riemannian-metrics">
+<span id="api-riemannian-metrics"></span><h3><a class="toc-backref" href="#id7" role="doc-backlink">Riemannian Metrics</a><a class="headerlink" href="#riemannian-metrics" title="Link to this heading">#</a></h3>
+<p>SPD Learn implements four Riemannian metrics for SPD manifolds. Each metric
+provides distance computation, geodesic interpolation, and exponential/logarithmic
+maps. Choose based on your application’s needs:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Properties</p></th>
+<th class="head"><p>Best For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>AIRM</strong></p></td>
+<td><p>Affine-invariant, curvature-aware</p></td>
+<td><p>Theoretical correctness, domain adaptation</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Log-Euclidean</strong></p></td>
+<td><p>Bi-invariant, closed-form mean</p></td>
+<td><p>Fast computation, deep learning</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Log-Cholesky</strong></p></td>
+<td><p>Avoids eigendecomposition</p></td>
+<td><p>Numerical stability, large matrices</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Bures-Wasserstein</strong></p></td>
+<td><p>Optimal transport connection</p></td>
+<td><p>Covariance interpolation, statistics</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="airm-affine-invariant-riemannian-metric">
+<h4>AIRM (Affine-Invariant Riemannian Metric)<a class="headerlink" href="#airm-affine-invariant-riemannian-metric" title="Link to this heading">#</a></h4>
+<p>The AIRM is the canonical Riemannian metric on SPD manifolds with affine invariance
+properties. It provides geodesic distances and interpolations that are invariant
+under congruence transformations.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/airm/spd_learn.functional.airm_distance.html#spd_learn.functional.airm_distance" title="spd_learn.functional.airm_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">airm_distance</span></code></a>(A, B)</p></td>
+<td><p>Compute the geodesic distance under the Affine-Invariant Riemannian Metric (AIRM).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/airm/spd_learn.functional.airm_geodesic.html#spd_learn.functional.airm_geodesic" title="spd_learn.functional.airm_geodesic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">airm_geodesic</span></code></a>(A, B, t)</p></td>
+<td><p>Geodesic interpolation on the SPD manifold under the Affine-Invariant Riemannian Metric (AIRM).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/airm/spd_learn.functional.exp_map_airm.html#spd_learn.functional.exp_map_airm" title="spd_learn.functional.exp_map_airm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp_map_airm</span></code></a>(P, V[, t])</p></td>
+<td><p>Riemannian exponential map under the Affine-Invariant metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/airm/spd_learn.functional.log_map_airm.html#spd_learn.functional.log_map_airm" title="spd_learn.functional.log_map_airm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_map_airm</span></code></a>(P, Q)</p></td>
+<td><p>Riemannian logarithmic map under the Affine-Invariant metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="log-euclidean-metric">
+<h4>Log-Euclidean Metric<a class="headerlink" href="#log-euclidean-metric" title="Link to this heading">#</a></h4>
+<p>The Log-Euclidean Metric (LEM) maps SPD matrices to a flat (Euclidean) space
+via matrix logarithm, enabling efficient closed-form computations.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_euclidean_distance.html#spd_learn.functional.log_euclidean_distance" title="spd_learn.functional.log_euclidean_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_euclidean_distance</span></code></a>(A, B)</p></td>
+<td><p>Computes the Log-Euclidean distance between SPD matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_euclidean_geodesic.html#spd_learn.functional.log_euclidean_geodesic" title="spd_learn.functional.log_euclidean_geodesic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_euclidean_geodesic</span></code></a>(A, B, t)</p></td>
+<td><p>Geodesic interpolation under the Log-Euclidean metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_euclidean_mean.html#spd_learn.functional.log_euclidean_mean" title="spd_learn.functional.log_euclidean_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_euclidean_mean</span></code></a>(weights, V)</p></td>
+<td><p>Computes the weighted Log-Euclidean mean of a batch of SPD matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_euclidean_multiply.html#spd_learn.functional.log_euclidean_multiply" title="spd_learn.functional.log_euclidean_multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_euclidean_multiply</span></code></a>(x, y)</p></td>
+<td><p>Logarithmic multiplication of SPD matrices under the Log-Euclidean metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_euclidean_scalar_multiply.html#spd_learn.functional.log_euclidean_scalar_multiply" title="spd_learn.functional.log_euclidean_scalar_multiply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_euclidean_scalar_multiply</span></code></a>(alpha, x)</p></td>
+<td><p>Logarithmic scalar multiplication of an SPD matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.exp_map_lem.html#spd_learn.functional.exp_map_lem" title="spd_learn.functional.exp_map_lem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp_map_lem</span></code></a>(P, V)</p></td>
+<td><p>Riemannian exponential map under the Log-Euclidean metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_map_lem.html#spd_learn.functional.log_map_lem" title="spd_learn.functional.log_map_lem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_map_lem</span></code></a>(P, Q)</p></td>
+<td><p>Riemannian logarithmic map under the Log-Euclidean metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="log-cholesky-metric">
+<h4>Log-Cholesky Metric<a class="headerlink" href="#log-cholesky-metric" title="Link to this heading">#</a></h4>
+<p>The Log-Cholesky metric uses the Cholesky decomposition to parameterize SPD
+matrices, avoiding expensive eigendecompositions while maintaining numerical
+stability.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_cholesky/spd_learn.functional.cholesky_log.html#spd_learn.functional.cholesky_log" title="spd_learn.functional.cholesky_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cholesky_log</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Matrix logarithm via Cholesky decomposition (Log-Cholesky map).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/log_cholesky/spd_learn.functional.cholesky_exp.html#spd_learn.functional.cholesky_exp" title="spd_learn.functional.cholesky_exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cholesky_exp</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Inverse of the Log-Cholesky map (Cholesky exponential).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_cholesky/spd_learn.functional.log_cholesky_distance.html#spd_learn.functional.log_cholesky_distance" title="spd_learn.functional.log_cholesky_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_cholesky_distance</span></code></a>(A, B)</p></td>
+<td><p>Compute the distance in the Log-Cholesky metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/log_cholesky/spd_learn.functional.log_cholesky_mean.html#spd_learn.functional.log_cholesky_mean" title="spd_learn.functional.log_cholesky_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_cholesky_mean</span></code></a>(matrices[, weights])</p></td>
+<td><p>Compute the weighted mean in the Log-Cholesky space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/log_cholesky/spd_learn.functional.log_cholesky_geodesic.html#spd_learn.functional.log_cholesky_geodesic" title="spd_learn.functional.log_cholesky_geodesic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_cholesky_geodesic</span></code></a>(A, B, t)</p></td>
+<td><p>Geodesic interpolation in the Log-Cholesky metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bures-wasserstein-metric">
+<h4>Bures-Wasserstein Metric<a class="headerlink" href="#bures-wasserstein-metric" title="Link to this heading">#</a></h4>
+<p>The Bures-Wasserstein (or Procrustes) metric has connections to optimal transport
+theory and is particularly useful for covariance interpolation.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/bures_wasserstein/spd_learn.functional.bures_wasserstein_distance.html#spd_learn.functional.bures_wasserstein_distance" title="spd_learn.functional.bures_wasserstein_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bures_wasserstein_distance</span></code></a>(A, B)</p></td>
+<td><p>Compute the Bures-Wasserstein distance between SPD matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/bures_wasserstein/spd_learn.functional.bures_wasserstein_geodesic.html#spd_learn.functional.bures_wasserstein_geodesic" title="spd_learn.functional.bures_wasserstein_geodesic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bures_wasserstein_geodesic</span></code></a>(A, B, t)</p></td>
+<td><p>Compute the geodesic interpolation under the Bures-Wasserstein metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/bures_wasserstein/spd_learn.functional.bures_wasserstein_mean.html#spd_learn.functional.bures_wasserstein_mean" title="spd_learn.functional.bures_wasserstein_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bures_wasserstein_mean</span></code></a>(matrices[, weights, ...])</p></td>
+<td><p>Compute the Bures-Wasserstein barycenter of SPD matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/bures_wasserstein/spd_learn.functional.bures_wasserstein_transport.html#spd_learn.functional.bures_wasserstein_transport" title="spd_learn.functional.bures_wasserstein_transport"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bures_wasserstein_transport</span></code></a>(A, B, X)</p></td>
+<td><p>Compute the optimal transport map from A to B applied to X.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="parallel-transport">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Parallel Transport</a><a class="headerlink" href="#parallel-transport" title="Link to this heading">#</a></h3>
+<p>Functions for parallel transport of tangent vectors along geodesics on the SPD
+manifold, essential for operations like domain adaptation.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/parallel_transport/spd_learn.functional.parallel_transport_airm.html#spd_learn.functional.parallel_transport_airm" title="spd_learn.functional.parallel_transport_airm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parallel_transport_airm</span></code></a>(v, p, q)</p></td>
+<td><p>Parallel transport of tangent vector under the Affine-Invariant metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/parallel_transport/spd_learn.functional.parallel_transport_lem.html#spd_learn.functional.parallel_transport_lem" title="spd_learn.functional.parallel_transport_lem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parallel_transport_lem</span></code></a>(v, p, q)</p></td>
+<td><p>Parallel transport of tangent vector under the Log-Euclidean metric.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/parallel_transport/spd_learn.functional.parallel_transport_log_cholesky.html#spd_learn.functional.parallel_transport_log_cholesky" title="spd_learn.functional.parallel_transport_log_cholesky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parallel_transport_log_cholesky</span></code></a>(v, p, q)</p></td>
+<td><p>Parallel transport of tangent vector under the Log-Cholesky metric.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/parallel_transport/spd_learn.functional.schild_ladder.html#spd_learn.functional.schild_ladder" title="spd_learn.functional.schild_ladder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">schild_ladder</span></code></a>(v, p, q[, n_steps])</p></td>
+<td><p>Parallel transport via Schild's ladder approximation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/parallel_transport/spd_learn.functional.pole_ladder.html#spd_learn.functional.pole_ladder" title="spd_learn.functional.pole_ladder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pole_ladder</span></code></a>(v, p, q)</p></td>
+<td><p>Parallel transport via pole ladder approximation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/parallel_transport/spd_learn.functional.transport_tangent_vector.html#spd_learn.functional.transport_tangent_vector" title="spd_learn.functional.transport_tangent_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transport_tangent_vector</span></code></a>(v, p, q[, metric])</p></td>
+<td><p>Parallel transport of tangent vector with metric selection.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="vectorization-utilities">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Vectorization Utilities</a><a class="headerlink" href="#vectorization-utilities" title="Link to this heading">#</a></h3>
+<p>Vectorization helpers for batching, (un)vectorizing matrices, and symmetric matrix
+encodings.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/vectorization/spd_learn.functional.vec_batch.html#spd_learn.functional.vec_batch" title="spd_learn.functional.vec_batch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vec_batch</span></code></a>(X)</p></td>
+<td><p>Vectorizes a batch of tensors along the last two dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/vectorization/spd_learn.functional.unvec_batch.html#spd_learn.functional.unvec_batch" title="spd_learn.functional.unvec_batch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unvec_batch</span></code></a>(X_vec, n)</p></td>
+<td><p>Unvectorizes a batch of tensors along the last dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/vectorization/spd_learn.functional.sym_to_upper.html#spd_learn.functional.sym_to_upper" title="spd_learn.functional.sym_to_upper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sym_to_upper</span></code></a>(X[, preserve_norm, upper])</p></td>
+<td><p>Vectorizes symmetric matrices by extracting triangular elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/vectorization/spd_learn.functional.vec_to_sym.html#spd_learn.functional.vec_to_sym" title="spd_learn.functional.vec_to_sym"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vec_to_sym</span></code></a>(x_vec[, preserve_norm, upper])</p></td>
+<td><p>Reconstructs symmetric matrices from vectorization.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="dropout">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Dropout</a><a class="headerlink" href="#dropout" title="Link to this heading">#</a></h3>
+<p>Functional implementation of dropout specifically designed for SPD tensors.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/dropout_functional/spd_learn.functional.dropout_spd.html#spd_learn.functional.dropout_spd" title="spd_learn.functional.dropout_spd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropout_spd</span></code></a>(input_mat[, p, use_scaling, ...])</p></td>
+<td><p>Applies dropout to a batch of SPD matrices.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="autograd-helpers">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Autograd Helpers</a><a class="headerlink" href="#autograd-helpers" title="Link to this heading">#</a></h3>
+<p>Custom forward and backward functions for operations like matrix eigen-decomposition,
+enabling gradient computation through these potentially complex steps.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/autograd/spd_learn.functional.modeig_backward.html#spd_learn.functional.modeig_backward" title="spd_learn.functional.modeig_backward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modeig_backward</span></code></a>(grad_output, s, U, ...)</p></td>
+<td><p>Backward pass for the modified eigenvalue of a symmetric matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/autograd/spd_learn.functional.modeig_forward.html#spd_learn.functional.modeig_forward" title="spd_learn.functional.modeig_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modeig_forward</span></code></a>(X, applied_fct, *args)</p></td>
+<td><p>Forward pass for the modified eigenvalue of a symmetric matrix.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="batch-normalization-operations">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Batch Normalization Operations</a><a class="headerlink" href="#batch-normalization-operations" title="Link to this heading">#</a></h3>
+<p>Functions for Riemannian batch normalization computations on SPD manifolds.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/batchnorm_functional/spd_learn.functional.karcher_mean_iteration.html#spd_learn.functional.karcher_mean_iteration" title="spd_learn.functional.karcher_mean_iteration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">karcher_mean_iteration</span></code></a>(X, current_mean[, detach])</p></td>
+<td><p>Perform one iteration of the Karcher mean algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/batchnorm_functional/spd_learn.functional.spd_centering.html#spd_learn.functional.spd_centering" title="spd_learn.functional.spd_centering"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spd_centering</span></code></a>(X, mean_invsqrt)</p></td>
+<td><p>Center SPD matrices around a mean via congruence transformation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/batchnorm_functional/spd_learn.functional.spd_rebiasing.html#spd_learn.functional.spd_rebiasing" title="spd_learn.functional.spd_rebiasing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spd_rebiasing</span></code></a>(X, bias_sqrt)</p></td>
+<td><p>Apply learnable rebiasing to centered SPD matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/batchnorm_functional/spd_learn.functional.tangent_space_variance.html#spd_learn.functional.tangent_space_variance" title="spd_learn.functional.tangent_space_variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tangent_space_variance</span></code></a>(X_tangent, mean_tangent)</p></td>
+<td><p>Compute scalar dispersion in the tangent space.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bilinear-operations">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Bilinear Operations</a><a class="headerlink" href="#bilinear-operations" title="Link to this heading">#</a></h3>
+<p>Bilinear transformations that preserve SPD properties.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/bilinear_functional/spd_learn.functional.bimap_transform.html#spd_learn.functional.bimap_transform" title="spd_learn.functional.bimap_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bimap_transform</span></code></a>(X, W)</p></td>
+<td><p>Apply bilinear transformation to SPD matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/bilinear_functional/spd_learn.functional.bimap_increase_dim.html#spd_learn.functional.bimap_increase_dim" title="spd_learn.functional.bimap_increase_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bimap_increase_dim</span></code></a>(X, projection_matrix, ...)</p></td>
+<td><p>Increase the dimension of SPD matrices via embedding.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="wavelet-operations">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Wavelet Operations</a><a class="headerlink" href="#wavelet-operations" title="Link to this heading">#</a></h3>
+<p>Time-frequency analysis using Gabor wavelets.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/wavelet_functional/spd_learn.functional.compute_gabor_wavelet.html#spd_learn.functional.compute_gabor_wavelet" title="spd_learn.functional.compute_gabor_wavelet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_gabor_wavelet</span></code></a>(tt, foi, fwhm[, ...])</p></td>
+<td><p>Compute a complex Gabor (Morlet) wavelet filterbank.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="numerical-stability">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Numerical Stability</a><a class="headerlink" href="#numerical-stability" title="Link to this heading">#</a></h3>
+<p>Utilities for ensuring numerical stability when working with SPD matrices,
+including epsilon handling and eigenvalue clamping. See <a class="reference internal" href="numerical_stability.html"><span class="doc">Numerical Stability</span></a>
+for detailed guidance.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.numerical_config.html#spd_learn.functional.numerical_config" title="spd_learn.functional.numerical_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numerical_config</span></code></a></p></td>
+<td><p>Global configuration for numerical stability thresholds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.NumericalConfig.html#spd_learn.functional.NumericalConfig" title="spd_learn.functional.NumericalConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalConfig</span></code></a>(eigval_clamp_scale, ...)</p></td>
+<td><p>Global configuration for numerical stability thresholds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.NumericalContext.html#spd_learn.functional.NumericalContext" title="spd_learn.functional.NumericalContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalContext</span></code></a>(**kwargs)</p></td>
+<td><p>Context manager for temporarily modifying numerical configuration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.get_epsilon.html#spd_learn.functional.get_epsilon" title="spd_learn.functional.get_epsilon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_epsilon</span></code></a>(dtype[, name, config])</p></td>
+<td><p>Get a dtype-aware epsilon value for numerical stability.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.get_epsilon_tensor.html#spd_learn.functional.get_epsilon_tensor" title="spd_learn.functional.get_epsilon_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_epsilon_tensor</span></code></a>(dtype[, name, device, config])</p></td>
+<td><p>Get a dtype-aware epsilon value as a tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.get_loewner_threshold.html#spd_learn.functional.get_loewner_threshold" title="spd_learn.functional.get_loewner_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_loewner_threshold</span></code></a>(eigenvalues, *[, config])</p></td>
+<td><p>Get threshold for detecting equal eigenvalues in Loewner matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.safe_clamp_eigenvalues.html#spd_learn.functional.safe_clamp_eigenvalues" title="spd_learn.functional.safe_clamp_eigenvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">safe_clamp_eigenvalues</span></code></a>(eigenvalues[, name, ...])</p></td>
+<td><p>Safely clamp eigenvalues with dtype-aware threshold.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.check_spd_eigenvalues.html#spd_learn.functional.check_spd_eigenvalues" title="spd_learn.functional.check_spd_eigenvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_spd_eigenvalues</span></code></a>(eigenvalues[, name, ...])</p></td>
+<td><p>Check if eigenvalues satisfy SPD requirements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.is_half_precision.html#spd_learn.functional.is_half_precision" title="spd_learn.functional.is_half_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_half_precision</span></code></a>(dtype)</p></td>
+<td><p>Check if dtype is half precision (float16 or bfloat16).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/numerical/spd_learn.functional.recommend_dtype_for_spd.html#spd_learn.functional.recommend_dtype_for_spd" title="spd_learn.functional.recommend_dtype_for_spd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recommend_dtype_for_spd</span></code></a>(condition_number, *)</p></td>
+<td><p>Recommend a dtype based on expected matrix condition number.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="modules">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Modules</a><a class="headerlink" href="#modules" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-spd_learn.modules" title="spd_learn.modules"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.modules</span></code></a>:</p>
+<span class="target" id="module-spd_learn.modules"></span><p>This module provides neural network layers specifically designed for deep learning
+on Riemannian manifolds, particularly SPD matrices. These layers wrap the
+functional operations from <a class="reference internal" href="#module-spd_learn.functional" title="spd_learn.functional"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.functional</span></code></a> into stateful
+<code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code> components.</p>
+<section id="covariance-layer">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Covariance Layer</a><a class="headerlink" href="#covariance-layer" title="Link to this heading">#</a></h3>
+<p>Modules for computing covariance matrices, often used as the first step in
+SPD-based pipelines.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/covariance/spd_learn.modules.CovLayer.html#spd_learn.modules.CovLayer" title="spd_learn.modules.CovLayer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CovLayer</span></code></a>(method[, device, dtype])</p></td>
+<td><p>Covariance Estimation Layer for Neuroimaging Data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="matrix-eigen-operations">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Matrix Eigen-Operations</a><a class="headerlink" href="#matrix-eigen-operations" title="Link to this heading">#</a></h3>
+<p>Modules performing operations based on matrix eigenvalue decomposition (LogEig,
+ReEig, ExpEig), essential for mapping between the SPD manifold and Euclidean/tangent
+spaces or applying non-linearities.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/modeig/spd_learn.modules.LogEig.html#spd_learn.modules.LogEig" title="spd_learn.modules.LogEig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogEig</span></code></a>([upper, flatten, autograd, device, dtype])</p></td>
+<td><p>Logarithmic Eigenvalue Layer (LogEig).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/modeig/spd_learn.modules.ReEig.html#spd_learn.modules.ReEig" title="spd_learn.modules.ReEig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReEig</span></code></a>([threshold, autograd, device, dtype])</p></td>
+<td><p>Rectified Eigenvalue Layer (ReEig).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/modeig/spd_learn.modules.ExpEig.html#spd_learn.modules.ExpEig" title="spd_learn.modules.ExpEig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExpEig</span></code></a>([upper, flatten, autograd, device, dtype])</p></td>
+<td><p>Exponential Eigenvalue Layer (ExpEig).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="manifold-parametrization">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Manifold Parametrization</a><a class="headerlink" href="#manifold-parametrization" title="Link to this heading">#</a></h3>
+<p>Modules for parametrizing learnable SPD matrices, ensuring parameters remain
+on the SPD manifold during optimization. Supports both matrix exponential and
+softplus mappings from symmetric matrices to SPD matrices.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/manifold/spd_learn.modules.SymmetricPositiveDefinite.html#spd_learn.modules.SymmetricPositiveDefinite" title="spd_learn.modules.SymmetricPositiveDefinite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SymmetricPositiveDefinite</span></code></a>([mapping, device, ...])</p></td>
+<td><p>Symmetric Positive Definite Manifold parametrization.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/manifold/spd_learn.modules.PositiveDefiniteScalar.html#spd_learn.modules.PositiveDefiniteScalar" title="spd_learn.modules.PositiveDefiniteScalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PositiveDefiniteScalar</span></code></a>([mapping, device, dtype])</p></td>
+<td><p>Positive definite scalars parametrization.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bilinear-mappings">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Bilinear Mappings</a><a class="headerlink" href="#bilinear-mappings" title="Link to this heading">#</a></h3>
+<p>Layers implementing learnable bilinear transformations suitable for SPD matrices,
+acting as analogous operations to linear layers in Euclidean space.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/bilinear/spd_learn.modules.BiMap.html#spd_learn.modules.BiMap" title="spd_learn.modules.BiMap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BiMap</span></code></a>(in_features, out_features[, ...])</p></td>
+<td><p>Bilinear Mapping Layer for SPD Matrices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/bilinear/spd_learn.modules.BiMapIncreaseDim.html#spd_learn.modules.BiMapIncreaseDim" title="spd_learn.modules.BiMapIncreaseDim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BiMapIncreaseDim</span></code></a>(in_features, out_features)</p></td>
+<td><p>Bilinear Mapping Layer for SPD Matrix Dimensionality Expansion.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="batch-normalization">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Batch Normalization</a><a class="headerlink" href="#batch-normalization" title="Link to this heading">#</a></h3>
+<p>Batch normalization layers specifically adapted for data on the SPD manifold
+or related representations.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/batchnorm/spd_learn.modules.SPDBatchNormMean.html#spd_learn.modules.SPDBatchNormMean" title="spd_learn.modules.SPDBatchNormMean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPDBatchNormMean</span></code></a>(num_features[, momentum, ...])</p></td>
+<td><p>Riemannian Batch Normalization for SPD Matrices (Mean-only).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/batchnorm/spd_learn.modules.SPDBatchNormMeanVar.html#spd_learn.modules.SPDBatchNormMeanVar" title="spd_learn.modules.SPDBatchNormMeanVar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPDBatchNormMeanVar</span></code></a>(num_features[, ...])</p></td>
+<td><p>SPD Batch Normalization (Mean and Variance).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/batchnorm/spd_learn.modules.BatchReNorm.html#spd_learn.modules.BatchReNorm" title="spd_learn.modules.BatchReNorm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BatchReNorm</span></code></a>(num_features[, momentum, ...])</p></td>
+<td><p>Batch Re-Normalization.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id1">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Regularization</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>Modules implementing regularization covariance methods, such as Ledoit-Wolf
+shrinkage for covariance estimation or trace normalization.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/regularization/spd_learn.modules.TraceNorm.html#spd_learn.modules.TraceNorm" title="spd_learn.modules.TraceNorm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TraceNorm</span></code></a>([epsilon, device, dtype])</p></td>
+<td><p>Trace Normalization Layer for Scale-Invariant Covariance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/regularization/spd_learn.modules.Shrinkage.html#spd_learn.modules.Shrinkage" title="spd_learn.modules.Shrinkage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Shrinkage</span></code></a>(n_chans[, init_shrinkage, ...])</p></td>
+<td><p>Learnable Shrinkage Regularization for Covariance Matrices.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Dropout</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>Dropout mechanisms designed for SPD matrix inputs or features derived from them.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/dropout/spd_learn.modules.SPDDropout.html#spd_learn.modules.SPDDropout" title="spd_learn.modules.SPDDropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPDDropout</span></code></a>([p, use_scaling, epsilon, ...])</p></td>
+<td><p>Structured Dropout for SPD Matrices.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="residual-connections">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Residual Connections</a><a class="headerlink" href="#residual-connections" title="Link to this heading">#</a></h3>
+<p>Modules for residual/skip connections on Riemannian manifolds, enabling deeper
+SPD networks with improved gradient flow.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/residual/spd_learn.modules.LogEuclideanResidual.html#spd_learn.modules.LogEuclideanResidual" title="spd_learn.modules.LogEuclideanResidual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogEuclideanResidual</span></code></a>([device, dtype])</p></td>
+<td><p>Residual/skip connection for SPD networks using the Log-Euclidean metric.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="signal-processing">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Signal Processing</a><a class="headerlink" href="#signal-processing" title="Link to this heading">#</a></h3>
+<p>Layers for signal processing operations, including learnable wavelet convolutions
+for time-frequency feature extraction.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/signal/spd_learn.modules.WaveletConv.html#spd_learn.modules.WaveletConv" title="spd_learn.modules.WaveletConv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WaveletConv</span></code></a>(kernel_width_s, foi_init[, ...])</p></td>
+<td><p>Parametrized Complex Gabor Wavelet Convolution Layer.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="utilities">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Utilities</a><a class="headerlink" href="#utilities" title="Link to this heading">#</a></h3>
+<p>Utility layers for preprocessing, feature extraction, or other auxiliary tasks
+within Riemannian deep learning models.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/utils/spd_learn.modules.PatchEmbeddingLayer.html#spd_learn.modules.PatchEmbeddingLayer" title="spd_learn.modules.PatchEmbeddingLayer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PatchEmbeddingLayer</span></code></a>(n_chans, n_patches[, ...])</p></td>
+<td><p>Patch Embedding Layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/utils/spd_learn.modules.Vec.html#spd_learn.modules.Vec" title="spd_learn.modules.Vec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vec</span></code></a>([device, dtype])</p></td>
+<td><p>Vectorization Layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/utils/spd_learn.modules.Vech.html#spd_learn.modules.Vech" title="spd_learn.modules.Vech"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vech</span></code></a>([preserve_norm, upper, device, dtype])</p></td>
+<td><p>Vectorize Triangular Part Layer.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="models">
+<h2><a class="toc-backref" href="#id27" role="doc-backlink">Models</a><a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-spd_learn.models" title="spd_learn.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.models</span></code></a>:</p>
+<span class="target" id="module-spd_learn.models"></span><p>This module offers pre-built models for working with SPD matrices, using the
+building blocks from <a class="reference internal" href="#module-spd_learn.modules" title="spd_learn.modules"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.modules</span></code></a>.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.EEGSPDNet.html#spd_learn.models.EEGSPDNet" title="spd_learn.models.EEGSPDNet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EEGSPDNet</span></code></a>(n_chans, n_outputs[, n_filters, ...])</p></td>
+<td><p>EE(G) SPDNet.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.Green.html#spd_learn.models.Green" title="spd_learn.models.Green"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Green</span></code></a>(n_outputs, n_chans, sfreq, ...)</p></td>
+<td><p>Gabor Riemann EEGNet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.MAtt.html#spd_learn.models.MAtt" title="spd_learn.models.MAtt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAtt</span></code></a>(n_patches, n_chans, n_outputs, ...[, ...])</p></td>
+<td><p>Manifold Attention Network for EEG Decoding (MAtt).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.PhaseSPDNet.html#spd_learn.models.PhaseSPDNet" title="spd_learn.models.PhaseSPDNet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PhaseSPDNet</span></code></a>([subspacedim, input_type, ...])</p></td>
+<td><p>Phase SPDNet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.SPDNet.html#spd_learn.models.SPDNet" title="spd_learn.models.SPDNet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPDNet</span></code></a>([input_type, cov_method, ...])</p></td>
+<td><p>Symmetric Positive Definite Neural Network (SPDNet).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.TensorCSPNet.html#spd_learn.models.TensorCSPNet" title="spd_learn.models.TensorCSPNet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorCSPNet</span></code></a>([n_chans, n_outputs, ...])</p></td>
+<td><p>Tensor-CSPNet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.TSMNet.html#spd_learn.models.TSMNet" title="spd_learn.models.TSMNet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TSMNet</span></code></a>([n_chans, n_temp_filters, ...])</p></td>
+<td><p>Tangent Space Mapping Network (TSMNet).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="model-selection-guide">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Model Selection Guide</a><a class="headerlink" href="#model-selection-guide" title="Link to this heading">#</a></h3>
+<p>Use this table to choose the right model for your application:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 20.0%" />
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Best For</p></th>
+<th class="head"><p>Input Type</p></th>
+<th class="head"><p>Key Feature</p></th>
+<th class="head"><p>Complexity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.SPDNet.html#spd_learn.models.SPDNet" title="spd_learn.models.SPDNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPDNet</span></code></a></p></td>
+<td><p>General SPD learning</p></td>
+<td><p>Covariance matrices</p></td>
+<td><p>Foundational architecture</p></td>
+<td><p>Low</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.TensorCSPNet.html#spd_learn.models.TensorCSPNet" title="spd_learn.models.TensorCSPNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TensorCSPNet</span></code></a></p></td>
+<td><p>Multi-band EEG</p></td>
+<td><p>Filter bank data</p></td>
+<td><p>Temporal-spectral-spatial</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.TSMNet.html#spd_learn.models.TSMNet" title="spd_learn.models.TSMNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSMNet</span></code></a></p></td>
+<td><p>Domain adaptation, Interpretation</p></td>
+<td><p>Raw EEG</p></td>
+<td><p>SPDBatchNorm</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.EEGSPDNet.html#spd_learn.models.EEGSPDNet" title="spd_learn.models.EEGSPDNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">EEGSPDNet</span></code></a></p></td>
+<td><p>Channel-specific EEG</p></td>
+<td><p>Raw EEG</p></td>
+<td><p>Grouped convolution</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.MAtt.html#spd_learn.models.MAtt" title="spd_learn.models.MAtt"><code class="xref py py-class docutils literal notranslate"><span class="pre">MAtt</span></code></a></p></td>
+<td><p>Attention-based</p></td>
+<td><p>Raw EEG</p></td>
+<td><p>Manifold attention</p></td>
+<td><p>High</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spd_learn.models.Green.html#spd_learn.models.Green" title="spd_learn.models.Green"><code class="xref py py-class docutils literal notranslate"><span class="pre">Green</span></code></a></p></td>
+<td><p>Interpretable features</p></td>
+<td><p>Raw EEG</p></td>
+<td><p>Learnable wavelets</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spd_learn.models.PhaseSPDNet.html#spd_learn.models.PhaseSPDNet" title="spd_learn.models.PhaseSPDNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhaseSPDNet</span></code></a></p></td>
+<td><p>Nonlinear dynamics</p></td>
+<td><p>Raw EEG</p></td>
+<td><p>Phase-space embedding</p></td>
+<td><p>Low</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="decision-flowchart">
+<h4>Decision Flowchart<a class="headerlink" href="#decision-flowchart" title="Link to this heading">#</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>START
+  │
+  ▼
+┌─────────────────────────────────┐
+│ What is your input data type?  │
+└─────────────────────────────────┘
+  │
+  ├─── Pre-computed covariance matrices ──► SPDNet
+  │
+  ├─── Filter bank EEG (multiple bands) ──► TensorCSPNet
+  │
+  └─── Raw time series
+        │
+        ▼
+      ┌─────────────────────────────────┐
+      │ Do you need domain adaptation? │
+      └─────────────────────────────────┘
+        │
+        ├─── Yes ──► TSMNet (with domain adaptation)
+        │
+        └─── No
+              │
+              ▼
+            ┌─────────────────────────────────┐
+            │ What is your priority?         │
+            └─────────────────────────────────┘
+              │
+              ├─── Interpretability ──► TSMNet, Green
+              │
+              ├─── Attention mechanism ──► MAtt
+              │
+              ├─── Conv feature extraction ──► TSMNet, EEGSPDNet
+              │
+              └─── Nonlinear dynamics ──► PhaseSPDNet
+</pre></div>
+</div>
+</section>
+<section id="model-architectures">
+<h4>Model Architectures<a class="headerlink" href="#model-architectures" title="Link to this heading">#</a></h4>
+<p><strong>SPDNet</strong> - Foundational architecture for SPD learning:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[CovLayer] → BiMap → ReEig → LogEig → Linear
+</pre></div>
+</div>
+<p><strong>TensorCSPNet</strong> - Multi-frequency EEG with temporal-spectral-spatial features:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Tensor Stacking → BiMap blocks → SPDBatchNormMean → LogEig → TCN → Linear
+</pre></div>
+</div>
+<p><strong>TSMNet</strong> - Domain adaptation with SPD batch normalization:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Conv2d → CovLayer → BiMap → ReEig → SPDBatchNormMeanVar → LogEig → Linear
+</pre></div>
+</div>
+<p><strong>EEGSPDNet</strong> - Channel-specific temporal filtering:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GroupedConv1d → CovLayer → BiMap/SPDDropout/ReEig blocks → LogEig → Linear
+</pre></div>
+</div>
+<p><strong>MAtt</strong> - Attention-based temporal weighting:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Conv2d → PatchCov → AttentionManifold → ReEig → LogEig → Linear
+</pre></div>
+</div>
+<p><strong>Green</strong> - Interpretable wavelet features:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>WaveletConv → CovLayer → Shrinkage → BiMap → LogEig → BatchReNorm → MLP
+</pre></div>
+</div>
+<p><strong>PhaseSPDNet</strong> - Phase-space embedding for nonlinear dynamics:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>PhaseDelay → SPDNet
+</pre></div>
+</div>
+</section>
+<section id="performance-comparison">
+<h4>Performance Comparison<a class="headerlink" href="#performance-comparison" title="Link to this heading">#</a></h4>
+<p>Based on motor imagery classification benchmarks (BNCI2014-001):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Accuracy (%)</p></th>
+<th class="head"><p>Parameters</p></th>
+<th class="head"><p>Training Time</p></th>
+<th class="head"><p>GPU Memory</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SPDNet</p></td>
+<td><p>70-75</p></td>
+<td><p>~10K</p></td>
+<td><p>Fast</p></td>
+<td><p>Low</p></td>
+</tr>
+<tr class="row-odd"><td><p>TensorCSPNet</p></td>
+<td><p>75-82</p></td>
+<td><p>~50K</p></td>
+<td><p>Medium</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td><p>TSMNet</p></td>
+<td><p>72-78</p></td>
+<td><p>~30K</p></td>
+<td><p>Medium</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-odd"><td><p>EEGSPDNet</p></td>
+<td><p>73-79</p></td>
+<td><p>~40K</p></td>
+<td><p>Medium</p></td>
+<td><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td><p>MAtt</p></td>
+<td><p>74-80</p></td>
+<td><p>~60K</p></td>
+<td><p>Slow</p></td>
+<td><p>High</p></td>
+</tr>
+<tr class="row-odd"><td><p>Green</p></td>
+<td><p>72-78</p></td>
+<td><p>~20K</p></td>
+<td><p>Medium</p></td>
+<td><p>Low</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><em>Note: Performance varies significantly across subjects and datasets.</em></p>
+<p>To reproduce these results and run your own benchmarks, please refer to the <a class="reference internal" href="generated/auto_examples/applied_examples/moabb_hydra_benchmark.html#sphx-glr-generated-auto-examples-applied-examples-moabb-hydra-benchmark-py"><span class="std std-ref">Benchmarking SPD Learn Models with MOABB and Hydra</span></a> example.</p>
+</section>
+</section>
+</section>
+<section id="initialization">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Initialization</a><a class="headerlink" href="#initialization" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-spd_learn.init" title="spd_learn.init"><code class="xref py py-mod docutils literal notranslate"><span class="pre">spd_learn.init</span></code></a>:</p>
+<p id="module-spd_learn.init">Initialization functions for SPD-aware neural networks.</p>
+<p>This module provides functions to initialize tensors with SPD-specific methods,
+following PyTorch’s <cite>torch.nn.init</cite> pattern.</p>
+<p>All functions operate in-place and return the modified tensor for convenience.</p>
+<section id="functions">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Functions</a><a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">stiefel_</span></code></dt><dd><p>Initialize tensor on the Stiefel manifold (orthonormal columns).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">spd_identity_</span></code></dt><dd><p>Initialize tensor as identity matrix.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span> <span class="k">as</span> <span class="n">spd_init</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spd_init</span><span class="o">.</span><span class="n">stiefel_</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># W is now on the Stiefel manifold: W^T @ W = I</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">W</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<p>This module provides functions to initialize tensors with SPD-specific methods,
+following PyTorch’s <code class="docutils literal notranslate"><span class="pre">torch.nn.init</span></code> pattern. All functions operate in-place
+and return the modified tensor for convenience.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/init/spd_learn.init.stiefel_.html#spd_learn.init.stiefel_" title="spd_learn.init.stiefel_"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stiefel_</span></code></a>(tensor[, seed])</p></td>
+<td><p>Initialize tensor on the Stiefel manifold (in-place).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/init/spd_learn.init.spd_identity_.html#spd_learn.init.spd_identity_" title="spd_learn.init.spd_identity_"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spd_identity_</span></code></a>(tensor)</p></td>
+<td><p>Initialize tensor as identity matrix (in-place).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="references.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">References</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="generated/functional/spd_learn.functional.matrix_log.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">spd_learn.functional.matrix_log</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

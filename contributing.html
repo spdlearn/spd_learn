@@ -1,0 +1,1167 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Contributing &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'contributing';</script>
+    <link rel="canonical" href="https://spdlearn.org/contributing.html" />
+    <link rel="icon" href="_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Frequently Asked Questions" href="faq.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Contributing</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="contributing">
+<span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h1>
+<p>Thank you for your interest in contributing to SPD Learn! This guide will help
+you get started with contributing to the project.</p>
+<nav class="contents local" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#getting-started" id="id7">Getting Started</a></p>
+<ul>
+<li><p><a class="reference internal" href="#setting-up-development-environment" id="id8">Setting Up Development Environment</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#development-workflow" id="id9">Development Workflow</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creating-a-branch" id="id10">Creating a Branch</a></p></li>
+<li><p><a class="reference internal" href="#running-tests" id="id11">Running Tests</a></p></li>
+<li><p><a class="reference internal" href="#code-style" id="id12">Code Style</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#types-of-contributions" id="id13">Types of Contributions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#bug-reports" id="id14">Bug Reports</a></p></li>
+<li><p><a class="reference internal" href="#feature-requests" id="id15">Feature Requests</a></p></li>
+<li><p><a class="reference internal" href="#code-contributions" id="id16">Code Contributions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#adding-new-features" id="id17">Adding New Features</a></p>
+<ul>
+<li><p><a class="reference internal" href="#adding-a-new-layer" id="id18">Adding a New Layer</a></p></li>
+<li><p><a class="reference internal" href="#adding-a-new-model" id="id19">Adding a New Model</a></p></li>
+<li><p><a class="reference internal" href="#adding-a-functional-operation" id="id20">Adding a Functional Operation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#documentation" id="id21">Documentation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#building-documentation" id="id22">Building Documentation</a></p></li>
+<li><p><a class="reference internal" href="#writing-documentation" id="id23">Writing Documentation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#code-organization" id="id24">Code Organization</a></p>
+<ul>
+<li><p><a class="reference internal" href="#architecture-overview" id="id25">Architecture Overview</a></p></li>
+<li><p><a class="reference internal" href="#package-structure" id="id26">Package Structure</a></p></li>
+<li><p><a class="reference internal" href="#trivialization-approach" id="id27">Trivialization Approach</a></p></li>
+<li><p><a class="reference internal" href="#naming-conventions" id="id28">Naming Conventions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#testing-guidelines" id="id29">Testing Guidelines</a></p>
+<ul>
+<li><p><a class="reference internal" href="#test-structure" id="id30">Test Structure</a></p></li>
+<li><p><a class="reference internal" href="#writing-tests" id="id31">Writing Tests</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#community" id="id32">Community</a></p></li>
+</ul>
+</nav>
+<section id="getting-started">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Getting Started</a><a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
+<section id="setting-up-development-environment">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Setting Up Development Environment</a><a class="headerlink" href="#setting-up-development-environment" title="Link to this heading">#</a></h3>
+<ol class="arabic">
+<li><p><strong>Fork and clone the repository</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/spdlearn/spd_learn.git
+<span class="nb">cd</span><span class="w"> </span>spd_learn
+</pre></div>
+</div>
+</li>
+<li><p><strong>Create a virtual environment</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># On Windows: venv\Scripts\activate</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Install in development mode with all dependencies</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Install pre-commit hooks</strong> (required for consistent formatting):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit
+pre-commit<span class="w"> </span>install
+pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="development-workflow">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Development Workflow</a><a class="headerlink" href="#development-workflow" title="Link to this heading">#</a></h2>
+<section id="creating-a-branch">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Creating a Branch</a><a class="headerlink" href="#creating-a-branch" title="Link to this heading">#</a></h3>
+<p>Create a new branch for your feature or bug fix:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/your-feature-name
+<span class="c1"># or</span>
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>fix/your-bug-fix
+</pre></div>
+</div>
+</section>
+<section id="running-tests">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Running Tests</a><a class="headerlink" href="#running-tests" title="Link to this heading">#</a></h3>
+<p>Run the test suite to ensure your changes don’t break existing functionality:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest
+</pre></div>
+</div>
+<p>Run tests with coverage:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>--cov<span class="o">=</span>spd_learn<span class="w"> </span>--cov-report<span class="o">=</span>html
+</pre></div>
+</div>
+</section>
+<section id="code-style">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Code Style</a><a class="headerlink" href="#code-style" title="Link to this heading">#</a></h3>
+<p>We use <code class="docutils literal notranslate"><span class="pre">ruff</span></code> for linting and <code class="docutils literal notranslate"><span class="pre">black</span></code> for formatting. Run before committing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>check<span class="w"> </span>spd_learn/
+black<span class="w"> </span>spd_learn/
+</pre></div>
+</div>
+</section>
+</section>
+<section id="types-of-contributions">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Types of Contributions</a><a class="headerlink" href="#types-of-contributions" title="Link to this heading">#</a></h2>
+<section id="bug-reports">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Bug Reports</a><a class="headerlink" href="#bug-reports" title="Link to this heading">#</a></h3>
+<p>If you find a bug, please open an issue on GitHub with:</p>
+<ol class="arabic simple">
+<li><p>A clear, descriptive title</p></li>
+<li><p>Steps to reproduce the bug</p></li>
+<li><p>Expected behavior vs. actual behavior</p></li>
+<li><p>Your environment (Python version, PyTorch version, OS)</p></li>
+<li><p>Minimal code example that reproduces the issue</p></li>
+</ol>
+</section>
+<section id="feature-requests">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Feature Requests</a><a class="headerlink" href="#feature-requests" title="Link to this heading">#</a></h3>
+<p>We welcome feature requests! Please open an issue describing:</p>
+<ol class="arabic simple">
+<li><p>The problem you’re trying to solve</p></li>
+<li><p>Your proposed solution</p></li>
+<li><p>Any alternatives you’ve considered</p></li>
+</ol>
+</section>
+<section id="code-contributions">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Code Contributions</a><a class="headerlink" href="#code-contributions" title="Link to this heading">#</a></h3>
+<section id="pull-requests">
+<h4>Pull Requests<a class="headerlink" href="#pull-requests" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><strong>Create an issue first</strong> for significant changes</p></li>
+<li><p><strong>Write tests</strong> for new functionality</p></li>
+<li><p><strong>Update documentation</strong> if needed</p></li>
+<li><p><strong>Follow the code style</strong> guidelines</p></li>
+<li><p><strong>Keep PRs focused</strong> - one feature/fix per PR</p></li>
+</ol>
+</section>
+<section id="pr-checklist">
+<h4>PR Checklist<a class="headerlink" href="#pr-checklist" title="Link to this heading">#</a></h4>
+<p>Before submitting a PR, ensure:</p>
+<ul class="simple">
+<li><p>[ ] All tests pass (<code class="docutils literal notranslate"><span class="pre">pytest</span></code>)</p></li>
+<li><p>[ ] Code is formatted (<code class="docutils literal notranslate"><span class="pre">black</span></code>, <code class="docutils literal notranslate"><span class="pre">ruff</span></code>)</p></li>
+<li><p>[ ] Documentation is updated</p></li>
+<li><p>[ ] Commit messages are clear and descriptive</p></li>
+<li><p>[ ] <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">run</span> <span class="pre">--all-files</span></code> passes</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="adding-new-features">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Adding New Features</a><a class="headerlink" href="#adding-new-features" title="Link to this heading">#</a></h2>
+<section id="adding-a-new-layer">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Adding a New Layer</a><a class="headerlink" href="#adding-a-new-layer" title="Link to this heading">#</a></h3>
+<p>To add a new neural network layer:</p>
+<ol class="arabic simple">
+<li><p>Create the layer in the appropriate file under <code class="docutils literal notranslate"><span class="pre">spd_learn/modules/</span></code></p></li>
+<li><p>Add comprehensive docstrings following NumPy format</p></li>
+<li><p>Export in <code class="docutils literal notranslate"><span class="pre">spd_learn/modules/__init__.py</span></code></p></li>
+<li><p>Add to <code class="docutils literal notranslate"><span class="pre">docs/source/api.rst</span></code></p></li>
+<li><p>Write unit tests in <code class="docutils literal notranslate"><span class="pre">tests/</span></code></p></li>
+</ol>
+<p>Example layer structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyNewLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Short description of the layer.</span>
+
+<span class="sd">    Longer description explaining what the layer does,</span>
+<span class="sd">    its mathematical formulation, and when to use it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_features : int</span>
+<span class="sd">        Input dimension.</span>
+<span class="sd">    out_features : int</span>
+<span class="sd">        Output dimension.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Author, A. (Year). Paper Title. Journal.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; layer = MyNewLayer(64, 32)</span>
+<span class="sd">    &gt;&gt;&gt; x = torch.randn(16, 64, 64)</span>
+<span class="sd">    &gt;&gt;&gt; output = layer(x)</span>
+<span class="sd">    &gt;&gt;&gt; output.shape</span>
+<span class="sd">    torch.Size([16, 32, 32])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
+        <span class="c1"># Initialize parameters...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : torch.Tensor</span>
+<span class="sd">            Input tensor of shape ``(batch, in_features, in_features)``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        torch.Tensor</span>
+<span class="sd">            Output tensor of shape ``(batch, out_features, out_features)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implementation...</span>
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-a-new-model">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Adding a New Model</a><a class="headerlink" href="#adding-a-new-model" title="Link to this heading">#</a></h3>
+<p>To add a new model architecture:</p>
+<ol class="arabic simple">
+<li><p>Create the model in <code class="docutils literal notranslate"><span class="pre">spd_learn/models/</span></code></p></li>
+<li><p>Include a docstring with:</p>
+<ul class="simple">
+<li><p>Architecture description</p></li>
+<li><p>Figure reference (if available)</p></li>
+<li><p>All parameters documented</p></li>
+<li><p>Original paper reference</p></li>
+</ul>
+</li>
+<li><p>Export in <code class="docutils literal notranslate"><span class="pre">spd_learn/models/__init__.py</span></code></p></li>
+<li><p>Add to <code class="docutils literal notranslate"><span class="pre">docs/source/api.rst</span></code></p></li>
+<li><p>Consider adding an example script</p></li>
+</ol>
+</section>
+<section id="adding-a-functional-operation">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Adding a Functional Operation</a><a class="headerlink" href="#adding-a-functional-operation" title="Link to this heading">#</a></h3>
+<p>For low-level operations:</p>
+<ol class="arabic simple">
+<li><p>Add to <code class="docutils literal notranslate"><span class="pre">spd_learn/functional/</span></code></p></li>
+<li><p>Implement both forward and backward passes if using custom autograd</p></li>
+<li><p>Export in <code class="docutils literal notranslate"><span class="pre">spd_learn/functional/__init__.py</span></code></p></li>
+<li><p>Document in <code class="docutils literal notranslate"><span class="pre">docs/source/api.rst</span></code></p></li>
+</ol>
+</section>
+</section>
+<section id="documentation">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Documentation</a><a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
+<section id="building-documentation">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Building Documentation</a><a class="headerlink" href="#building-documentation" title="Link to this heading">#</a></h3>
+<p>Build the documentation locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+make<span class="w"> </span>html
+</pre></div>
+</div>
+<p>View the built documentation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>open<span class="w"> </span>build/html/index.html<span class="w">  </span><span class="c1"># macOS</span>
+xdg-open<span class="w"> </span>build/html/index.html<span class="w">  </span><span class="c1"># Linux</span>
+</pre></div>
+</div>
+</section>
+<section id="writing-documentation">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Writing Documentation</a><a class="headerlink" href="#writing-documentation" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Use <strong>NumPy-style docstrings</strong> for all public functions and classes</p></li>
+<li><p>Include <strong>examples</strong> in docstrings where helpful</p></li>
+<li><p>Add <strong>references</strong> to papers when implementing published methods</p></li>
+<li><p>Update the <strong>User Guide</strong> for conceptual changes</p></li>
+</ul>
+</section>
+</section>
+<section id="code-organization">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Code Organization</a><a class="headerlink" href="#code-organization" title="Link to this heading">#</a></h2>
+<section id="architecture-overview">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Architecture Overview</a><a class="headerlink" href="#architecture-overview" title="Link to this heading">#</a></h3>
+<p>SPD Learn follows PyTorch’s design philosophy with a clear separation between
+<strong>functional operations</strong> and <strong>stateful modules</strong>. This architecture enables
+flexibility, composability, and ease of extension.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────┐
+│              models/                     │
+│  Pre-built architectures (SPDNet, etc.) │
+│  Compose modules into complete models   │
+└──────────────────┬──────────────────────┘
+                   │ uses
+┌──────────────────▼──────────────────────┐
+│              modules/                    │
+│  Stateful nn.Module layers (BiMap, etc.)│
+│  Learnable parameters + forward()       │
+└──────────────────┬──────────────────────┘
+                   │ calls
+┌──────────────────▼──────────────────────┐
+│             functional/                  │
+│  Pure functions (matrix_log, etc.)       │
+│  Custom autograd for SPD operations      │
+└─────────────────────────────────────────┘
+</pre></div>
+</div>
+<section id="design-principles">
+<h4>Design Principles<a class="headerlink" href="#design-principles" title="Link to this heading">#</a></h4>
+<p>SPD Learn follows PyTorch’s design philosophy <span id="id2">[<a class="reference internal" href="references.html#id74" title="Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: an imperative style, high-performance deep learning library. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alché-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing Systems, volume 32. Curran Associates, Inc., 2019. URL: https://proceedings.neurips.cc/paper_files/paper/2019/file/bdbca288fee7f92f2bfa9f7012727740-Paper.pdf.">Paszke <em>et al.</em>, 2019</a>]</span> with a
+clear separation between stateless operations and stateful modules. This pattern,
+also adopted by JAX <span id="id3">[<a class="reference internal" href="references.html#id75" title="Roy Frostig, Matthew James Johnson, and Chris Leary. Compiling machine learning programs via high-level tracing. In Systems for Machine Learning (SysML). 2018. URL: https://mlsys.org/Conferences/doc/2018/146.pdf.">Frostig <em>et al.</em>, 2018</a>]</span>, reflects classical systems
+design principles <span id="id4">[<a class="reference internal" href="references.html#id77" title="Jerome H. Saltzer, David P. Reed, and David D. Clark. End-to-end arguments in system design. ACM Transactions on Computer Systems, 2(4):277–288, November 1984. doi:10.1145/357401.357402.">Saltzer <em>et al.</em>, 1984</a>]</span>, <span id="id5">[<a class="reference internal" href="references.html#id76" title="Jim Waldo, Geoff Wyant, Ann Wollrath, and Samuel C. Kendall. A note on distributed computing. Technical Report TR-94-29, Sun Microsystems Laboratories Inc., Mountain View, CA, November 1994. URL: https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf.">Waldo <em>et al.</em>, 1994</a>]</span>.</p>
+<ol class="arabic simple">
+<li><p><strong>Functional First</strong>: Mathematical operations are implemented as pure functions
+in <code class="docutils literal notranslate"><span class="pre">spd_learn.functional</span></code>. No internal state, usable outside neural networks.</p></li>
+<li><p><strong>Modules Wrap Functional</strong>: <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> classes in <code class="docutils literal notranslate"><span class="pre">spd_learn.modules</span></code>
+wrap functional operations, adding learnable parameters and state management.</p></li>
+<li><p><strong>Models Compose Modules</strong>: Complete architectures in <code class="docutils literal notranslate"><span class="pre">spd_learn.models</span></code>
+compose modules into end-to-end trainable networks.</p></li>
+<li><p><strong>Trivialization for Constraints</strong>: Manifold-valued parameters (Stiefel, SPD)
+use trivialization <span id="id6">[<a class="reference internal" href="references.html#id25" title="Mario Lezcano-Casado. Trivializations for gradient-based optimization on manifolds. In Advances in Neural Information Processing Systems, volume 32, 9154–9164. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html.">Lezcano-Casado, 2019</a>]</span>—mappings from
+unconstrained space to the manifold—enabling standard optimizers.</p></li>
+</ol>
+</section>
+</section>
+<section id="package-structure">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Package Structure</a><a class="headerlink" href="#package-structure" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>spd_learn/
+├── __init__.py          # Package initialization and public API
+├── version.py           # Version string
+├── logging.py           # Logging utilities
+│
+├── functional/          # Pure functions (no learnable parameters)
+│   ├── __init__.py      # Public functional API
+│   ├── autograd.py      # Custom autograd: modeig_forward/backward
+│   ├── core.py          # Core spectral operations (matrix_log, matrix_exp, etc.)
+│   ├── covariance.py    # Covariance estimators
+│   ├── metrics/         # Riemannian metrics subpackage
+│   │   ├── __init__.py  # Metrics API aggregation
+│   │   ├── airm.py      # Affine-Invariant Riemannian Metric
+│   │   ├── log_euclidean.py  # Log-Euclidean Metric
+│   │   ├── bures_wasserstein.py  # Bures-Wasserstein Metric
+│   │   └── log_cholesky.py  # Log-Cholesky Metric
+│   ├── transport.py     # Parallel transport operations
+│   ├── numerical.py     # Numerical stability configuration
+│   ├── regularize.py    # Shrinkage estimators
+│   ├── dropout.py       # SPD-aware dropout
+│   └── utils.py         # Helper functions (ensure_sym, etc.)
+│
+├── modules/             # nn.Module layers (stateful, learnable)
+│   ├── __init__.py      # Public modules API
+│   ├── bilinear.py      # BiMap, BiMapIncreaseDim (Stiefel-constrained)
+│   ├── modeig.py        # LogEig, ReEig, ExpEig (spectral layers)
+│   ├── covariance.py    # CovLayer (covariance pooling)
+│   ├── batchnorm.py     # SPDBatchNormMeanVar, SPDBatchNormMean
+│   ├── dropout.py       # SPDDropout
+│   ├── regularize.py    # Shrinkage, TraceNorm
+│   ├── wavelet.py       # WaveletConv (Gabor wavelets)
+│   ├── manifold.py      # SPD parametrization helpers
+│   ├── residual.py      # Residual connections on SPD
+│   └── utils.py         # PatchEmbeddingLayer, Vec, Vech
+│
+└── models/              # Pre-built architectures
+    ├── __init__.py      # Public models API
+    ├── spdnet.py        # SPDNet (Huang et al., 2017)
+    ├── tsmnet.py        # TSMNet (Kobler et al., 2022)
+    ├── tensorcsp.py     # TensorCSPNet (Ju et al., 2022)
+    ├── eegspdnet.py     # EEGSPDNet (Wilson et al., 2025)
+    ├── green.py         # GREEN (Paillard et al., 2025)
+    ├── matt.py          # MAtt (Pan et al., 2022)
+    └── phase_spdnet.py  # PhaseSPDNet (Carrara et al., 2025)
+</pre></div>
+</div>
+<section id="functional-layer-spd-learn-functional">
+<h4>Functional Layer (<code class="docutils literal notranslate"><span class="pre">spd_learn.functional</span></code>)<a class="headerlink" href="#functional-layer-spd-learn-functional" title="Link to this heading">#</a></h4>
+<p>The functional layer provides <strong>pure functions</strong> for SPD matrix operations.
+These functions:</p>
+<ul class="simple">
+<li><p>Have <strong>no internal state</strong> or learnable parameters</p></li>
+<li><p>Are <strong>differentiable</strong> via custom autograd (when needed)</p></li>
+<li><p>Can be used <strong>standalone</strong> outside neural networks</p></li>
+<li><p>Follow the pattern: <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">=</span> <span class="pre">function(input,</span> <span class="pre">*args)</span></code></p></li>
+</ul>
+<p><strong>Key components:</strong></p>
+<ul class="simple">
+<li><p><strong>Spectral operations</strong> (<code class="docutils literal notranslate"><span class="pre">functional.py</span></code>): <code class="docutils literal notranslate"><span class="pre">matrix_log</span></code>, <code class="docutils literal notranslate"><span class="pre">matrix_exp</span></code>,
+<code class="docutils literal notranslate"><span class="pre">matrix_sqrt</span></code>, <code class="docutils literal notranslate"><span class="pre">matrix_power</span></code> — implemented via eigendecomposition with
+custom backward passes using the Loewner matrix formulation.</p></li>
+<li><p><strong>Autograd</strong> (<code class="docutils literal notranslate"><span class="pre">autograd.py</span></code>): <code class="docutils literal notranslate"><span class="pre">modeig_forward</span></code> and <code class="docutils literal notranslate"><span class="pre">modeig_backward</span></code>
+implement the forward and backward passes for spectral matrix functions,
+caching eigendecompositions for efficient gradient computation.</p></li>
+<li><p><strong>Riemannian operations</strong> (<code class="docutils literal notranslate"><span class="pre">metrics/</span></code>): <code class="docutils literal notranslate"><span class="pre">airm_distance</span></code>,
+<code class="docutils literal notranslate"><span class="pre">airm_geodesic</span></code>, <code class="docutils literal notranslate"><span class="pre">log_euclidean_distance</span></code>, <code class="docutils literal notranslate"><span class="pre">log_euclidean_mean</span></code> for
+operations under various Riemannian metrics (AIRM, Log-Euclidean, etc.).</p></li>
+</ul>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">matrix_log</span><span class="p">,</span> <span class="n">matrix_exp</span><span class="p">,</span> <span class="n">log_euclidean_mean</span>
+
+<span class="c1"># Create SPD matrices</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="c1"># Apply matrix logarithm (differentiable)</span>
+<span class="n">log_X</span> <span class="o">=</span> <span class="n">matrix_log</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># Compute Log-Euclidean mean (unweighted)</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="n">matrix_exp</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">log_X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="modules-layer-spd-learn-modules">
+<h4>Modules Layer (<code class="docutils literal notranslate"><span class="pre">spd_learn.modules</span></code>)<a class="headerlink" href="#modules-layer-spd-learn-modules" title="Link to this heading">#</a></h4>
+<p>The modules layer provides <strong>stateful ``nn.Module`` classes</strong> that wrap
+functional operations. These modules:</p>
+<ul class="simple">
+<li><p><strong>Inherit from</strong> <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></p></li>
+<li><p><strong>Manage learnable parameters</strong> (weights, biases)</p></li>
+<li><p><strong>Handle manifold constraints</strong> via trivialization</p></li>
+<li><p>Follow the pattern: <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">=</span> <span class="pre">module(input)</span></code></p></li>
+</ul>
+<p><strong>Key components:</strong></p>
+<ul class="simple">
+<li><p><strong>BiMap</strong> (<code class="docutils literal notranslate"><span class="pre">bilinear.py</span></code>): Bilinear mapping <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">W^T</span> <span class="pre">X</span> <span class="pre">W</span></code> where <code class="docutils literal notranslate"><span class="pre">W</span></code> is
+constrained to the Stiefel manifold via <code class="docutils literal notranslate"><span class="pre">torch.nn.utils.parametrizations.orthogonal</span></code>.</p></li>
+<li><p><strong>LogEig/ReEig/ExpEig</strong> (<code class="docutils literal notranslate"><span class="pre">modeig.py</span></code>): Spectral layers that apply functions
+to eigenvalues. <code class="docutils literal notranslate"><span class="pre">ReEig</span></code> rectifies eigenvalues (non-linearity), <code class="docutils literal notranslate"><span class="pre">LogEig</span></code>
+maps to tangent space, <code class="docutils literal notranslate"><span class="pre">ExpEig</span></code> maps back to manifold.</p></li>
+<li><p><strong>SPDBatchNormMeanVar</strong> (<code class="docutils literal notranslate"><span class="pre">batchnorm.py</span></code>): Batch normalization on the SPD manifold
+using the Fréchet mean and variance, with learnable SPD bias via trivialization.</p></li>
+<li><p><strong>CovLayer</strong> (<code class="docutils literal notranslate"><span class="pre">covariance.py</span></code>): Computes covariance matrices from time series,
+supporting various estimators (sample, shrinkage, real-valued).</p></li>
+</ul>
+<p>Example of trivialization in BiMap:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parametrizations</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BiMap</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Raw unconstrained parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">))</span>
+        <span class="c1"># Apply orthogonal parametrization (Stiefel constraint)</span>
+        <span class="n">parametrizations</span><span class="o">.</span><span class="n">orthogonal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="c1"># W is automatically orthogonalized</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
+</pre></div>
+</div>
+</section>
+<section id="models-layer-spd-learn-models">
+<h4>Models Layer (<code class="docutils literal notranslate"><span class="pre">spd_learn.models</span></code>)<a class="headerlink" href="#models-layer-spd-learn-models" title="Link to this heading">#</a></h4>
+<p>The models layer provides <strong>complete architectures</strong> that compose modules into
+end-to-end trainable networks. These models:</p>
+<ul class="simple">
+<li><p><strong>Accept raw data</strong> (EEG signals, fMRI time series, or precomputed SPD matrices)</p></li>
+<li><p><strong>Output predictions</strong> (class logits, features)</p></li>
+<li><p>Are <strong>ready for training</strong> with standard PyTorch optimizers</p></li>
+</ul>
+<p><strong>Architecture pattern</strong> (most models follow this):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Input → [CovLayer] → BiMap → ReEig → BiMap → ReEig → LogEig → Vec → Linear → Output
+        (optional)   └────────── SPD Processing ──────────┘    └─ Classifier ─┘
+</pre></div>
+</div>
+<p>Example model usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPDNet</span>
+
+<span class="c1"># Create model for 22-channel EEG, 4 classes</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">n_outputs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">subspacedim</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="c1"># Input: raw EEG (batch, channels, time)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># (32, 4)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="trivialization-approach">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Trivialization Approach</a><a class="headerlink" href="#trivialization-approach" title="Link to this heading">#</a></h3>
+<p>SPD Learn uses <strong>trivialization</strong> to handle manifold-valued parameters, enabling
+unconstrained optimization with standard gradient descent.</p>
+<p><strong>What is trivialization?</strong></p>
+<p>A trivialization is a smooth mapping <code class="docutils literal notranslate"><span class="pre">Φ:</span> <span class="pre">ℝ^d</span> <span class="pre">→</span> <span class="pre">M</span></code> from an unconstrained
+Euclidean space to the target manifold <code class="docutils literal notranslate"><span class="pre">M</span></code>. Instead of optimizing directly on
+the manifold (which requires Riemannian optimization), we optimize the
+unconstrained parameters and map them to the manifold.</p>
+<p><strong>Stiefel manifold</strong> (orthogonal matrices):</p>
+<p>For BiMap weights <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">∈</span> <span class="pre">St(n,</span> <span class="pre">m)</span></code> (matrices with orthonormal columns):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># PyTorch&#39;s built-in orthogonal parametrization</span>
+<span class="n">parametrizations</span><span class="o">.</span><span class="n">orthogonal</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">)</span>
+
+<span class="c1"># Internally uses Cayley map or matrix exponential:</span>
+<span class="c1"># W = cayley(A) where A is skew-symmetric</span>
+</pre></div>
+</div>
+<p><strong>SPD manifold</strong> (positive definite matrices):</p>
+<p>For SPD parameters (e.g., bias in SPDBatchNormMeanVar):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Map symmetric matrix S to SPD via matrix exponential</span>
+<span class="c1"># X = exp(S), where S is unconstrained symmetric</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">matrix_exp</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>  <span class="c1"># Always SPD for any symmetric S</span>
+</pre></div>
+</div>
+<p>This approach:</p>
+<ul class="simple">
+<li><p>Enables <strong>standard optimizers</strong> (Adam, SGD) without modification</p></li>
+<li><p>Provides <strong>automatic constraint satisfaction</strong> by construction</p></li>
+<li><p>Supports <strong>stable gradients</strong> via the chain rule through the mapping</p></li>
+</ul>
+</section>
+<section id="naming-conventions">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Naming Conventions</a><a class="headerlink" href="#naming-conventions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Modules</strong>: <code class="docutils literal notranslate"><span class="pre">CamelCase</span></code> (e.g., <a class="reference internal" href="generated/bilinear/spd_learn.modules.BiMap.html#spd_learn.modules.BiMap" title="spd_learn.modules.BiMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">BiMap</span></code></a>, <a class="reference internal" href="generated/batchnorm/spd_learn.modules.SPDBatchNormMeanVar.html#spd_learn.modules.SPDBatchNormMeanVar" title="spd_learn.modules.SPDBatchNormMeanVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPDBatchNormMeanVar</span></code></a>)</p></li>
+<li><p><strong>Functions</strong>: <code class="docutils literal notranslate"><span class="pre">snake_case</span></code> (e.g., <a class="reference internal" href="generated/functional/spd_learn.functional.matrix_log.html#spd_learn.functional.matrix_log" title="spd_learn.functional.matrix_log"><code class="xref py py-func docutils literal notranslate"><span class="pre">matrix_log()</span></code></a>, <a class="reference internal" href="generated/log_euclidean/spd_learn.functional.log_euclidean_mean.html#spd_learn.functional.log_euclidean_mean" title="spd_learn.functional.log_euclidean_mean"><code class="xref py py-func docutils literal notranslate"><span class="pre">log_euclidean_mean()</span></code></a>)</p></li>
+<li><p><strong>Private methods</strong>: prefix with <code class="docutils literal notranslate"><span class="pre">_</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">_compute_mean</span></code>)</p></li>
+<li><p><strong>Type hints</strong>: Use throughout for clarity and IDE support</p></li>
+</ul>
+</section>
+</section>
+<section id="testing-guidelines">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Testing Guidelines</a><a class="headerlink" href="#testing-guidelines" title="Link to this heading">#</a></h2>
+<section id="test-structure">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Test Structure</a><a class="headerlink" href="#test-structure" title="Link to this heading">#</a></h3>
+<p>Tests are organized in <code class="docutils literal notranslate"><span class="pre">tests/</span></code> mirroring the package structure:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tests/
+├── test_functional.py
+├── test_modules.py
+└── test_models.py
+</pre></div>
+</div>
+</section>
+<section id="writing-tests">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Writing Tests</a><a class="headerlink" href="#writing-tests" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Test both <strong>forward and backward passes</strong></p></li>
+<li><p>Test <strong>edge cases</strong> (empty batches, single samples)</p></li>
+<li><p>Test <strong>numerical stability</strong> with extreme values</p></li>
+<li><p>Use <strong>parametrized tests</strong> for multiple configurations</p></li>
+</ul>
+<p>Example test:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiMap</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;in_features,out_features&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_bimap_output_shape</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">BiMap</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Make SPD</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_bimap_preserves_spd</span><span class="p">():</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">BiMap</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>  <span class="c1"># SPD</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c1"># Check positive definiteness via eigenvalues</span>
+    <span class="n">eigvals</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">eigvals</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="community">
+<h2><a class="toc-backref" href="#id32" role="doc-backlink">Community</a><a class="headerlink" href="#community" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>GitHub Issues</strong>: Bug reports and feature requests</p></li>
+<li><p><strong>Pull Requests</strong>: Code contributions</p></li>
+<li><p><strong>Discussions</strong>: Questions and ideas</p></li>
+</ul>
+<p>Thank you for contributing to SPD Learn!</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="faq.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Frequently Asked Questions</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

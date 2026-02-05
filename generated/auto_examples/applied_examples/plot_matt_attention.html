@@ -1,0 +1,1138 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Manifold Attention with MAtt &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"tex": {"macros": {"spd": "\\mathcal{S}^n_{++}", "sym": "\\text{Sym}(n)", "syms": "\\mathcal{S}^n", "reals": "\\mathbb{R}", "choleskyspace": "\\mathcal{L}_+", "manifold": "\\mathcal{M}", "gl": "\\text{GL}(n)", "stiefel": ["\\text{St}(#1, #2)", 2], "tangent": ["T_{#1} \\mathcal{M}", 1], "tangentspd": ["T_{#1} \\mathcal{S}^n_{++}", 1], "Exp": ["\\text{Exp}_{#1}", 1], "Log": ["\\text{Log}_{#1}", 1], "logchol": "\\log_{\\text{chol}}", "expchol": "\\exp_{\\text{chol}}", "tril": ["\\text{tril}(#1)", 1], "dairm": ["d_{\\text{AIRM}}(#1, #2)", 2], "dlem": ["d_{\\text{LEM}}(#1, #2)", 2], "dbw": ["d_{\\text{BW}}(#1, #2)", 2], "dlcm": ["d_{\\text{LCM}}(#1, #2)", 2], "gairm": ["g^{\\text{AIRM}}_{#1}", 1], "glem": ["g^{\\text{LEM}}_{#1}", 1], "gbw": ["g^{\\text{BW}}_{#1}", 1], "glcm": ["g^{\\text{LCM}}_{#1}", 1], "tr": "\\text{tr}", "diag": "\\text{diag}", "frob": ["\\| #1 \\|_F", 1], "frobinner": ["\\langle #1, #2 \\rangle_F", 2], "lyap": ["\\mathcal{L}_{#1}", 1], "reeig": "\\text{ReEig}", "logeig": "\\text{LogEig}", "expeig": "\\text{ExpEig}", "frechet": "\\mathcal{G}", "geomean": "G", "In": "I_n", "I": "I", "transpose": "^\\top", "lemult": "\\odot", "lescalar": "\\circledast"}}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/auto_examples/applied_examples/plot_matt_attention';</script>
+    <link rel="canonical" href="https://spdlearn.org/generated/auto_examples/applied_examples/plot_matt_attention.html" />
+    <link rel="icon" href="../../../_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Testing Robustness of SPD Models with Riemannian PGD Attack" href="plot_spd_rpgd_attack.html" />
+    <link rel="prev" title="Applied Examples" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="../../../_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_03_eeg_classification.html">End-to-End EEG Classification Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_01_spd_concepts.html">Understanding Symmetric Positive Definite (SPD) Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_02_building_blocks.html">Building Blocks of SPD Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_04_numerical_precision.html">Numerical Precision and Stability for SPD Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../visualizations/index.html">SPD Layer Visualizations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_logeig_animation.html">LogEig: Linearization and the Swelling Effect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_bimap_animation.html">BiMap Layer Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_reeig_animation.html">ReEig Layer Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_batchnorm_animation.html">SPD Batch Normalization Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_covlayer_animation.html">CovLayer Animation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Applied Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Manifold Attention with MAtt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_spd_rpgd_attack.html">Testing Robustness of SPD Models with Riemannian PGD Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_fmri.html">Classifying fMRI data with SPDNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_eegspdnet.html">EEG Classification with EEGSPDNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_green_wavelets.html">Learnable Wavelets with GREEN for EEG Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_phase_spdnet.html">Phase-Space Embedding with PhaseSPDNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_benchmark_filterbank.html">Filter Bank Motor Imagery with TensorCSPNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_parallel_transport.html">Parallel Transport on SPD Manifolds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radar.html">Radar Image Classification with SPD Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_tsmnet_domain_adaptation.html">Cross-Session Transfer with TSMNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="moabb_hydra_benchmark.html">Benchmarking SPD Learn Models with MOABB and Hydra</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Applied Examples</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Applied Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Manifold Attention with MAtt</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-generated-auto-examples-applied-examples-plot-matt-attention-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="manifold-attention-with-matt">
+<span id="matt-attention"></span><span id="sphx-glr-generated-auto-examples-applied-examples-plot-matt-attention-py"></span><h1>Manifold Attention with MAtt<a class="headerlink" href="#manifold-attention-with-matt" title="Link to this heading">#</a></h1>
+<p>This tutorial demonstrates how to use MAtt (Manifold Attention Network)
+for EEG classification. MAtt applies attention mechanisms on the SPD
+manifold to weight temporal segments by their discriminative importance.</p>
+<nav class="contents local" id="this-example-covers">
+<p class="topic-title">This example covers:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id2">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#setup-and-imports" id="id3">Setup and Imports</a></p></li>
+<li><p><a class="reference internal" href="#loading-the-dataset" id="id4">Loading the Dataset</a></p></li>
+<li><p><a class="reference internal" href="#creating-the-matt-model" id="id5">Creating the MAtt Model</a></p></li>
+<li><p><a class="reference internal" href="#training-the-model" id="id6">Training the Model</a></p></li>
+<li><p><a class="reference internal" href="#visualizing-results" id="id7">Visualizing Results</a></p></li>
+<li><p><a class="reference internal" href="#understanding-manifold-attention" id="id8">Understanding Manifold Attention</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id9">Summary</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>MAtt <span id="id1">[<a class="reference internal" href="../../../references.html#id16" title="Yue-Ting Pan, Jing-Lun Chou, and Chun-Shu Wei. Matt: a manifold attention network for eeg decoding. In Advances in Neural Information Processing Systems, volume 35, 31116–31129. 2022. URL: https://proceedings.neurips.cc/paper_files/paper/2022/hash/c981fd12b1d5703f19bd8289da9fc996-Abstract-Conference.html.">Pan <em>et al.</em>, 2022</a>]</span> introduces <strong>attention mechanisms on the SPD
+manifold</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Patch-based Processing</strong>: Segments the signal into temporal patches</p></li>
+<li><p><strong>Covariance per Patch</strong>: Computes SPD matrices for each segment</p></li>
+<li><p><strong>Manifold Attention</strong>: Weights patches using Log-Euclidean distances</p></li>
+<li><p><strong>Aggregation</strong>: Combines weighted SPD matrices for classification</p></li>
+</ol>
+<p>This allows the model to focus on the most discriminative time periods
+within each trial, improving classification and interpretability.</p>
+</section>
+<section id="setup-and-imports">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Setup and Imports</a><a class="headerlink" href="#setup-and-imports" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">braindecode</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EEGClassifier</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">moabb.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">BNCI2014_001</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">moabb.paradigms</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotorImagery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">accuracy_score</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder" class="sphx-glr-backref-module-sklearn-preprocessing sphx-glr-backref-type-py-class"><span class="n">LabelEncoder</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skorch.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">EpochScoring</span><span class="p">,</span> <span class="n">GradientNormClipping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skorch.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidSplit</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.models</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="torch.nn.Module" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">MAtt</span></a>
+
+
+<a href="https://docs.python.org/3/library/warnings.html#warnings.filterwarnings" title="warnings.filterwarnings" class="sphx-glr-backref-module-warnings sphx-glr-backref-type-py-function"><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span></a><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-the-dataset">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Loading the Dataset</a><a class="headerlink" href="#loading-the-dataset" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">BNCI2014_001</span><span class="p">()</span>
+<span class="n">paradigm</span> <span class="o">=</span> <span class="n">MotorImagery</span><span class="p">(</span><span class="n">n_classes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dataset</span><span class="o">.</span><span class="n">code</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Paradigm: 4-class motor imagery&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Choosing from all possible events
+Dataset: BNCI2014-001
+Paradigm: 4-class motor imagery
+</pre></div>
+</div>
+</section>
+<section id="creating-the-matt-model">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Creating the MAtt Model</a><a class="headerlink" href="#creating-the-matt-model" title="Link to this heading">#</a></h2>
+<p>MAtt architecture:</p>
+<ol class="arabic simple">
+<li><p><strong>Spatial Conv</strong>: Learns spatial filters</p></li>
+<li><p><strong>Temporal Conv</strong>: Extracts temporal features</p></li>
+<li><p><strong>Patch Embedding</strong>: Segments into n_patches temporal windows</p></li>
+<li><p><strong>Covariance + TraceNorm</strong>: SPD matrix per patch</p></li>
+<li><p><strong>AttentionManifold</strong>: Queries, keys, values on SPD manifold</p></li>
+<li><p><strong>ReEig + LogEig</strong>: Project to tangent space</p></li>
+<li><p><strong>Linear</strong>: Classification</p></li>
+</ol>
+<p>The attention mechanism computes:</p>
+<div class="math notranslate nohighlight">
+\[\text{attention}(Q, K) = \text{softmax}\left(\frac{1}{1 + \log(1 + d_{LE}(Q, K))}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(d_{LE}\)</span> is the Log-Euclidean distance.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_chans</span></a> <span class="o">=</span> <span class="mi">22</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_outputs</span></a> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="n">model</span> <span class="o">=</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="torch.nn.Module" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">MAtt</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_chans</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_chans</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_outputs</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_outputs</span></a><span class="p">,</span>
+    <span class="n">n_patches</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>  <span class="c1"># Number of temporal segments</span>
+    <span class="n">temporal_out_channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>  <span class="c1"># Temporal feature dimension</span>
+    <span class="n">temporal_kernel_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>  <span class="c1"># ~100ms at 250Hz</span>
+    <span class="n">temporal_padding</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>  <span class="c1"># Keep time dimension</span>
+    <span class="n">attention_in_features</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>  <span class="c1"># Input to attention (must match temporal_out_channels)</span>
+    <span class="n">attention_out_features</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>  <span class="c1"># Output from attention</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MAtt Architecture:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MAtt Architecture:
+MAtt(
+  (add_extra_dim): Rearrange(&#39;batch chan time -&gt; batch 1 chan time&#39;)
+  (spatial_filter): Conv2d(1, 22, kernel_size=(22, 1), stride=(1, 1))
+  (spatial_batch_norm): BatchNorm2d(22, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (temporal_feature_extractor): Conv2d(22, 32, kernel_size=(1, 25), stride=(1, 1), padding=(0, 12))
+  (temporal_batch_norm): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (squeeze_channel): Rearrange(&#39;batch kernel 1 time -&gt; batch kernel time&#39;)
+  (patch_cov_layer): Sequential(
+    (0): PatchEmbeddingLayer()
+    (1): CovLayer()
+    (2): TraceNorm()
+  )
+  (manifold_attention): AttentionManifold(
+    (q_trans): ParametrizedBiMap(
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _Orthogonal()
+        )
+      )
+    )
+    (k_trans): ParametrizedBiMap(
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _Orthogonal()
+        )
+      )
+    )
+    (v_trans): ParametrizedBiMap(
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _Orthogonal()
+        )
+      )
+    )
+  )
+  (re_eig): ReEig()
+  (tangent): LogEig()
+  (flatten): Flatten(start_dim=1, end_dim=-1)
+  (linear): Linear(in_features=1800, out_features=4, bias=True)
+)
+</pre></div>
+</div>
+</section>
+<section id="training-the-model">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Training the Model</a><a class="headerlink" href="#training-the-model" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subject_id</span></a> <span class="o">=</span> <span class="mi">1</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">batch_size</span></a> <span class="o">=</span> <span class="mi">32</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_epochs</span></a> <span class="o">=</span> <span class="mi">100</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">learning_rate</span></a> <span class="o">=</span> <span class="mf">1e-4</span>  <span class="c1"># Low learning rate for stable SPD learning</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.cuda.is_available.html#torch.cuda.is_available" title="torch.cuda.is_available" class="sphx-glr-backref-module-torch-cuda sphx-glr-backref-type-py-function"><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span></a><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using device: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Cache configuration</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cache_config</span></a> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">save_raw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_epochs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_array</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">overwrite_raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">overwrite_epochs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">overwrite_array</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Load data</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">X</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">labels</span></a><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">paradigm</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subject_id</span></a><span class="p">],</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cache_config</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cache_config</span></a>
+<span class="p">)</span>
+
+<span class="c1"># Encode labels</span>
+<a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder" class="sphx-glr-backref-module-sklearn-preprocessing sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">le</span></a> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder" class="sphx-glr-backref-module-sklearn-preprocessing sphx-glr-backref-type-py-class"><span class="n">LabelEncoder</span></a><span class="p">()</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y</span></a> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder.fit_transform" title="sklearn.preprocessing.LabelEncoder.fit_transform" class="sphx-glr-backref-module-sklearn-preprocessing sphx-glr-backref-type-py-method"><span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">labels</span></a><span class="p">)</span>
+
+<span class="c1"># Split by session</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_idx</span></a> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;session == &#39;0train&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test_idx</span></a> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;session == &#39;1test&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Data shape: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">X</span><span class="o">.</span><span class="n">shape</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training samples: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_idx</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test samples: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test_idx</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create classifier</span>
+<span class="c1"># Note: SPD networks benefit from gradient clipping to prevent</span>
+<span class="c1"># divergence during training on the Riemannian manifold.</span>
+<span class="n">clf</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EEGClassifier</span></a><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html#torch.nn.CrossEntropyLoss" title="torch.nn.CrossEntropyLoss" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span></a><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam" title="torch.optim.Adam" class="sphx-glr-backref-module-torch-optim sphx-glr-backref-type-py-class"><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span></a><span class="p">,</span>
+    <span class="n">optimizer__lr</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">learning_rate</span></a><span class="p">,</span>
+    <span class="n">train_split</span><span class="o">=</span><span class="n">ValidSplit</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stratified</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">batch_size</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">batch_size</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_epochs</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_epochs</span></a><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;train_acc&quot;</span><span class="p">,</span>
+            <span class="n">EpochScoring</span><span class="p">(</span>
+                <span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="n">lower_is_better</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">on_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;train_acc&quot;</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;gradient_clip&quot;</span><span class="p">,</span> <span class="n">GradientNormClipping</span><span class="p">(</span><span class="n">gradient_clip_value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)),</span>
+    <span class="p">],</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Train</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">X</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_idx</span></a><span class="p">],</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_idx</span></a><span class="p">])</span>
+
+<span class="c1"># Evaluate</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y_pred_train</span></a> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">X</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_idx</span></a><span class="p">])</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y_pred_test</span></a> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">X</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test_idx</span></a><span class="p">])</span>
+
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_acc</span></a> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">accuracy_score</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_idx</span></a><span class="p">],</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y_pred_train</span></a><span class="p">)</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test_acc</span></a> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">accuracy_score</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test_idx</span></a><span class="p">],</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y_pred_test</span></a><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results for Subject </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subject_id</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train Accuracy: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">train_acc</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test Accuracy:  </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test_acc</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Using device: cpu
+
+Data shape: (480, 22, 1001)
+Training samples: 192
+Test samples: 288
+  epoch    train_acc    train_loss    valid_acc    valid_loss     dur
+-------  -----------  ------------  -----------  ------------  ------
+      1       0.2812        1.4198       0.3000        1.4129  1.6544
+      2       0.3812        1.3855       0.2500        1.3933  1.5665
+      3       0.3312        1.3585       0.2500        1.3589  1.5517
+      4       0.4125        1.3204       0.4500        1.3371  1.6659
+      5       0.4688        1.3008       0.4000        1.3129  1.7126
+      6       0.5125        1.2773       0.5000        1.2931  1.6723
+      7       0.6188        1.2485       0.5000        1.2649  1.6784
+      8       0.5938        1.2215       0.5500        1.2414  1.7404
+      9       0.7188        1.2010       0.5000        1.2219  1.7269
+     10       0.7375        1.1761       0.6000        1.2029  1.6832
+     11       0.7063        1.1592       0.5500        1.1844  1.7251
+     12       0.6188        1.1493       0.6000        1.1771  1.7339
+     13       0.6062        1.1189       0.5500        1.1472  1.7169
+     14       0.6500        1.1029       0.5500        1.1403  1.6827
+     15       0.7188        1.0895       0.6000        1.1160  1.7406
+     16       0.7500        1.0628       0.5500        1.0949  1.7422
+     17       0.6625        1.0501       0.6000        1.0777  1.7015
+     18       0.7250        1.0231       0.6000        1.0715  1.7010
+     19       0.7500        1.0143       0.5500        1.0605  1.7298
+     20       0.8000        0.9913       0.6500        1.0351  1.7437
+     21       0.8063        0.9745       0.6500        1.0233  1.6902
+     22       0.7875        0.9537       0.7500        1.0141  1.6290
+     23       0.7625        0.9466       0.7500        0.9970  1.5393
+     24       0.7688        0.9229       0.8000        0.9838  1.5502
+     25       0.8313        0.9073       0.6500        0.9772  1.5132
+     26       0.7937        0.8976       0.6000        0.9644  1.6327
+     27       0.8000        0.8835       0.7500        0.9533  1.6194
+     28       0.7375        0.8833       0.7500        0.9386  1.6034
+     29       0.7812        0.8405       0.6500        0.9273  1.5848
+     30       0.7937        0.8419       0.6500        0.9209  1.7818
+     31       0.8500        0.8204       0.8000        0.8988  1.5712
+     32       0.8688        0.8045       0.7500        0.8886  1.5742
+     33       0.8125        0.7985       0.7500        0.8836  1.5708
+     34       0.8063        0.7840       0.8000        0.8617  1.6723
+     35       0.8688        0.7755       0.8000        0.8557  1.6788
+     36       0.8625        0.7546       0.6500        0.8518  1.6842
+     37       0.8000        0.7426       0.7500        0.8361  1.6148
+     38       0.8375        0.7307       0.7500        0.8295  1.8155
+     39       0.8875        0.7207       0.6500        0.8202  1.5773
+     40       0.8438        0.7137       0.6500        0.8276  1.5481
+     41       0.8375        0.6945       0.8500        0.8127  1.5565
+     42       0.8812        0.6843       0.9000        0.7934  1.5866
+     43       0.8562        0.6727       0.7500        0.7866  2.3088
+     44       0.8562        0.6768       0.8000        0.7856  1.5869
+     45       0.8688        0.6698       0.7000        0.7759  1.5853
+     46       0.8875        0.6513       0.8000        0.7658  1.7636
+     47       0.9062        0.6398       0.8500        0.7588  1.7657
+     48       0.8875        0.6304       0.7500        0.7589  1.5866
+     49       0.8875        0.6108       0.6500        0.7464  1.8958
+     50       0.9000        0.6059       0.7000        0.7479  1.5940
+     51       0.8938        0.6009       0.8500        0.7398  1.6755
+     52       0.8812        0.6128       0.8000        0.7262  1.6673
+     53       0.8875        0.6023       0.7500        0.7280  1.6672
+     54       0.9000        0.5841       0.7000        0.7226  1.6934
+     55       0.8938        0.5693       0.7500        0.7167  1.6643
+     56       0.9000        0.5563       0.8500        0.7112  1.6922
+     57       0.9187        0.5513       0.8500        0.6952  1.6821
+     58       0.9125        0.5452       0.8500        0.6964  1.6768
+     59       0.9062        0.5412       0.7500        0.6907  1.6970
+     60       0.9062        0.5253       0.7000        0.6926  1.6614
+     61       0.9000        0.5303       0.9000        0.6746  1.6778
+     62       0.9000        0.5292       0.9000        0.6740  1.6969
+     63       0.9125        0.5183       0.8000        0.6785  1.6681
+     64       0.9375        0.5029       0.8500        0.6710  1.6874
+     65       0.9187        0.4993       0.8000        0.6596  1.6648
+     66       0.9250        0.4917       0.8000        0.6635  1.6662
+     67       0.9062        0.4942       0.8000        0.6527  1.6812
+     68       0.9187        0.4836       0.7500        0.6462  1.7006
+     69       0.9313        0.4714       0.7500        0.6477  1.5916
+     70       0.9313        0.4670       0.7500        0.6471  1.6003
+     71       0.9313        0.4470       0.8000        0.6413  1.5977
+     72       0.9250        0.4549       0.7500        0.6384  1.5818
+     73       0.9375        0.4472       0.7500        0.6371  1.5819
+     74       0.9187        0.4438       0.7500        0.6345  1.5855
+     75       0.9250        0.4316       0.7500        0.6327  1.6028
+     76       0.9500        0.4326       0.8500        0.6306  1.5827
+     77       0.9625        0.4136       0.7000        0.6243  1.5828
+     78       0.9437        0.4139       0.8000        0.6280  1.5749
+     79       0.9187        0.4226       0.7500        0.6232  1.5937
+     80       0.9500        0.4059       0.7500        0.6140  1.5758
+     81       0.9500        0.4256       0.8500        0.6025  1.5868
+     82       0.9437        0.3898       0.7500        0.6154  1.5887
+     83       0.9250        0.3983       0.7500        0.6089  1.6071
+     84       0.9375        0.3878       0.8500        0.5940  1.5804
+     85       0.9625        0.3796       0.7500        0.6024  1.6743
+     86       0.9563        0.3808       0.7500        0.6086  1.6741
+     87       0.9563        0.3850       0.8000        0.5936  1.6812
+     88       0.9625        0.3744       0.8500        0.6025  1.6836
+     89       0.9688        0.3745       0.7500        0.5910  1.6777
+     90       0.9563        0.3730       0.7500        0.5796  1.6350
+     91       0.9563        0.3699       0.8500        0.5979  1.6517
+     92       0.9688        0.3521       0.7500        0.5957  1.6339
+     93       0.9688        0.3478       0.8000        0.5807  1.6308
+     94       0.9625        0.3441       0.7500        0.5902  1.6506
+     95       0.9812        0.3377       0.7000        0.5873  1.6645
+     96       0.9750        0.3440       0.7500        0.5841  1.6873
+     97       0.9750        0.3280       0.7500        0.5854  1.6852
+     98       0.9750        0.3324       0.8000        0.5776  1.6748
+     99       0.9812        0.3291       0.7500        0.5689  1.6670
+    100       0.9688        0.3300       0.8500        0.5638  1.6803
+
+==================================================
+Results for Subject 1
+==================================================
+Train Accuracy: 97.40%
+Test Accuracy:  73.61%
+</pre></div>
+</div>
+</section>
+<section id="visualizing-results">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Visualizing Results</a><a class="headerlink" href="#visualizing-results" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># Training history</span>
+<span class="n">history</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">history</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax1</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;train_loss&quot;</span><span class="p">],</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train Loss&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;valid_loss&quot;</span><span class="p">],</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Valid Loss&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Training and Validation Loss&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax2</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;train_acc&quot;</span><span class="p">],</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train Acc&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;valid_acc&quot;</span><span class="p">],</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Valid Acc&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Accuracy&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Training and Validation Accuracy&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylim.html#matplotlib.axes.Axes.set_ylim" title="matplotlib.axes.Axes.set_ylim" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span></a><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_plot_matt_attention_001.png" srcset="../../../_images/sphx_glr_plot_matt_attention_001.png" alt="Training and Validation Loss, Training and Validation Accuracy" class = "sphx-glr-single-img"/></section>
+<section id="understanding-manifold-attention">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Understanding Manifold Attention</a><a class="headerlink" href="#understanding-manifold-attention" title="Link to this heading">#</a></h2>
+<p>The attention mechanism in MAtt operates differently from standard attention:</p>
+<p><strong>Standard Attention</strong> (Euclidean):</p>
+<div class="math notranslate nohighlight">
+\[\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right) V\]</div>
+<p><strong>Manifold Attention</strong> (Log-Euclidean):</p>
+<div class="math notranslate nohighlight">
+\[\text{energy}_{ij} = d_{LE}(Q_i, K_j) = \|\log(Q_i) - \log(K_j)\|_F\]</div>
+<div class="math notranslate nohighlight">
+\[\text{weights}_{ij} = \frac{1}{1 + \log(1 + \text{energy}_{ij})}\]</div>
+<div class="math notranslate nohighlight">
+\[\text{output}_i = \sum_j \text{softmax}(\text{weights})_{ij} \odot V_j\]</div>
+<p>This respects the Riemannian geometry of SPD matrices, computing
+meaningful distances on the manifold rather than in Euclidean space.</p>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>In this tutorial, we demonstrated:</p>
+<ol class="arabic simple">
+<li><p>Creating a MAtt model with patch-based temporal segmentation</p></li>
+<li><p>Training for motor imagery classification</p></li>
+<li><p>Understanding the manifold attention mechanism</p></li>
+</ol>
+<p>MAtt is particularly useful when:</p>
+<ul class="simple">
+<li><p>Different time segments have varying discriminative power</p></li>
+<li><p>You want interpretable attention weights</p></li>
+<li><p>The data has complex temporal dynamics</p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 52.872 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-generated-auto-examples-applied-examples-plot-matt-attention-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/b58542f92329f036d623a63001615a6d/plot_matt_attention.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_matt_attention.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/2d9cc0523e65a3c65e3658dfc060baf6/plot_matt_attention.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_matt_attention.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/014d2ea831bc8ce891d5119901b94c19/plot_matt_attention.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_matt_attention.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Applied Examples</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="plot_spd_rpgd_attack.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Testing Robustness of SPD Models with Riemannian PGD Attack</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-imports">Setup and Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-the-dataset">Loading the Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-matt-model">Creating the MAtt Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-the-model">Training the Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-results">Visualizing Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-manifold-attention">Understanding Manifold Attention</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  <div class="sphx-glr-sidebar-component">
+    
+      
+        <div class="sphx-glr-sidebar-item sphx-glr-download-python-sidebar" title="plot_matt_attention.py">
+          <a download href="../../../_downloads/2d9cc0523e65a3c65e3658dfc060baf6/plot_matt_attention.py">
+            <i class="fa-solid fa-download"></i>
+            Download source code
+          </a>
+        </div>
+      
+    
+      
+        <div class="sphx-glr-sidebar-item sphx-glr-download-jupyter-sidebar" title="plot_matt_attention.ipynb">
+          <a download href="../../../_downloads/b58542f92329f036d623a63001615a6d/plot_matt_attention.ipynb">
+            <i class="fa-solid fa-download"></i>
+            Download Jupyter notebook
+          </a>
+        </div>
+      
+    
+      
+        <div class="sphx-glr-sidebar-item sphx-glr-download-zip-sidebar" title="plot_matt_attention.zip">
+          <a download href="../../../_downloads/014d2ea831bc8ce891d5119901b94c19/plot_matt_attention.zip">
+            <i class="fa-solid fa-download"></i>
+            Download zipped
+          </a>
+        </div>
+      
+    
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<div class="sd-card sd-shadow-sm sd-mb-3 spdlearn-colab-card">
+  <div class="sd-card-body spdlearn-colab-card-body">
+    <p class="sd-card-text sd-fs-5 sd-font-weight-bold sd-mb-2">Run this example in Google Colab</p>
+    <p class="sd-card-text sd-text-muted sd-mb-3">No installation required - runs directly in your browser with GPU support.</p>
+    <a class="sd-btn sd-btn-primary spdlearn-colab-btn" href="https://colab.research.google.com/github/spdlearn/spd_learn/blob/gh-pages/auto_examples/_notebooks/applied_examples/plot_matt_attention.ipynb" target="_blank" rel="noopener">
+      <img class="spdlearn-colab-badge" alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+    </a>
+  </div>
+</div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

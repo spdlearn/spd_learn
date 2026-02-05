@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Filter Bank Motor Imagery with TensorCSPNet &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/auto_examples/applied_examples/plot_benchmark_filterbank';</script>
+    <link rel="canonical" href="https://spdlearn.org/generated/auto_examples/applied_examples/plot_benchmark_filterbank.html" />
+    <link rel="icon" href="../../../_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Parallel Transport on SPD Manifolds" href="plot_parallel_transport.html" />
+    <link rel="prev" title="Phase-Space Embedding with PhaseSPDNet" href="plot_phase_spdnet.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="../../../_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_03_eeg_classification.html">End-to-End EEG Classification Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_01_spd_concepts.html">Understanding Symmetric Positive Definite (SPD) Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_02_building_blocks.html">Building Blocks of SPD Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_04_numerical_precision.html">Numerical Precision and Stability for SPD Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../visualizations/index.html">SPD Layer Visualizations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_logeig_animation.html">LogEig: Linearization and the Swelling Effect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_bimap_animation.html">BiMap Layer Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_reeig_animation.html">ReEig Layer Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_batchnorm_animation.html">SPD Batch Normalization Animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../visualizations/plot_covlayer_animation.html">CovLayer Animation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Applied Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_matt_attention.html">Manifold Attention with MAtt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_spd_rpgd_attack.html">Testing Robustness of SPD Models with Riemannian PGD Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_fmri.html">Classifying fMRI data with SPDNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_eegspdnet.html">EEG Classification with EEGSPDNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_green_wavelets.html">Learnable Wavelets with GREEN for EEG Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_phase_spdnet.html">Phase-Space Embedding with PhaseSPDNet</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Filter Bank Motor Imagery with TensorCSPNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_parallel_transport.html">Parallel Transport on SPD Manifolds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radar.html">Radar Image Classification with SPD Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_tsmnet_domain_adaptation.html">Cross-Session Transfer with TSMNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="moabb_hydra_benchmark.html">Benchmarking SPD Learn Models with MOABB and Hydra</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Applied Examples</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Applied Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Filter Bank Motor Imagery with TensorCSPNet</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-generated-auto-examples-applied-examples-plot-benchmark-filterbank-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="filter-bank-motor-imagery-with-tensorcspnet">
+<span id="filterbank-tensorcspnet"></span><span id="sphx-glr-generated-auto-examples-applied-examples-plot-benchmark-filterbank-py"></span><h1>Filter Bank Motor Imagery with TensorCSPNet<a class="headerlink" href="#filter-bank-motor-imagery-with-tensorcspnet" title="Link to this heading">#</a></h1>
+<p>This tutorial demonstrates how to use TensorCSPNet for motor imagery
+classification with filter bank features. TensorCSPNet is designed to
+process multi-frequency EEG data by stacking covariance matrices from
+different frequency bands into a tensor structure.</p>
+<nav class="contents local" id="this-example-covers">
+<p class="topic-title">This example covers:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id5">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#setup-and-imports" id="id6">Setup and Imports</a></p></li>
+<li><p><a class="reference internal" href="#loading-the-dataset" id="id7">Loading the Dataset</a></p></li>
+<li><p><a class="reference internal" href="#defining-the-filter-bank" id="id8">Defining the Filter Bank</a></p></li>
+<li><p><a class="reference internal" href="#setting-up-the-paradigm" id="id9">Setting up the Paradigm</a></p></li>
+<li><p><a class="reference internal" href="#creating-the-tensorcspnet-model" id="id10">Creating the TensorCSPNet Model</a></p></li>
+<li><p><a class="reference internal" href="#setting-up-the-classifier" id="id11">Setting up the Classifier</a></p></li>
+<li><p><a class="reference internal" href="#training-and-evaluation-function" id="id12">Training and Evaluation Function</a></p></li>
+<li><p><a class="reference internal" href="#running-the-evaluation" id="id13">Running the Evaluation</a></p></li>
+<li><p><a class="reference internal" href="#visualizing-training-history" id="id14">Visualizing Training History</a></p></li>
+<li><p><a class="reference internal" href="#confusion-matrix" id="id15">Confusion Matrix</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id16">Summary</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>Motor imagery (MI) is a mental process where a person imagines performing
+a motor action without actually executing it. EEG-based brain-computer
+interfaces (BCIs) can decode these imagined movements to control devices.</p>
+<p>Filter bank approaches decompose the EEG signal into multiple frequency
+bands, allowing the model to capture frequency-specific spatial patterns.
+TensorCSPNet <span id="id1">[<a class="reference internal" href="../../../user_guide.html#id31" title="Ce Ju and Cuntai Guan. Tensor-cspnet: a novel geometric deep learning framework for motor imagery classification. IEEE Transactions on Neural Networks and Learning Systems, 34(12):10955-10969, 2023. doi:10.1109/TNNLS.2022.3172108.">Ju and Guan, 2023</a>]</span> leverages this by creating SPD (Symmetric
+Positive
+Definite) covariance matrices for each frequency band and processing
+them through a geometry-aware neural network.</p>
+</section>
+<section id="setup-and-imports">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Setup and Imports</a><a class="headerlink" href="#setup-and-imports" title="Link to this heading">#</a></h2>
+<p>First, we import the necessary libraries. We use:</p>
+<ul class="simple">
+<li><p><strong>MOABB</strong>: For loading standardized EEG datasets</p></li>
+<li><p><strong>Braindecode</strong>: For the EEGClassifier wrapper</p></li>
+<li><p><strong>SPD Learn</strong>: For the TensorCSPNet model</p></li>
+<li><p><strong>scikit-learn</strong>: For evaluation metrics and pipelines</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">moabb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">braindecode</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EEGClassifier</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">einops.layers.torch</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="torch.nn.Module" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">Rearrange</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">moabb.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">BNCI2014_001</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">moabb.paradigms</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterBankMotorImagery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ConfusionMatrixDisplay.html#sklearn.metrics.ConfusionMatrixDisplay" title="sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay" class="sphx-glr-backref-module-sklearn-metrics-_plot-confusion_matrix sphx-glr-backref-type-py-class"><span class="n">ConfusionMatrixDisplay</span></a><span class="p">,</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">accuracy_score</span></a><span class="p">,</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix" title="sklearn.metrics.confusion_matrix" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">confusion_matrix</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder" class="sphx-glr-backref-module-sklearn-preprocessing sphx-glr-backref-type-py-class"><span class="n">LabelEncoder</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skorch.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">EpochScoring</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skorch.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidSplit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.models</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="torch.nn.Module" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">TensorCSPNet</span></a>
+
+
+<span class="c1"># Set logging and ignore warnings for cleaner output</span>
+<span class="n">moabb</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/warnings.html#warnings.filterwarnings" title="warnings.filterwarnings" class="sphx-glr-backref-module-warnings sphx-glr-backref-type-py-function"><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span></a><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-the-dataset">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Loading the Dataset</a><a class="headerlink" href="#loading-the-dataset" title="Link to this heading">#</a></h2>
+<p>We use the BCI Competition IV Dataset 2a (BNCI2014_001)
+<span id="id2">[<a class="reference internal" href="../../../references.html#id59" title="Michael Tangermann, Klaus-Robert Müller, Ad Aertsen, Niels Birbaumer, Christoph Braun, Clemens Brunner, Robert Leeb, Carsten Mehring, Kai J Miller, Gernot R Müller-Putz, and others. Review of the bci competition iv. Frontiers in Neuroscience, 6:55, 2012. doi:10.3389/fnins.2012.00055.">Tangermann <em>et al.</em>, 2012</a>]</span>, which
+contains EEG recordings from 9 subjects performing 4 different motor
+imagery tasks:</p>
+<ul class="simple">
+<li><p>Left hand movement</p></li>
+<li><p>Right hand movement</p></li>
+<li><p>Both feet movement</p></li>
+<li><p>Tongue movement</p></li>
+</ul>
+<p>The dataset has 22 EEG channels and was recorded at 250 Hz.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">BNCI2014_001</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dataset</span><span class="o">.</span><span class="n">code</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of subjects: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dataset</span><span class="o">.</span><span class="n">subject_list</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of sessions per subject: 2 (train + test)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Dataset: BNCI2014-001
+Number of subjects: 9
+Number of sessions per subject: 2 (train + test)
+</pre></div>
+</div>
+</section>
+<section id="defining-the-filter-bank">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Defining the Filter Bank</a><a class="headerlink" href="#defining-the-filter-bank" title="Link to this heading">#</a></h2>
+<p>We define a filter bank covering the mu (8-12 Hz) and beta (12-30 Hz)
+rhythms, which are known to be modulated during motor imagery
+<span id="id3">[<a class="reference internal" href="../../../references.html#id31" title="Gert Pfurtscheller and Fernando H Lopes da Silva. Event-related eeg/meg synchronization and desynchronization: basic principles. Clinical Neurophysiology, 110(11):1842–1857, 1999. doi:10.1016/S1388-2457(99)00141-8.">Pfurtscheller and Lopes da Silva, 1999</a>]</span>.
+Each filter extracts a specific frequency band from the EEG signal.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>  <span class="c1"># Theta band</span>
+    <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>  <span class="c1"># Mu/Alpha band</span>
+    <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>  <span class="c1"># Low beta</span>
+    <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>  <span class="c1"># Mid beta</span>
+    <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span>  <span class="c1"># High beta</span>
+    <span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">28</span><span class="p">],</span>  <span class="c1"># Beta/Gamma transition</span>
+    <span class="p">[</span><span class="mi">28</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span>  <span class="c1"># Low gamma</span>
+    <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">36</span><span class="p">],</span>  <span class="c1"># Gamma</span>
+    <span class="p">[</span><span class="mi">36</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>  <span class="c1"># High gamma</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of frequency bands: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Frequency bands (Hz):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">low</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">high</span></a><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Band </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">low</span></a><span class="si">}</span><span class="s2">-</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">high</span></a><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Number of frequency bands: 9
+Frequency bands (Hz):
+  Band 1: 4-8 Hz
+  Band 2: 8-12 Hz
+  Band 3: 12-16 Hz
+  Band 4: 16-20 Hz
+  Band 5: 20-24 Hz
+  Band 6: 24-28 Hz
+  Band 7: 28-32 Hz
+  Band 8: 32-36 Hz
+  Band 9: 36-40 Hz
+</pre></div>
+</div>
+</section>
+<section id="setting-up-the-paradigm">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Setting up the Paradigm</a><a class="headerlink" href="#setting-up-the-paradigm" title="Link to this heading">#</a></h2>
+<p>The FilterBankMotorImagery paradigm from MOABB handles:</p>
+<ul class="simple">
+<li><p>Filtering the data into multiple frequency bands</p></li>
+<li><p>Extracting epochs around motor imagery events</p></li>
+<li><p>Organizing data in the format (n_trials, n_channels, n_times, n_filters)</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">paradigm</span> <span class="o">=</span> <span class="n">FilterBankMotorImagery</span><span class="p">(</span><span class="n">n_classes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Paradigm: </span><span class="si">{</span><span class="n">paradigm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of classes: 4 (left hand, right hand, feet, tongue)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2026-02-05 18:25:36,651 WARNING MainThread moabb.paradigms.motor_imagery Choosing from all possible events
+
+Paradigm: &lt;moabb.paradigms.motor_imagery.FilterBankMotorImagery object at 0x7f923bbd4b50&gt;
+Number of classes: 4 (left hand, right hand, feet, tongue)
+</pre></div>
+</div>
+</section>
+<section id="creating-the-tensorcspnet-model">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Creating the TensorCSPNet Model</a><a class="headerlink" href="#creating-the-tensorcspnet-model" title="Link to this heading">#</a></h2>
+<p>TensorCSPNet <span id="id4">[<a class="reference internal" href="../../../user_guide.html#id31" title="Ce Ju and Cuntai Guan. Tensor-cspnet: a novel geometric deep learning framework for motor imagery classification. IEEE Transactions on Neural Networks and Learning Systems, 34(12):10955-10969, 2023. doi:10.1109/TNNLS.2022.3172108.">Ju and Guan, 2023</a>]</span> is a deep learning architecture designed
+for filter
+bank EEG classification. The architecture consists of:</p>
+<ol class="arabic simple">
+<li><p><strong>Tensor Stacking</strong>: Organizes multi-band covariance matrices</p></li>
+<li><p><strong>BiMap Layers</strong>: Learns spatial filters on the SPD manifold</p></li>
+<li><p><strong>Temporal Convolution</strong>: Captures temporal dynamics</p></li>
+<li><p><strong>Classification Head</strong>: Final prediction layer</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The input to TensorCSPNet has shape (batch, channels, time, frequencies).
+We use einops to rearrange from MOABB’s format (batch, channels, time, freq)
+to the expected format.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Training hyperparameters</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">batch_size</span></a> <span class="o">=</span> <span class="mi">16</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_epochs</span></a> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># Reduced from 50 for faster documentation build</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">learning_rate</span></a> <span class="o">=</span> <span class="mf">1e-3</span>
+
+<span class="c1"># Check for GPU availability</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.cuda.is_available.html#torch.cuda.is_available" title="torch.cuda.is_available" class="sphx-glr-backref-module-torch-cuda sphx-glr-backref-type-py-function"><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span></a><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using device: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the model pipeline</span>
+<span class="c1"># We wrap TensorCSPNet with a Rearrange layer to handle the input format</span>
+<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" title="torch.nn.Sequential" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">model</span></a> <span class="o">=</span> <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" title="torch.nn.Sequential" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span></a><span class="p">(</span>
+    <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="torch.nn.Module" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">Rearrange</span></a><span class="p">(</span><span class="s2">&quot;b c t f -&gt; b f c t&quot;</span><span class="p">),</span>  <span class="c1"># Rearrange to (batch, freq, channels, time)</span>
+    <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="torch.nn.Module" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">TensorCSPNet</span></a><span class="p">(</span>
+        <span class="n">n_chans</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span>  <span class="c1"># Number of EEG channels</span>
+        <span class="n">n_outputs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># Number of classes</span>
+        <span class="n">n_freqs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a><span class="p">),</span>  <span class="c1"># Number of frequency bands</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Model architecture:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" title="torch.nn.Sequential" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">model</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Using device: cpu
+
+Model architecture:
+Sequential(
+  (0): Rearrange(&#39;b c t f -&gt; b f c t&#39;)
+  (1): TensorCSPNet(
+    (temporal_segmenter): Sequential(
+      (0): Rearrange(&#39;batch freq chans time-&gt; (batch freq) chans time&#39;)
+      (1): PatchEmbeddingLayer()
+    )
+    (cov): CovLayer()
+    (tensor_stack): Rearrange(&#39;batch windows_index freq_index chans1 chans2 -&gt;batch (windows_index freq_index) chans1 chans2&#39;)
+    (bimap_block): Sequential(
+      (0): BiMap(
+        (increase_dim): BiMapIncreaseDim()
+      )
+      (1): ReEig()
+      (2): BiMap()
+      (3): Rearrange(&#39;batch depth cov1 cov2 -&gt; (batch depth) cov1 cov2&#39;)
+      (4): ParametrizedSPDBatchNormMean(
+        (parametrizations): ModuleDict(
+          (bias): ParametrizationList(
+            (0): SymmetricPositiveDefinite()
+          )
+        )
+      )
+      (5): ReEig()
+    )
+    (log_eig): LogEig()
+    (temporal_block): Conv2d(1, 16, kernel_size=(4, 4356), stride=(1, 484))
+    (final_layers): Linear(in_features=16, out_features=4, bias=True)
+  )
+)
+</pre></div>
+</div>
+</section>
+<section id="setting-up-the-classifier">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Setting up the Classifier</a><a class="headerlink" href="#setting-up-the-classifier" title="Link to this heading">#</a></h2>
+<p>We use Braindecode’s EEGClassifier, which is built on top of skorch
+and provides a scikit-learn compatible interface for training
+PyTorch models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EEGClassifier</span></a><span class="p">(</span>
+    <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Sequential.html#torch.nn.Sequential" title="torch.nn.Sequential" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">model</span></a><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html#torch.nn.CrossEntropyLoss" title="torch.nn.CrossEntropyLoss" class="sphx-glr-backref-module-torch-nn sphx-glr-backref-type-py-class"><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span></a><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html#torch.optim.AdamW" title="torch.optim.AdamW" class="sphx-glr-backref-module-torch-optim sphx-glr-backref-type-py-class"><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span></a><span class="p">,</span>
+    <span class="n">optimizer__lr</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">learning_rate</span></a><span class="p">,</span>
+    <span class="n">optimizer__weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">train_split</span><span class="o">=</span><span class="n">ValidSplit</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stratified</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">batch_size</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">batch_size</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_epochs</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_epochs</span></a><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;train_acc&quot;</span><span class="p">,</span>
+            <span class="n">EpochScoring</span><span class="p">(</span>
+                <span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="n">lower_is_better</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">on_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;train_acc&quot;</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">device</span></a><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-and-evaluation-function">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Training and Evaluation Function</a><a class="headerlink" href="#training-and-evaluation-function" title="Link to this heading">#</a></h2>
+<p>We define a function to train and evaluate the model on a single subject.
+This function:</p>
+<ol class="arabic simple">
+<li><p>Loads the data for the subject</p></li>
+<li><p>Splits into training and test sets (using session info)</p></li>
+<li><p>Trains the model</p></li>
+<li><p>Evaluates on both train and test sets</p></li>
+</ol>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evaluate_subject</span><span class="p">(</span><span class="n">subject</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Train and evaluate TensorCSPNet on a single subject.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    subject : int</span>
+<span class="sd">        Subject ID to evaluate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary containing accuracy scores and predictions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating Subject </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Cache configuration for faster repeated runs</span>
+    <span class="n">cache_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">save_raw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">save_epochs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">save_array</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">use</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">overwrite_raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">overwrite_epochs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">overwrite_array</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Load data for this subject</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">paradigm</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="p">[</span><span class="n">subject</span><span class="p">],</span> <span class="n">cache_config</span><span class="o">=</span><span class="n">cache_config</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Encode labels to integers</span>
+    <span class="n">le</span> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder" class="sphx-glr-backref-module-sklearn-preprocessing sphx-glr-backref-type-py-class"><span class="n">LabelEncoder</span></a><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data shape: </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Labels: </span><span class="si">{</span><span class="n">le</span><span class="o">.</span><span class="n">classes_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Split into train and test using session information</span>
+    <span class="c1"># Session &#39;0train&#39; is for training, &#39;1test&#39; is for testing</span>
+    <span class="n">train_idx</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;session == &#39;0train&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">test_idx</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;session == &#39;1test&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training samples: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_idx</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test samples: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_idx</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Train the model</span>
+    <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">])</span>
+
+    <span class="c1"># Get predictions</span>
+    <span class="n">y_pred_train</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_idx</span><span class="p">])</span>
+    <span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">test_idx</span><span class="p">])</span>
+
+    <span class="c1"># Calculate accuracies</span>
+    <span class="n">train_acc</span> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">accuracy_score</span></a><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">y_pred_train</span><span class="p">)</span>
+    <span class="n">test_acc</span> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">accuracy_score</span></a><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">test_idx</span><span class="p">],</span> <span class="n">y_pred_test</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Results for Subject </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Train Accuracy: </span><span class="si">{</span><span class="n">train_acc</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Test Accuracy:  </span><span class="si">{</span><span class="n">test_acc</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span>
+        <span class="s2">&quot;train_acc&quot;</span><span class="p">:</span> <span class="n">train_acc</span><span class="p">,</span>
+        <span class="s2">&quot;test_acc&quot;</span><span class="p">:</span> <span class="n">test_acc</span><span class="p">,</span>
+        <span class="s2">&quot;y_true_test&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">test_idx</span><span class="p">],</span>
+        <span class="s2">&quot;y_pred_test&quot;</span><span class="p">:</span> <span class="n">y_pred_test</span><span class="p">,</span>
+        <span class="s2">&quot;label_encoder&quot;</span><span class="p">:</span> <span class="n">le</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">clf</span><span class="o">.</span><span class="n">history</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="running-the-evaluation">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Running the Evaluation</a><a class="headerlink" href="#running-the-evaluation" title="Link to this heading">#</a></h2>
+<p>For demonstration purposes, we evaluate on a single subject.
+In practice, you would loop over all subjects for a complete benchmark.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Training deep learning models on EEG data can take several minutes
+per subject, depending on your hardware.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evaluate on subject 1 (you can change this or loop over all subjects)</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subject_id</span></a> <span class="o">=</span> <span class="mi">1</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a> <span class="o">=</span> <span class="n">evaluate_subject</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subject_id</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>==================================================
+Evaluating Subject 1
+==================================================
+2026-02-05 18:25:36,732 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-e6584f4...
+2026-02-05 18:25:37,157 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-e6584f4
+2026-02-05 18:25:37,234 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-b25a61d...
+2026-02-05 18:25:37,653 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-b25a61d
+2026-02-05 18:25:37,727 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-1481928...
+2026-02-05 18:25:38,189 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-1481928
+2026-02-05 18:25:38,263 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-b053cc5...
+2026-02-05 18:25:38,743 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-b053cc5
+2026-02-05 18:25:38,816 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-79d6c2f...
+2026-02-05 18:25:39,269 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-79d6c2f
+2026-02-05 18:25:39,345 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-19959bb...
+2026-02-05 18:25:39,827 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-19959bb
+2026-02-05 18:25:39,900 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-f6eb184...
+2026-02-05 18:25:40,370 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-f6eb184
+2026-02-05 18:25:40,444 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-95d144b...
+2026-02-05 18:25:40,893 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-95d144b
+2026-02-05 18:25:40,969 INFO MainThread moabb.datasets.bids_interface Attempting to retrieve cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-4399828...
+2026-02-05 18:25:41,473 INFO MainThread moabb.datasets.bids_interface Finished reading cache of &#39;BNCI2014-001&#39; sub-1 suffix-array desc-4399828
+Data shape: (576, 22, 1001, 9)
+Labels: [&#39;feet&#39; &#39;left_hand&#39; &#39;right_hand&#39; &#39;tongue&#39;]
+Training samples: 288
+Test samples: 288
+2026-02-05 18:25:43,517 INFO MainThread braindecode.eegneuralnet.EEGClassifier The module passed is already initialized which is not recommended. Instead, you can pass the module class and its parameters separately.
+For more details, see https://skorch.readthedocs.io/en/stable/user/neuralnet.html#module
+Skipping setting signal-related parameters from data.
+  epoch    train_acc    train_loss    valid_acc    valid_loss     dur
+-------  -----------  ------------  -----------  ------------  ------
+      1       0.2969        3.3340       0.2759        2.3487  4.9143
+      2       0.4570        1.1171       0.5172        1.0825  4.9054
+      3       0.7773        0.6745       0.4828        0.9500  4.9131
+      4       0.7500        0.5577       0.5862        0.7849  4.9473
+      5       0.9727        0.3368       0.8276        0.6595  5.1607
+      6       0.9688        0.2411       0.5172        0.7690  4.8234
+      7       0.9961        0.1504       0.5172        0.7300  4.9311
+      8       1.0000        0.0996       0.7586        0.5940  4.9636
+      9       1.0000        0.0662       0.7931        0.5691  4.9714
+     10       1.0000        0.0546       0.7931        0.5797  4.9728
+     11       1.0000        0.0376       0.7586        0.5740  5.0149
+     12       1.0000        0.0324       0.8276        0.5503  5.0441
+     13       1.0000        0.0294       0.6897        0.6372  5.0567
+     14       1.0000        0.0235       0.7241        0.5284  4.1118
+     15       1.0000        0.0203       0.7586        0.5090  3.0813
+
+Results for Subject 1:
+  Train Accuracy: 97.57%
+  Test Accuracy:  74.31%
+</pre></div>
+</div>
+</section>
+<section id="visualizing-training-history">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Visualizing Training History</a><a class="headerlink" href="#visualizing-training-history" title="Link to this heading">#</a></h2>
+<p>Let’s plot the training and validation loss curves to understand
+how the model learned over epochs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># Extract history</span>
+<span class="n">history</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Plot loss</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax1</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;train_loss&quot;</span><span class="p">],</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train Loss&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;valid_loss&quot;</span><span class="p">],</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Valid Loss&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Training and Validation Loss&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax1</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Plot accuracy</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax2</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axes</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;train_acc&quot;</span><span class="p">],</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train Acc&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#range" title="builtins.range" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epochs</span></a><span class="p">,</span> <span class="n">history</span><span class="p">[:,</span> <span class="s2">&quot;valid_acc&quot;</span><span class="p">],</span> <span class="s2">&quot;r--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Valid Acc&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Accuracy&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="s2">&quot;Training and Validation Accuracy&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.grid.html#matplotlib.axes.Axes.grid" title="matplotlib.axes.Axes.grid" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">grid</span></a><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylim.html#matplotlib.axes.Axes.set_ylim" title="matplotlib.axes.Axes.set_ylim" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span></a><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_plot_benchmark_filterbank_001.png" srcset="../../../_images/sphx_glr_plot_benchmark_filterbank_001.png" alt="Training and Validation Loss, Training and Validation Accuracy" class = "sphx-glr-single-img"/></section>
+<section id="confusion-matrix">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Confusion Matrix</a><a class="headerlink" href="#confusion-matrix" title="Link to this heading">#</a></h2>
+<p>The confusion matrix shows how well the model distinguishes between
+different motor imagery classes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="c1"># Get class names</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">class_names</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;label_encoder&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">classes_</span>
+
+<span class="c1"># Compute confusion matrix</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cm</span></a> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix" title="sklearn.metrics.confusion_matrix" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">confusion_matrix</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;y_true_test&quot;</span><span class="p">],</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;y_pred_test&quot;</span><span class="p">])</span>
+
+<span class="c1"># Plot</span>
+<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ConfusionMatrixDisplay.html#sklearn.metrics.ConfusionMatrixDisplay" title="sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay" class="sphx-glr-backref-module-sklearn-metrics-_plot-confusion_matrix sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">disp</span></a> <span class="o">=</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ConfusionMatrixDisplay.html#sklearn.metrics.ConfusionMatrixDisplay" title="sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay" class="sphx-glr-backref-module-sklearn-metrics-_plot-confusion_matrix sphx-glr-backref-type-py-class"><span class="n">ConfusionMatrixDisplay</span></a><span class="p">(</span><a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix" title="sklearn.metrics.confusion_matrix" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-function"><span class="n">confusion_matrix</span></a><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cm</span></a><span class="p">,</span> <span class="n">display_labels</span><span class="o">=</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">class_names</span></a><span class="p">)</span>
+<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ConfusionMatrixDisplay.html#sklearn.metrics.ConfusionMatrixDisplay.plot" title="sklearn.metrics.ConfusionMatrixDisplay.plot" class="sphx-glr-backref-module-sklearn-metrics sphx-glr-backref-type-py-method"><span class="n">disp</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a><span class="o">=</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">,</span> <span class="n">values_format</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Confusion Matrix - Subject </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subject_id</span></a><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;Test Accuracy: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s1">&#39;test_acc&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_plot_benchmark_filterbank_002.png" srcset="../../../_images/sphx_glr_plot_benchmark_filterbank_002.png" alt="Confusion Matrix - Subject 1 Test Accuracy: 74.31%" class = "sphx-glr-single-img"/></section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>In this tutorial, we demonstrated how to:</p>
+<ol class="arabic simple">
+<li><p>Load and prepare filter bank motor imagery data using MOABB</p></li>
+<li><p>Create a TensorCSPNet model for multi-frequency EEG classification</p></li>
+<li><p>Train and evaluate the model using Braindecode’s EEGClassifier</p></li>
+<li><p>Visualize training history and confusion matrices</p></li>
+</ol>
+<p>TensorCSPNet leverages the geometry of SPD matrices to learn
+discriminative spatial filters across multiple frequency bands,
+making it well-suited for motor imagery classification.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 23.400 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-generated-auto-examples-applied-examples-plot-benchmark-filterbank-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/d95aa9689f6fb3dd21fcdcf4b54e7853/plot_benchmark_filterbank.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_benchmark_filterbank.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/ae88c5ee905c52633ed35d4e3dd9fbd3/plot_benchmark_filterbank.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_benchmark_filterbank.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/4a4808d5ae3fa76a4856ff86ce0a9f4e/plot_benchmark_filterbank.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_benchmark_filterbank.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="plot_phase_spdnet.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Phase-Space Embedding with PhaseSPDNet</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="plot_parallel_transport.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Parallel Transport on SPD Manifolds</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-imports">Setup and Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-the-dataset">Loading the Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-filter-bank">Defining the Filter Bank</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-paradigm">Setting up the Paradigm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-tensorcspnet-model">Creating the TensorCSPNet Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-classifier">Setting up the Classifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-and-evaluation-function">Training and Evaluation Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-evaluation">Running the Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-training-history">Visualizing Training History</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#confusion-matrix">Confusion Matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  <div class="sphx-glr-sidebar-component">
+    
+      
+        <div class="sphx-glr-sidebar-item sphx-glr-download-python-sidebar" title="plot_benchmark_filterbank.py">
+          <a download href="../../../_downloads/ae88c5ee905c52633ed35d4e3dd9fbd3/plot_benchmark_filterbank.py">
+            <i class="fa-solid fa-download"></i>
+            Download source code
+          </a>
+        </div>
+      
+    
+      
+        <div class="sphx-glr-sidebar-item sphx-glr-download-jupyter-sidebar" title="plot_benchmark_filterbank.ipynb">
+          <a download href="../../../_downloads/d95aa9689f6fb3dd21fcdcf4b54e7853/plot_benchmark_filterbank.ipynb">
+            <i class="fa-solid fa-download"></i>
+            Download Jupyter notebook
+          </a>
+        </div>
+      
+    
+      
+        <div class="sphx-glr-sidebar-item sphx-glr-download-zip-sidebar" title="plot_benchmark_filterbank.zip">
+          <a download href="../../../_downloads/4a4808d5ae3fa76a4856ff86ce0a9f4e/plot_benchmark_filterbank.zip">
+            <i class="fa-solid fa-download"></i>
+            Download zipped
+          </a>
+        </div>
+      
+    
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<div class="sd-card sd-shadow-sm sd-mb-3 spdlearn-colab-card">
+  <div class="sd-card-body spdlearn-colab-card-body">
+    <p class="sd-card-text sd-fs-5 sd-font-weight-bold sd-mb-2">Run this example in Google Colab</p>
+    <p class="sd-card-text sd-text-muted sd-mb-3">No installation required - runs directly in your browser with GPU support.</p>
+    <a class="sd-btn sd-btn-primary spdlearn-colab-btn" href="https://colab.research.google.com/github/spdlearn/spd_learn/blob/gh-pages/auto_examples/_notebooks/applied_examples/plot_benchmark_filterbank.ipynb" target="_blank" rel="noopener">
+      <img class="spdlearn-colab-badge" alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+    </a>
+  </div>
+</div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

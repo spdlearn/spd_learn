@@ -1,0 +1,979 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Frequently Asked Questions &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"tex": {"macros": {"spd": "\\mathcal{S}^n_{++}", "sym": "\\text{Sym}(n)", "syms": "\\mathcal{S}^n", "reals": "\\mathbb{R}", "choleskyspace": "\\mathcal{L}_+", "manifold": "\\mathcal{M}", "gl": "\\text{GL}(n)", "stiefel": ["\\text{St}(#1, #2)", 2], "tangent": ["T_{#1} \\mathcal{M}", 1], "tangentspd": ["T_{#1} \\mathcal{S}^n_{++}", 1], "Exp": ["\\text{Exp}_{#1}", 1], "Log": ["\\text{Log}_{#1}", 1], "logchol": "\\log_{\\text{chol}}", "expchol": "\\exp_{\\text{chol}}", "tril": ["\\text{tril}(#1)", 1], "dairm": ["d_{\\text{AIRM}}(#1, #2)", 2], "dlem": ["d_{\\text{LEM}}(#1, #2)", 2], "dbw": ["d_{\\text{BW}}(#1, #2)", 2], "dlcm": ["d_{\\text{LCM}}(#1, #2)", 2], "gairm": ["g^{\\text{AIRM}}_{#1}", 1], "glem": ["g^{\\text{LEM}}_{#1}", 1], "gbw": ["g^{\\text{BW}}_{#1}", 1], "glcm": ["g^{\\text{LCM}}_{#1}", 1], "tr": "\\text{tr}", "diag": "\\text{diag}", "frob": ["\\| #1 \\|_F", 1], "frobinner": ["\\langle #1, #2 \\rangle_F", 2], "lyap": ["\\mathcal{L}_{#1}", 1], "reeig": "\\text{ReEig}", "logeig": "\\text{LogEig}", "expeig": "\\text{ExpEig}", "frechet": "\\mathcal{G}", "geomean": "G", "In": "I_n", "I": "I", "transpose": "^\\top", "lemult": "\\odot", "lescalar": "\\circledast"}}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'faq';</script>
+    <link rel="canonical" href="https://spdlearn.org/faq.html" />
+    <link rel="icon" href="_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="Benchmarking SPD Learn Models with MOABB and Hydra" href="generated/auto_examples/applied_examples/moabb_hydra_benchmark.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Frequently Asked Questions</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="frequently-asked-questions">
+<span id="faq"></span><h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading">#</a></h1>
+<p>This page answers common questions about SPD Learn and working with SPD matrices.</p>
+<nav class="contents local" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#general-questions" id="id1">General Questions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#what-is-an-spd-matrix" id="id2">What is an SPD matrix?</a></p></li>
+<li><p><a class="reference internal" href="#why-use-spd-specific-neural-networks" id="id3">Why use SPD-specific neural networks?</a></p></li>
+<li><p><a class="reference internal" href="#how-is-spd-learn-different-from-pyriemann" id="id4">How is SPD Learn different from pyRiemann?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#technical-questions" id="id5">Technical Questions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#how-do-i-ensure-my-input-is-spd" id="id6">How do I ensure my input is SPD?</a></p></li>
+<li><p><a class="reference internal" href="#why-am-i-getting-nan-values-during-training" id="id7">Why am I getting NaN values during training?</a></p></li>
+<li><p><a class="reference internal" href="#how-do-i-handle-different-matrix-sizes" id="id8">How do I handle different matrix sizes?</a></p></li>
+<li><p><a class="reference internal" href="#what-s-the-difference-between-logeig-and-tangent-space-projection" id="id9">What’s the difference between LogEig and tangent space projection?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#model-specific-questions" id="id10">Model-Specific Questions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#when-should-i-use-filter-banks-vs-raw-eeg" id="id11">When should I use filter banks vs. raw EEG?</a></p></li>
+<li><p><a class="reference internal" href="#how-do-i-choose-bimap-dimensions" id="id12">How do I choose BiMap dimensions?</a></p></li>
+<li><p><a class="reference internal" href="#how-does-spdbatchnormmeanvar-enable-domain-adaptation" id="id13">How does SPDBatchNormMeanVar enable domain adaptation?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#performance-questions" id="id14">Performance Questions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#how-can-i-speed-up-training" id="id15">How can I speed up training?</a></p></li>
+<li><p><a class="reference internal" href="#how-much-gpu-memory-do-spd-models-need" id="id16">How much GPU memory do SPD models need?</a></p></li>
+<li><p><a class="reference internal" href="#why-is-my-model-not-learning" id="id17">Why is my model not learning?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#integration-questions" id="id18">Integration Questions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#how-do-i-use-spd-learn-with-moabb" id="id19">How do I use SPD Learn with MOABB?</a></p></li>
+<li><p><a class="reference internal" href="#how-do-i-use-spd-learn-with-nilearn" id="id20">How do I use SPD Learn with Nilearn?</a></p></li>
+<li><p><a class="reference internal" href="#can-i-use-spd-learn-with-scikit-learn-pipelines" id="id21">Can I use SPD Learn with scikit-learn pipelines?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#getting-help" id="id22">Getting Help</a></p></li>
+</ul>
+</nav>
+<section id="general-questions">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">General Questions</a><a class="headerlink" href="#general-questions" title="Link to this heading">#</a></h2>
+<section id="what-is-an-spd-matrix">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">What is an SPD matrix?</a><a class="headerlink" href="#what-is-an-spd-matrix" title="Link to this heading">#</a></h3>
+<p>A <strong>Symmetric Positive Definite (SPD)</strong> matrix is a square matrix <span class="math notranslate nohighlight">\(X\)</span> that satisfies:</p>
+<ol class="arabic simple">
+<li><p><strong>Symmetry</strong>: <span class="math notranslate nohighlight">\(X = X^\top\)</span></p></li>
+<li><p><strong>Positive definiteness</strong>: <span class="math notranslate nohighlight">\(z^\top X z &gt; 0\)</span> for all non-zero vectors <span class="math notranslate nohighlight">\(z\)</span></p></li>
+</ol>
+<p>Equivalently, all eigenvalues of an SPD matrix are strictly positive.</p>
+<p><strong>Common examples</strong>:</p>
+<ul class="simple">
+<li><p>Covariance matrices of multivariate data</p></li>
+<li><p>Correlation matrices</p></li>
+<li><p>Diffusion tensors in medical imaging</p></li>
+<li><p>Kernel matrices in machine learning</p></li>
+</ul>
+</section>
+<section id="why-use-spd-specific-neural-networks">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Why use SPD-specific neural networks?</a><a class="headerlink" href="#why-use-spd-specific-neural-networks" title="Link to this heading">#</a></h3>
+<p>SPD matrices lie on a <strong>Riemannian manifold</strong>, not a flat Euclidean space.
+Standard neural network operations (like addition, scaling) can produce matrices
+that are no longer SPD, leading to:</p>
+<ul class="simple">
+<li><p>Numerical instability (negative eigenvalues)</p></li>
+<li><p>Loss of geometric structure</p></li>
+<li><p>Suboptimal learning</p></li>
+</ul>
+<p>SPD Learn’s layers (<a class="reference internal" href="generated/bilinear/spd_learn.modules.BiMap.html#spd_learn.modules.BiMap" title="spd_learn.modules.BiMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">BiMap</span></code></a>, <a class="reference internal" href="generated/modeig/spd_learn.modules.ReEig.html#spd_learn.modules.ReEig" title="spd_learn.modules.ReEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReEig</span></code></a>, <a class="reference internal" href="generated/modeig/spd_learn.modules.LogEig.html#spd_learn.modules.LogEig" title="spd_learn.modules.LogEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogEig</span></code></a>) are designed to:</p>
+<ul class="simple">
+<li><p><strong>Preserve positive definiteness</strong> throughout the network</p></li>
+<li><p><strong>Respect the manifold geometry</strong> for more principled learning</p></li>
+<li><p><strong>Enable stable gradient computation</strong> through eigenvalue operations</p></li>
+</ul>
+</section>
+<section id="how-is-spd-learn-different-from-pyriemann">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">How is SPD Learn different from pyRiemann?</a><a class="headerlink" href="#how-is-spd-learn-different-from-pyriemann" title="Link to this heading">#</a></h3>
+<p><strong>pyRiemann</strong> focuses on classical Riemannian methods:</p>
+<ul class="simple">
+<li><p>Riemannian classifiers (MDM, FgMDM)</p></li>
+<li><p>Tangent space projections</p></li>
+<li><p>Geodesic operations</p></li>
+<li><p>scikit-learn compatible transformers</p></li>
+</ul>
+<p><strong>SPD Learn</strong> focuses on deep learning:</p>
+<ul class="simple">
+<li><p>Neural network layers for SPD manifolds</p></li>
+<li><p>End-to-end differentiable architectures</p></li>
+<li><p>GPU acceleration via PyTorch</p></li>
+<li><p>Integration with modern DL frameworks (Braindecode, skorch)</p></li>
+</ul>
+<p>They are <strong>complementary</strong>: you can use pyRiemann for preprocessing and
+SPD Learn for deep learning.</p>
+</section>
+</section>
+<section id="technical-questions">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Technical Questions</a><a class="headerlink" href="#technical-questions" title="Link to this heading">#</a></h2>
+<section id="how-do-i-ensure-my-input-is-spd">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">How do I ensure my input is SPD?</a><a class="headerlink" href="#how-do-i-ensure-my-input-is-spd" title="Link to this heading">#</a></h3>
+<p>If starting from raw covariance estimates, they may not be strictly SPD due to:</p>
+<ul class="simple">
+<li><p>Numerical precision issues</p></li>
+<li><p>Insufficient samples</p></li>
+<li><p>Rank deficiency</p></li>
+</ul>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Add regularization</strong> (Ledoit-Wolf shrinkage):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shrinkage</span>
+
+<span class="n">shrinkage</span> <span class="o">=</span> <span class="n">Shrinkage</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">init_shrinkage</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">learnable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X_reg</span> <span class="o">=</span> <span class="n">shrinkage</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use ReEig to clamp eigenvalues</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReEig</span>
+
+<span class="n">reeig</span> <span class="o">=</span> <span class="n">ReEig</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">X_spd</span> <span class="o">=</span> <span class="n">reeig</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Add small identity matrix</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_spd</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="why-am-i-getting-nan-values-during-training">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Why am I getting NaN values during training?</a><a class="headerlink" href="#why-am-i-getting-nan-values-during-training" title="Link to this heading">#</a></h3>
+<p>NaN values typically occur due to:</p>
+<ol class="arabic">
+<li><p><strong>Negative eigenvalues</strong>: Use <a class="reference internal" href="generated/modeig/spd_learn.modules.ReEig.html#spd_learn.modules.ReEig" title="spd_learn.modules.ReEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReEig</span></code></a> with appropriate threshold</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reeig</span> <span class="o">=</span> <span class="n">ReEig</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>  <span class="c1"># Increase threshold if still getting NaNs</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Eigenvalue decomposition instability</strong>: Enable autograd mode</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logeig</span> <span class="o">=</span> <span class="n">LogEig</span><span class="p">(</span><span class="n">autograd</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># LogEig with more stable backward pass</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Learning rate too high</strong>: Reduce learning rate</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Poorly conditioned matrices</strong>: Add regularization or shrinkage</p></li>
+</ol>
+</section>
+<section id="how-do-i-handle-different-matrix-sizes">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">How do I handle different matrix sizes?</a><a class="headerlink" href="#how-do-i-handle-different-matrix-sizes" title="Link to this heading">#</a></h3>
+<p>If you have matrices of varying sizes (e.g., different channel counts):</p>
+<ol class="arabic">
+<li><p><strong>Pad smaller matrices</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+
+<span class="c1"># Pad to max_size</span>
+<span class="n">X_padded</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_size</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_size</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]))</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use</strong> <a class="reference internal" href="generated/bilinear/spd_learn.modules.BiMapIncreaseDim.html#spd_learn.modules.BiMapIncreaseDim" title="spd_learn.modules.BiMapIncreaseDim"><code class="xref py py-class docutils literal notranslate"><span class="pre">BiMapIncreaseDim</span></code></a> to expand dimensions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiMapIncreaseDim</span>
+
+<span class="n">expand</span> <span class="o">=</span> <span class="n">BiMapIncreaseDim</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Create separate models</strong> for different sizes</p></li>
+</ol>
+</section>
+<section id="what-s-the-difference-between-logeig-and-tangent-space-projection">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">What’s the difference between LogEig and tangent space projection?</a><a class="headerlink" href="#what-s-the-difference-between-logeig-and-tangent-space-projection" title="Link to this heading">#</a></h3>
+<p>Both map SPD matrices to Euclidean space, but:</p>
+<p><strong>LogEig</strong> (matrix logarithm):</p>
+<ul class="simple">
+<li><p>Maps to the space of symmetric matrices</p></li>
+<li><p><span class="math notranslate nohighlight">\(\logeig(X) = U \log(\Lambda) U^\top\)</span></p></li>
+<li><p>Preserves more structure, but requires eigendecomposition</p></li>
+</ul>
+<p><strong>Tangent space projection</strong> (at identity or reference):</p>
+<ul class="simple">
+<li><p>Projects to tangent space at a reference point</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Log{\I}(X) = \log(X)\)</span> (at identity)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Log{\frechet}(X) = \frechet^{-1/2} \log(\frechet^{-1/2} X \frechet^{-1/2}) \frechet^{-1/2}\)</span> (at <span class="math notranslate nohighlight">\(\frechet\)</span>)</p></li>
+</ul>
+<p>In SPD Learn, <a class="reference internal" href="generated/modeig/spd_learn.modules.LogEig.html#spd_learn.modules.LogEig" title="spd_learn.modules.LogEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogEig</span></code></a> implements the matrix logarithm. For tangent space
+at a reference (like batch mean), use <a class="reference internal" href="generated/batchnorm/spd_learn.modules.SPDBatchNormMeanVar.html#spd_learn.modules.SPDBatchNormMeanVar" title="spd_learn.modules.SPDBatchNormMeanVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPDBatchNormMeanVar</span></code></a> first.</p>
+</section>
+</section>
+<section id="model-specific-questions">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Model-Specific Questions</a><a class="headerlink" href="#model-specific-questions" title="Link to this heading">#</a></h2>
+<section id="when-should-i-use-filter-banks-vs-raw-eeg">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">When should I use filter banks vs. raw EEG?</a><a class="headerlink" href="#when-should-i-use-filter-banks-vs-raw-eeg" title="Link to this heading">#</a></h3>
+<p><strong>Use filter banks</strong> (TensorCSPNet) when:</p>
+<ul class="simple">
+<li><p>You know relevant frequency bands (e.g., mu/beta for motor imagery)</p></li>
+<li><p>You want explicit frequency decomposition</p></li>
+<li><p>You have sufficient data for the larger model</p></li>
+</ul>
+<p><strong>Use raw EEG</strong> (EEGSPDNet, GREEN, MAtt) when:</p>
+<ul class="simple">
+<li><p>You want the model to learn frequency representations</p></li>
+<li><p>You prefer end-to-end learning</p></li>
+<li><p>You have limited prior knowledge about discriminative frequencies</p></li>
+</ul>
+</section>
+<section id="how-do-i-choose-bimap-dimensions">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">How do I choose BiMap dimensions?</a><a class="headerlink" href="#how-do-i-choose-bimap-dimensions" title="Link to this heading">#</a></h3>
+<p>The BiMap layer reduces dimensionality: <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">n)</span> <span class="pre">→</span> <span class="pre">(m,</span> <span class="pre">m)</span></code> where <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;</span> <span class="pre">n</span></code>.</p>
+<p><strong>Guidelines</strong>:</p>
+<ul class="simple">
+<li><p>Start with <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">n</span> <span class="pre">//</span> <span class="pre">2</span></code> (50% reduction)</p></li>
+<li><p>For small datasets: more aggressive reduction (prevent overfitting)</p></li>
+<li><p>For large datasets: preserve more dimensions</p></li>
+<li><p>Multiple BiMap layers: gradual reduction (e.g., 64 → 32 → 16)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Single layer</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">subspacedim</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+
+<span class="c1"># Progressive reduction in EEGSPDNet</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">EEGSPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">bimap_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># 220→110→55→27</span>
+</pre></div>
+</div>
+</section>
+<section id="how-does-spdbatchnormmeanvar-enable-domain-adaptation">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">How does SPDBatchNormMeanVar enable domain adaptation?</a><a class="headerlink" href="#how-does-spdbatchnormmeanvar-enable-domain-adaptation" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="generated/batchnorm/spd_learn.modules.SPDBatchNormMeanVar.html#spd_learn.modules.SPDBatchNormMeanVar" title="spd_learn.modules.SPDBatchNormMeanVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPDBatchNormMeanVar</span></code></a> maintains running statistics (Fréchet mean) that can be
+domain-specific:</p>
+<ol class="arabic simple">
+<li><p><strong>Training</strong>: Learns normalization from source domain</p></li>
+<li><p><strong>Adaptation</strong>: Updates running mean on target domain (unlabeled)</p></li>
+<li><p><strong>Inference</strong>: Uses adapted statistics</p></li>
+</ol>
+<p>This enables <strong>Source-Free Unsupervised Domain Adaptation (SFUDA)</strong> where
+you adapt to a new domain without source data.</p>
+</section>
+</section>
+<section id="performance-questions">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Performance Questions</a><a class="headerlink" href="#performance-questions" title="Link to this heading">#</a></h2>
+<section id="how-can-i-speed-up-training">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">How can I speed up training?</a><a class="headerlink" href="#how-can-i-speed-up-training" title="Link to this heading">#</a></h3>
+<ol class="arabic">
+<li><p><strong>Use GPU</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Increase batch size</strong> (if memory allows):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">64</span>  <span class="c1"># or higher</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Use autograd=False</strong> for <a class="reference internal" href="generated/modeig/spd_learn.modules.LogEig.html#spd_learn.modules.LogEig" title="spd_learn.modules.LogEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogEig</span></code></a> (faster but less stable):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logeig</span> <span class="o">=</span> <span class="n">LogEig</span><span class="p">(</span><span class="n">autograd</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Reduce model complexity</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">subspacedim</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>  <span class="c1"># Smaller subspace</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="how-much-gpu-memory-do-spd-models-need">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">How much GPU memory do SPD models need?</a><a class="headerlink" href="#how-much-gpu-memory-do-spd-models-need" title="Link to this heading">#</a></h3>
+<p>Memory scales with:</p>
+<ul class="simple">
+<li><p><strong>Matrix size</strong>: <span class="math notranslate nohighlight">\(O(n^2)\)</span> for <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">n</span></code> matrices</p></li>
+<li><p><strong>Batch size</strong>: Linear scaling</p></li>
+<li><p><strong>Eigendecomposition</strong>: Requires temporary storage</p></li>
+</ul>
+<p><strong>Typical requirements</strong> (22-channel EEG, batch_size=32):</p>
+<ul class="simple">
+<li><p>SPDNet: ~500 MB</p></li>
+<li><p>TensorCSPNet: ~1 GB</p></li>
+<li><p>MAtt: ~1.5 GB</p></li>
+</ul>
+<p><strong>Reduce memory</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Gradient checkpointing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.checkpoint</span><span class="w"> </span><span class="kn">import</span> <span class="n">checkpoint</span>
+
+<span class="c1"># Mixed precision (PyTorch 2.0+)</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="why-is-my-model-not-learning">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Why is my model not learning?</a><a class="headerlink" href="#why-is-my-model-not-learning" title="Link to this heading">#</a></h3>
+<p>Common issues:</p>
+<ol class="arabic">
+<li><p><strong>Data not SPD</strong>: Verify inputs are positive definite</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eigvals</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">eigvals</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;Not SPD!&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Learning rate</strong>: Try different rates (1e-3, 1e-4, 1e-5)</p></li>
+<li><p><strong>Initialization</strong>: Check <a class="reference internal" href="generated/bilinear/spd_learn.modules.BiMap.html#spd_learn.modules.BiMap" title="spd_learn.modules.BiMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">BiMap</span></code></a> weights are orthogonal</p></li>
+<li><p><strong>Regularization</strong>: Add dropout or weight decay</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Data preprocessing</strong>: Normalize/standardize inputs</p></li>
+</ol>
+</section>
+</section>
+<section id="integration-questions">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Integration Questions</a><a class="headerlink" href="#integration-questions" title="Link to this heading">#</a></h2>
+<section id="how-do-i-use-spd-learn-with-moabb">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">How do I use SPD Learn with MOABB?</a><a class="headerlink" href="#how-do-i-use-spd-learn-with-moabb" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">moabb.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">BNCI2014_001</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">moabb.paradigms</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotorImagery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">braindecode</span><span class="w"> </span><span class="kn">import</span> <span class="n">EEGClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPDNet</span>
+
+<span class="c1"># Load data</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">BNCI2014_001</span><span class="p">()</span>
+<span class="n">paradigm</span> <span class="o">=</span> <span class="n">MotorImagery</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">paradigm</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Create classifier</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">EEGClassifier</span><span class="p">(</span>
+    <span class="n">SPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">n_outputs</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="how-do-i-use-spd-learn-with-nilearn">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">How do I use SPD Learn with Nilearn?</a><a class="headerlink" href="#how-do-i-use-spd-learn-with-nilearn" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">nilearn.connectome</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConnectivityMeasure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPDNet</span>
+
+<span class="c1"># Compute connectivity matrices</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ConnectivityMeasure</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;covariance&quot;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">time_series_list</span><span class="p">)</span>  <span class="c1"># (n_subjects, n_rois, n_rois)</span>
+
+<span class="c1"># Convert to tensor</span>
+<span class="n">X_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Create model for pre-computed covariance</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_outputs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;cov&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="can-i-use-spd-learn-with-scikit-learn-pipelines">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Can I use SPD Learn with scikit-learn pipelines?</a><a class="headerlink" href="#can-i-use-spd-learn-with-scikit-learn-pipelines" title="Link to this heading">#</a></h3>
+<p>Yes, via Braindecode’s <code class="docutils literal notranslate"><span class="pre">EEGClassifier</span></code> or custom wrappers:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">braindecode</span><span class="w"> </span><span class="kn">import</span> <span class="n">EEGClassifier</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">&quot;clf&quot;</span><span class="p">,</span> <span class="n">EEGClassifier</span><span class="p">(</span><span class="n">SPDNet</span><span class="p">(</span><span class="n">n_chans</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">n_outputs</span><span class="o">=</span><span class="mi">4</span><span class="p">)))])</span>
+
+<span class="c1"># Cross-validation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="getting-help">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Getting Help</a><a class="headerlink" href="#getting-help" title="Link to this heading">#</a></h2>
+<p>If your question isn’t answered here:</p>
+<ol class="arabic simple">
+<li><p>Check the <a class="reference internal" href="user_guide.html"><span class="doc">User Guide</span></a> for conceptual explanations</p></li>
+<li><p>Check the <a class="reference internal" href="api.html"><span class="doc">API Reference</span></a> for detailed function documentation</p></li>
+<li><p>Browse the <a class="reference internal" href="generated/auto_examples/index.html"><span class="doc">Applied Examples</span></a> for code examples</p></li>
+<li><p>Open an issue on <a class="reference external" href="https://github.com/spdlearn/spd_learn/issues">GitHub</a></p></li>
+</ol>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="generated/auto_examples/applied_examples/moabb_hydra_benchmark.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Benchmarking SPD Learn Models with MOABB and Hydra</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="contributing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

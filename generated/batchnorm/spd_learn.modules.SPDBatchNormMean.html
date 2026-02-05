@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>spd_learn.modules.SPDBatchNormMean &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"tex": {"macros": {"spd": "\\mathcal{S}^n_{++}", "sym": "\\text{Sym}(n)", "syms": "\\mathcal{S}^n", "reals": "\\mathbb{R}", "choleskyspace": "\\mathcal{L}_+", "manifold": "\\mathcal{M}", "gl": "\\text{GL}(n)", "stiefel": ["\\text{St}(#1, #2)", 2], "tangent": ["T_{#1} \\mathcal{M}", 1], "tangentspd": ["T_{#1} \\mathcal{S}^n_{++}", 1], "Exp": ["\\text{Exp}_{#1}", 1], "Log": ["\\text{Log}_{#1}", 1], "logchol": "\\log_{\\text{chol}}", "expchol": "\\exp_{\\text{chol}}", "tril": ["\\text{tril}(#1)", 1], "dairm": ["d_{\\text{AIRM}}(#1, #2)", 2], "dlem": ["d_{\\text{LEM}}(#1, #2)", 2], "dbw": ["d_{\\text{BW}}(#1, #2)", 2], "dlcm": ["d_{\\text{LCM}}(#1, #2)", 2], "gairm": ["g^{\\text{AIRM}}_{#1}", 1], "glem": ["g^{\\text{LEM}}_{#1}", 1], "gbw": ["g^{\\text{BW}}_{#1}", 1], "glcm": ["g^{\\text{LCM}}_{#1}", 1], "tr": "\\text{tr}", "diag": "\\text{diag}", "frob": ["\\| #1 \\|_F", 1], "frobinner": ["\\langle #1, #2 \\rangle_F", 2], "lyap": ["\\mathcal{L}_{#1}", 1], "reeig": "\\text{ReEig}", "logeig": "\\text{LogEig}", "expeig": "\\text{ExpEig}", "frechet": "\\mathcal{G}", "geomean": "G", "In": "I_n", "I": "I", "transpose": "^\\top", "lemult": "\\odot", "lescalar": "\\circledast"}}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/batchnorm/spd_learn.modules.SPDBatchNormMean';</script>
+    <link rel="canonical" href="https://spdlearn.org/generated/batchnorm/spd_learn.modules.SPDBatchNormMean.html" />
+    <link rel="icon" href="../../_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="spd_learn.modules.SPDBatchNormMeanVar" href="spd_learn.modules.SPDBatchNormMeanVar.html" />
+    <link rel="prev" title="spd_learn.modules.BiMapIncreaseDim" href="../bilinear/spd_learn.modules.BiMapIncreaseDim.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="../../_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_log.html">spd_learn.functional.matrix_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_exp.html">spd_learn.functional.matrix_exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_softplus.html">spd_learn.functional.matrix_softplus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_inv_softplus.html">spd_learn.functional.matrix_inv_softplus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.softplus.html">spd_learn.functional.softplus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.inv_softplus.html">spd_learn.functional.inv_softplus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_power.html">spd_learn.functional.matrix_power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_sqrt.html">spd_learn.functional.matrix_sqrt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_inv_sqrt.html">spd_learn.functional.matrix_inv_sqrt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.matrix_sqrt_inv.html">spd_learn.functional.matrix_sqrt_inv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.clamp_eigvals.html">spd_learn.functional.clamp_eigvals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.abs_eigvals.html">spd_learn.functional.abs_eigvals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.ensure_sym.html">spd_learn.functional.ensure_sym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/spd_learn.functional.orthogonal_polar_factor.html">spd_learn.functional.orthogonal_polar_factor</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../covariance_functional/spd_learn.functional.covariance.html">spd_learn.functional.covariance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../covariance_functional/spd_learn.functional.sample_covariance.html">spd_learn.functional.sample_covariance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../covariance_functional/spd_learn.functional.real_covariance.html">spd_learn.functional.real_covariance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../covariance_functional/spd_learn.functional.cross_covariance.html">spd_learn.functional.cross_covariance</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../regularization_functional/spd_learn.functional.trace_normalization.html">spd_learn.functional.trace_normalization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularization_functional/spd_learn.functional.ledoit_wolf.html">spd_learn.functional.ledoit_wolf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularization_functional/spd_learn.functional.shrinkage_covariance.html">spd_learn.functional.shrinkage_covariance</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../airm/spd_learn.functional.airm_distance.html">spd_learn.functional.airm_distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../airm/spd_learn.functional.airm_geodesic.html">spd_learn.functional.airm_geodesic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../airm/spd_learn.functional.exp_map_airm.html">spd_learn.functional.exp_map_airm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../airm/spd_learn.functional.log_map_airm.html">spd_learn.functional.log_map_airm</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.log_euclidean_distance.html">spd_learn.functional.log_euclidean_distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.log_euclidean_geodesic.html">spd_learn.functional.log_euclidean_geodesic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.log_euclidean_mean.html">spd_learn.functional.log_euclidean_mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.log_euclidean_multiply.html">spd_learn.functional.log_euclidean_multiply</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.log_euclidean_scalar_multiply.html">spd_learn.functional.log_euclidean_scalar_multiply</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.exp_map_lem.html">spd_learn.functional.exp_map_lem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_euclidean/spd_learn.functional.log_map_lem.html">spd_learn.functional.log_map_lem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../log_cholesky/spd_learn.functional.cholesky_log.html">spd_learn.functional.cholesky_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_cholesky/spd_learn.functional.cholesky_exp.html">spd_learn.functional.cholesky_exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_cholesky/spd_learn.functional.log_cholesky_distance.html">spd_learn.functional.log_cholesky_distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_cholesky/spd_learn.functional.log_cholesky_mean.html">spd_learn.functional.log_cholesky_mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../log_cholesky/spd_learn.functional.log_cholesky_geodesic.html">spd_learn.functional.log_cholesky_geodesic</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bures_wasserstein/spd_learn.functional.bures_wasserstein_distance.html">spd_learn.functional.bures_wasserstein_distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bures_wasserstein/spd_learn.functional.bures_wasserstein_geodesic.html">spd_learn.functional.bures_wasserstein_geodesic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bures_wasserstein/spd_learn.functional.bures_wasserstein_mean.html">spd_learn.functional.bures_wasserstein_mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bures_wasserstein/spd_learn.functional.bures_wasserstein_transport.html">spd_learn.functional.bures_wasserstein_transport</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../parallel_transport/spd_learn.functional.parallel_transport_airm.html">spd_learn.functional.parallel_transport_airm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallel_transport/spd_learn.functional.parallel_transport_lem.html">spd_learn.functional.parallel_transport_lem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallel_transport/spd_learn.functional.parallel_transport_log_cholesky.html">spd_learn.functional.parallel_transport_log_cholesky</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallel_transport/spd_learn.functional.schild_ladder.html">spd_learn.functional.schild_ladder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallel_transport/spd_learn.functional.pole_ladder.html">spd_learn.functional.pole_ladder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallel_transport/spd_learn.functional.transport_tangent_vector.html">spd_learn.functional.transport_tangent_vector</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../vectorization/spd_learn.functional.vec_batch.html">spd_learn.functional.vec_batch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vectorization/spd_learn.functional.unvec_batch.html">spd_learn.functional.unvec_batch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vectorization/spd_learn.functional.sym_to_upper.html">spd_learn.functional.sym_to_upper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vectorization/spd_learn.functional.vec_to_sym.html">spd_learn.functional.vec_to_sym</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../dropout_functional/spd_learn.functional.dropout_spd.html">spd_learn.functional.dropout_spd</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../autograd/spd_learn.functional.modeig_backward.html">spd_learn.functional.modeig_backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autograd/spd_learn.functional.modeig_forward.html">spd_learn.functional.modeig_forward</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../batchnorm_functional/spd_learn.functional.karcher_mean_iteration.html">spd_learn.functional.karcher_mean_iteration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batchnorm_functional/spd_learn.functional.spd_centering.html">spd_learn.functional.spd_centering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batchnorm_functional/spd_learn.functional.spd_rebiasing.html">spd_learn.functional.spd_rebiasing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batchnorm_functional/spd_learn.functional.tangent_space_variance.html">spd_learn.functional.tangent_space_variance</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bilinear_functional/spd_learn.functional.bimap_transform.html">spd_learn.functional.bimap_transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bilinear_functional/spd_learn.functional.bimap_increase_dim.html">spd_learn.functional.bimap_increase_dim</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../wavelet_functional/spd_learn.functional.compute_gabor_wavelet.html">spd_learn.functional.compute_gabor_wavelet</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.numerical_config.html">spd_learn.functional.numerical_config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.NumericalConfig.html">spd_learn.functional.NumericalConfig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.NumericalContext.html">spd_learn.functional.NumericalContext</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.get_epsilon.html">spd_learn.functional.get_epsilon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.get_epsilon_tensor.html">spd_learn.functional.get_epsilon_tensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.get_loewner_threshold.html">spd_learn.functional.get_loewner_threshold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.safe_clamp_eigenvalues.html">spd_learn.functional.safe_clamp_eigenvalues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.check_spd_eigenvalues.html">spd_learn.functional.check_spd_eigenvalues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.is_half_precision.html">spd_learn.functional.is_half_precision</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numerical/spd_learn.functional.recommend_dtype_for_spd.html">spd_learn.functional.recommend_dtype_for_spd</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../covariance/spd_learn.modules.CovLayer.html">spd_learn.modules.CovLayer</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../modeig/spd_learn.modules.LogEig.html">spd_learn.modules.LogEig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modeig/spd_learn.modules.ReEig.html">spd_learn.modules.ReEig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modeig/spd_learn.modules.ExpEig.html">spd_learn.modules.ExpEig</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../manifold/spd_learn.modules.SymmetricPositiveDefinite.html">spd_learn.modules.SymmetricPositiveDefinite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manifold/spd_learn.modules.PositiveDefiniteScalar.html">spd_learn.modules.PositiveDefiniteScalar</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bilinear/spd_learn.modules.BiMap.html">spd_learn.modules.BiMap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bilinear/spd_learn.modules.BiMapIncreaseDim.html">spd_learn.modules.BiMapIncreaseDim</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">spd_learn.modules.SPDBatchNormMean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_learn.modules.SPDBatchNormMeanVar.html">spd_learn.modules.SPDBatchNormMeanVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spd_learn.modules.BatchReNorm.html">spd_learn.modules.BatchReNorm</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../regularization/spd_learn.modules.TraceNorm.html">spd_learn.modules.TraceNorm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularization/spd_learn.modules.Shrinkage.html">spd_learn.modules.Shrinkage</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../dropout/spd_learn.modules.SPDDropout.html">spd_learn.modules.SPDDropout</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../residual/spd_learn.modules.LogEuclideanResidual.html">spd_learn.modules.LogEuclideanResidual</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../signal/spd_learn.modules.WaveletConv.html">spd_learn.modules.WaveletConv</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../utils/spd_learn.modules.PatchEmbeddingLayer.html">spd_learn.modules.PatchEmbeddingLayer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/spd_learn.modules.Vec.html">spd_learn.modules.Vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/spd_learn.modules.Vech.html">spd_learn.modules.Vech</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.EEGSPDNet.html">spd_learn.models.EEGSPDNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.Green.html">spd_learn.models.Green</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.MAtt.html">spd_learn.models.MAtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.PhaseSPDNet.html">spd_learn.models.PhaseSPDNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.SPDNet.html">spd_learn.models.SPDNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.TensorCSPNet.html">spd_learn.models.TensorCSPNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spd_learn.models.TSMNet.html">spd_learn.models.TSMNet</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../init/spd_learn.init.stiefel_.html">spd_learn.init.stiefel_</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../init/spd_learn.init.spd_identity_.html">spd_learn.init.spd_identity_</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">spd_learn.modules.SPDBatchNormMean</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="spd-learn-modules-spdbatchnormmean">
+<h1>spd_learn.modules.SPDBatchNormMean<a class="headerlink" href="#spd-learn-modules-spdbatchnormmean" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="spd_learn.modules.SPDBatchNormMean">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">spd_learn.modules.</span></span><span class="sig-name descname"><span class="pre">SPDBatchNormMean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rebias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/spdlearn/spd_learn/blob/main/src/spd_learn/modules.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spd_learn.modules.SPDBatchNormMean" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<p>Riemannian Batch Normalization for SPD Matrices (Mean-only).</p>
+<p>This class implements the Riemannian Batch Normalization (RBN) layer for
+the Symmetric Positive Definite (SPD) manifold
+<span id="id1">[<a class="reference internal" href="../../user_guide.html#id22" title="Daniel Brooks, Olivier Schwander, Frédéric Barbaresco, Jean-Yves Schneider, and Matthieu Cord. Riemannian batch normalization for spd neural networks. In Advances in Neural Information Processing Systems, volume 32. 2019. URL: https://proceedings.neurips.cc/paper/2019/hash/6e69ebbfad976d4637bb4b39de261bf7-Abstract.html.">Brooks <em>et al.</em>, 2019</a>]</span>.</p>
+<div class="math notranslate nohighlight">
+\[\tilde{P}_i = \mathcal{G}^{-\frac{1}{2}} P_i \mathcal{G}^{-\frac{1}{2}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> is the Fréchet mean of the batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The size of the SPD matrices (number of features).</p></li>
+<li><p><strong>momentum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>default=0.1</em>) – Momentum factor for updating the running mean.</p></li>
+<li><p><strong>rebias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>default=True</em>) – If <cite>True</cite>, the layer rebases the data.</p></li>
+<li><p><strong>n_iter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>default=1</em>) – Number of Karcher flow iterations to estimate the batch mean.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPDBatchNormMean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bn</span> <span class="o">=</span> <span class="n">SPDBatchNormMean</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># Make SPD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span> <span class="o">=</span> <span class="n">bn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([8, 4, 4])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ellipse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spd_learn.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPDBatchNormMean</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_to_ellipse</span><span class="p">(</span><span class="n">spd_matrix</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="n">eigvals</span><span class="p">,</span> <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">spd_matrix</span><span class="p">)</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigvals</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigvals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">eigvecs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">eigvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">)</span>
+
+<span class="c1"># Create batch of 2x2 SPD matrices</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="n">spd_batch</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)],</span>
+                  <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)]])</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="n">scale</span><span class="p">,</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">R</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">R</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">spd_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spd_batch</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Apply SPDBatchNormMean</span>
+<span class="n">bn</span> <span class="o">=</span> <span class="n">SPDBatchNormMean</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">rebias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">bn</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">bn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>
+
+<span class="c1"># Before normalization</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">S</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">numpy</span><span class="p">()):</span>
+    <span class="n">ellipse</span> <span class="o">=</span> <span class="n">spd_to_ellipse</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ellipse</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ellipse</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ellipse</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Before SPDBatchNormMean&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="c1"># After normalization</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">S</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()):</span>
+    <span class="n">ellipse</span> <span class="o">=</span> <span class="n">spd_to_ellipse</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ellipse</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ellipse</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ellipse</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span>
+<span class="n">identity</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                   <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;After SPDBatchNormMean&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;SPDBatchNormMean: Riemannian Centering&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../_downloads/1c452f5a007c4f717c330dd3349ee46d/spd_learn-modules-SPDBatchNormMean-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../_images/spd_learn-modules-SPDBatchNormMean-1.png" class="plot-directive" src="../../_images/spd_learn-modules-SPDBatchNormMean-1.png" />
+</figure>
+<dl class="py method">
+<dt class="sig sig-object py" id="spd_learn.modules.SPDBatchNormMean.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/spdlearn/spd_learn/blob/main/src/spd_learn/modules.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spd_learn.modules.SPDBatchNormMean.forward" title="Link to this definition">#</a></dt>
+<dd><p>Forward pass of the Riemannian Batch Normalization layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)"><em>torch.Tensor</em></a>) – Input tensor of shape <cite>(batch_size, h, n, n)</cite>, where each slice
+along the batch dimension is an SPD matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized tensor of the same shape as the input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spd_learn.modules.SPDBatchNormMean.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference external" href="https://github.com/spdlearn/spd_learn/blob/main/src/spd_learn/modules.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spd_learn.modules.SPDBatchNormMean.reset_parameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spd_learn.modules.SPDBatchNormMean.reset_running_stats">
+<span class="sig-name descname"><span class="pre">reset_running_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference external" href="https://github.com/spdlearn/spd_learn/blob/main/src/spd_learn/modules.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spd_learn.modules.SPDBatchNormMean.reset_running_stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../bilinear/spd_learn.modules.BiMapIncreaseDim.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">spd_learn.modules.BiMapIncreaseDim</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="spd_learn.modules.SPDBatchNormMeanVar.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">spd_learn.modules.SPDBatchNormMeanVar</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

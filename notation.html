@@ -1,0 +1,1195 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notation &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"tex": {"macros": {"spd": "\\mathcal{S}^n_{++}", "sym": "\\text{Sym}(n)", "syms": "\\mathcal{S}^n", "reals": "\\mathbb{R}", "choleskyspace": "\\mathcal{L}_+", "manifold": "\\mathcal{M}", "gl": "\\text{GL}(n)", "stiefel": ["\\text{St}(#1, #2)", 2], "tangent": ["T_{#1} \\mathcal{M}", 1], "tangentspd": ["T_{#1} \\mathcal{S}^n_{++}", 1], "Exp": ["\\text{Exp}_{#1}", 1], "Log": ["\\text{Log}_{#1}", 1], "logchol": "\\log_{\\text{chol}}", "expchol": "\\exp_{\\text{chol}}", "tril": ["\\text{tril}(#1)", 1], "dairm": ["d_{\\text{AIRM}}(#1, #2)", 2], "dlem": ["d_{\\text{LEM}}(#1, #2)", 2], "dbw": ["d_{\\text{BW}}(#1, #2)", 2], "dlcm": ["d_{\\text{LCM}}(#1, #2)", 2], "gairm": ["g^{\\text{AIRM}}_{#1}", 1], "glem": ["g^{\\text{LEM}}_{#1}", 1], "gbw": ["g^{\\text{BW}}_{#1}", 1], "glcm": ["g^{\\text{LCM}}_{#1}", 1], "tr": "\\text{tr}", "diag": "\\text{diag}", "frob": ["\\| #1 \\|_F", 1], "frobinner": ["\\langle #1, #2 \\rangle_F", 2], "lyap": ["\\mathcal{L}_{#1}", 1], "reeig": "\\text{ReEig}", "logeig": "\\text{LogEig}", "expeig": "\\text{ExpEig}", "frechet": "\\mathcal{G}", "geomean": "G", "In": "I_n", "I": "I", "transpose": "^\\top", "lemult": "\\odot", "lescalar": "\\circledast"}}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notation';</script>
+    <link rel="canonical" href="https://spdlearn.org/notation.html" />
+    <link rel="icon" href="_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Glossary" href="glossary.html" />
+    <link rel="prev" title="Numerical Stability" href="numerical_stability.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="background/index.html">Background</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="background/1_scope_and_data.html">Scope and Data Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background/2_geometry_essentials.html">Geometry Essentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background/3_spdlearn_pipeline.html">SPD Learn Pipeline and Trivialization</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="geometric_concepts.html">Geometric Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numerical_stability.html">Numerical Stability</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="theory.html" class="nav-link">Theory</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Notation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="notation">
+<span id="id1"></span><h1>Notation<a class="headerlink" href="#notation" title="Link to this heading">#</a></h1>
+<p>This page defines the mathematical notation used throughout SPD Learn documentation
+and source code. Consistent notation follows the conventions established in
+<span id="id2">Congedo <em>et al.</em> [<a class="reference internal" href="references.html#id30" title="Marco Congedo, Alexandre Barachant, and Rajendra Bhatia. Riemannian geometry for eeg-based brain-computer interfaces; a primer and a review. Brain-Computer Interfaces, 4(3):155–174, 2017. doi:10.1080/2326263X.2017.1297192.">2017</a>]</span> and related literature.</p>
+<nav class="contents local" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#spaces-and-manifolds" id="id101">Spaces and Manifolds</a></p></li>
+<li><p><a class="reference internal" href="#groups" id="id102">Groups</a></p></li>
+<li><p><a class="reference internal" href="#tangent-spaces" id="id103">Tangent Spaces</a></p></li>
+<li><p><a class="reference internal" href="#maps-and-operations" id="id104">Maps and Operations</a></p>
+<ul>
+<li><p><a class="reference internal" href="#exponential-and-logarithmic-maps" id="id105">Exponential and Logarithmic Maps</a></p></li>
+<li><p><a class="reference internal" href="#cholesky-operations" id="id106">Cholesky Operations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#riemannian-metrics" id="id107">Riemannian Metrics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#inner-products" id="id108">Inner Products</a></p></li>
+<li><p><a class="reference internal" href="#distance-functions" id="id109">Distance Functions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#special-symbols" id="id110">Special Symbols</a></p>
+<ul>
+<li><p><a class="reference internal" href="#log-euclidean-group-operations" id="id111">Log-Euclidean Group Operations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#layer-notation" id="id112">Layer Notation</a></p></li>
+<li><p><a class="reference internal" href="#common-variables" id="id113">Common Variables</a></p></li>
+<li><p><a class="reference internal" href="#documentation-macros" id="id114">Documentation Macros</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id115">References</a></p></li>
+</ul>
+</nav>
+<section id="spaces-and-manifolds">
+<h2><a class="toc-backref" href="#id101" role="doc-backlink">Spaces and Manifolds</a><a class="headerlink" href="#spaces-and-manifolds" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 40.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathcal{S}^n_{++}\)</span></p></td>
+<td><p>SPD manifold: <span class="math notranslate nohighlight">\(n \times n\)</span> symmetric positive definite matrices</p></td>
+<td><p><span id="id3">[<a class="reference internal" href="references.html#id30" title="Marco Congedo, Alexandre Barachant, and Rajendra Bhatia. Riemannian geometry for eeg-based brain-computer interfaces; a primer and a review. Brain-Computer Interfaces, 4(3):155–174, 2017. doi:10.1080/2326263X.2017.1297192.">Congedo <em>et al.</em>, 2017</a>]</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\text{Sym}(n)\)</span></p></td>
+<td><p>Space of <span class="math notranslate nohighlight">\(n \times n\)</span> symmetric matrices</p></td>
+<td><p>Tangent space at identity</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathcal{S}^n\)</span></p></td>
+<td><p>Space of symmetric matrices (same as <span class="math notranslate nohighlight">\(\text{Sym}(n)\)</span>)</p></td>
+<td><p>Log-Euclidean codomain</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\mathbb{R}^{n \times n}\)</span></p></td>
+<td><p>Space of <span class="math notranslate nohighlight">\(n \times n\)</span> real matrices</p></td>
+<td><p>General matrix space</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(n\)</span>-dimensional Euclidean space</p></td>
+<td><p>Vector space</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\mathcal{M}\)</span></p></td>
+<td><p>Generic Riemannian manifold</p></td>
+<td><p>Abstract manifold notation</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathcal{L}_+\)</span></p></td>
+<td><p>Cholesky space: lower-triangular matrices with positive diagonal</p></td>
+<td><p>Log-Cholesky metric</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="groups">
+<h2><a class="toc-backref" href="#id102" role="doc-backlink">Groups</a><a class="headerlink" href="#groups" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 40.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(GL(n)\)</span></p></td>
+<td><p>General linear group: invertible <span class="math notranslate nohighlight">\(n \times n\)</span> matrices</p></td>
+<td><p>Affine invariance</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\text{St}(n, k)\)</span></p></td>
+<td><p>Stiefel manifold: <span class="math notranslate nohighlight">\(n \times k\)</span> matrices with orthonormal columns</p></td>
+<td><p>BiMap weights</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tangent-spaces">
+<h2><a class="toc-backref" href="#id103" role="doc-backlink">Tangent Spaces</a><a class="headerlink" href="#tangent-spaces" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Convention</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(T_P \mathcal{M}\)</span></p></td>
+<td><p>Tangent space at point <span class="math notranslate nohighlight">\(P\)</span> on manifold <span class="math notranslate nohighlight">\(\mathcal{M}\)</span></p></td>
+<td><p><strong>Uppercase</strong> <span class="math notranslate nohighlight">\(P\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_P \mathcal{S}^n_{++}\)</span></p></td>
+<td><p>Tangent space at <span class="math notranslate nohighlight">\(P\)</span> on SPD manifold</p></td>
+<td><p><span class="math notranslate nohighlight">\(\cong \text{Sym}(n)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We use <strong>uppercase</strong> letters (e.g., <span class="math notranslate nohighlight">\(P\)</span>, <span class="math notranslate nohighlight">\(Q\)</span>) for points on the
+SPD manifold to distinguish them from lowercase scalars or indices. This
+convention is consistent with <span id="id4">Pennec <em>et al.</em> [<a class="reference internal" href="references.html#id3" title="Xavier Pennec, Pierre Fillard, and Nicholas Ayache. A riemannian framework for tensor computing. International Journal of Computer Vision, 66(1):41–66, 2006. doi:10.1007/s11263-005-3222-z.">2006</a>]</span>.</p>
+<p>The tangent space <span class="math notranslate nohighlight">\(T_P \mathcal{S}^n_{++}\)</span> is <strong>isomorphic</strong> to
+<span class="math notranslate nohighlight">\(\text{Sym}(n)\)</span>, denoted by <span class="math notranslate nohighlight">\(\cong\)</span> (not <span class="math notranslate nohighlight">\(\equiv\)</span>).</p>
+</div>
+</section>
+<section id="maps-and-operations">
+<h2><a class="toc-backref" href="#id104" role="doc-backlink">Maps and Operations</a><a class="headerlink" href="#maps-and-operations" title="Link to this heading">#</a></h2>
+<section id="exponential-and-logarithmic-maps">
+<h3><a class="toc-backref" href="#id105" role="doc-backlink">Exponential and Logarithmic Maps</a><a class="headerlink" href="#exponential-and-logarithmic-maps" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Domain → Codomain</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\text{Exp}_P\)</span></p></td>
+<td><p>Riemannian exponential map at <span class="math notranslate nohighlight">\(P\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T_P\mathcal{M} \to \mathcal{M}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\text{Log}_P\)</span></p></td>
+<td><p>Riemannian logarithmic map at <span class="math notranslate nohighlight">\(P\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{M} \to T_P\mathcal{M}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\exp(S)\)</span></p></td>
+<td><p>Matrix exponential</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{Sym}(n) \to \mathcal{S}^n_{++}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\log(X)\)</span></p></td>
+<td><p>Matrix logarithm</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{S}^n_{++} \to \text{Sym}(n)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="cholesky-operations">
+<h3><a class="toc-backref" href="#id106" role="doc-backlink">Cholesky Operations</a><a class="headerlink" href="#cholesky-operations" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\log_{\text{chol}}\)</span></p></td>
+<td><p>Log-Cholesky logarithm</p></td>
+<td><p>Applies log to diagonal</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\exp_{\text{chol}}\)</span></p></td>
+<td><p>Log-Cholesky exponential</p></td>
+<td><p>Applies exp to diagonal</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\text{tril}(L, k)\)</span></p></td>
+<td><p>Lower-triangular part with offset <span class="math notranslate nohighlight">\(k\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k=-1\)</span> excludes diagonal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="riemannian-metrics">
+<h2><a class="toc-backref" href="#id107" role="doc-backlink">Riemannian Metrics</a><a class="headerlink" href="#riemannian-metrics" title="Link to this heading">#</a></h2>
+<section id="inner-products">
+<h3><a class="toc-backref" href="#id108" role="doc-backlink">Inner Products</a><a class="headerlink" href="#inner-products" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Definition</p></th>
+<th class="head"><p>Metric</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(g^{\text{AIRM}}_P(v, w)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\langle P^{-1/2} v P^{-1/2}, P^{-1/2} w P^{-1/2} \rangle_F\)</span></p></td>
+<td><p>Affine-Invariant</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(g^{\text{LEM}}_P(v, w)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\langle D_P \log(v), D_P \log(w) \rangle_F\)</span></p></td>
+<td><p>Log-Euclidean</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(g^{\text{BW}}_P(V, W)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{tr}(\mathcal{L}_P[V] W)\)</span></p></td>
+<td><p>Bures-Wasserstein</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(g^{\text{LCM}}_P(v, w)\)</span></p></td>
+<td><p>See <a class="reference internal" href="geometric_concepts.html"><span class="doc">Geometric Concepts</span></a></p></td>
+<td><p>Log-Cholesky</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="distance-functions">
+<h3><a class="toc-backref" href="#id109" role="doc-backlink">Distance Functions</a><a class="headerlink" href="#distance-functions" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Formula</p></th>
+<th class="head"><p>Metric</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d_{\text{AIRM}}(A, B)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\| \log(A^{-1/2} B A^{-1/2}) \|_F\)</span></p></td>
+<td><p>Affine-Invariant</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(d_{\text{LEM}}(A, B)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\| \log(A) - \log(B) \|_F\)</span></p></td>
+<td><p>Log-Euclidean</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d_{\text{BW}}(A, B)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\sqrt{\text{tr}(A) + \text{tr}(B) - 2\text{tr}((A^{1/2} B A^{1/2})^{1/2})}\)</span></p></td>
+<td><p>Bures-Wasserstein</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(d_{\text{LCM}}(A, B)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\| \text{logchol}(L_A) - \text{logchol}(L_B) \|_F\)</span></p></td>
+<td><p>Log-Cholesky</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="special-symbols">
+<h2><a class="toc-backref" href="#id110" role="doc-backlink">Special Symbols</a><a class="headerlink" href="#special-symbols" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>LaTeX</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(I\)</span> or <span class="math notranslate nohighlight">\(I_n\)</span></p></td>
+<td><p>Identity matrix (of size <span class="math notranslate nohighlight">\(n \times n\)</span>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">I</span></code> or <code class="docutils literal notranslate"><span class="pre">I_n</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\cong\)</span></p></td>
+<td><p>Isomorphic to</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\cong</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\langle \cdot, \cdot \rangle_F\)</span></p></td>
+<td><p>Frobenius inner product</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\langle</span> <span class="pre">\cdot,</span> <span class="pre">\cdot</span> <span class="pre">\rangle_F</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\| \cdot \|_F\)</span></p></td>
+<td><p>Frobenius norm</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\|</span> <span class="pre">\cdot</span> <span class="pre">\|_F</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\text{tr}(\cdot)\)</span></p></td>
+<td><p>Matrix trace</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\text{tr}(\cdot)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\text{diag}(\cdot)\)</span></p></td>
+<td><p>Diagonal matrix or diagonal elements</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\text{diag}(\cdot)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\odot\)</span></p></td>
+<td><p>Log-Euclidean multiplication</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\odot</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\circledast\)</span></p></td>
+<td><p>Log-Euclidean scalar multiplication</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\circledast</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d(\cdot, \cdot)\)</span></p></td>
+<td><p>Generic distance function on the manifold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">d(\cdot,</span> <span class="pre">\cdot)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(G(P_1, \ldots, P_k)\)</span></p></td>
+<td><p>Geometric (Riemannian) mean of SPD matrices</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">G(P_1,</span> <span class="pre">\ldots,</span> <span class="pre">P_k)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="log-euclidean-group-operations">
+<h3><a class="toc-backref" href="#id111" role="doc-backlink">Log-Euclidean Group Operations</a><a class="headerlink" href="#log-euclidean-group-operations" title="Link to this heading">#</a></h3>
+<p>The Log-Euclidean framework defines group operations on SPD matrices:</p>
+<div class="math notranslate nohighlight">
+\[A \odot B = \exp(\log(A) + \log(B))\]</div>
+<div class="math notranslate nohighlight">
+\[t \circledast A = \exp(t \cdot \log(A)) = A^t\]</div>
+</section>
+</section>
+<section id="layer-notation">
+<h2><a class="toc-backref" href="#id112" role="doc-backlink">Layer Notation</a><a class="headerlink" href="#layer-notation" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Module</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\text{ReEig}(X)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(U \max(\Lambda, \varepsilon) U^\top\)</span></p></td>
+<td><p><a class="reference internal" href="generated/modeig/spd_learn.modules.ReEig.html#spd_learn.modules.ReEig" title="spd_learn.modules.ReEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReEig</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\text{LogEig}(X)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(U \log(\Lambda) U^\top\)</span></p></td>
+<td><p><a class="reference internal" href="generated/modeig/spd_learn.modules.LogEig.html#spd_learn.modules.LogEig" title="spd_learn.modules.LogEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogEig</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\text{ExpEig}(X)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(U \exp(\Lambda) U^\top\)</span></p></td>
+<td><p><a class="reference internal" href="generated/modeig/spd_learn.modules.ExpEig.html#spd_learn.modules.ExpEig" title="spd_learn.modules.ExpEig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpEig</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\mathcal{G}\)</span></p></td>
+<td><p>Fréchet mean (batch normalization)</p></td>
+<td><p><a class="reference internal" href="generated/batchnorm/spd_learn.modules.SPDBatchNormMeanVar.html#spd_learn.modules.SPDBatchNormMeanVar" title="spd_learn.modules.SPDBatchNormMeanVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">SPDBatchNormMeanVar</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="common-variables">
+<h2><a class="toc-backref" href="#id113" role="doc-backlink">Common Variables</a><a class="headerlink" href="#common-variables" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 60.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(X, A, B, P, Q\)</span></p></td>
+<td><p>SPD matrices</p></td>
+<td><p><span class="math notranslate nohighlight">\(\in \mathcal{S}^n_{++}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(S, V, W\)</span></p></td>
+<td><p>Symmetric matrices (tangent vectors)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\in \text{Sym}(n)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(U\)</span></p></td>
+<td><p>Orthogonal matrix (eigenvectors)</p></td>
+<td><p><span class="math notranslate nohighlight">\(U^\top U = I\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Lambda\)</span></p></td>
+<td><p>Diagonal matrix (eigenvalues)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\lambda_i &gt; 0\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(L\)</span></p></td>
+<td><p>Lower-triangular Cholesky factor</p></td>
+<td><p><span class="math notranslate nohighlight">\(\in \mathcal{L}_+\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(W\)</span></p></td>
+<td><p>Stiefel matrix (BiMap weights)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\in \text{St}(n, k)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(n\)</span></p></td>
+<td><p>Matrix dimension</p></td>
+<td><p>Positive integer</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(t\)</span></p></td>
+<td><p>Geodesic parameter</p></td>
+<td><p><span class="math notranslate nohighlight">\(t \in [0, 1]\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="documentation-macros">
+<h2><a class="toc-backref" href="#id114" role="doc-backlink">Documentation Macros</a><a class="headerlink" href="#documentation-macros" title="Link to this heading">#</a></h2>
+<p>SPD Learn provides LaTeX-style macros for consistent notation in documentation.
+These macros work in both HTML (via MathJax) and PDF (via LaTeX) output.</p>
+<p><strong>Usage in RST files:</strong></p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>The SPD manifold <span class="na">:math:</span><span class="nv">`\spd`</span> equipped with the AIRM metric...
+
+The distance <span class="na">:math:</span><span class="nv">`\dairm{A}{B}`</span> between matrices...
+
+The tangent space <span class="na">:math:</span><span class="nv">`\tangent{P}`</span> at point <span class="na">:math:</span><span class="nv">`P`</span>...
+</pre></div>
+</div>
+<p><strong>Available Macros:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 35.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Macro</p></th>
+<th class="head"><p>Renders As</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\spd</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{S}^n_{++}\)</span></p></td>
+<td><p>SPD manifold</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\sym</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{Sym}(n)\)</span></p></td>
+<td><p>Symmetric matrices</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\manifold</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{M}\)</span></p></td>
+<td><p>Generic manifold</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\choleskyspace</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{L}_+\)</span></p></td>
+<td><p>Cholesky space</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\tangent{P}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(T_P \mathcal{M}\)</span></p></td>
+<td><p>Tangent space at P</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\tangentspd{P}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(T_P \mathcal{S}^n_{++}\)</span></p></td>
+<td><p>Tangent space on SPD at P</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\Exp{P}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{Exp}_P\)</span></p></td>
+<td><p>Riemannian exponential at P</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\Log{P}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{Log}_P\)</span></p></td>
+<td><p>Riemannian logarithm at P</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\dairm{A}{B}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{\text{AIRM}}(A, B)\)</span></p></td>
+<td><p>AIRM distance</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\dlem{A}{B}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{\text{LEM}}(A, B)\)</span></p></td>
+<td><p>Log-Euclidean distance</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\dbw{A}{B}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{\text{BW}}(A, B)\)</span></p></td>
+<td><p>Bures-Wasserstein distance</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\dlcm{A}{B}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{\text{LCM}}(A, B)\)</span></p></td>
+<td><p>Log-Cholesky distance</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\gairm{P}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(g^{\text{AIRM}}_P\)</span></p></td>
+<td><p>AIRM inner product at P</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\frob{X}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\| X \|_F\)</span></p></td>
+<td><p>Frobenius norm</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\frobinner{X}{Y}</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\langle X, Y \rangle_F\)</span></p></td>
+<td><p>Frobenius inner product</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\tr</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{tr}\)</span></p></td>
+<td><p>Trace operator</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\diag</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{diag}\)</span></p></td>
+<td><p>Diagonal operator</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\reeig</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{ReEig}\)</span></p></td>
+<td><p>ReEig layer</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\logeig</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{LogEig}\)</span></p></td>
+<td><p>LogEig layer</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\frechet</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{G}\)</span></p></td>
+<td><p>Fréchet mean</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\geomean</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(G\)</span></p></td>
+<td><p>Geometric mean</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">\I</span></code> or <code class="docutils literal notranslate"><span class="pre">\In</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(I\)</span> or <span class="math notranslate nohighlight">\(I_n\)</span></p></td>
+<td><p>Identity matrix</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\transpose</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(^\top\)</span></p></td>
+<td><p>Transpose symbol</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Macros are defined in <code class="docutils literal notranslate"><span class="pre">docs/source/conf.py</span></code> under <code class="docutils literal notranslate"><span class="pre">mathjax3_config</span></code> (for HTML)
+and <code class="docutils literal notranslate"><span class="pre">latex_elements[&quot;preamble&quot;]</span></code> (for PDF). When adding new notation, update both
+locations and this reference table.</p>
+</div>
+</section>
+<section id="references">
+<h2><a class="toc-backref" href="#id115" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id5">
+<div role="list" class="citation-list">
+<div class="citation" id="id33" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>)</span>
+<p>Marco Congedo, Alexandre Barachant, and Rajendra Bhatia. Riemannian geometry for eeg-based brain-computer interfaces; a primer and a review. <em>Brain-Computer Interfaces</em>, 4(3):155–174, 2017. <a class="reference external" href="https://doi.org/10.1080/2326263X.2017.1297192">doi:10.1080/2326263X.2017.1297192</a>.</p>
+</div>
+<div class="citation" id="id6" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
+<p>Xavier Pennec, Pierre Fillard, and Nicholas Ayache. A riemannian framework for tensor computing. <em>International Journal of Computer Vision</em>, 66(1):41–66, 2006. <a class="reference external" href="https://doi.org/10.1007/s11263-005-3222-z">doi:10.1007/s11263-005-3222-z</a>.</p>
+</div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="geometric_concepts.html"><span class="doc">Geometric Concepts</span></a> — Detailed explanations of geometric operations</p></li>
+<li><p><a class="reference internal" href="glossary.html"><span class="doc">Glossary</span></a> — Definitions of key terms</p></li>
+<li><p><a class="reference internal" href="api.html"><span class="doc">API Reference</span></a> — API reference with mathematical specifications</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="numerical_stability.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Numerical Stability</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="glossary.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Glossary</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

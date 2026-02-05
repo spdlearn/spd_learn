@@ -1,0 +1,1232 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>References &#8212; SPD Learn 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34850bfa" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5aa371e9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'references';</script>
+    <link rel="canonical" href="https://spdlearn.org/references.html" />
+    <link rel="icon" href="_static/spd_learn.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Glossary" href="glossary.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spd_learn.png" class="logo__image only-light" alt="SPD Learn Logo"/>
+    <img src="_static/spd_learn.png" class="logo__image only-dark pst-js-only" alt="SPD Learn Logo"/>
+  
+  
+    <p class="title logo__title"><strong>SPD</strong> Learn</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="theory.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="generated/auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="faq.html">
+    FAQ
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="External Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/spdlearn/spd_learn" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/spd_learn/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item"><a class="btn btn-sm btn-outline-primary translate-btn" id="translate-page"
+   href="https://translate.google.com/translate?sl=en&tl=auto&u="
+   target="_blank" rel="noopener"
+   title="Translate this page with Google Translate"
+   style="margin-left: 0.5rem; font-size: 0.8rem;">
+  <i class="fa-solid fa-language"></i> Translate
+</a>
+<script>
+(function () {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const url = (canonical && canonical.href) ? canonical.href : window.location.href;
+
+  // Google Translate URL wrapper - sl=en (source: English), tl=auto (target: auto-detect user preference)
+  const gt = "https://translate.google.com/translate?sl=en&tl=auto&u=" + encodeURIComponent(url);
+
+  const a = document.getElementById("translate-page");
+  if (a) a.href = gt;
+})();
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="background/index.html">Background</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="background/1_scope_and_data.html">Scope and Data Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background/2_geometry_essentials.html">Geometry Essentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background/3_spdlearn_pipeline.html">SPD Learn Pipeline and Trivialization</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="geometric_concepts.html">Geometric Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numerical_stability.html">Numerical Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notation.html">Notation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">References</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="theory.html" class="nav-link">Theory</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">References</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="references">
+<span id="id1"></span><h1>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h1>
+<p>This page provides an overview of the foundational literature behind SPD Learn,
+organized by model architecture and research lineage.</p>
+<section id="literature-map">
+<h2>Literature Map<a class="headerlink" href="#literature-map" title="Link to this heading">#</a></h2>
+<p>The following visualization shows the relationships between key publications
+implemented in SPD Learn. The map illustrates how different SPD neural network
+architectures have evolved and influenced each other over time.</p>
+<figure class="align-center" id="id98">
+<a class="litmap-figure reference internal image-reference" href="_images/litmap_spd_learn.png"><img alt="Literature map showing connections between SPD Learn model papers" class="litmap-figure" src="_images/litmap_spd_learn.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text"><strong>SPD Learn Literature Map</strong> — Generated with <a class="reference external" href="https://www.litmaps.com/">Litmaps</a>.
+The x-axis represents publication date (more recent to the right), and the
+y-axis represents citation count (more cited at the top). Lines show citation
+relationships between papers.</span><a class="headerlink" href="#id98" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<hr class="docutils" />
+<section id="model-legend">
+<h2>Model Legend<a class="headerlink" href="#model-legend" title="Link to this heading">#</a></h2>
+<p>The following legend explains the color coding used in the literature map above,
+with each color representing a distinct model family implemented in SPD Learn.</p>
+<style>
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--pst-color-surface);
+  border: 1px solid var(--pst-color-border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.legend-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.legend-content {
+  flex: 1;
+}
+.legend-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+.legend-desc {
+  font-size: 0.85rem;
+  color: var(--pst-color-text-muted);
+  line-height: 1.4;
+}
+.legend-ref {
+  font-size: 0.8rem;
+  color: var(--pst-color-primary);
+  margin-top: 0.25rem;
+}
+</style>
+
+<div class="legend-grid">
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #7DD3FC;"></div>
+    <div class="legend-content">
+      <div class="legend-title">SPDNet</div>
+      <div class="legend-desc">The foundational architecture for deep learning on SPD manifolds using BiMap, ReEig, and LogEig layers. Originally developed for computer vision tasks; application to EEG/neuroimaging is original work by the BCI research community.</div>
+      <div class="legend-ref">Huang & Van Gool, 2017</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #047857;"></div>
+    <div class="legend-content">
+      <div class="legend-title">Riemannian BatchNorm</div>
+      <div class="legend-desc">Riemannian batch normalization technique for SPD neural networks, used in TSMNet and TensorCSPNet.</div>
+      <div class="legend-ref">Brooks et al., 2019</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #F97316;"></div>
+    <div class="legend-content">
+      <div class="legend-title">TSMNet</div>
+      <div class="legend-desc">Tangent Space Mapping Network combining temporal convolutions with SPD batch normalization for domain adaptation.</div>
+      <div class="legend-ref">Kobler et al., 2022</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #BEF264;"></div>
+    <div class="legend-content">
+      <div class="legend-title">MAtt</div>
+      <div class="legend-desc">Manifold Attention Network integrating Riemannian geometry with attention mechanisms on SPD matrices.</div>
+      <div class="legend-ref">Pan et al., 2022</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #A855F7;"></div>
+    <div class="legend-content">
+      <div class="legend-title">TensorCSPNet</div>
+      <div class="legend-desc">Multi-band SPDNet framework using tensor stacking and Common Spatial Patterns for filter bank EEG classification.</div>
+      <div class="legend-ref">Ju et al., 2022</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #FBBF24;"></div>
+    <div class="legend-content">
+      <div class="legend-title">EEGSPDNet</div>
+      <div class="legend-desc">End-to-end architecture with channel-specific convolution, covariance pooling, and SPDNet for EEG classification.</div>
+      <div class="legend-ref">Wilson et al., 2025</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #22C55E;"></div>
+    <div class="legend-content">
+      <div class="legend-title">GREEN</div>
+      <div class="legend-desc">Gabor Riemann EEGNet combining learnable Gabor wavelets with Riemannian geometry and shrinkage estimation.</div>
+      <div class="legend-ref">Paillard et al., 2025</div>
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #3B82F6;"></div>
+    <div class="legend-content">
+      <div class="legend-title">PhaseSPDNet</div>
+      <div class="legend-desc">Phase-Space Embedding combined with SPDNet for geometric analysis of EEG dynamics in reconstructed phase space.</div>
+      <div class="legend-ref">Carrara et al., 2024</div>
+    </div>
+  </div>
+</div></section>
+<hr class="docutils" />
+<section id="full-bibliography">
+<h2>Full Bibliography<a class="headerlink" href="#full-bibliography" title="Link to this heading">#</a></h2>
+<p>Below are the complete bibliographic references for the models and foundational
+works implemented in SPD Learn.</p>
+<div class="docutils container" id="id2">
+<div role="list" class="citation-list">
+<div class="citation" id="id13" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Zhiwu Huang and Luc Van Gool. A riemannian network for spd matrix learning. In <em>Proceedings of the AAAI Conference on Artificial Intelligence</em>, volume 31, 2036–2042. 2017. URL: <a class="reference external" href="https://ojs.aaai.org/index.php/AAAI/article/view/10866">https://ojs.aaai.org/index.php/AAAI/article/view/10866</a>.</p>
+</div>
+<div class="citation" id="id23" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Ce Ju and Cuntai Guan. Tensor-cspnet: a novel geometric deep learning framework for motor imagery classification. <em>IEEE Transactions on Neural Networks and Learning Systems</em>, 34(12):10955–10969, 2023. <a class="reference external" href="https://doi.org/10.1109/TNNLS.2022.3172108">doi:10.1109/TNNLS.2022.3172108</a>.</p>
+</div>
+<div class="citation" id="id15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>Reinmar J Kobler, Jun-ichiro Hirayama, Qibin Zhao, and Motoaki Kawanabe. Spd domain-specific batch normalization to crack interpretable unsupervised domain adaptation in eeg. In <em>Advances in Neural Information Processing Systems</em>, volume 35, 6219–6235. 2022. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/2022/hash/28ef7ee7cd3e03093acc39e1272411b7-Abstract-Conference.html">https://proceedings.neurips.cc/paper_files/paper/2022/hash/28ef7ee7cd3e03093acc39e1272411b7-Abstract-Conference.html</a>.</p>
+</div>
+<div class="citation" id="id17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Igor Carrara*, Bruno Aristimunha*, Marie-Constance Corsi, Raphael Y. de Camargo, Sylvain Chevallier, and Théodore Papadopoulo. Geometric neural network based on phase space for bci-eeg decoding. <em>Journal of Neural Engineering</em>, 21(6):016049, 2024. <a class="reference external" href="https://doi.org/10.1088/1741-2552/ad88a2">doi:10.1088/1741-2552/ad88a2</a>.</p>
+</div>
+<div class="citation" id="id18" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>Antoine Collas, Ce Ju, Nicolas Salvy, and Bertrand Thirion. Riemannian flow matching for brain connectivity matrices via pullback geometry. In <em>The Thirty-ninth Annual Conference on Neural Information Processing Systems</em>. 2025. URL: <a class="reference external" href="https://openreview.net/forum?id=NY3LzmUXl7">https://openreview.net/forum?id=NY3LzmUXl7</a>.</p>
+</div>
+<div class="citation" id="id14" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<p>Daniel Brooks, Olivier Schwander, Frédéric Barbaresco, Jean-Yves Schneider, and Matthieu Cord. Riemannian batch normalization for spd neural networks. In <em>Advances in Neural Information Processing Systems</em>, volume 32. 2019. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2019/hash/6e69ebbfad976d4637bb4b39de261bf7-Abstract.html">https://proceedings.neurips.cc/paper/2019/hash/6e69ebbfad976d4637bb4b39de261bf7-Abstract.html</a>.</p>
+</div>
+<div class="citation" id="id50" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<p>Nicholas J Higham. <em>Accuracy and Stability of Numerical Algorithms</em>. SIAM, 2nd edition, 2002. <a class="reference external" href="https://doi.org/10.1137/1.9780898718027">doi:10.1137/1.9780898718027</a>.</p>
+</div>
+<div class="citation" id="id53" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<p>Zhenhua Lin. Riemannian geometry of symmetric positive definite matrices via cholesky decomposition. <em>SIAM Journal on Matrix Analysis and Applications</em>, 40(4):1353–1370, 2019. <a class="reference external" href="https://doi.org/10.1137/18M1221084">doi:10.1137/18M1221084</a>.</p>
+</div>
+<div class="citation" id="id92" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<p>Ce Ju, Reinmar Kobler, Antoine Collas, Motoaki Kawanabe, Cuntai Guan, and Bertrand Thirion. Spd matrix learning for neuroimaging analysis: perspectives, methods, and challenges. <em>arXiv preprint arXiv2504.18882</em>, 2026. URL: <a class="reference external" href="https://arxiv.org/abs/2504.18882">https://arxiv.org/abs/2504.18882</a>.</p>
+</div>
+<div class="citation" id="id25" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
+<p>Mario Lezcano-Casado. Trivializations for gradient-based optimization on manifolds. In <em>Advances in Neural Information Processing Systems</em>, volume 32, 9154–9164. 2019. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html">https://proceedings.neurips.cc/paper/2019/hash/1b33d16fc562464579b7199ca3114982-Abstract.html</a>.</p>
+</div>
+<div class="citation" id="id6" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></span>
+<p>Rajendra Bhatia. <em>Positive Definite Matrices</em>. Princeton University Press, 2007. <a class="reference external" href="https://doi.org/10.1515/9781400827787">doi:10.1515/9781400827787</a>.</p>
+</div>
+<div class="citation" id="id30" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></span>
+<p>Marco Congedo, Alexandre Barachant, and Rajendra Bhatia. Riemannian geometry for eeg-based brain-computer interfaces; a primer and a review. <em>Brain-Computer Interfaces</em>, 4(3):155–174, 2017. <a class="reference external" href="https://doi.org/10.1080/2326263X.2017.1297192">doi:10.1080/2326263X.2017.1297192</a>.</p>
+</div>
+<div class="citation" id="id3" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></span>
+<p>Xavier Pennec, Pierre Fillard, and Nicholas Ayache. A riemannian framework for tensor computing. <em>International Journal of Computer Vision</em>, 66(1):41–66, 2006. <a class="reference external" href="https://doi.org/10.1007/s11263-005-3222-z">doi:10.1007/s11263-005-3222-z</a>.</p>
+</div>
+<div class="citation" id="id79" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></span>
+<p>Tsuyoshi Ando, Chi-Kwong Li, and Roy Mathias. Geometric means. <em>Linear Algebra and its Applications</em>, 385:305–334, 2004. <a class="reference external" href="https://doi.org/10.1016/j.laa.2003.11.019">doi:10.1016/j.laa.2003.11.019</a>.</p>
+</div>
+<div class="citation" id="id4" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></span>
+<p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Geometric means in a novel vector space structure on symmetric positive-definite matrices. <em>SIAM Journal on Matrix Analysis and Applications</em>, 29(1):328–347, 2007. <a class="reference external" href="https://doi.org/10.1137/050637996">doi:10.1137/050637996</a>.</p>
+</div>
+<div class="citation" id="id37" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>16<span class="fn-bracket">]</span></span>
+<p>Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the bures-wasserstein distance between positive definite matrices. <em>Expositiones Mathematicae</em>, 37(2):165–191, 2019. <a class="reference external" href="https://doi.org/10.1016/j.exmath.2018.01.002">doi:10.1016/j.exmath.2018.01.002</a>.</p>
+</div>
+<div class="citation" id="id93" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>17<span class="fn-bracket">]</span></span>
+<p>Paolo Zanini, Marco Congedo, Christian Jutten, Salem Said, and Yannick Berthoumieu. Transfer learning: a riemannian geometry framework with applications to brain–computer interfaces. <em>IEEE Transactions on Biomedical Engineering</em>, 65(5):1107–1116, 2017.</p>
+</div>
+<div class="citation" id="id28" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>18<span class="fn-bracket">]</span></span>
+<p>Matthew Chen, Micky Nnamdi, Justin Shao, Andrew Hornback, Hongyun Huang, Ben Tamo, Yishan Zhong, Benoit Marteau, Wenqi Shi, and May Dongmei Wang. Mendr: manifold explainable neural data representations. 2025. <a class="reference external" href="https://arxiv.org/abs/2508.04956">arXiv:2508.04956</a>.</p>
+</div>
+<div class="citation" id="id49" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>19<span class="fn-bracket">]</span></span>
+<p>Catalin Ionescu, Orestis Vantzos, and Cristian Sminchisescu. Matrix backpropagation for deep networks with structured layers. In <em>IEEE International Conference on Computer Vision</em>, 2965–2973. 2015. <a class="reference external" href="https://doi.org/10.1109/ICCV.2015.339">doi:10.1109/ICCV.2015.339</a>.</p>
+</div>
+<div class="citation" id="id54" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>20<span class="fn-bracket">]</span></span>
+<p>Isay Katsman, Eric Chen, Sidhanth Holalkere, Anna Asch, Aaron Lou, Ser-Nam Lim, and Christopher De Sa. Riemannian residual neural networks. In <em>Advances in Neural Information Processing Systems</em>, volume 36. 2023.</p>
+</div>
+<div class="citation" id="id47" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>21<span class="fn-bracket">]</span></span>
+<p>Martial Agueh and Guillaume Carlier. Barycenters in the wasserstein space. <em>SIAM Journal on Mathematical Analysis</em>, 43(2):904–924, 2011. <a class="reference external" href="https://doi.org/10.1137/100805741">doi:10.1137/100805741</a>.</p>
+</div>
+<div class="citation" id="id39" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>22<span class="fn-bracket">]</span></span>
+<p>Pedro C Álvarez-Esteban, Eustasio del Barrio, Juan A Cuesta-Albertos, and Carlos Matrán. A fixed-point approach to barycenters in wasserstein space. <em>Journal of Mathematical Analysis and Applications</em>, 441(2):744–762, 2016. <a class="reference external" href="https://doi.org/10.1016/j.jmaa.2016.04.016">doi:10.1016/j.jmaa.2016.04.016</a>.</p>
+</div>
+<div class="citation" id="id48" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>23<span class="fn-bracket">]</span></span>
+<p>Clark R Givens and Rae Michael Shortt. A class of wasserstein metrics for probability distributions. <em>The Michigan Mathematical Journal</em>, 31(2):231–240, 1984. <a class="reference external" href="https://doi.org/10.1307/mmj/1029003026">doi:10.1307/mmj/1029003026</a>.</p>
+</div>
+<div class="citation" id="id96" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>24<span class="fn-bracket">]</span></span>
+<p>Lene Theil Skovgaard. A riemannian geometry of the multivariate normal model. <em>Scandinavian journal of statistics</em>, pages 211–223, 1984.</p>
+</div>
+<div class="citation" id="id97" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>25<span class="fn-bracket">]</span></span>
+<p>Or Yair, Mirela Ben-Chen, and Ronen Talmon. Parallel transport on the cone manifold of spd matrices for domain adaptation. <em>IEEE Transactions on Signal Processing</em>, 67(7):1797–1811, 2019.</p>
+</div>
+<div class="citation" id="id52" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>26<span class="fn-bracket">]</span></span>
+<p>Jürgen Ehlers, Felix AE Pirani, and Alfred Schild. The geometry of free fall and light propagation. In <em>General Relativity: Papers in Honour of JL Synge</em>, pages 63–84. Clarendon Press, 1972.</p>
+</div>
+<div class="citation" id="id36" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>27<span class="fn-bracket">]</span></span>
+<p>Marco Lorenzi and Xavier Pennec. Efficient parallel transport of deformations in time series of images: from schild's to pole ladder. <em>Journal of Mathematical Imaging and Vision</em>, 50(1):5–17, 2014. <a class="reference external" href="https://doi.org/10.1007/s10851-013-0470-3">doi:10.1007/s10851-013-0470-3</a>.</p>
+</div>
+<div class="citation" id="id42" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>28<span class="fn-bracket">]</span></span>
+<p>Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Classification of covariance matrices using a riemannian-based kernel for bci applications. <em>Neurocomputing</em>, 112:172–178, 2013. <a class="reference external" href="https://doi.org/10.1016/j.neucom.2012.12.039">doi:10.1016/j.neucom.2012.12.039</a>.</p>
+</div>
+<div class="citation" id="id24" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>29<span class="fn-bracket">]</span></span>
+<p>Joseph Paillard, Joerg F. Hipp, and Denis A. Engemann. Green: a lightweight architecture using learnable wavelets and riemannian geometry for biomarker exploration. <em>Patterns</em>, 6(1):101091, 2025. <a class="reference external" href="https://doi.org/10.1016/j.patter.2024.101091">doi:10.1016/j.patter.2024.101091</a>.</p>
+</div>
+<div class="citation" id="id32" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>30<span class="fn-bracket">]</span></span>
+<p>Johannes Müller-Gerking, Gert Pfurtscheller, and Henrik Flyvbjerg. Designing optimal spatial filters for single-trial eeg classification in a movement task. <em>Clinical Neurophysiology</em>, 110(5):787–798, 1999. <a class="reference external" href="https://doi.org/10.1016/S1388-2457(98)00038-8">doi:10.1016/S1388-2457(98)00038-8</a>.</p>
+</div>
+<div class="citation" id="id33" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>31<span class="fn-bracket">]</span></span>
+<p>Olivier Ledoit and Michael Wolf. A well-conditioned estimator for large-dimensional covariance matrices. <em>Journal of Multivariate Analysis</em>, 88(2):365–411, 2004. <a class="reference external" href="https://doi.org/10.1016/S0047-259X(03)00096-4">doi:10.1016/S0047-259X(03)00096-4</a>.</p>
+</div>
+<div class="citation" id="id41" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>32<span class="fn-bracket">]</span></span>
+<p>Gaël Varoquaux, Alexandre Gramfort, Jean Baptiste Poline, and Bertrand Thirion. Brain covariance selection: better individual functional connectivity models using population prior. In <em>Advances in Neural Information Processing Systems</em>, volume 23, 2334–2342. 2010. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper/2010/hash/db576a7d2453575f29eab4bac787b919-Abstract.html">https://proceedings.neurips.cc/paper/2010/hash/db576a7d2453575f29eab4bac787b919-Abstract.html</a>.</p>
+</div>
+<div class="citation" id="id72" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>33<span class="fn-bracket">]</span></span>
+<p>Denis A Engemann and Alexandre Gramfort. Automated model selection in covariance estimation and spatial whitening of meg and eeg signals. <em>NeuroImage</em>, 108:328–342, 2015. <a class="reference external" href="https://doi.org/10.1016/j.neuroimage.2014.12.040">doi:10.1016/j.neuroimage.2014.12.040</a>.</p>
+</div>
+<div class="citation" id="id29" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>34<span class="fn-bracket">]</span></span>
+<p>Bruno Aristimunha, Ce Ju, Antoine Collas, Florent Bouchard, Ammar Mian, Bertrand Thirion, Sylvain Chevallier, and Reinmar Kobler. Spdlearn: a geometric deep learning python library for neural decoding through trivialization. <em>To be submitted</em>, 2026. URL: <a class="github reference external" href="https://github.com/spdlearn/spd_learn">spdlearn/spd_learn</a>.</p>
+</div>
+<div class="citation" id="id73" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>35<span class="fn-bracket">]</span></span>
+<p>Mehdi Rahim, Bertrand Thirion, and Gaël Varoquaux. Population-shrinkage of covariance to estimate better brain functional connectivity. In <em>Medical Image Computing and Computer-Assisted Intervention (MICCAI)</em>, 460–468. 2017. <a class="reference external" href="https://doi.org/10.1007/978-3-319-66182-7_53">doi:10.1007/978-3-319-66182-7_53</a>.</p>
+</div>
+<div class="citation" id="id55" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>36<span class="fn-bracket">]</span></span>
+<p>Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In <em>IEEE Conference on Computer Vision and Pattern Recognition</em>, 770–778. 2016. <a class="reference external" href="https://doi.org/10.1109/CVPR.2016.90">doi:10.1109/CVPR.2016.90</a>.</p>
+</div>
+<div class="citation" id="id67" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>37<span class="fn-bracket">]</span></span>
+<p>Daniel Wilson, Robin Tibor Schirrmeister, Lukas AW Gemein, and Tonio Ball. Deep riemannian networks for eeg decoding. <em>Imaging Neuroscience</em>, 2025. <a class="reference external" href="https://doi.org/10.1162/imag_a_00511">doi:10.1162/imag_a_00511</a>.</p>
+</div>
+<div class="citation" id="id16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>38<span class="fn-bracket">]</span></span>
+<p>Yue-Ting Pan, Jing-Lun Chou, and Chun-Shu Wei. Matt: a manifold attention network for eeg decoding. In <em>Advances in Neural Information Processing Systems</em>, volume 35, 31116–31129. 2022. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/2022/hash/c981fd12b1d5703f19bd8289da9fc996-Abstract-Conference.html">https://proceedings.neurips.cc/paper_files/paper/2022/hash/c981fd12b1d5703f19bd8289da9fc996-Abstract-Conference.html</a>.</p>
+</div>
+<div class="citation" id="id56" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>39<span class="fn-bracket">]</span></span>
+<p>Robin Tibor Schirrmeister, Jost Tobias Springenberg, Lukas Dominique Josef Fiederer, Martin Glasstetter, Katharina Eggensperger, Michael Tangermann, Frank Hutter, Wolfram Burgard, and Tonio Ball. Deep learning with convolutional neural networks for eeg decoding and visualization. <em>Human Brain Mapping</em>, 38(11):5391–5420, 2017. <a class="reference external" href="https://doi.org/10.1002/hbm.23730">doi:10.1002/hbm.23730</a>.</p>
+</div>
+<div class="citation" id="id59" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>40<span class="fn-bracket">]</span></span>
+<p>Michael Tangermann, Klaus-Robert Müller, Ad Aertsen, Niels Birbaumer, Christoph Braun, Clemens Brunner, Robert Leeb, Carsten Mehring, Kai J Miller, Gernot R Müller-Putz, and others. Review of the bci competition iv. <em>Frontiers in Neuroscience</em>, 6:55, 2012. <a class="reference external" href="https://doi.org/10.3389/fnins.2012.00055">doi:10.3389/fnins.2012.00055</a>.</p>
+</div>
+<div class="citation" id="id95" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>41<span class="fn-bracket">]</span></span>
+<p>D. Timoz, T. de Surrel, and F. Yger. Riemannian adversarial attacks on symmetric positive definite matrices. In <em>International Conference on Acoustics, Speech, and Signal Processing - ICASSP</em>, 1–8. Springer, 2026.</p>
+</div>
+<div class="citation" id="id63" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>42<span class="fn-bracket">]</span></span>
+<p>Jared A Nielsen, Brandon A Zielinski, P Thomas Fletcher, Andrew L Alexander, Nicholas Lange, Erin D Bigler, Janet E Lainhart, and Jeffrey S Anderson. Abnormal lateralization of functional connectivity between language and default mode regions in autism. <em>Molecular Autism</em>, 5:8, 2014. <a class="reference external" href="https://doi.org/10.1186/2040-2392-5-8">doi:10.1186/2040-2392-5-8</a>.</p>
+</div>
+<div class="citation" id="id64" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>43<span class="fn-bracket">]</span></span>
+<p>Kamalaker Dadi, Mehdi Rahim, Alexandre Abraham, Darya Chyzhyk, Michael Milham, Bertrand Thirion, and Gaël Varoquaux. Benchmarking functional connectome-based predictive models for resting-state fmri. <em>NeuroImage</em>, 192:115–134, 2019. <a class="reference external" href="https://doi.org/10.1016/j.neuroimage.2019.02.062">doi:10.1016/j.neuroimage.2019.02.062</a>.</p>
+</div>
+<div class="citation" id="id65" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>44<span class="fn-bracket">]</span></span>
+<p>Nilearn contributors. Nilearn: machine learning for neuroimaging in python. Zenodo. URL: <a class="reference external" href="https://nilearn.github.io/">https://nilearn.github.io/</a>, <a class="reference external" href="https://doi.org/10.5281/zenodo.8397156">doi:10.5281/zenodo.8397156</a>.</p>
+</div>
+<div class="citation" id="id31" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>45<span class="fn-bracket">]</span></span>
+<p>Gert Pfurtscheller and Fernando H Lopes da Silva. Event-related eeg/meg synchronization and desynchronization: basic principles. <em>Clinical Neurophysiology</em>, 110(11):1842–1857, 1999. <a class="reference external" href="https://doi.org/10.1016/S1388-2457(99)00141-8">doi:10.1016/S1388-2457(99)00141-8</a>.</p>
+</div>
+<div class="citation" id="id8" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>46<span class="fn-bracket">]</span></span>
+<p>Pierre-Antoine Absil, Robert Mahony, and Rodolphe Sepulchre. <em>Optimization Algorithms on Matrix Manifolds</em>. Princeton University Press, 2008. URL: <a class="reference external" href="https://press.princeton.edu/absil">https://press.princeton.edu/absil</a>.</p>
+</div>
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>47<span class="fn-bracket">]</span></span>
+<p>Nicolas Boumal. <em>An introduction to optimization on smooth manifolds</em>. Cambridge University Press, 2023. URL: <a class="reference external" href="https://www.nicolasboumal.net/book">https://www.nicolasboumal.net/book</a>, <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
+</div>
+<div class="citation" id="id57" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>48<span class="fn-bracket">]</span></span>
+<p>Jong-Sen Lee and Eric Pottier. <em>Polarimetric Radar Imaging: From Basics to Applications</em>. CRC Press, 2009. <a class="reference external" href="https://doi.org/10.1201/9781420054989">doi:10.1201/9781420054989</a>.</p>
+</div>
+<div class="citation" id="id58" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>49<span class="fn-bracket">]</span></span>
+<p>Shane R Cloude and Eric Pottier. A review of target decomposition theorems in radar polarimetry. <em>IEEE Transactions on Geoscience and Remote Sensing</em>, 34(2):498–518, 1996. <a class="reference external" href="https://doi.org/10.1109/36.485127">doi:10.1109/36.485127</a>.</p>
+</div>
+<div class="citation" id="id61" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>50<span class="fn-bracket">]</span></span>
+<p>Omry Yadan. Hydra - a framework for elegantly configuring complex applications. GitHub, 2019. URL: <a class="github reference external" href="https://github.com/facebookresearch/hydra">facebookresearch/hydra</a>.</p>
+</div>
+<div class="citation" id="id62" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>51<span class="fn-bracket">]</span></span>
+<p>Vinay Jayaram and Alexandre Barachant. Moabb: trustworthy algorithm benchmarking for bcis. <em>Journal of Neural Engineering</em>, 15(6):066011, 2018. <a class="reference external" href="https://doi.org/10.1088/1741-2552/aadea0">doi:10.1088/1741-2552/aadea0</a>.</p>
+</div>
+<div class="citation" id="id74" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>52<span class="fn-bracket">]</span></span>
+<p>Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: an imperative style, high-performance deep learning library. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alché-Buc, E. Fox, and R. Garnett, editors, <em>Advances in Neural Information Processing Systems</em>, volume 32. Curran Associates, Inc., 2019. URL: <a class="reference external" href="https://proceedings.neurips.cc/paper_files/paper/2019/file/bdbca288fee7f92f2bfa9f7012727740-Paper.pdf">https://proceedings.neurips.cc/paper_files/paper/2019/file/bdbca288fee7f92f2bfa9f7012727740-Paper.pdf</a>.</p>
+</div>
+<div class="citation" id="id75" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>53<span class="fn-bracket">]</span></span>
+<p>Roy Frostig, Matthew James Johnson, and Chris Leary. Compiling machine learning programs via high-level tracing. In <em>Systems for Machine Learning (SysML)</em>. 2018. URL: <a class="reference external" href="https://mlsys.org/Conferences/doc/2018/146.pdf">https://mlsys.org/Conferences/doc/2018/146.pdf</a>.</p>
+</div>
+<div class="citation" id="id77" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>54<span class="fn-bracket">]</span></span>
+<p>Jerome H. Saltzer, David P. Reed, and David D. Clark. End-to-end arguments in system design. <em>ACM Transactions on Computer Systems</em>, 2(4):277–288, November 1984. <a class="reference external" href="https://doi.org/10.1145/357401.357402">doi:10.1145/357401.357402</a>.</p>
+</div>
+<div class="citation" id="id76" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>55<span class="fn-bracket">]</span></span>
+<p>Jim Waldo, Geoff Wyant, Ann Wollrath, and Samuel C. Kendall. A note on distributed computing. Technical Report TR-94-29, Sun Microsystems Laboratories Inc., Mountain View, CA, November 1994. URL: <a class="reference external" href="https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf">https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf</a>.</p>
+</div>
+<div class="citation" id="id5" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>56<span class="fn-bracket">]</span></span>
+<p>Alexandre Barachant, Stéphane Bonnet, Marco Congedo, and Christian Jutten. Multiclass brain–computer interface classification by riemannian geometry. <em>IEEE Transactions on Biomedical Engineering</em>, 59(4):920–928, 2012. <a class="reference external" href="https://doi.org/10.1109/TBME.2011.2172210">doi:10.1109/TBME.2011.2172210</a>.</p>
+</div>
+<div class="citation" id="id7" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>57<span class="fn-bracket">]</span></span>
+<p>Nicolas Boumal. <em>An Introduction to Optimization on Smooth Manifolds</em>. Cambridge University Press, 2023. <a class="reference external" href="https://doi.org/10.1017/9781009166164">doi:10.1017/9781009166164</a>.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>58<span class="fn-bracket">]</span></span>
+<p>Maurice Fréchet. Les éléments aléatoires de nature quelconque dans un espace distancié. <em>Annales de l'Institut Henri Poincaré</em>, 10(4):215–310, 1948. URL: <a class="reference external" href="http://eudml.org/doc/79021">http://eudml.org/doc/79021</a>.</p>
+</div>
+<div class="citation" id="id11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>59<span class="fn-bracket">]</span></span>
+<p>Bijan Afsari. Riemannian $L^p$ center of mass: existence, uniqueness, and convexity. <em>Proceedings of the American Mathematical Society</em>, 139(2):655–673, 2011. <a class="reference external" href="https://doi.org/10.1090/S0002-9939-2010-10541-5">doi:10.1090/S0002-9939-2010-10541-5</a>.</p>
+</div>
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>60<span class="fn-bracket">]</span></span>
+<p>Silvere Bonnabel. Stochastic gradient descent on riemannian manifolds. <em>IEEE Transactions on Automatic Control</em>, 58(9):2217–2229, 2013. <a class="reference external" href="https://doi.org/10.1109/TAC.2013.2254619">doi:10.1109/TAC.2013.2254619</a>.</p>
+</div>
+<div class="citation" id="id19" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>61<span class="fn-bracket">]</span></span>
+<p>Vincent Arsigny, Pierre Fillard, Xavier Pennec, and Nicholas Ayache. Log-euclidean metrics for fast and simple calculus on diffusion tensors. <em>Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine</em>, 56(2):411–421, 2006.</p>
+</div>
+<div class="citation" id="id20" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>62<span class="fn-bracket">]</span></span>
+<p>Xuan Son Nguyen. The gyro-structure of some matrix manifolds. <em>Advances in Neural Information Processing Systems</em>, 35:26618–26630, 2022.</p>
+</div>
+<div class="citation" id="id21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>63<span class="fn-bracket">]</span></span>
+<p>Sadeep Jayasumana, Richard Hartley, Mathieu Salzmann, Hongdong Li, and Mehrtash Harandi. Kernel methods on the riemannian manifold of symmetric positive definite matrices. In <em>proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</em>, 73–80. 2013.</p>
+</div>
+<div class="citation" id="id22" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>64<span class="fn-bracket">]</span></span>
+<p>Alexandre Barachant, Quentin Barthélemy, Jean-Rémi King, Alexandre Gramfort, Sylvain Chevallier, Pedro L. C. Rodrigues, Emanuele Olivetti, Vladislav Goncharenko, Gabriel Wagner vom Berg, Ghiles Reguig, Arthur Lebeurrier, Erik Bjäreholt, Maria Sayu Yamamoto, Pierre Clisson, and Marie-Constance Corsi. Pyriemann/pyriemann: v0.5. June 2023. <a class="reference external" href="https://doi.org/10.5281/zenodo.8059038">doi:10.5281/zenodo.8059038</a>.</p>
+</div>
+<div class="citation" id="id26" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>65<span class="fn-bracket">]</span></span>
+<p>Suvrit Sra. Positive definite matrices and the s-divergence. <em>Proceedings of the American Mathematical Society</em>, 144(7):2787–2797, 2016. <a class="reference external" href="https://doi.org/10.1090/proc/12953">doi:10.1090/proc/12953</a>.</p>
+</div>
+<div class="citation" id="id27" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>66<span class="fn-bracket">]</span></span>
+<p>Donald Bures. An extension of kakutani's theorem on infinite product measures to the tensor product of semifinite w*-algebras. <em>Transactions of the American Mathematical Society</em>, 135:199–212, 1969. <a class="reference external" href="https://doi.org/10.1090/S0002-9947-1969-0236719-2">doi:10.1090/S0002-9947-1969-0236719-2</a>.</p>
+</div>
+<div class="citation" id="id34" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>67<span class="fn-bracket">]</span></span>
+<p>Yilun Chen, Ami Wiesel, Yonina C Eldar, and Alfred O Hero. Shrinkage algorithms for mmse covariance estimation. <em>IEEE Transactions on Signal Processing</em>, 58(10):5016–5029, 2010. <a class="reference external" href="https://doi.org/10.1109/TSP.2010.2053029">doi:10.1109/TSP.2010.2053029</a>.</p>
+</div>
+<div class="citation" id="id35" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>68<span class="fn-bracket">]</span></span>
+<p>Juliane Schäfer and Korbinian Strimmer. A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. <em>Statistical Applications in Genetics and Molecular Biology</em>, 2005. <a class="reference external" href="https://doi.org/10.2202/1544-6115.1175">doi:10.2202/1544-6115.1175</a>.</p>
+</div>
+<div class="citation" id="id38" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>69<span class="fn-bracket">]</span></span>
+<p>Xuan Son Nguyen. A gyrovector space approach for symmetric positive semi-definite matrix learning. In <em>European Conference on Computer Vision</em>, 52–68. Springer, 2022.</p>
+</div>
+<div class="citation" id="id40" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>70<span class="fn-bracket">]</span></span>
+<p>Marco Congedo, Alexandre Barachant, and Ehsan Kharati Koopaei. Fixed point algorithms for estimating power means of positive definite matrices. <em>IEEE Transactions on Signal Processing</em>, 65(9):2211–2220, 2017. <a class="reference external" href="https://doi.org/10.1109/TSP.2017.2649483">doi:10.1109/TSP.2017.2649483</a>.</p>
+</div>
+<div class="citation" id="id43" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>71<span class="fn-bracket">]</span></span>
+<p>Mehrtash Harandi, Mathieu Salzmann, and Richard Hartley. Dimensionality reduction on spd manifolds: the emergence of geometry-aware methods. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, 40(1):48–62, 2017. <a class="reference external" href="https://doi.org/10.1109/TPAMI.2017.2655048">doi:10.1109/TPAMI.2017.2655048</a>.</p>
+</div>
+<div class="citation" id="id44" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>72<span class="fn-bracket">]</span></span>
+<p>Florian Yger, Maxime Berar, and Fabien Lotte. Riemannian approaches in brain-computer interfaces: a review. <em>IEEE Transactions on Neural Systems and Rehabilitation Engineering</em>, 25(10):1753–1762, 2017. <a class="reference external" href="https://doi.org/10.1109/TNSRE.2016.2627016">doi:10.1109/TNSRE.2016.2627016</a>.</p>
+</div>
+<div class="citation" id="id45" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>73<span class="fn-bracket">]</span></span>
+<p>Rudrasis Chakraborty, Jose Bouza, Jonathan Manton, and Baba C Vemuri. Manifoldnet: a deep neural network for manifold-valued data with applications. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, 44(2):799–810, 2020. <a class="reference external" href="https://doi.org/10.1109/TPAMI.2020.3003846">doi:10.1109/TPAMI.2020.3003846</a>.</p>
+</div>
+<div class="citation" id="id46" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>74<span class="fn-bracket">]</span></span>
+<p>Luigi Malagò, Luigi Montrucchio, and Giovanni Pistone. Wasserstein riemannian geometry of gaussian densities. <em>Information Geometry</em>, 1(2):137–179, 2018. <a class="reference external" href="https://doi.org/10.1007/s41884-018-0014-4">doi:10.1007/s41884-018-0014-4</a>.</p>
+</div>
+<div class="citation" id="id51" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>75<span class="fn-bracket">]</span></span>
+<p>Pedro LC Rodrigues, Christian Jutten, and Marco Congedo. Riemannian procrustes analysis: transfer learning for brain-computer interfaces. <em>IEEE Transactions on Biomedical Engineering</em>, 66(8):2390–2401, 2019. <a class="reference external" href="https://doi.org/10.1109/TBME.2018.2889705">doi:10.1109/TBME.2018.2889705</a>.</p>
+</div>
+<div class="citation" id="id60" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>76<span class="fn-bracket">]</span></span>
+<p>Bangyan Zhou, Xue Wu, Zhao Lv, Lei Zhang, and Xiaojin Guo. A fully automated trial selection method for optimization of motor imagery based brain-computer interface. <em>PLoS One</em>, 11(9):e0162657, 2016. <a class="reference external" href="https://doi.org/10.1371/journal.pone.0162657">doi:10.1371/journal.pone.0162657</a>.</p>
+</div>
+<div class="citation" id="id66" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>77<span class="fn-bracket">]</span></span>
+<p>Ce Ju, Reinmar J Kobler, Liyao Tang, Cuntai Guan, and Motoaki Kawanabe. Deep geodesic canonical correlation analysis for covariance-based neuroimaging data. In <em>The Twelfth International Conference on Learning Representations</em>. 2024. URL: <a class="reference external" href="https://openreview.net/forum?id=PnR1MNen7u">https://openreview.net/forum?id=PnR1MNen7u</a>.</p>
+</div>
+<div class="citation" id="id68" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>78<span class="fn-bracket">]</span></span>
+<p>Baochen Sun, Jiashi Feng, and Kate Saenko. Return of frustratingly easy domain adaptation. In <em>AAAI Conference on Artificial Intelligence</em>, 2058–2065. 2016.</p>
+</div>
+<div class="citation" id="id69" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>79<span class="fn-bracket">]</span></span>
+<p>Basura Fernando, Amaury Habrard, Marc Sebban, and Tinne Tuytelaars. Unsupervised visual domain adaptation using subspace alignment. In <em>IEEE International Conference on Computer Vision</em>, 2960–2967. 2013. <a class="reference external" href="https://doi.org/10.1109/ICCV.2013.368">doi:10.1109/ICCV.2013.368</a>.</p>
+</div>
+<div class="citation" id="id70" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>80<span class="fn-bracket">]</span></span>
+<p>Nicolas Courty, Rémi Flamary, Devis Tuia, and Alain Rakotomamonjy. Optimal transport for domain adaptation. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, 39(9):1853–1865, 2017. <a class="reference external" href="https://doi.org/10.1109/TPAMI.2016.2615921">doi:10.1109/TPAMI.2016.2615921</a>.</p>
+</div>
+<div class="citation" id="id71" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>81<span class="fn-bracket">]</span></span>
+<p>Fabien Lotte and Cuntai Guan. Regularizing common spatial patterns to improve bci designs: unified theory and new algorithms. <em>IEEE Transactions on Biomedical Engineering</em>, 58(2):355–362, 2010. <a class="reference external" href="https://doi.org/10.1109/TBME.2010.2082539">doi:10.1109/TBME.2010.2082539</a>.</p>
+</div>
+<div class="citation" id="id78" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>82<span class="fn-bracket">]</span></span>
+<p>Maher Moakher. A differential geometric approach to the geometric mean of symmetric positive-definite matrices. <em>SIAM journal on matrix analysis and applications</em>, 26(3):735–747, 2005.</p>
+</div>
+<div class="citation" id="id80" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>83<span class="fn-bracket">]</span></span>
+<p>Zeineb Chebbi and Maher Moakher. Means of hermitian positive-definite matrices based on the log-determinant α-divergence function. <em>Linear Algebra and its Applications</em>, 436(7):1872–1889, 2012. <a class="reference external" href="https://doi.org/10.1016/j.laa.2011.12.003">doi:10.1016/j.laa.2011.12.003</a>.</p>
+</div>
+<div class="citation" id="id81" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>84<span class="fn-bracket">]</span></span>
+<p>Andrzej Cichocki, Sergio Cruces, and Shun-ichi Amari. Families of alpha-beta-and gamma-divergences: flexible and robust measures of similarities. <em>Entropy</em>, 12(6):1532–1568, 2010. <a class="reference external" href="https://doi.org/10.3390/e12061532">doi:10.3390/e12061532</a>.</p>
+</div>
+<div class="citation" id="id82" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>85<span class="fn-bracket">]</span></span>
+<p>Yongdo Lim and Miklós Pálfia. Matrix power means and the karcher mean. <em>Journal of Functional Analysis</em>, 262(4):1498–1514, 2012. <a class="reference external" href="https://doi.org/10.1016/j.jfa.2011.11.012">doi:10.1016/j.jfa.2011.11.012</a>.</p>
+</div>
+<div class="citation" id="id83" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>86<span class="fn-bracket">]</span></span>
+<p>Rajendra Bhatia and John Holbrook. Riemannian geometry and matrix geometric mean. <em>Linear Algebra and its Applications</em>, 413(2-3):594–618, 2006. <a class="reference external" href="https://doi.org/10.1016/j.laa.2005.08.025">doi:10.1016/j.laa.2005.08.025</a>.</p>
+</div>
+<div class="citation" id="id84" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>87<span class="fn-bracket">]</span></span>
+<p>Rajendra Bhatia. The riemannian mean of positive matrices. In <em>Matrix information geometry</em>, pages 35–51. Springer, 2012.</p>
+</div>
+<div class="citation" id="id85" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>88<span class="fn-bracket">]</span></span>
+<p>André M Bastos and Jan-Mathijs Schoffelen. A tutorial review of functional connectivity analysis methods and their interpretational pitfalls. <em>Frontiers in systems neuroscience</em>, 9:175, 2016.</p>
+</div>
+<div class="citation" id="id86" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>89<span class="fn-bracket">]</span></span>
+<p>Peter J Basser, James Mattiello, and Denis LeBihan. Mr diffusion tensor spectroscopy and imaging. <em>Biophysical journal</em>, 66(1):259–267, 1994.</p>
+</div>
+<div class="citation" id="id87" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>90<span class="fn-bracket">]</span></span>
+<p>David E Tyler. A distribution-free m-estimator of multivariate scatter. <em>The annals of Statistics</em>, pages 234–251, 1987.</p>
+</div>
+<div class="citation" id="id88" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>91<span class="fn-bracket">]</span></span>
+<p>Stefan Haufe, Frank Meinecke, Kai Görgen, Sven Dähne, John-Dylan Haynes, Benjamin Blankertz, and Felix Bießmann. On the interpretation of weight vectors of linear models in multivariate neuroimaging. <em>Neuroimage</em>, 87:96–110, 2014.</p>
+</div>
+<div class="citation" id="id89" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>92<span class="fn-bracket">]</span></span>
+<p>Karl J Friston. Functional and effective connectivity in neuroimaging: a synthesis. <em>Human brain mapping</em>, 2(1-2):56–78, 1994.</p>
+</div>
+<div class="citation" id="id90" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>93<span class="fn-bracket">]</span></span>
+<p>Philipp Bomatter, Joseph Paillard, Pilar Garces, Jörg Hipp, and Denis-Alexander Engemann. Machine learning of brain-specific biomarkers from eeg. <em>EBioMedicine</em>, 2024.</p>
+</div>
+<div class="citation" id="id91" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>94<span class="fn-bracket">]</span></span>
+<p>Gaël Varoquaux, Flore Baronnet, Andreas Kleinschmidt, Pierre Fillard, and Bertrand Thirion. Detection of brain functional-connectivity difference in post-stroke patients using group-level covariance modeling. In <em>Medical Image Computing and Computer-Assisted Intervention–MICCAI 2010: 13th International Conference, Beijing, China, September 20-24, 2010, Proceedings, Part I 13</em>, 200–208. Springer, 2010.</p>
+</div>
+<div class="citation" id="id94" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>95<span class="fn-bracket">]</span></span>
+<p>Randy L Buckner, Fenna M Krienen, and BT Thomas Yeo. Opportunities and limitations of intrinsic functional connectivity mri. <em>Nature neuroscience</em>, 16(7):832–837, 2013.</p>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="bibtex-entries">
+<h2>BibTeX Entries<a class="headerlink" href="#bibtex-entries" title="Link to this heading">#</a></h2>
+<p>For convenience, here are BibTeX entries for citing the main works:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">huang2017riemannian</span><span class="p">,</span>
+<span class="w">   </span><span class="na">title</span><span class="p">=</span><span class="s">{A Riemannian network for SPD matrix learning}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="p">=</span><span class="s">{Huang, Zhiwu and Van Gool, Luc}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{Proceedings of the AAAI Conference on Artificial Intelligence}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="p">=</span><span class="s">{31}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">number</span><span class="p">=</span><span class="s">{1}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">year</span><span class="p">=</span><span class="s">{2017}</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">brooks2019riemannian</span><span class="p">,</span>
+<span class="w">   </span><span class="na">title</span><span class="p">=</span><span class="s">{Riemannian batch normalization for SPD neural networks}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="p">=</span><span class="s">{Brooks, Daniel and Schwander, Olivier and Barbaresco, Fr{\&#39;e}d{\&#39;e}ric and</span>
+<span class="s">           Schneider, Jean-Yves and Cord, Matthieu}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{Advances in Neural Information Processing Systems}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="p">=</span><span class="s">{32}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">year</span><span class="p">=</span><span class="s">{2019}</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">kobler2022spd</span><span class="p">,</span>
+<span class="w">   </span><span class="na">title</span><span class="p">=</span><span class="s">{SPD domain-specific batch normalization to crack interpretable</span>
+<span class="s">          unsupervised domain adaptation in EEG}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="p">=</span><span class="s">{Kobler, Reinmar J and Hirayama, Jun-ichiro and Zhao, Qibin and Kawanabe, Motoaki}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{Advances in Neural Information Processing Systems}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="p">=</span><span class="s">{35}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">pages</span><span class="p">=</span><span class="s">{6219--6235}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">year</span><span class="p">=</span><span class="s">{2022}</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">pan2022matt</span><span class="p">,</span>
+<span class="w">   </span><span class="na">title</span><span class="p">=</span><span class="s">{MAtt: A manifold attention network for EEG decoding}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="p">=</span><span class="s">{Pan, Yue-Ting and Chou, Jing-Lun and Wei, Chun-Shu}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{Advances in Neural Information Processing Systems}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="p">=</span><span class="s">{35}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">pages</span><span class="p">=</span><span class="s">{31116--31129}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">year</span><span class="p">=</span><span class="s">{2022}</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="nc">@article</span><span class="p">{</span><span class="nl">paillard2024green</span><span class="p">,</span>
+<span class="w">   </span><span class="na">title</span><span class="p">=</span><span class="s">{GREEN: a lightweight architecture using learnable wavelets and</span>
+<span class="s">          Riemannian geometry for biomarker exploration}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="p">=</span><span class="s">{Paillard, Joseph and Hipp, Joerg F. and Engemann, Denis A.}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">journal</span><span class="p">=</span><span class="s">{Patterns}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="p">=</span><span class="s">{6}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">number</span><span class="p">=</span><span class="s">{1}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">pages</span><span class="p">=</span><span class="s">{101153}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">year</span><span class="p">=</span><span class="s">{2025}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">doi</span><span class="p">=</span><span class="s">{10.1016/j.patter.2025.101153}</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="nc">@article</span><span class="p">{</span><span class="nl">ju2022tensor</span><span class="p">,</span>
+<span class="w">   </span><span class="na">title</span><span class="p">=</span><span class="s">{Tensor-CSPNet: A Novel Geometric Deep Learning Framework for</span>
+<span class="s">          Motor Imagery Classification}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">author</span><span class="p">=</span><span class="s">{Ju, Ce and Guan, Cuntai}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">journal</span><span class="p">=</span><span class="s">{IEEE Transactions on Neural Networks and Learning Systems}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">volume</span><span class="p">=</span><span class="s">{34}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">number</span><span class="p">=</span><span class="s">{12}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">pages</span><span class="p">=</span><span class="s">{10955--10969}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">year</span><span class="p">=</span><span class="s">{2023}</span><span class="p">,</span>
+<span class="w">   </span><span class="na">doi</span><span class="p">=</span><span class="s">{10.1109/TNNLS.2022.3172108}</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="nc">@article</span><span class="p">{</span><span class="nl">ju2026spdmatrixlearningneuroimaging</span><span class="p">,</span>
+<span class="w">      </span><span class="na">title</span><span class="p">=</span><span class="s">{SPD Matrix Learning for Neuroimaging Analysis: Perspectives, Methods, and Challenges}</span><span class="p">,</span>
+<span class="w">      </span><span class="na">author</span><span class="p">=</span><span class="s">{Ce Ju and Reinmar Kobler and Antoine Collas and Motoaki Kawanabe and Cuntai Guan and Bertrand Thirion}</span><span class="p">,</span>
+<span class="w">      </span><span class="na">year</span><span class="p">=</span><span class="s">{2026}</span><span class="p">,</span>
+<span class="w">      </span><span class="na">journal</span><span class="p">=</span><span class="s">{arXiv preprint arXiv2504.18882}</span><span class="p">,</span>
+<span class="w">      </span><span class="na">url</span><span class="p">=</span><span class="s">{https://arxiv.org/abs/2504.18882}</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="citing-spd-learn">
+<h2>Citing SPD Learn<a class="headerlink" href="#citing-spd-learn" title="Link to this heading">#</a></h2>
+<p>If you use SPD Learn in your research, please cite:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">aristimunha2025spdlearn</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{SPDlearn: A Geometric Deep Learning Python Library for</span>
+<span class="s">         Neural Decoding Through Trivialization}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Aristimunha, Bruno and Ju, Ce and Collas, Antoine and</span>
+<span class="s">          Bouchard, Florent and Thirion, Bertrand and</span>
+<span class="s">          Chevallier, Sylvain and Kobler, Reinmar}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">journal</span><span class="p">=</span><span class="s">{To be submitted}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2026}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="p">=</span><span class="s">{https://github.com/spdlearn/spd_learn}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="theory.html"><span class="doc">Theory</span></a> – Theoretical foundations</p></li>
+<li><p><a class="reference internal" href="api.html"><span class="doc">API Reference</span></a> – API reference for implemented models</p></li>
+<li><p><a class="reference internal" href="generated/auto_examples/index.html"><span class="doc">Applied Examples</span></a> – Practical examples</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="glossary.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Glossary</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, SPD Learn Developers.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
