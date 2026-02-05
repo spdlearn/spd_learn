@@ -1,0 +1,164 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+dynamic = ["version"]
+name = "spd_learn"
+description = "Deep Riemannian Learning for Symmetric Positive Definite matrices"
+authors = [{ name = "Bruno Aristimunha", email = "b.aristimunha@gmail.com" }]
+maintainers = [
+    { name = "Bruno Aristimunha", email = "b.aristimunha@gmail.com" },
+]
+
+keywords = [
+    "python",
+    "deep-learning",
+    "pytorch",
+    "spdnet",
+    "torch",
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering",
+    "Development Status :: 3 - Alpha",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+readme = "README.rst"
+requires-python = ">=3.11"
+dependencies = [
+    "torch",
+    "einops",
+    "numpy",
+]
+
+[project.optional-dependencies]
+tests = [
+    'pytest',
+    'pytest-cov',
+    'pytest-codeblocks',
+    'sybil',
+    'codecov',
+    'pytest_cases',
+    'mypy',
+]
+docs = [
+    'sphinx',
+    'pydata-sphinx-theme',
+    'sphinx_gallery',
+    'sphinx-copybutton',
+    'sphinx-sitemap',
+    'sphinxcontrib-bibtex',
+    'numpydoc',
+    'memory_profiler',
+    'ipython',
+    'sphinx_design',
+    'sphinx-autodoc-typehints',
+    'hydra-core',
+    'omegaconf',
+    'nbformat',
+]
+brain = [
+    'moabb',
+    'braindecode',
+    'moabb',
+    'nilearn',
+    'pyriemann',
+    'skada',
+]
+dev = [
+    'spd_learn[tests]',
+    'pre-commit',
+    'ruff',
+    'mypy',
+    'rich',  # For enhanced logging
+    'types-PyYAML',
+    'types-requests',
+]
+all = [
+    'spd_learn[tests]',
+    'spd_learn[docs]',
+    'spd_learn[brain]',
+    'spd_learn[dev]',
+]
+
+[tool.setuptools]
+
+[tool.setuptools.dynamic]
+version = {attr = "spd_learn.version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["spd_learn*"]  # package names should match these glob patterns (["*"] by default)
+exclude = []  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]  # Include isort rules (I)
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+# Sphinx-gallery examples have imports throughout the file
+"examples/**/*.py" = ["E402", "E501"]
+"docs/**/*.py" = ["E402", "E501", "F841"]
+# Tests can have long lines for assertions and descriptive messages
+"tests/**/*.py" = ["E501"]
+# Allow long lines in functional modules (math formulas in docstrings)
+"spd_learn/functional/**/*.py" = ["E501"]
+"spd_learn/modules/**/*.py" = ["E501"]
+# GitHub scripts
+".github/**/*.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["spd_learn"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+lines-between-types = 1
+lines-after-imports = 2
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "gpu: marks tests that require GPU",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["spd_learn"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/version.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]

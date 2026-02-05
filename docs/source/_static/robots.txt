@@ -1,0 +1,22 @@
+# SPD Learn Documentation - robots.txt
+# https://spdlearn.org/
+
+User-agent: *
+Allow: /
+
+# Exclude duplicate/generated content from indexing
+Disallow: /_sources/
+Disallow: /_downloads/
+Disallow: /genindex/
+Disallow: /search/
+Disallow: /py-modindex/
+
+# Allow important pages
+Allow: /index.html
+Allow: /installation.html
+Allow: /user_guide.html
+Allow: /api.html
+Allow: /generated/auto_examples/
+
+# Sitemap location
+Sitemap: https://spdlearn.org/sitemap.xml
