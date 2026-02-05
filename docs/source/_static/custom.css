@@ -54,6 +54,7 @@ html[data-theme="dark"] {
   --hf-text-muted: rgba(226, 232, 240, 0.7);
 }
 
+
 /* --------------------------------------------------------------------------
    1.5. Page Width & Layout Overrides (PyData Theme)
    -------------------------------------------------------------------------- */
@@ -881,7 +882,7 @@ html[data-theme="dark"] .hf-hero {
   position: absolute;
   width: 420px;
   height: 420px;
-  right: -120px;
+  right: 0;
   bottom: -140px;
   background: radial-gradient(circle, rgba(79, 140, 255, 0.22), transparent 65%);
   opacity: 0.6;
@@ -1425,6 +1426,7 @@ html[data-theme="dark"] .hf-quickstart .highlight button.copybtn:focus-visible {
   border-radius: 0 12px 12px 12px;
   color: #0f172a;
   padding: 0.8rem 1.05rem;
+  min-height: 220px;
 }
 
 html[data-theme="dark"] .sd-tab-set.hf-code-tabs>label {
@@ -3419,7 +3421,7 @@ html[data-theme="dark"] .spd-cone-bg-left {
 /* Hero Section positioning */
 .hf-hero {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   z-index: 1;
 }
 
@@ -3436,14 +3438,14 @@ html[data-theme="dark"] .spd-cone-bg-left {
   .spd-cone-bg-right {
     width: 42vmin;
     height: 42vmin;
-    right: -2%;
+    right: 0;
     opacity: 0.08;
   }
 
   .spd-cone-bg-left {
     width: 26vmin;
     height: 26vmin;
-    left: -5%;
+    left: 0;
     opacity: 0.05;
   }
 }
@@ -3452,7 +3454,7 @@ html[data-theme="dark"] .spd-cone-bg-left {
   .spd-cone-bg-right {
     width: 38vmin;
     height: 38vmin;
-    right: -5%;
+    right: 0;
     opacity: 0.06;
   }
 
@@ -3677,7 +3679,7 @@ html[data-theme="dark"] .highlight::after {
   content: '';
   position: absolute;
   top: 50%;
-  right: -40px;
+  right: 0;
   transform: translateY(-50%);
   width: 200px;
   height: 200px;
@@ -3722,7 +3724,7 @@ html[data-theme="dark"] body[data-page="api"] .bd-article h2:first-of-type::befo
     width: 180px;
     height: 180px;
     top: -40px;
-    right: -30px;
+    right: 0;
     opacity: 0.1;
   }
 
@@ -3733,7 +3735,7 @@ html[data-theme="dark"] body[data-page="api"] .bd-article h2:first-of-type::befo
   .hf-callout::before {
     width: 150px;
     height: 150px;
-    right: -50px;
+    right: 0;
     opacity: 0.05;
   }
 }
@@ -3743,7 +3745,7 @@ html[data-theme="dark"] body[data-page="api"] .bd-article h2:first-of-type::befo
     width: 120px;
     height: 120px;
     top: -20px;
-    right: -20px;
+    right: 0;
     opacity: 0.08;
   }
 

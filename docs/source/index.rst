@@ -47,7 +47,7 @@
 
             .. rst-class:: hf-hero-lede
 
-               **SPD Learn** is a __pure__ PyTorch library for geometric deep learning on Symmetric Positive Definite (SPD) matrices.
+               **SPD Learn** is a *pure* PyTorch library for geometric deep learning on Symmetric Positive Definite (SPD) matrices.
                The library provides differentiable Riemannian operations, broadcast-compatible layers,
                and reference implementations of published neural network architectures for SPD data.
 
@@ -60,11 +60,11 @@
 
                   Get Started
 
-            .. button-ref:: generated/auto_examples/index
-               :color: secondary
-               :class: sd-btn-lg hf-btn hf-btn-secondary
+               .. button-ref:: generated/auto_examples/index
+                  :color: secondary
+                  :class: sd-btn-lg hf-btn hf-btn-secondary
 
-               Examples
+                  Examples
 
          .. grid-item::
             :class: hf-hero-panel hf-reveal hf-delay-2
@@ -151,7 +151,7 @@
 
          .. rst-class:: hf-stat-text
 
-            Built entirely on PyTorch __only__, with automatic differentiation, and GPU acceleration.
+            Built entirely on PyTorch, with automatic differentiation, and GPU acceleration.
 
       .. grid-item-card::
          :link: generated/auto_examples/index
