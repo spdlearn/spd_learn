@@ -1,18 +1,65 @@
-:html_theme.sidebar_secondary.remove:
-
 .. _user_guide:
 
 ==========
 User Guide
 ==========
 
-This guide provides more guide introduction to SPD Learn and the fundamental concepts
-behind deep learning on Symmetric Positive Definite (SPD) matrices.
+.. rst-class:: guide-intro
 
-.. contents:: Contents
+   A practical introduction to deep learning on SPD matrices with SPD Learn.
+
+.. only:: html
+
+   .. raw:: html
+
+      <div class="guide-quickstart">
+         <h3 class="guide-quickstart-title">Recommended Path</h3>
+         <div class="guide-path-grid">
+            <a href="#what-are-spd-matrices" class="guide-path-card">
+               <span class="guide-path-number">1</span>
+               <div class="guide-path-content">
+                  <strong>SPD Matrices</strong>
+                  <span>What they are & why they matter</span>
+               </div>
+            </a>
+            <a href="#why-riemannian-geometry" class="guide-path-card">
+               <span class="guide-path-number">2</span>
+               <div class="guide-path-content">
+                  <strong>Riemannian Geometry</strong>
+                  <span>Why standard math breaks down</span>
+               </div>
+            </a>
+            <a href="#neural-network-modules" class="guide-path-card">
+               <span class="guide-path-number">3</span>
+               <div class="guide-path-content">
+                  <strong>Network Layers</strong>
+                  <span>BiMap, ReEig, LogEig explained</span>
+               </div>
+            </a>
+            <a href="#typical-spdnet-pipeline" class="guide-path-card">
+               <span class="guide-path-number">4</span>
+               <div class="guide-path-content">
+                  <strong>Build a Model</strong>
+                  <span>End-to-end SPDNet pipeline</span>
+               </div>
+            </a>
+         </div>
+      </div>
+
+      <details class="guide-toc-details">
+         <summary>Full contents</summary>
+
+.. contents::
    :local:
-   :depth: 2
+   :depth: 1
 
+.. only:: html
+
+   .. raw:: html
+
+      </details>
+
+----
 
 Introduction
 ============
@@ -50,8 +97,8 @@ different brain regions (fMRI) or electrode channels (EEG).
 where :math:`x_t \in \reals^n` are the observations and :math:`\bar{x}` is their mean.
 
 
-Why Riemannian Geometry?
-------------------------
+Why Geometry Matters
+--------------------
 
 Mathematically, the set of SPD matrices does not constitute a vector space under
 standard matrix operations. In particular, simple addition or the use of Euclidean

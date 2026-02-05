@@ -159,6 +159,7 @@ html_css_files = ["custom.css"]
 html_sidebars = {
     "api": [],
     "installation": [],
+    "user_guide": [],
 }
 
 html_logo = "_static/spd_learn.png"
@@ -222,6 +223,7 @@ html_theme_options = {
     # Secondary sidebar items - includes Colab launcher for examples
     # Note: We only specify auto_examples pattern; other pages use default sidebar
     "secondary_sidebar_items": {
+        "user_guide": [],  # Remove secondary sidebar from user guide
         "generated/auto_examples/**": [
             "page-toc",
             "sg_download_links",

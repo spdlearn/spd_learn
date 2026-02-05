@@ -4588,3 +4588,231 @@ html[data-theme="dark"] .theory-card-list li::before {
     font-size: 0.78rem;
   }
 }
+
+/* ==========================================================================
+   User Guide - Quick Start Path & ToC
+   ========================================================================== */
+
+/* Intro text */
+.guide-intro {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--hf-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+/* Quick start container */
+.guide-quickstart {
+  background: linear-gradient(135deg, rgba(238, 76, 44, 0.04), rgba(79, 140, 255, 0.04));
+  border: 1px solid var(--hf-card-border);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.guide-quickstart-title {
+  font-family: var(--pst-font-family-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--hf-text-muted);
+  margin: 0 0 1rem 0;
+}
+
+/* Path grid - 4 columns on desktop */
+.guide-path-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+/* Path card */
+.guide-path-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: white;
+  border: 1px solid var(--hf-card-border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.guide-path-card:hover {
+  border-color: var(--eegdash-primary);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Step number */
+.guide-path-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(135deg, var(--eegdash-primary), var(--hf-sky-strong));
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Path content */
+.guide-path-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.guide-path-content strong {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pst-color-text-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guide-path-card:hover .guide-path-content strong {
+  color: var(--eegdash-primary);
+}
+
+.guide-path-content span {
+  font-size: 0.7rem;
+  color: var(--hf-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Collapsible ToC */
+.guide-toc-details {
+  margin-bottom: 1.5rem;
+}
+
+.guide-toc-details summary {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--hf-text-muted);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guide-toc-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.guide-toc-details summary::before {
+  content: '▶';
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+}
+
+.guide-toc-details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.guide-toc-details summary:hover {
+  color: var(--eegdash-primary);
+}
+
+/* Style the contents inside details */
+.guide-toc-details .contents {
+  margin-top: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--hf-surface);
+  border: 1px solid var(--hf-card-border);
+  border-radius: 10px;
+}
+
+.guide-toc-details .contents > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-toc-details .contents > ul > li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.guide-toc-details .contents > ul > li:last-child {
+  border-bottom: none;
+}
+
+.guide-toc-details .contents a {
+  text-decoration: none;
+  color: var(--pst-color-text-base);
+  font-size: 0.9rem;
+}
+
+.guide-toc-details .contents a:hover {
+  color: var(--eegdash-primary);
+}
+
+/* Hide nested lists in collapsed ToC */
+.guide-toc-details .contents ul ul {
+  display: none;
+}
+
+/* ---- Dark mode ---- */
+html[data-theme="dark"] .guide-quickstart {
+  background: linear-gradient(135deg, rgba(238, 76, 44, 0.08), rgba(79, 140, 255, 0.08));
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .guide-path-card {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .guide-path-card:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: var(--eegdash-primary);
+}
+
+html[data-theme="dark"] .guide-toc-details .contents {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .guide-toc-details .contents > ul > li {
+  border-bottom-color: rgba(148, 163, 184, 0.1);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .guide-path-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .guide-path-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-quickstart {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .guide-path-card {
+    padding: 0.75rem;
+  }
+
+  .guide-path-number {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.8rem;
+  }
+}
