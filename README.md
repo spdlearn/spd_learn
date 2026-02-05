@@ -17,12 +17,10 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/spd_learn/"><img src="https://img.shields.io/pypi/v/spd_learn?color=blue&style=flat-square" alt="PyPI"></a>
-  <a href="https://pypi.org/project/spd_learn/"><img src="https://img.shields.io/pypi/pyversions/spd_learn?style=flat-square" alt="Python"></a>
-  <a href="https://github.com/spdlearn/spd_learn/blob/main/LICENSE.txt"><img src="https://img.shields.io/pypi/l/spd_learn?style=flat-square" alt="License"></a>
-  <a href="https://github.com/spdlearn/spd_learn/actions/workflows/install-tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/spdlearn/spd_learn/install-tests.yml?style=flat-square&label=tests" alt="Tests"></a>
-  <a href="https://spdlearn.org/"><img src="https://img.shields.io/github/actions/workflow/status/spdlearn/spd_learn/docs.yml?style=flat-square&label=docs" alt="Docs"></a>
-  <a href="https://github.com/spdlearn/spd_learn"><img src="https://img.shields.io/github/stars/spdlearn/spd_learn?style=flat-square" alt="GitHub Stars"></a>
+  <a href="https://github.com/spdlearn/spd_learn"><img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue?style=flat-square" alt="Python"></a>
+  <a href="https://github.com/spdlearn/spd_learn/blob/main/LICENSE.txt"><img src="https://img.shields.io/badge/license-BSD--3--Clause-green?style=flat-square" alt="License"></a>
+  <a href="https://github.com/spdlearn/spd_learn"><img src="https://img.shields.io/badge/PyTorch-2.0%2B-red?style=flat-square&logo=pytorch" alt="PyTorch"></a>
+  <a href="https://github.com/spdlearn/spd_learn"><img src="https://img.shields.io/github/stars/spdlearn/spd_learn?style=social" alt="GitHub Stars"></a>
 </p>
 
 ---
