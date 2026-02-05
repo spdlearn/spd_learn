@@ -199,7 +199,7 @@ html_theme_options = {
     "header_links_before_dropdown": 6,
     "navigation_depth": 6,
     "show_toc_level": 1,
-    "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links", "translate-button"],
     "icon_links": [
         {
             "name": "GitHub",
