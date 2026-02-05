@@ -1,0 +1,35 @@
+{#
+  Custom launcher links for Sphinx-Gallery example pages.
+  Adds an "Open in Colab" button that opens the generated notebook version
+  of the current example.
+#}
+
+{% if pagename.startswith('generated/auto_examples/') and not pagename.endswith('/index') and pagename != 'generated/auto_examples/index' and not pagename.endswith('sg_execution_times') %}
+
+{# Where notebooks are published in GitHub for Colab to load from. #}
+{% set colab_repo = colab_repo|default('bruAristimunha/spd_learn') %}
+{% set colab_branch = colab_branch|default('gh-pages') %}
+{% set colab_docs_path = colab_docs_path|default('') %}
+
+{% if colab_docs_path %}
+  {% set colab_prefix = colab_docs_path ~ '/' %}
+{% else %}
+  {% set colab_prefix = '' %}
+{% endif %}
+
+{#
+  Pages live at: generated/auto_examples/<name>
+  Notebooks are generated into: auto_examples/_notebooks/<name>.ipynb
+#}
+{% set example_ipynb_repo_path = pagename.replace('generated/auto_examples/', colab_prefix ~ 'auto_examples/_notebooks/') + '.ipynb' %}
+
+<div class="sd-card sd-shadow-sm sd-mb-3 spdlearn-colab-card">
+  <div class="sd-card-body spdlearn-colab-card-body">
+    <p class="sd-card-text sd-fs-5 sd-font-weight-bold sd-mb-2">Run this example in Google Colab</p>
+    <p class="sd-card-text sd-text-muted sd-mb-3">No installation required - runs directly in your browser with GPU support.</p>
+    <a class="sd-btn sd-btn-primary spdlearn-colab-btn" href="https://colab.research.google.com/github/{{ colab_repo }}/blob/{{ colab_branch }}/{{ example_ipynb_repo_path }}" target="_blank" rel="noopener">
+      <img class="spdlearn-colab-badge" alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+    </a>
+  </div>
+</div>
+{% endif %}
