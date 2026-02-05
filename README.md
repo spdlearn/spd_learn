@@ -152,7 +152,7 @@ Join our community and help advance deep learning on Riemannian manifolds.
 ### Supported by
 
 <p align="center">
-  <a href="https://www.inria.fr/"><img src="docs/source/_static/support/inria_dark.png" alt="Inria" height="60"></a>
+  <a href="https://www.inria.fr/"><img src="docs/source/_static/support/inria_red.png" alt="Inria" height="60"></a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://www.cnrs.fr/"><img src="docs/source/_static/support/cnrs_dark.png" alt="CNRS" height="60"></a>
   &nbsp;&nbsp;&nbsp;
