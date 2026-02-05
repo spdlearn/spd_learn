@@ -569,32 +569,32 @@
 
          <div class="logos-container hf-logo-cloud">
            <div class="logo-item">
-             <img src="_static/support/inria_white.png" alt="Inria" class="logo-light" style="height: 300px; width: auto;">
-             <img src="_static/support/inria_dark.png" alt="Inria" class="logo-dark" style="height: 300px; width: auto;">
+             <img src="_static/support/inria_dark.png" alt="Inria" class="logo-light" style="height: 300px; width: auto;">
+             <img src="_static/support/inria_white.png" alt="Inria" class="logo-dark" style="height: 300px; width: auto;">
            </div>
            <div class="logo-item">
-             <img src="_static/support/cnrs_white.png" alt="CNRS" class="logo-light" style="height:  300px; width: auto;">
-             <img src="_static/support/cnrs_dark.png" alt="CNRS" class="logo-dark" style="height:  300px; width: auto;">
+             <img src="_static/support/cnrs_dark.png" alt="CNRS" class="logo-light" style="height:  300px; width: auto;">
+             <img src="_static/support/cnrs_white.png" alt="CNRS" class="logo-dark" style="height:  300px; width: auto;">
            </div>
            <div class="logo-item">
-             <img src="_static/support/cea_white.png" alt="CEA" class="logo-light" style="height:  300px; width: auto;">
-             <img src="_static/support/cea_dark.png" alt="CEA" class="logo-dark" style="height:  300px; width: auto;">
+             <img src="_static/support/cea_dark.png" alt="CEA" class="logo-light" style="height:  300px; width: auto;">
+             <img src="_static/support/cea_white.png" alt="CEA" class="logo-dark" style="height:  300px; width: auto;">
            </div>
            <div class="logo-item">
-             <img src="_static/support/paris_saclay_white.jpg" alt="Université Paris-Saclay" class="logo-light" style="height: 300px; width: auto;">
-             <img src="_static/support/paris_saclay_dark.jpg" alt="Université Paris-Saclay" class="logo-dark" style="height: 300px; width: auto;">
+             <img src="_static/support/paris_saclay_dark.png" alt="Université Paris-Saclay" class="logo-light" style="height: 300px; width: auto;">
+             <img src="_static/support/paris_saclay_white.png" alt="Université Paris-Saclay" class="logo-dark" style="height: 300px; width: auto;">
            </div>
            <div class="logo-item">
              <img src="_static/support/atr_logo_white.png" alt="ATR" class="logo-light" style="height: 300px; width: auto;">
-             <img src="_static/support/atr_logo_white.png" alt="ATR" class="logo-dark" style="height: 300px; width: auto;">
+             <img src="_static/support/atr_logo_dark.png" alt="ATR" class="logo-dark" style="height: 300px; width: auto;">
            </div>
            <div class="logo-item">
              <img src="_static/support/ucsd_dark.svg" alt="UC San Diego" class="logo-light" style="height: 300px; width: auto;">
-             <img src="_static/support/ucsd_white.svg" alt="UC San Diego" class="logo-dark" style="height: 300px; width: auto;">
+             <img src="_static/support/ucsd_dark.svg" alt="UC San Diego" class="logo-dark" style="height: 300px; width: auto;">
            </div>
            <div class="logo-item">
              <img src="_static/support/usmb_dark.png" alt="Université Savoie Mont Blanc" class="logo-light" style="height: 300px; width: auto;">
-             <img src="_static/support/usmb_white.png" alt="Université Savoie Mont Blanc" class="logo-dark" style="height: 300px; width: auto;">
+             <img src="_static/support/usmb_dark.png" alt="Université Savoie Mont Blanc" class="logo-dark" style="height: 300px; width: auto;">
            </div>
          </div>
 
