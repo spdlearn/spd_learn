@@ -1,0 +1,170 @@
+name: docs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  cancel-in-progress: true
+on:
+  push:
+    branches:
+      - "master"
+      - "main"
+  pull_request:
+    branches:
+      - '*' # all branches, including forks
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build_docs:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "ubuntu-latest" ]
+        python-version: ["3.11"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "pyproject.toml"
+
+      - name: Install dependencies
+        run: uv pip install --system -e .[all]
+
+      - name: Test documentation code blocks
+        run: pytest docs/ -v
+
+      - name: Create/Restore Data Caches mne and Nilearn
+        id: cache-data
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/mne_data
+            ~/nilearn_data
+          key: ${{ runner.os }}-data-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-data
+
+      - name: Build Docs
+        run: make -C docs html
+
+      - name: Generate notebooks from examples (Colab)
+        run: |
+          set -euo pipefail
+          echo "Converting Python examples to notebooks..."
+          mkdir -p docs/build/html/auto_examples/_notebooks
+          find examples -type f -name '*.py' | while read -r f; do
+            rel="${f#examples/}"
+            out_path="docs/build/html/auto_examples/_notebooks/${rel%.py}.ipynb"
+            mkdir -p "$(dirname "$out_path")"
+            python .github/scripts/convert_to_notebook.py --input "$f" --output "$out_path"
+          done
+
+      # Upload documentation as artifact for all builds
+      - name: Upload documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-html
+          path: ./docs/build/html/
+          retention-days: 14
+
+      # Deploy PR preview to surge.sh (optional - requires SURGE_TOKEN secret)
+      - name: Deploy PR Preview
+        if: github.event_name == 'pull_request'
+        id: deploy-preview
+        continue-on-error: true
+        env:
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: |
+          if [ -z "$SURGE_TOKEN" ]; then
+            echo "SURGE_TOKEN not configured, skipping live preview deployment"
+            exit 0
+          fi
+          npm install -g surge
+          DEPLOY_DOMAIN="spd-learn-pr-${{ github.event.pull_request.number }}.surge.sh"
+          surge ./docs/build/html $DEPLOY_DOMAIN --token $SURGE_TOKEN
+          echo "preview_url=https://$DEPLOY_DOMAIN" >> $GITHUB_OUTPUT
+
+      # Comment on PR with preview link
+      - name: Comment PR with Preview Link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.deploy-preview.outputs.preview_url }}' || '';
+            const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const surgeSuccess = '${{ steps.deploy-preview.outcome }}' === 'success';
+
+            let body = `## 📚 Documentation Preview\n\n`;
+
+            if (surgeSuccess && previewUrl) {
+              body += `| Resource | Link |\n`;
+              body += `|----------|------|\n`;
+              body += `| 🌐 **Live Preview** | [${previewUrl}](${previewUrl}) |\n`;
+              body += `| 📦 Download Artifact | [View Workflow Run](${artifactUrl}) |\n\n`;
+              body += `> This preview will be available for 14 days. The live preview updates with each push to this PR.`;
+            } else {
+              body += `📦 **[Download Documentation Artifact](${artifactUrl})**\n\n`;
+              body += `> Download the \`documentation-html\` artifact from the workflow run to view the docs locally.\n\n`;
+              body += `💡 *To enable live previews, add a \`SURGE_TOKEN\` secret to this repository. See [surge.sh](https://surge.sh) for setup instructions.*`;
+            }
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Documentation Preview')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+  deploy:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    needs: build_docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download docs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: documentation-html
+          path: ./docs/build/html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build/html
+          publish_branch: gh-pages
+          force_orphan: true
