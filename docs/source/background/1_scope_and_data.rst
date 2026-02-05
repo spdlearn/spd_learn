@@ -34,10 +34,10 @@ utility layers such as :class:`~spd_learn.modules.CovLayer` to compute covarianc
 matrices from raw signals and feed them to neural network layers. The following
 covariance estimation methods are supported:
 
-* :func:`~spd_learn.functional.covariance.covariance`: Empirical covariance.
-* :func:`~spd_learn.functional.covariance.sample_covariance`: Sample covariance with Bessel correction.
-* :func:`~spd_learn.functional.covariance.real_covariance`: Real part of the covariance for complex signals.
-* :func:`~spd_learn.functional.covariance.cross_covariance`: Cross-frequency covariance matrix.
+* :func:`~spd_learn.functional.covariance`: Empirical covariance.
+* :func:`~spd_learn.functional.sample_covariance`: Sample covariance with Bessel correction.
+* :func:`~spd_learn.functional.real_covariance`: Real part of the covariance for complex signals.
+* :func:`~spd_learn.functional.cross_covariance`: Cross-frequency covariance matrix.
 
 
 
