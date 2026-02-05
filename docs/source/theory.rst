@@ -1,5 +1,4 @@
 :html_theme.sidebar_secondary.remove: true
-:html_theme.sidebar_primary.remove: true
 
 .. _theory:
 
@@ -7,109 +6,129 @@
 Theory
 ======
 
-This section provides the theoretical foundations for understanding SPD Learn,
-covering both the mathematical concepts and the terminology used throughout
-the documentation.
+.. rst-class:: theory-intro
+
+   Mathematical foundations and reference material for SPD Learn.
 
 .. only:: html
 
-   .. grid:: 1 2 2 5
-      :gutter: 4
+   .. raw:: html
 
-      .. grid-item-card:: Background
-         :link: background/index
-         :link-type: doc
+      <div class="theory-grid">
+         <a href="background/index.html" class="theory-card">
+            <div class="theory-card-header">
+               <div class="theory-card-icon">
+                  <i class="fa-solid fa-book-open"></i>
+               </div>
+               <span class="theory-card-tag tag-start">Start here</span>
+            </div>
+            <h3 class="theory-card-title">Background</h3>
+            <ul class="theory-card-list">
+               <li>Data representations (EEG/fMRI covariances)</li>
+               <li>Minimal geometry & metric choices</li>
+               <li>SPDNet pipeline overview</li>
+            </ul>
+            <div class="theory-card-footer">
+               <span class="theory-card-meta">~10 min</span>
+               <span class="theory-card-cta">Read <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+         </a>
 
-         Concise background for using SPD Learn: data representations, minimal
-         geometry, SPDNet pipeline, and limitations.
+         <a href="geometric_concepts.html" class="theory-card">
+            <div class="theory-card-header">
+               <div class="theory-card-icon">
+                  <i class="fa-solid fa-compass-drafting"></i>
+               </div>
+               <span class="theory-card-tag tag-core">Core math</span>
+            </div>
+            <h3 class="theory-card-title">Geometric Concepts</h3>
+            <ul class="theory-card-list">
+               <li>SPD manifold & Riemannian metrics</li>
+               <li>Exp/Log maps, parallel transport</li>
+               <li>Layer operation visualizations</li>
+            </ul>
+            <div class="theory-card-footer">
+               <span class="theory-card-meta">~20 min</span>
+               <span class="theory-card-cta">Read <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+         </a>
 
-      .. grid-item-card:: Geometric Concepts
-         :link: geometric_concepts
-         :link-type: doc
+         <a href="numerical_stability.html" class="theory-card">
+            <div class="theory-card-header">
+               <div class="theory-card-icon">
+                  <i class="fa-solid fa-shield-halved"></i>
+               </div>
+               <span class="theory-card-tag tag-practical">Practical</span>
+            </div>
+            <h3 class="theory-card-title">Numerical Stability</h3>
+            <ul class="theory-card-list">
+               <li>Dtype-aware thresholds & clamping</li>
+               <li>Configuration for stability</li>
+               <li>Troubleshooting NaN & convergence</li>
+            </ul>
+            <div class="theory-card-footer">
+               <span class="theory-card-meta">~8 min</span>
+               <span class="theory-card-cta">Read <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+         </a>
 
-         Riemannian geometry on SPD manifolds: metrics, geodesics,
-         exponential/logarithmic maps, parallel transport, and layer visualizations.
+         <a href="notation.html" class="theory-card">
+            <div class="theory-card-header">
+               <div class="theory-card-icon">
+                  <i class="fa-solid fa-sigma"></i>
+               </div>
+               <span class="theory-card-tag tag-reference">Reference</span>
+            </div>
+            <h3 class="theory-card-title">Notation</h3>
+            <ul class="theory-card-list">
+               <li>Manifold symbols (𝒮⁺, Sym, T_P)</li>
+               <li>Distance & metric conventions</li>
+               <li>Layer operation symbols</li>
+            </ul>
+            <div class="theory-card-footer">
+               <span class="theory-card-meta">~3 min</span>
+               <span class="theory-card-cta">Read <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+         </a>
 
-      .. grid-item-card:: Numerical Stability
-         :link: numerical_stability
-         :link-type: doc
+         <a href="glossary.html" class="theory-card">
+            <div class="theory-card-header">
+               <div class="theory-card-icon">
+                  <i class="fa-solid fa-tags"></i>
+               </div>
+               <span class="theory-card-tag tag-reference">Reference</span>
+            </div>
+            <h3 class="theory-card-title">Glossary</h3>
+            <ul class="theory-card-list">
+               <li>SPD matrices & Riemannian terms</li>
+               <li>Layer & module definitions</li>
+               <li>Model architecture names</li>
+            </ul>
+            <div class="theory-card-footer">
+               <span class="theory-card-meta">Quick lookup</span>
+               <span class="theory-card-cta">Read <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+         </a>
 
-         Managing numerical precision in SPD operations: dtype-aware thresholds,
-         eigenvalue clamping, and troubleshooting common issues.
-
-      .. grid-item-card:: Notation
-         :link: notation
-         :link-type: doc
-
-         Standard mathematical notation conventions used throughout SPD Learn,
-         including symbols for manifolds, metrics, and operations.
-
-      .. grid-item-card:: Glossary
-         :link: glossary
-         :link-type: doc
-
-         Quick reference for key terms and definitions used throughout SPD Learn,
-         from SPD matrices to domain adaptation.
-
-      .. grid-item-card:: References
-         :link: references
-         :link-type: doc
-
-         Literature map, model legend, and complete bibliography of foundational
-         works implemented in SPD Learn.
-
-
-Overview
-========
-
-Understanding the geometry of Symmetric Positive Definite (SPD) matrices is
-essential for effective use of SPD Learn. The pages below provide six
-complementary perspectives:
-
-**Background** provides the minimal context needed to use SPD Learn:
-
-- What data representations the library targets (EEG/fMRI covariances)
-- Minimal geometric ideas and metric choices
-- How SPDNet is implemented in the package
-- Practical limitations and decision checklist
-
-**Geometric Concepts** offers an in-depth exploration of:
-
-- The SPD manifold structure and why covariance matrices live on it
-- Riemannian metrics (Affine-Invariant, Log-Euclidean, Bures-Wasserstein, Log-Cholesky)
-- Tangent spaces, exponential and logarithmic maps
-- Parallel transport for domain adaptation
-- trivialization for optimization
-- Visualizations of SPD network layers
-
-**Numerical Stability** covers practical considerations:
-
-- Dtype-aware numerical thresholds
-- Configuration system for stability parameters
-- Safe eigenvalue clamping and validation
-- Recommendations for different training scenarios
-- Troubleshooting NaN values and convergence issues
-
-**Notation** establishes consistent mathematical conventions:
-
-- Spaces and manifolds (:math:`\spd`, :math:`\sym`, etc.)
-- Tangent space notation (:math:`\tangent{P}`)
-- Distance and metric symbols
-- Layer operations and special symbols
-
-**Glossary** provides concise definitions for:
-
-- Core mathematical concepts (SPD matrices, Riemannian manifolds, geodesics)
-- SPD Learn layers and modules (BiMap, ReEig, LogEig, BatchNorm variants)
-- Model architectures (SPDNet, TSMNet, TensorCSPNet, GREEN, etc.)
-- Application-specific terms (BCI, motor imagery, domain adaptation)
-
-**References** offers a comprehensive bibliography including:
-
-- Interactive literature map showing model relationships and citation networks
-- Color-coded legend for all model families implemented in SPD Learn
-- Full bibliographic entries with DOIs and links
-- BibTeX entries for easy citation
+         <a href="references.html" class="theory-card">
+            <div class="theory-card-header">
+               <div class="theory-card-icon">
+                  <i class="fa-solid fa-bookmark"></i>
+               </div>
+               <span class="theory-card-tag tag-reference">Reference</span>
+            </div>
+            <h3 class="theory-card-title">References</h3>
+            <ul class="theory-card-list">
+               <li>Interactive literature map</li>
+               <li>Model family legend</li>
+               <li>Full bibliography & BibTeX</li>
+            </ul>
+            <div class="theory-card-footer">
+               <span class="theory-card-meta">95 papers</span>
+               <span class="theory-card-cta">Read <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+         </a>
+      </div>
 
 
 .. toctree::

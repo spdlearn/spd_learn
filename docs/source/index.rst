@@ -92,7 +92,7 @@
                         from spd_learn.models import SPDNet
 
                         # Create SPDNet for 22-channel EEG, 4 classes
-                        model = SPDNet(n_chans=22, n_outputs=4, subspacedim=16)
+                        model = SPDNet(n_chans=22, n_outputs=4)
 
                         # Input: (batch, channels, time)
                         X = torch.randn(32, 22, 500)
@@ -294,7 +294,7 @@
             .. raw:: html
 
                <span class="hf-tag">Phase</span>
-               <span class="hf-tag">Hilbert</span>
+               <span class="hf-tag">Dynamic System</span>
                <span class="hf-tag">BiMap</span>
 
       .. grid-item-card:: GREEN
@@ -412,72 +412,96 @@
 .. raw:: html
 
     <h2 class="hf-section-title hf-section-title-center">Getting Started</h2>
-    <p class="hf-section-subtitle" style="text-align: center; margin-left: auto; margin-right: auto;">Three simple steps to start using SPD Learn.</p>
+    <p class="hf-section-subtitle" style="text-align: center; margin-left: auto; margin-right: auto;">Get up and running with SPD Learn in three steps.</p>
 
 .. only:: html
 
-   .. grid:: 1 1 3 3
-      :gutter: 4
-      :class-container: hf-step-grid
+   .. tab-set::
+      :class: hf-getting-started-stepper
 
-      .. grid-item-card::
-         :class-card: hf-step
+      .. tab-item:: 1. Install
 
          .. raw:: html
 
-            <div class="hf-step-number">1</div>
-
-         **Install**
+            <div class="step-header">
+               <span class="step-indicator">Step 1 of 3</span>
+               <h3 class="step-title">Install the library</h3>
+               <p class="step-subtitle">Add SPD Learn to your Python environment with pip or from source.</p>
+            </div>
 
          .. code-block:: bash
 
             pip install spd_learn
 
-         Or install from source:
+         .. raw:: html
+
+            <p class="step-hint">For development, clone the repo and install in editable mode:</p>
 
          .. code-block:: bash
 
             git clone https://github.com/spdlearn/spd_learn
             cd spd_learn && pip install -e .
 
-      .. grid-item-card::
-         :class-card: hf-step
+         .. raw:: html
+
+            <div class="step-actions">
+               <a href="installation.html" class="step-cta">Full installation guide</a>
+            </div>
+
+      .. tab-item:: 2. Import & Create
 
          .. raw:: html
 
-            <div class="hf-step-number">2</div>
-
-         **Import & Create**
+            <div class="step-header">
+               <span class="step-indicator">Step 2 of 3</span>
+               <h3 class="step-title">Create your SPD model</h3>
+               <p class="step-subtitle">Define an SPDNet with BiMap and ReEig layers in a few lines of code.</p>
+            </div>
 
          .. code-block:: python
 
             from spd_learn.models import SPDNet
-            from spd_learn.modules import BiMap, ReEig
 
-            # Create your model
-            model = SPDNet(n_chans=22, n_outputs=4, subspacedim=16)
-
-      .. grid-item-card::
-         :class-card: hf-step
+            model = SPDNet(
+                n_chans=22,        # EEG channels
+                n_outputs=4,       # Number of classes
+                subspacedim=16     # SPD subspace dimension
+            )
 
          .. raw:: html
 
-            <div class="hf-step-number">3</div>
+            <p class="step-hint">The model handles covariance computation, SPD projection, and classification end-to-end.</p>
+            <div class="step-actions">
+               <a href="api.html" class="step-cta">Explore model architectures</a>
+            </div>
 
-         **Train & Evaluate**
+      .. tab-item:: 3. Train
+
+         .. raw:: html
+
+            <div class="step-header">
+               <span class="step-indicator">Step 3 of 3</span>
+               <h3 class="step-title">Train with PyTorch</h3>
+               <p class="step-subtitle">Use standard PyTorch training loops — no special APIs required.</p>
+            </div>
 
          .. code-block:: python
 
-            import torch
-
-            # Standard PyTorch training
-            optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+            optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+            criterion = torch.nn.CrossEntropyLoss()
 
             for epoch in range(100):
-                output = model(X_train)
-                loss = criterion(output, y_train)
+                optimizer.zero_grad()
+                loss = criterion(model(X_train), y_train)
                 loss.backward()
                 optimizer.step()
+
+         .. raw:: html
+
+            <p class="step-hint">SPD Learn integrates with scikit-learn pipelines via skorch wrappers.</p>
+            <div class="step-actions">
+               <a href="generated/auto_examples/index.html" class="step-cta">See full examples</a>
+            </div>
 
 ----
 
@@ -604,6 +628,15 @@
 
     <h2 class="hf-section-title hf-section-title-center">Citation</h2>
     <p class="hf-section-subtitle" style="text-align: center; margin-left: auto; margin-right: auto;">If you use SPD Learn in your research, please cite us.</p>
+
+.. raw:: html
+
+    <div class="citation-apa">
+      <span class="citation-text">Aristimunha, B., Ju, C., Collas, A., Bouchard, F., Mian, A., Thirion, B., Chevallier, S., &amp; Kobler, R. (2026). SPDlearn: A geometric deep learning Python library for neural decoding through trivialization. <em>To be submitted</em>. https://github.com/spdlearn/spd_learn</span>
+      <button class="citation-copy-btn" onclick="navigator.clipboard.writeText('Aristimunha, B., Ju, C., Collas, A., Bouchard, F., Mian, A., Thirion, B., Chevallier, S., & Kobler, R. (2026). SPDlearn: A geometric deep learning Python library for neural decoding through trivialization. To be submitted. https://github.com/spdlearn/spd_learn'); this.innerHTML='<i class=&quot;fa-solid fa-check&quot;></i>'; setTimeout(() => this.innerHTML='<i class=&quot;fa-solid fa-copy&quot;></i>', 2000);" title="Copy APA citation">
+        <i class="fa-solid fa-copy"></i>
+      </button>
+    </div>
 
 .. code-block:: bibtex
 

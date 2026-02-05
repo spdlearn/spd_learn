@@ -29,9 +29,12 @@ docs/screenshot*
 
 dist/
 docs/build/
+docs/_build/
+_build/
 docs/source/sg_execution_times.rst
 docs/source/gen_modules/
 docs/source/generated/
+generated/
 docs/auto_examples/
 docs/auto_tutorials/
 docs/modules/generated/

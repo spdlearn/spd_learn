@@ -1426,7 +1426,6 @@ html[data-theme="dark"] .hf-quickstart .highlight button.copybtn:focus-visible {
   border-radius: 0 12px 12px 12px;
   color: #0f172a;
   padding: 0.8rem 1.05rem;
-  min-height: 220px;
 }
 
 html[data-theme="dark"] .sd-tab-set.hf-code-tabs>label {
@@ -3095,18 +3094,131 @@ article hr {
   margin: 3rem 0;
 }
 
-/* Citation Block Styling */
-article .highlight-bibtex {
-  border-radius: 16px;
-  overflow: hidden;
+/* APA Citation Styling - Top of unified citation card */
+.citation-apa {
+  position: relative;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--pst-color-text-base);
+  padding: 1.5rem 3.5rem 1.25rem 2rem;
+  margin: 1.5rem auto 0;
+  max-width: 900px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.02), rgba(79, 140, 255, 0.04));
+  border-radius: 12px 12px 0 0;
   border: 1px solid var(--hf-card-border);
+  border-bottom: none;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+/* APA format label */
+.citation-apa::before {
+  content: "APA";
+  position: absolute;
+  top: 0;
+  left: 1.5rem;
+  transform: translateY(-50%);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.6rem;
+  background: var(--pst-color-surface);
+  border-radius: 4px;
+  color: var(--pst-color-text-muted);
+  border: 1px solid var(--hf-card-border);
+  z-index: 1;
+}
+
+.citation-apa em {
+  font-style: italic;
+}
+
+.citation-copy-btn {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 1px solid var(--hf-card-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  color: var(--pst-color-text-muted);
+  transition: all 0.2s ease;
+}
+
+.citation-copy-btn:hover {
+  background: var(--eegdash-primary);
+  border-color: var(--eegdash-primary);
+  color: white;
+}
+
+html[data-theme="dark"] .citation-apa {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.5), rgba(30, 41, 59, 0.6));
+  border-bottom: none;
+}
+
+html[data-theme="dark"] .citation-apa::before {
+  background: var(--pst-color-background);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+html[data-theme="dark"] .citation-copy-btn {
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+html[data-theme="dark"] .citation-copy-btn:hover {
+  background: var(--eegdash-primary);
+  border-color: var(--eegdash-primary);
+}
+
+/* Citation Block Styling - Bottom of unified citation card */
+article .highlight-bibtex {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  border-radius: 0 0 12px 12px;
+  overflow: visible;
+  border: 1px solid var(--hf-card-border);
+  border-top: 1px dashed var(--hf-card-border);
+}
+
+/* BibTeX format label */
+article .highlight-bibtex::before {
+  content: "BIBTEX";
+  position: absolute;
+  top: 0;
+  left: 1.5rem;
+  transform: translateY(-50%);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.6rem;
+  background: var(--pst-color-surface);
+  border-radius: 4px;
+  color: var(--pst-color-text-muted);
+  border: 1px solid var(--hf-card-border);
+  z-index: 1;
 }
 
 article .highlight-bibtex pre {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.03), rgba(79, 140, 255, 0.05));
   padding: 1.5rem;
+  padding-top: 1.25rem;
   margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: hidden;
+  border-radius: 0 0 12px 12px;
+}
+
+html[data-theme="dark"] article .highlight-bibtex {
+  border-top-color: rgba(148, 163, 184, 0.3);
+}
+
+html[data-theme="dark"] article .highlight-bibtex::before {
+  background: var(--pst-color-background);
+  border-color: rgba(148, 163, 184, 0.3);
 }
 
 html[data-theme="dark"] article .highlight-bibtex pre {
@@ -3980,4 +4092,499 @@ html[data-theme="dark"] img[loading="lazy"]:not(.loaded) {
 /* Ensure gallery images use lazy loading */
 .sphx-glr-thumbcontainer img {
   loading: lazy;
+}
+
+/* ==========================================================================
+   Getting Started Stepper
+   Clean tab-based stepper with proper hierarchy and visual connection
+   ========================================================================== */
+
+.sd-tab-set.hf-getting-started-stepper {
+  max-width: 760px;
+  margin: 1.5rem auto 2.5rem;
+}
+
+/* Hide default radio inputs */
+.sd-tab-set.hf-getting-started-stepper > input {
+  display: none;
+}
+
+/* Tab container - flex row centered */
+.sd-tab-set.hf-getting-started-stepper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0;
+}
+
+/* Step tabs - clean underline style */
+.sd-tab-set.hf-getting-started-stepper > label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: var(--pst-font-family-heading);
+  color: var(--hf-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover state */
+.sd-tab-set.hf-getting-started-stepper > label:hover {
+  color: var(--eegdash-primary);
+}
+
+/* Active/selected step - underline style */
+.sd-tab-set.hf-getting-started-stepper > input:checked + label {
+  color: var(--eegdash-primary);
+  border-bottom-color: var(--eegdash-primary);
+  font-weight: 700;
+}
+
+/* Content panel */
+.sd-tab-set.hf-getting-started-stepper .sd-tab-content {
+  width: 100%;
+  text-align: left;
+  background: white;
+  border: 1px solid var(--hf-card-border);
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  margin-top: 0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* Step header container */
+.sd-tab-set.hf-getting-started-stepper .step-header {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--hf-card-border);
+}
+
+/* Step indicator badge */
+.sd-tab-set.hf-getting-started-stepper .step-indicator {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--eegdash-primary);
+  background: rgba(238, 76, 44, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/* Step title */
+.sd-tab-set.hf-getting-started-stepper .step-title {
+  font-family: var(--pst-font-family-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pst-color-text-base);
+  margin: 0 0 0.35rem 0;
+  line-height: 1.3;
+}
+
+/* Step subtitle */
+.sd-tab-set.hf-getting-started-stepper .step-subtitle {
+  font-size: 0.95rem;
+  color: var(--hf-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Step hint text */
+.sd-tab-set.hf-getting-started-stepper .step-hint {
+  font-size: 0.85rem;
+  color: var(--hf-text-muted);
+  margin: 0.75rem 0;
+  font-style: italic;
+}
+
+/* Code blocks in stepper */
+.sd-tab-set.hf-getting-started-stepper .sd-tab-content div.highlight {
+  margin: 1rem 0;
+  border-radius: 8px;
+  border: 1px solid var(--hf-card-border);
+  overflow: hidden;
+}
+
+.sd-tab-set.hf-getting-started-stepper .sd-tab-content div.highlight pre {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  max-height: none;
+}
+
+/* Step CTA actions */
+.sd-tab-set.hf-getting-started-stepper .step-actions {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hf-card-border);
+}
+
+.sd-tab-set.hf-getting-started-stepper .step-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--eegdash-primary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.sd-tab-set.hf-getting-started-stepper .step-cta:hover {
+  color: var(--eegdash-primary-dark);
+  text-decoration: underline;
+}
+
+.sd-tab-set.hf-getting-started-stepper .step-cta::after {
+  content: '\2192';
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.sd-tab-set.hf-getting-started-stepper .step-cta:hover::after {
+  transform: translateX(3px);
+}
+
+/* ---- Dark mode ---- */
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper > label {
+  color: var(--hf-text-muted);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper > label:hover {
+  color: var(--eegdash-primary);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper > input:checked + label {
+  color: var(--eegdash-primary);
+  border-bottom-color: var(--eegdash-primary);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper .sd-tab-content {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(148, 163, 184, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper .step-header {
+  border-bottom-color: rgba(148, 163, 184, 0.15);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper .step-indicator {
+  background: rgba(238, 76, 44, 0.2);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper .step-actions {
+  border-top-color: rgba(148, 163, 184, 0.15);
+}
+
+html[data-theme="dark"] .sd-tab-set.hf-getting-started-stepper .sd-tab-content div.highlight {
+  border-color: rgba(148, 163, 184, 0.15);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .sd-tab-set.hf-getting-started-stepper {
+    max-width: 100%;
+    margin: 1rem auto 2rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper > label {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .sd-tab-content {
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .step-title {
+    font-size: 1.1rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .step-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .sd-tab-content div.highlight pre {
+    font-size: 0.8rem;
+    padding: 0.875rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sd-tab-set.hf-getting-started-stepper > label {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .sd-tab-content {
+    padding: 1rem 1.25rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .step-indicator {
+    font-size: 0.65rem;
+  }
+
+  .sd-tab-set.hf-getting-started-stepper .step-title {
+    font-size: 1rem;
+  }
+}
+
+/* ==========================================================================
+   Theory Page - Card Grid
+   Clean, scannable card layout for theory section landing page
+   ========================================================================== */
+
+/* Intro text */
+.theory-intro {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--hf-text-muted);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Card grid - 3 columns on desktop, 2 on tablet, 1 on mobile */
+.theory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-width: 1000px;
+  margin: 0 auto 3rem;
+}
+
+/* Individual card */
+.theory-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid var(--hf-card-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theory-card:hover {
+  border-color: var(--eegdash-primary);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
+}
+
+.theory-card:focus {
+  outline: 2px solid var(--eegdash-primary);
+  outline-offset: 2px;
+}
+
+/* Card header with icon and tag */
+.theory-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+/* Icon container */
+.theory-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: rgba(238, 76, 44, 0.08);
+  border-radius: 8px;
+  color: var(--eegdash-primary);
+  font-size: 1rem;
+}
+
+/* Tag/badge */
+.theory-card-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+.theory-card-tag.tag-start {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+.theory-card-tag.tag-core {
+  background: rgba(79, 140, 255, 0.12);
+  color: #2563eb;
+}
+
+.theory-card-tag.tag-practical {
+  background: rgba(251, 146, 60, 0.12);
+  color: #ea580c;
+}
+
+.theory-card-tag.tag-reference {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+/* Card title */
+.theory-card-title {
+  font-family: var(--pst-font-family-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pst-color-text-base);
+  margin: 0 0 0.6rem 0;
+  line-height: 1.3;
+}
+
+.theory-card:hover .theory-card-title {
+  color: var(--eegdash-primary);
+}
+
+/* Card bullet list */
+.theory-card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 auto 0;
+  font-size: 0.8rem;
+  color: var(--hf-text-muted);
+  line-height: 1.5;
+}
+
+.theory-card-list li {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.theory-card-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--hf-card-border);
+}
+
+/* Card footer */
+.theory-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--hf-card-border);
+}
+
+/* Metadata (time to read) */
+.theory-card-meta {
+  font-size: 0.7rem;
+  color: var(--hf-text-muted);
+}
+
+/* CTA link */
+.theory-card-cta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--eegdash-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.theory-card-cta i {
+  font-size: 0.65rem;
+  transition: transform 0.2s ease;
+}
+
+.theory-card:hover .theory-card-cta i {
+  transform: translateX(3px);
+}
+
+/* ---- Dark mode ---- */
+html[data-theme="dark"] .theory-card {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .theory-card:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: var(--eegdash-primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .theory-card-icon {
+  background: rgba(238, 76, 44, 0.15);
+}
+
+html[data-theme="dark"] .theory-card-tag.tag-start {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+html[data-theme="dark"] .theory-card-tag.tag-core {
+  background: rgba(79, 140, 255, 0.2);
+  color: #60a5fa;
+}
+
+html[data-theme="dark"] .theory-card-tag.tag-practical {
+  background: rgba(251, 146, 60, 0.2);
+  color: #fb923c;
+}
+
+html[data-theme="dark"] .theory-card-tag.tag-reference {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .theory-card-footer {
+  border-top-color: rgba(148, 163, 184, 0.15);
+}
+
+html[data-theme="dark"] .theory-card-list li::before {
+  color: rgba(148, 163, 184, 0.4);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .theory-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .theory-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .theory-card {
+    padding: 1rem 1.25rem;
+  }
+
+  .theory-card-title {
+    font-size: 1rem;
+  }
+
+  .theory-card-list {
+    font-size: 0.78rem;
+  }
 }
