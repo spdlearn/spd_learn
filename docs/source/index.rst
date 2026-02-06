@@ -593,8 +593,8 @@
 
          <div class="logos-container hf-logo-cloud">
            <div class="logo-item">
-             <img src="_static/support/inria_dark.png" alt="Inria" class="logo-light" style="height: 300px; width: auto;">
-             <img src="_static/support/inria_white.png" alt="Inria" class="logo-dark" style="height: 300px; width: auto;">
+             <img src="_static/support/inria_red.png" alt="Inria" class="logo-light" style="height: 300px; width: auto;">
+             <img src="_static/support/inria_red.png" alt="Inria" class="logo-dark" style="height: 300px; width: auto;">
            </div>
            <div class="logo-item">
              <img src="_static/support/cnrs_dark.png" alt="CNRS" class="logo-light" style="height:  300px; width: auto;">
