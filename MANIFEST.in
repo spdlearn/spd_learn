@@ -1,0 +1,6 @@
+include LICENSE.txt
+include README.md
+include CHANGELOG.md
+include pyproject.toml
+
+recursive-include spd_learn *.py
