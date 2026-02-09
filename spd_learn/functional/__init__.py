@@ -15,6 +15,7 @@ matrices, organized into:
 """
 
 from .autograd import modeig_backward, modeig_forward
+from .frechet import frechet_derivative_exp, frechet_derivative_log
 from .batchnorm import (
     karcher_mean_iteration,
     spd_centering,
@@ -165,6 +166,9 @@ __all__ = [
     "compute_gabor_wavelet",
     # Dropout
     "dropout_spd",
+    # Frechet derivatives
+    "frechet_derivative_log",
+    "frechet_derivative_exp",
     # Autograd utilities
     "modeig_backward",
     "modeig_forward",

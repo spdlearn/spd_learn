@@ -10,12 +10,14 @@ from spd_learn.functional import (
     bures_wasserstein_transport,
     cholesky_exp,
     cholesky_log,
+    frechet_derivative_log,
     log_cholesky_distance,
     log_cholesky_geodesic,
     log_cholesky_mean,
     log_euclidean_distance,
     parallel_transport_airm,
     parallel_transport_lem,
+    parallel_transport_log_cholesky,
     pole_ladder,
     schild_ladder,
     transport_tangent_vector,
@@ -433,13 +435,172 @@ def test_parallel_transport_airm_gradcheck():
 # --- Parallel transport LEM tests ---
 
 
-def test_parallel_transport_lem_is_identity():
-    """LEM transport should be identity (flat geometry)."""
+def lem_inner_product(U, V, P):
+    """Compute the LEM inner product <U, V>_P = tr(D_log(P)[U] D_log(P)[V])."""
+    dlog_U = frechet_derivative_log(P, U)
+    dlog_V = frechet_derivative_log(P, V)
+    return torch.sum(dlog_U * dlog_V, dim=(-2, -1))
+
+
+def test_parallel_transport_lem_self_transport():
+    """Transport from P to P should be identity."""
+    P = make_spd(3)
+    V = make_symmetric(3)
+    V_transported = parallel_transport_lem(V, P, P)
+    assert torch.allclose(V, V_transported, atol=1e-5), (
+        f"Self-transport failed: max diff = {(V - V_transported).abs().max().item():.2e}"
+    )
+
+
+def test_parallel_transport_lem_preserves_symmetry():
+    """Transported vector should be symmetric."""
     P = make_spd(3)
     Q = make_spd(3)
     V = make_symmetric(3)
     V_transported = parallel_transport_lem(V, P, Q)
-    assert torch.allclose(V, V_transported, atol=1e-6)
+    assert torch.allclose(V_transported, V_transported.T, atol=1e-6)
+
+
+def test_parallel_transport_lem_roundtrip():
+    """Transport P->Q then Q->P should recover the original vector."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    V = make_symmetric(3)
+
+    V_to_Q = parallel_transport_lem(V, P, Q)
+    V_back = parallel_transport_lem(V_to_Q, Q, P)
+
+    assert torch.allclose(V, V_back, atol=1e-5), (
+        f"Roundtrip failed: max diff = {(V - V_back).abs().max().item():.2e}"
+    )
+
+
+def test_parallel_transport_lem_linearity():
+    """Parallel transport should be linear: Gamma(aU + bV) = a*Gamma(U) + b*Gamma(V)."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    U = make_symmetric(3)
+    V = make_symmetric(3)
+    a, b = 2.5, -1.3
+
+    combined = a * U + b * V
+    transported_combined = parallel_transport_lem(combined, P, Q)
+
+    transported_U = parallel_transport_lem(U, P, Q)
+    transported_V = parallel_transport_lem(V, P, Q)
+    linear_combo_transported = a * transported_U + b * transported_V
+
+    assert torch.allclose(transported_combined, linear_combo_transported, atol=1e-6)
+
+
+def test_parallel_transport_lem_preserves_inner_product():
+    """Parallel transport should preserve the LEM inner product."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    U = make_symmetric(3)
+    V = make_symmetric(3)
+
+    inner_P = lem_inner_product(U, V, P)
+
+    U_transported = parallel_transport_lem(U, P, Q)
+    V_transported = parallel_transport_lem(V, P, Q)
+    inner_Q = lem_inner_product(U_transported, V_transported, Q)
+
+    assert torch.allclose(inner_P, inner_Q, rtol=1e-4, atol=1e-6), (
+        f"LEM inner product not preserved: at P={inner_P.item():.6f}, at Q={inner_Q.item():.6f}"
+    )
+
+
+def test_parallel_transport_lem_gradient():
+    """Gradient should flow through all inputs."""
+    P = make_spd(3).requires_grad_(True)
+    Q = make_spd(3).requires_grad_(True)
+    V = make_symmetric(3).requires_grad_(True)
+
+    V_transported = parallel_transport_lem(V, P, Q)
+    loss = V_transported.sum()
+    loss.backward()
+
+    assert V.grad is not None
+    assert P.grad is not None
+    assert Q.grad is not None
+
+
+def test_parallel_transport_lem_non_identity():
+    """LEM transport should NOT be identity for P != Q."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    V = make_symmetric(3)
+    V_transported = parallel_transport_lem(V, P, Q)
+    # For distinct P and Q, the transported vector should differ from V
+    assert not torch.allclose(V, V_transported, atol=1e-3), (
+        "LEM transport should be non-trivial for P != Q"
+    )
+
+
+# --- Parallel transport Log-Cholesky tests ---
+
+
+def test_parallel_transport_log_cholesky_self_transport():
+    """Transport from P to P should be identity."""
+    P = make_spd(3)
+    V = make_symmetric(3)
+    V_transported = parallel_transport_log_cholesky(V, P, P)
+    assert torch.allclose(V, V_transported, atol=1e-5), (
+        f"Self-transport failed: max diff = {(V - V_transported).abs().max().item():.2e}"
+    )
+
+
+def test_parallel_transport_log_cholesky_preserves_symmetry():
+    """Transported vector should be symmetric."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    V = make_symmetric(3)
+    V_transported = parallel_transport_log_cholesky(V, P, Q)
+    assert torch.allclose(V_transported, V_transported.T, atol=1e-6)
+
+
+def test_parallel_transport_log_cholesky_roundtrip():
+    """Transport P->Q then Q->P should recover the original vector."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    V = make_symmetric(3)
+
+    V_to_Q = parallel_transport_log_cholesky(V, P, Q)
+    V_back = parallel_transport_log_cholesky(V_to_Q, Q, P)
+
+    assert torch.allclose(V, V_back, atol=1e-5), (
+        f"Roundtrip failed: max diff = {(V - V_back).abs().max().item():.2e}"
+    )
+
+
+def test_parallel_transport_log_cholesky_linearity():
+    """Parallel transport should be linear."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    U = make_symmetric(3)
+    V = make_symmetric(3)
+    a, b = 2.5, -1.3
+
+    combined = a * U + b * V
+    transported_combined = parallel_transport_log_cholesky(combined, P, Q)
+
+    transported_U = parallel_transport_log_cholesky(U, P, Q)
+    transported_V = parallel_transport_log_cholesky(V, P, Q)
+    linear_combo_transported = a * transported_U + b * transported_V
+
+    assert torch.allclose(transported_combined, linear_combo_transported, atol=1e-6)
+
+
+def test_parallel_transport_log_cholesky_non_identity():
+    """Log-Cholesky transport should NOT be identity for P != Q."""
+    P = make_spd(3)
+    Q = make_spd(3)
+    V = make_symmetric(3)
+    V_transported = parallel_transport_log_cholesky(V, P, Q)
+    assert not torch.allclose(V, V_transported, atol=1e-3), (
+        "Log-Cholesky transport should be non-trivial for P != Q"
+    )
 
 
 # --- Schild's ladder tests ---
