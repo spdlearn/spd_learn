@@ -38,8 +38,8 @@ Parallel transport is essential for:
 The module provides implementations for different Riemannian metrics:
 
 - **AIRM**: Uses the congruence transport formula (non-trivial transport)
-- **LEM**: Uses Frechet derivatives of matrix log/exp (Thanwerdas & Pennec, 2023)
-- **Log-Cholesky**: Uses Cholesky decomposition with log-diagonal transport (Lin, 2019)
+- **LEM**: Uses Frechet derivatives of matrix log/exp, see table 4 from :cite:p:`thanwerdas2023`
+- **Log-Cholesky**: Uses Cholesky decomposition with log-diagonal transport :cite:p:`lin2019riemannian`
 
 It also provides numerical approximation methods:
 
