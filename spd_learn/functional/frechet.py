@@ -72,18 +72,15 @@ def frechet_derivative_log(P, V):
     denom_safe[is_eq] = 1.0
 
     # Numerator: log(lambda_i) - log(lambda_j)
-    numer = log_eigvals.unsqueeze(-1) - log_eigvals.unsqueeze(-2)
+    numerator = log_eigvals.unsqueeze(-1) - log_eigvals.unsqueeze(-2)
 
     # K_ij = (log(lambda_i) - log(lambda_j)) / (lambda_i - lambda_j)
-    K = numer / denom_safe
+    K = numerator / denom_safe
 
     # Diagonal (and near-equal): K_ii = 1 / lambda_i
     diag_vals = 1.0 / eigvals
     # For equal eigenvalues, use average of the diagonal values
-    K[is_eq] = (
-        0.5
-        * (diag_vals.unsqueeze(-1) + diag_vals.unsqueeze(-2))[is_eq]
-    )
+    K[is_eq] = 0.5 * (diag_vals.unsqueeze(-1) + diag_vals.unsqueeze(-2))[is_eq]
 
     # Apply: U @ (K * (U^T V U)) @ U^T
     Ut = U.transpose(-2, -1)
@@ -142,17 +139,14 @@ def frechet_derivative_exp(X, W):
     denom_safe[is_eq] = 1.0
 
     # Numerator: exp(d_i) - exp(d_j)
-    numer = exp_eigvals.unsqueeze(-1) - exp_eigvals.unsqueeze(-2)
+    numerator = exp_eigvals.unsqueeze(-1) - exp_eigvals.unsqueeze(-2)
 
     # M_ij = (exp(d_i) - exp(d_j)) / (d_i - d_j)
-    M = numer / denom_safe
+    M = numerator / denom_safe
 
     # Diagonal (and near-equal): M_ii = exp(d_i)
     # For equal eigenvalues, use average of exp values
-    M[is_eq] = (
-        0.5
-        * (exp_eigvals.unsqueeze(-1) + exp_eigvals.unsqueeze(-2))[is_eq]
-    )
+    M[is_eq] = 0.5 * (exp_eigvals.unsqueeze(-1) + exp_eigvals.unsqueeze(-2))[is_eq]
 
     # Apply: U @ (M * (U^T W U)) @ U^T
     Ut = U.transpose(-2, -1)

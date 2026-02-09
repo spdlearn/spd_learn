@@ -380,14 +380,14 @@ def parallel_transport_log_cholesky(v, p, q):
     # First: X = L_P^{-1} V  (solve L_P X = V)
     X = torch.linalg.solve_triangular(L_P, v, upper=False)
     # Then: S = X L_P^{-T}  (solve L_P S^T = X^T, then transpose)
-    S = torch.linalg.solve_triangular(
-        L_P, X.transpose(-2, -1), upper=False
-    ).transpose(-2, -1)
+    S = torch.linalg.solve_triangular(L_P, X.transpose(-2, -1), upper=False).transpose(
+        -2, -1
+    )
 
     # B = strictly_lower(S) + 0.5 * diag(S)
-    B = S.tril(-1) + torch.diagonal(S, dim1=-2, dim2=-1).unsqueeze(-2) * 0.5 * torch.eye(
-        S.shape[-1], dtype=S.dtype, device=S.device
-    )
+    B = S.tril(-1) + torch.diagonal(S, dim1=-2, dim2=-1).unsqueeze(
+        -2
+    ) * 0.5 * torch.eye(S.shape[-1], dtype=S.dtype, device=S.device)
 
     # dL = L_P @ B (lower triangular)
     dL = L_P @ B

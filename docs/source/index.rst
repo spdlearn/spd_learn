@@ -463,9 +463,9 @@
             from spd_learn.models import SPDNet
 
             model = SPDNet(
-                n_chans=22,        # EEG channels
-                n_outputs=4,       # Number of classes
-                subspacedim=16     # SPD subspace dimension
+                n_chans=22,  # EEG channels
+                n_outputs=4,  # Number of classes
+                subspacedim=16,  # SPD subspace dimension
             )
 
          .. raw:: html
