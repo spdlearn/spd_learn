@@ -238,25 +238,15 @@ def bures_wasserstein_geodesic(A, B, t):
     r"""Compute the geodesic interpolation under the Bures-Wasserstein metric.
 
     The geodesic between two SPD matrices :math:`A` and :math:`B` under the
-    Bures-Wasserstein metric is given by:
+    Bures-Wasserstein metric is given by
+    :cite:p:`malago2018wasserstein`:
 
     .. math::
 
-        \gamma(t) = \left((1-t) A^{1/2} + t A^{-1/2} \# B \right)^2
+        \gamma(t) = (1-t)^2 A + t^2 B
+            + t(1-t) \left((AB)^{1/2} + (BA)^{1/2}\right)
 
-    where :math:`A^{-1/2} \# B` denotes the matrix geometric mean:
-
-    .. math::
-
-        A^{-1/2} \# B = A^{-1/2} (A^{1/2} B A^{1/2})^{1/2} A^{-1/2}
-
-    Alternatively, this can be written as:
-
-    .. math::
-
-        \gamma(t) = (1-t)^2 A + t^2 B + t(1-t) \left(M + M^T\right)
-
-    where :math:`M = (A^{1/2} B A^{1/2})^{1/2}`.
+    where :math:`(AB)^{1/2} = A^{1/2} (A^{1/2} B A^{1/2})^{1/2} A^{-1/2}`.
 
     Parameters
     ----------
@@ -290,14 +280,9 @@ def bures_wasserstein_geodesic(A, B, t):
 
     Notes
     -----
-    The geodesic is computed using the formula:
-
-    .. math::
-
-        \gamma(t) = (1-t)^2 A + t^2 B + t(1-t)(M + M^T)
-
-    where :math:`M = (A^{1/2} B A^{1/2})^{1/2}`. This formulation is
-    numerically stable and efficient to compute :cite:p:`bhatia2019bures`.
+    The cross-term :math:`(AB)^{1/2}` is computed as
+    :math:`A^{1/2} M A^{-1/2}` where :math:`M = (A^{1/2} B A^{1/2})^{1/2}`,
+    since :math:`(A^{1/2} M A^{-1/2})^2 = A^{1/2} M^2 A^{-1/2} = AB`.
 
     See Also
     --------
@@ -323,15 +308,18 @@ def bures_wasserstein_geodesic(A, B, t):
     # Expand t for broadcasting
     t = t.reshape(t.shape + (1,) * 2)
 
-    # Compute A^{1/2}
-    A_sqrt = matrix_sqrt.apply(A)
+    # Compute A^{1/2} and A^{-1/2}
+    A_sqrt, A_inv_sqrt = matrix_sqrt_inv.apply(A)
 
     # Compute M = (A^{1/2} B A^{1/2})^{1/2}
     ABA = A_sqrt @ B @ A_sqrt
     M = matrix_sqrt.apply(ABA)
 
-    # Geodesic formula: (1-t)^2 A + t^2 B + t(1-t)(M + M^T)
-    result = (1 - t) ** 2 * A + t**2 * B + t * (1 - t) * (M + M.transpose(-1, -2))
+    # (AB)^{1/2} = A^{1/2} M A^{-1/2}
+    AB12 = A_sqrt @ M @ A_inv_sqrt
+
+    # Geodesic: (1-t)^2 A + t^2 B + t(1-t)((AB)^{1/2} + (BA)^{1/2})
+    result = (1 - t) ** 2 * A + t**2 * B + t * (1 - t) * (AB12 + AB12.transpose(-1, -2))
 
     # Ensure symmetry
     return ensure_sym(result)
