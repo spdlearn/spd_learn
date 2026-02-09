@@ -381,15 +381,6 @@ def test_parallel_transport_airm_zero_vector():
     assert torch.allclose(V_transported, V, atol=1e-10)
 
 
-def test_parallel_transport_airm_batched():
-    """Test batched transport."""
-    P = make_spd(3, batch_size=5)
-    Q = make_spd(3, batch_size=5)
-    V = make_symmetric(3, batch_size=5)
-    V_transported = parallel_transport_airm(V, P, Q)
-    assert V_transported.shape == (5, 3, 3)
-
-
 @pytest.mark.parametrize(
     "grad_input",
     ["v", "p", "q", "all"],
@@ -601,6 +592,34 @@ def test_parallel_transport_log_cholesky_non_identity():
     assert not torch.allclose(V, V_transported, atol=1e-3), (
         "Log-Cholesky transport should be non-trivial for P != Q"
     )
+
+
+# --- Batched transport tests (parametrized) ---
+
+
+@pytest.mark.parametrize(
+    "transport_fn",
+    [parallel_transport_airm, parallel_transport_lem, parallel_transport_log_cholesky],
+    ids=["airm", "lem", "log_cholesky"],
+)
+def test_parallel_transport_batched(transport_fn):
+    """Batched transport should return correct shape and match per-sample results."""
+    batch_size = 5
+    n = 3
+    P = make_spd(n, batch_size=batch_size)
+    Q = make_spd(n, batch_size=batch_size)
+    V = make_symmetric(n, batch_size=batch_size)
+
+    V_transported = transport_fn(V, P, Q)
+    assert V_transported.shape == (batch_size, n, n)
+
+    # Batched result should match individual per-sample results
+    for i in range(batch_size):
+        V_i = transport_fn(V[i], P[i], Q[i])
+        assert torch.allclose(V_transported[i], V_i, atol=1e-6), (
+            f"Batch sample {i} mismatch: max diff = "
+            f"{(V_transported[i] - V_i).abs().max().item():.2e}"
+        )
 
 
 # --- Schild's ladder tests ---

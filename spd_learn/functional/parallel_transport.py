@@ -228,7 +228,7 @@ def parallel_transport_lem(v, p, q):
 
     Transports a tangent vector :math:`V \in T_P \mathcal{M}` from the tangent
     space at :math:`P` to the tangent space at :math:`Q` using the
-    Log-Euclidean metric :cite:p:`thanwerdas2023n`.
+    Log-Euclidean metric :cite:p:`thanwerdas2023`.
 
     **Transport Formula**
 
