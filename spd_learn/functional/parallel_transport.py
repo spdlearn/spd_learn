@@ -38,7 +38,8 @@ Parallel transport is essential for:
 The module provides implementations for different Riemannian metrics:
 
 - **AIRM**: Uses the congruence transport formula (non-trivial transport)
-- **LEM**: Identity transport in the log-space (trivial/flat geometry)
+- **LEM**: Uses Frechet derivatives of matrix log/exp, see table 4 from :cite:p:`thanwerdas2023`
+- **Log-Cholesky**: Uses Cholesky decomposition with log-diagonal transport :cite:p:`lin2019riemannian`
 
 It also provides numerical approximation methods:
 
@@ -49,13 +50,15 @@ See :cite:p:`pennec2006riemannian` and :cite:p:`lorenzi2014efficient` for more
 details on parallel transport and numerical approximation methods.
 """
 
-from torch.autograd import Function
+import torch
 
 from .core import (
     matrix_inv_sqrt,
+    matrix_log,
     matrix_sqrt,
     matrix_sqrt_inv,
 )
+from .frechet import frechet_derivative_exp, frechet_derivative_log
 from .metrics.affine_invariant import exp_map_airm, log_map_airm
 from .utils import ensure_sym
 
@@ -105,73 +108,6 @@ def _parallel_transport_airm_functional(v, p, q):
     # Transport: v' = E @ v @ E^T
     v_transported = E @ v @ E.transpose(-2, -1)
     return ensure_sym(v_transported)
-
-
-class ParallelTransportLEM(Function):
-    r"""Parallel transport under the Log-Euclidean Metric (LEM).
-
-    Under the Log-Euclidean metric, the SPD manifold is isometric to a flat
-    Euclidean space via the matrix logarithm. In this flat space, parallel
-    transport is simply the identity operation.
-
-    The transport formula in the original SPD space is:
-
-    .. math::
-
-        \Gamma_{P \rightarrow Q}^{LEM}(V) = D\exp_Q(D\log_P(V))
-
-    where :math:`D\log_P` and :math:`D\exp_Q` are the differentials of the
-    logarithm and exponential maps at P and Q respectively.
-
-    For tangent vectors represented as symmetric matrices in the ambient space,
-    this simplifies to:
-
-    .. math::
-
-        \Gamma_{P \rightarrow Q}^{LEM}(V) = V
-
-    i.e., the identity transport, because in the log-Euclidean framework,
-    tangent vectors are already represented in a shared vector space.
-
-    Notes
-    -----
-    The Log-Euclidean metric makes the SPD manifold globally flat (zero curvature),
-    which means parallel transport is path-independent and reduces to identity.
-    This is computationally advantageous but may not capture the intrinsic
-    geometry of SPD matrices as well as AIRM.
-    """
-
-    @staticmethod
-    def forward(ctx, v, p, q):
-        """Forward pass for parallel transport under LEM.
-
-        Parameters
-        ----------
-        v : torch.Tensor
-            Tangent vector at p, shape (..., n, n). Must be symmetric.
-        p : torch.Tensor
-            Source point on SPD manifold, shape (..., n, n). (unused)
-        q : torch.Tensor
-            Target point on SPD manifold, shape (..., n, n). (unused)
-
-        Returns
-        -------
-        torch.Tensor
-            Transported tangent vector at q (same as v), shape (..., n, n).
-        """
-        # Under LEM, parallel transport is identity
-        ctx.save_for_backward(v)
-        return v.clone()
-
-    @staticmethod
-    def backward(ctx, grad_output):
-        """Backward pass for parallel transport under LEM.
-
-        Since the forward pass is identity, the backward pass is also identity
-        for the tangent vector gradient, and zero for the base points.
-        """
-        (v,) = ctx.saved_tensors
-        return grad_output.clone(), None, None
 
 
 def parallel_transport_airm(v, p, q):
@@ -290,117 +226,191 @@ def parallel_transport_airm(v, p, q):
 def parallel_transport_lem(v, p, q):
     r"""Parallel transport of tangent vector under the Log-Euclidean metric.
 
-    Under the Log-Euclidean metric, the SPD manifold is isometric to a flat
-    Euclidean space. Parallel transport in flat space is the identity operation,
-    so this function returns the input tangent vector unchanged.
+    Transports a tangent vector :math:`V \in T_P \mathcal{M}` from the tangent
+    space at :math:`P` to the tangent space at :math:`Q` using the
+    Log-Euclidean metric :cite:p:`thanwerdas2023`.
+
+    **Transport Formula**
+
+    .. math::
+
+        \Gamma_{P \rightarrow Q}^{LEM}(V) = D\exp(\log Q)\bigl[D\log(P)[V]\bigr]
+
+    where :math:`D\log(P)` is the Frechet derivative of the matrix logarithm
+    at :math:`P` and :math:`D\exp(\log Q)` is the Frechet derivative of the
+    matrix exponential at :math:`\log Q`. The intermediate step maps the
+    ambient tangent vector into the flat log-space, where transport is trivial,
+    then maps back to the ambient tangent space at :math:`Q`.
 
     Parameters
     ----------
     v : torch.Tensor
         Tangent vector at p, shape (..., n, n). Must be symmetric.
     p : torch.Tensor
-        Source point on SPD manifold, shape (..., n, n). (unused, for API
-        consistency)
+        Source point on SPD manifold, shape (..., n, n).
     q : torch.Tensor
-        Target point on SPD manifold, shape (..., n, n). (unused, for API
-        consistency)
+        Target point on SPD manifold, shape (..., n, n).
 
     Returns
     -------
     torch.Tensor
-        Transported tangent vector at q (identical to v), shape (..., n, n).
+        Transported tangent vector at q, shape (..., n, n).
 
     Examples
     --------
     >>> import torch
     >>> from spd_learn.functional import parallel_transport_lem
     >>> n = 3
-    >>> A = torch.randn(n, n)
-    >>> p = A @ A.T + torch.eye(n)
-    >>> B = torch.randn(n, n)
-    >>> q = B @ B.T + torch.eye(n)
-    >>> v = torch.randn(n, n)
+    >>> A = torch.randn(n, n, dtype=torch.float64)
+    >>> p = A @ A.T + torch.eye(n, dtype=torch.float64)
+    >>> B = torch.randn(n, n, dtype=torch.float64)
+    >>> q = B @ B.T + torch.eye(n, dtype=torch.float64)
+    >>> v = torch.randn(n, n, dtype=torch.float64)
     >>> v = (v + v.T) / 2
     >>> v_transported = parallel_transport_lem(v, p, q)
-    >>> torch.allclose(v, v_transported)
+    >>> # Self-transport should be identity
+    >>> v_self = parallel_transport_lem(v, p, p)
+    >>> torch.allclose(v, v_self, atol=1e-6)
     True
 
     Notes
     -----
-    The Log-Euclidean metric makes the SPD manifold globally flat, which means:
-
-    1. Parallel transport is path-independent
-    2. The transported vector equals the original vector
-    3. Computationally very efficient (O(1) operation)
-
-    However, this simplicity comes at the cost of not fully capturing the
-    intrinsic Riemannian structure of SPD matrices.
+    While the Log-Euclidean metric makes the SPD manifold globally flat
+    (zero curvature), so that parallel transport is trivial **in the log
+    space**, it is non-trivial when expressed in the ambient SPD space for
+    tangent vectors represented as symmetric matrices. The Frechet
+    derivatives handle the coordinate change between these representations.
 
     See Also
     --------
-    :func:`parallel_transport_airm` : Parallel transport under AIRM (non-trivial).
+    :func:`parallel_transport_airm` : Parallel transport under AIRM.
+    :func:`~spd_learn.functional.frechet.frechet_derivative_log` : Frechet derivative of log.
+    :func:`~spd_learn.functional.frechet.frechet_derivative_exp` : Frechet derivative of exp.
     :func:`~spd_learn.functional.log_euclidean_distance` : Distance under Log-Euclidean metric.
-    :func:`~spd_learn.functional.log_euclidean_mean` : Mean under Log-Euclidean metric.
     """
-    return ParallelTransportLEM.apply(v, p, q)
+    # Step 1: Map v from ambient T_P to log-space via D_log(P)[V]
+    w = frechet_derivative_log(p, v)
+    # Step 2: Map w from log-space back to ambient T_Q via D_exp(log(Q))[W]
+    log_q = matrix_log.apply(q)
+    v_transported = frechet_derivative_exp(log_q, w)
+    return ensure_sym(v_transported)
 
 
 def parallel_transport_log_cholesky(v, p, q):
     r"""Parallel transport of tangent vector under the Log-Cholesky metric.
 
-    Under the Log-Cholesky metric, the SPD manifold inherits a flat (Euclidean)
-    geometry from the Cholesky space via the Log-Cholesky map. In flat space,
-    parallel transport is the identity operation.
+    Transports a tangent vector :math:`V \in T_P \mathcal{M}` from the tangent
+    space at :math:`P` to the tangent space at :math:`Q` using the
+    Log-Cholesky metric :cite:p:`lin2019riemannian` (Proposition 7).
+
+    **Transport Formula**
+
+    Given Cholesky decompositions :math:`P = L_P L_P^T` and
+    :math:`Q = L_Q L_Q^T`:
+
+    1. Pull back :math:`V` to the Cholesky tangent space:
+       :math:`S = L_P^{-1} V L_P^{-T}`, then
+       :math:`B = \operatorname{strictly\_lower}(S) + \frac{1}{2}\operatorname{diag}(S)`
+       and :math:`dL = L_P B`.
+
+    2. Convert to log-Cholesky coordinates:
+       :math:`dY = \operatorname{strictly\_lower}(dL) + \operatorname{diag}(\operatorname{diag}(dL) / \operatorname{diag}(L_P))`
+
+    3. Transport in flat log-Cholesky space is the identity: :math:`dY` stays
+       the same.
+
+    4. Convert back at :math:`Q`:
+       :math:`dL_Q = \operatorname{strictly\_lower}(dY) + \operatorname{diag}(\operatorname{diag}(dY) \cdot \operatorname{diag}(L_Q))`
+
+    5. Push forward:
+       :math:`V' = dL_Q L_Q^T + L_Q dL_Q^T`
 
     Parameters
     ----------
     v : torch.Tensor
         Tangent vector at p, shape (..., n, n). Must be symmetric.
     p : torch.Tensor
-        Source point on SPD manifold, shape (..., n, n). (unused, for API
-        consistency)
+        Source point on SPD manifold, shape (..., n, n).
     q : torch.Tensor
-        Target point on SPD manifold, shape (..., n, n). (unused, for API
-        consistency)
+        Target point on SPD manifold, shape (..., n, n).
 
     Returns
     -------
     torch.Tensor
-        Transported tangent vector at q (identical to v), shape (..., n, n).
+        Transported tangent vector at q, shape (..., n, n).
 
     Examples
     --------
     >>> import torch
     >>> from spd_learn.functional import parallel_transport_log_cholesky
     >>> n = 3
-    >>> A = torch.randn(n, n)
-    >>> p = A @ A.T + torch.eye(n)
-    >>> B = torch.randn(n, n)
-    >>> q = B @ B.T + torch.eye(n)
-    >>> v = torch.randn(n, n)
+    >>> A = torch.randn(n, n, dtype=torch.float64)
+    >>> p = A @ A.T + torch.eye(n, dtype=torch.float64)
+    >>> B = torch.randn(n, n, dtype=torch.float64)
+    >>> q = B @ B.T + torch.eye(n, dtype=torch.float64)
+    >>> v = torch.randn(n, n, dtype=torch.float64)
     >>> v = (v + v.T) / 2
     >>> v_transported = parallel_transport_log_cholesky(v, p, q)
-    >>> torch.allclose(v, v_transported)
+    >>> # Self-transport should be identity
+    >>> v_self = parallel_transport_log_cholesky(v, p, p)
+    >>> torch.allclose(v, v_self, atol=1e-6)
     True
 
     Notes
     -----
-    The Log-Cholesky metric makes the SPD manifold globally flat via the
-    diffeomorphism to Cholesky space :cite:p:`lin2019riemannian`. This means:
-
-    1. Parallel transport is path-independent
-    2. The transported vector equals the original vector
-    3. Computationally very efficient (O(1) operation)
+    While the Log-Cholesky metric makes the SPD manifold globally flat in
+    the log-Cholesky coordinates, transport is non-trivial when expressed
+    in the ambient SPD space for tangent vectors represented as symmetric
+    matrices. This implementation follows Proposition 7 of
+    :cite:p:`lin2019riemannian`.
 
     See Also
     --------
-    :func:`parallel_transport_airm` : Parallel transport under AIRM (non-trivial).
-    :func:`parallel_transport_lem` : Parallel transport under Log-Euclidean (also identity).
+    :func:`parallel_transport_airm` : Parallel transport under AIRM.
+    :func:`parallel_transport_lem` : Parallel transport under Log-Euclidean.
     :func:`~spd_learn.functional.log_cholesky_distance` : Distance under Log-Cholesky metric.
     :func:`~spd_learn.functional.log_cholesky_mean` : Mean under Log-Cholesky metric.
     """
-    # Under Log-Cholesky metric, parallel transport is identity (flat geometry)
-    return v.clone()
+    # Cholesky decompose P and Q
+    L_P = torch.linalg.cholesky(p)
+    L_Q = torch.linalg.cholesky(q)
+
+    # Step 1: Pull V back to the Cholesky tangent space
+    # Compute S = L_P^{-1} V L_P^{-T} (symmetric)
+    # First: X = L_P^{-1} V  (solve L_P X = V)
+    X = torch.linalg.solve_triangular(L_P, v, upper=False)
+    # Then: S = X L_P^{-T}  (solve L_P S^T = X^T, then transpose)
+    S = torch.linalg.solve_triangular(L_P, X.transpose(-2, -1), upper=False).transpose(
+        -2, -1
+    )
+
+    # B = strictly_lower(S) + 0.5 * diag(S)
+    B = S.tril(-1) + torch.diagonal(S, dim1=-2, dim2=-1).unsqueeze(
+        -2
+    ) * 0.5 * torch.eye(S.shape[-1], dtype=S.dtype, device=S.device)
+
+    # dL = L_P @ B (lower triangular)
+    dL = L_P @ B
+
+    # Step 2: Convert to log-Cholesky tangent coordinates
+    diag_L_P = torch.diagonal(L_P, dim1=-2, dim2=-1)
+    diag_dL = torch.diagonal(dL, dim1=-2, dim2=-1)
+    # dY = strictly_lower(dL) + diag(diag(dL) / diag(L_P))
+    dY = dL.tril(-1) + torch.diag_embed(diag_dL / diag_L_P)
+
+    # Step 3: Transport in flat log-Cholesky space is identity (dY stays the same)
+
+    # Step 4: Convert back at Q
+    diag_L_Q = torch.diagonal(L_Q, dim1=-2, dim2=-1)
+    diag_dY = torch.diagonal(dY, dim1=-2, dim2=-1)
+    # dL_Q = strictly_lower(dY) + diag(diag(dY) * diag(L_Q))
+    dL_Q = dY.tril(-1) + torch.diag_embed(diag_dY * diag_L_Q)
+
+    # Step 5: Push forward to ambient tangent space at Q
+    # V' = dL_Q @ L_Q^T + L_Q @ dL_Q^T
+    v_transported = dL_Q @ L_Q.transpose(-2, -1) + L_Q @ dL_Q.transpose(-2, -1)
+
+    return ensure_sym(v_transported)
 
 
 def _geodesic_midpoint_airm(p, q):
@@ -616,8 +626,8 @@ def transport_tangent_vector(v, p, q, metric="airm", **kwargs):
     metric : str, optional
         The Riemannian metric to use. Options are:
         - "airm": Affine-Invariant Riemannian Metric (closed-form)
-        - "lem" or "log_euclidean": Log-Euclidean Metric (identity)
-        - "log_cholesky": Log-Cholesky Metric (identity)
+        - "lem" or "log_euclidean": Log-Euclidean Metric (Frechet derivatives)
+        - "log_cholesky": Log-Cholesky Metric (Cholesky decomposition)
         - "schild": Schild's ladder approximation
         - "pole": Pole ladder approximation
         Default is "airm".

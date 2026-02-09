@@ -486,12 +486,59 @@ linkcheck_retries = 2
 def linkcode_resolve(domain, info):
     """Resolve GitHub links for source code.
 
-    This function is required by sphinx.ext.linkcode.
+    This function is required by sphinx.ext.linkcode. It uses inspect
+    to find the actual source file and line numbers, handling __init__.py
+    packages and generating correct URLs without an erroneous src/ prefix.
     """
+    import importlib
+    import inspect
+    import os
+
     if domain != "py":
         return None
     if not info["module"]:
         return None
 
-    filename = info["module"].replace(".", "/")
-    return f"https://github.com/{github_user}/{github_repo}/blob/{github_version}/src/{filename}.py"
+    modname = info["module"]
+    fullname = info["fullname"]
+
+    try:
+        mod = importlib.import_module(modname)
+    except ImportError:
+        return None
+
+    # Resolve the object from its fully qualified name
+    obj = mod
+    for part in fullname.split("."):
+        try:
+            obj = getattr(obj, part)
+        except AttributeError:
+            return None
+
+    # Unwrap decorated objects to get the original function
+    obj = inspect.unwrap(obj)
+
+    try:
+        sourcefile = inspect.getsourcefile(obj)
+    except TypeError:
+        return None
+
+    if sourcefile is None:
+        return None
+
+    # Get path relative to the repository root
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    try:
+        relpath = os.path.relpath(sourcefile, repo_root)
+    except ValueError:
+        return None
+
+    # Build the line number anchor
+    linespec = ""
+    try:
+        source, lineno = inspect.getsourcelines(obj)
+        linespec = f"#L{lineno}-L{lineno + len(source) - 1}"
+    except (OSError, TypeError):
+        pass
+
+    return f"https://github.com/{github_user}/{github_repo}/blob/{github_version}/{relpath}{linespec}"

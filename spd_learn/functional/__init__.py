@@ -41,6 +41,7 @@ from .core import (
 )
 from .covariance import covariance, cross_covariance, real_covariance, sample_covariance
 from .dropout import dropout_spd
+from .frechet import frechet_derivative_exp, frechet_derivative_log
 from .metrics import (
     # AIRM metric
     airm_distance,
@@ -165,6 +166,9 @@ __all__ = [
     "compute_gabor_wavelet",
     # Dropout
     "dropout_spd",
+    # Frechet derivatives
+    "frechet_derivative_log",
+    "frechet_derivative_exp",
     # Autograd utilities
     "modeig_backward",
     "modeig_forward",
