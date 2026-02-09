@@ -270,19 +270,34 @@ print(f"  Log-Cholesky: {torch.allclose(V0, V_chol_self, atol=1e-5)}")
 #
 # SPD Learn provides several transport methods with different trade-offs:
 #
-# +----------------+--------------------+-----------+---------------------------+
-# | Method         | Formula            | Complexity| Notes                     |
-# +================+====================+===========+===========================+
-# | AIRM           | :math:`EVE^T`      | O(n³)     | Exact, preserves geometry |
-# +----------------+--------------------+-----------+---------------------------+
-# | LEM            | Fréchet derivatives| O(n³)     | Via D_exp(log Q)[D_log(P)]|
-# +----------------+--------------------+-----------+---------------------------+
-# | Log-Cholesky   | Cholesky pull/push | O(n³)     | Via log-diagonal map      |
-# +----------------+--------------------+-----------+---------------------------+
-# | Schild's ladder| Iterative          | O(k·n³)   | ~O(1/k²) (small steps)   |
-# +----------------+--------------------+-----------+---------------------------+
-# | Pole ladder    | Single iteration   | O(n³)     | O(h²) (small distance)   |
-# +----------------+--------------------+-----------+---------------------------+
+# .. list-table::
+#    :header-rows: 1
+#    :widths: 16 20 11 27
+#
+#    * - Method
+#      - Formula
+#      - Complexity
+#      - Notes
+#    * - AIRM
+#      - :math:`EVE^T`
+#      - O(n³)
+#      - Exact, preserves geometry
+#    * - LEM
+#      - Fréchet derivatives
+#      - O(n³)
+#      - Via D_exp(log Q)[D_log(P)]
+#    * - Log-Cholesky
+#      - Cholesky pull/push
+#      - O(n³)
+#      - Via log-diagonal map
+#    * - Schild's ladder
+#      - Iterative
+#      - O(k·n³)
+#      - ~O(1/k²) (small steps)
+#    * - Pole ladder
+#      - Single iteration
+#      - O(n³)
+#      - O(h²) (small distance)
 #
 # The ``transport_tangent_vector`` function provides a unified interface:
 
