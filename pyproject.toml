@@ -52,6 +52,7 @@ tests = [
     'codecov',
     'pytest_cases',
     'mypy',
+    'pyriemann',
 ]
 docs = [
     'sphinx',
