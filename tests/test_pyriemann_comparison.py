@@ -80,7 +80,10 @@ MATRIX_OPS = {
 DISTANCE_PAIRS = {
     "riemann": {"spd_learn": airm_distance, "pyriemann": distance_riemann},
     "logeuclid": {"spd_learn": log_euclidean_distance, "pyriemann": distance_logeuclid},
-    "wasserstein": {"spd_learn": bures_wasserstein_distance, "pyriemann": distance_wasserstein},
+    "wasserstein": {
+        "spd_learn": bures_wasserstein_distance,
+        "pyriemann": distance_wasserstein,
+    },
     "logchol": {"spd_learn": log_cholesky_distance, "pyriemann": distance_logchol},
 }
 
@@ -88,7 +91,10 @@ GEODESIC_PAIRS = {
     "riemann": {"spd_learn": airm_geodesic, "pyriemann": geodesic_riemann},
     "logeuclid": {"spd_learn": log_euclidean_geodesic, "pyriemann": geodesic_logeuclid},
     "logchol": {"spd_learn": log_cholesky_geodesic, "pyriemann": geodesic_logchol},
-    "wasserstein": {"spd_learn": bures_wasserstein_geodesic, "pyriemann": geodesic_wasserstein},
+    "wasserstein": {
+        "spd_learn": bures_wasserstein_geodesic,
+        "pyriemann": geodesic_wasserstein,
+    },
 }
 
 MEAN_PAIRS = {
@@ -123,7 +129,9 @@ def to_numpy(tensor):
 
 
 @pytest.mark.parametrize("n", SIZES)
-@pytest.mark.parametrize("op_name", list(MATRIX_OPS.keys()), ids=list(MATRIX_OPS.keys()))
+@pytest.mark.parametrize(
+    "op_name", list(MATRIX_OPS.keys()), ids=list(MATRIX_OPS.keys())
+)
 def test_matrix_op(op_name, n):
     """spd_learn matrix op matches pyriemann on a random SPD matrix."""
     rng = np.random.RandomState(SEED)
@@ -161,7 +169,9 @@ def test_matrix_power(n, alpha):
 
 
 @pytest.mark.parametrize("n", SIZES)
-@pytest.mark.parametrize("metric", list(DISTANCE_PAIRS.keys()), ids=list(DISTANCE_PAIRS.keys()))
+@pytest.mark.parametrize(
+    "metric", list(DISTANCE_PAIRS.keys()), ids=list(DISTANCE_PAIRS.keys())
+)
 def test_distance(metric, n):
     """spd_learn distance matches pyriemann for a pair of SPD matrices."""
     rng = np.random.RandomState(SEED)
@@ -180,9 +190,12 @@ def test_distance(metric, n):
 # 3. Geodesics
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.parametrize("n", SIZES)
 @pytest.mark.parametrize("alpha", [0.0, 0.25, 0.5, 0.75, 1.0])
-@pytest.mark.parametrize("metric", list(GEODESIC_PAIRS.keys()), ids=list(GEODESIC_PAIRS.keys()))
+@pytest.mark.parametrize(
+    "metric", list(GEODESIC_PAIRS.keys()), ids=list(GEODESIC_PAIRS.keys())
+)
 def test_geodesic(metric, n, alpha):
     """spd_learn geodesic matches pyriemann at various interpolation points."""
     rng = np.random.RandomState(SEED)
