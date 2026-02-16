@@ -649,8 +649,7 @@ def test_expeig_output_shape(upper, flatten, random_spd_matrix):
     X_exp = exp_layer(X_log)
 
     assert X_exp.shape == (3, n, n), (
-        f"upper={upper}, flatten={flatten}: "
-        f"expected (3, {n}, {n}), got {X_exp.shape}"
+        f"upper={upper}, flatten={flatten}: expected (3, {n}, {n}), got {X_exp.shape}"
     )
 
 

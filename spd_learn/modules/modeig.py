@@ -417,8 +417,7 @@ class ExpEig(nn.Module):
             n = int((math.sqrt(1 + 8 * n_vec) - 1) / 2)
             if n * (n + 1) // 2 != n_vec:
                 raise ValueError(
-                    "ExpEig(upper=True) expects last dimension n(n+1)/2, "
-                    f"got {n_vec}."
+                    f"ExpEig(upper=True) expects last dimension n(n+1)/2, got {n_vec}."
                 )
             X = vec_to_sym(X)
         elif self.flatten:
@@ -426,8 +425,7 @@ class ExpEig(nn.Module):
             n = int(math.sqrt(n_vec))
             if n * n != n_vec:
                 raise ValueError(
-                    "ExpEig(flatten=True) expects last dimension n*n, "
-                    f"got {n_vec}."
+                    f"ExpEig(flatten=True) expects last dimension n*n, got {n_vec}."
                 )
             X = X.unflatten(-1, (n, n))
         elif X.ndim < 2 or X.shape[-1] != X.shape[-2]:
