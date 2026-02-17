@@ -4,6 +4,7 @@ import math
 
 import torch
 import torch.nn as nn
+from einops import rearrange
 
 from ..functional import (
     clamp_eigvals,
@@ -413,21 +414,14 @@ class ExpEig(nn.Module):
             The output SPD matrix of shape ``(..., n, n)``.
         """
         if self.upper:
-            n_vec = X.shape[-1]
-            n = int((math.sqrt(1 + 8 * n_vec) - 1) / 2)
-            if n * (n + 1) // 2 != n_vec:
-                raise ValueError(
-                    f"ExpEig(upper=True) expects last dimension n(n+1)/2, got {n_vec}."
-                )
             X = vec_to_sym(X)
         elif self.flatten:
-            n_vec = X.shape[-1]
-            n = int(math.sqrt(n_vec))
-            if n * n != n_vec:
+            n = math.isqrt(X.shape[-1])
+            if n * n != X.shape[-1]:
                 raise ValueError(
-                    f"ExpEig(flatten=True) expects last dimension n*n, got {n_vec}."
+                    f"ExpEig(flatten=True) expects last dimension n*n, got {X.shape[-1]}."
                 )
-            X = X.unflatten(-1, (n, n))
+            X = rearrange(X, "... (n1 n2) -> ... n1 n2", n1=n, n2=n)
         elif X.ndim < 2 or X.shape[-1] != X.shape[-2]:
             raise ValueError(
                 "ExpEig expects matrix input with shape (..., n, n) when "

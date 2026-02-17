@@ -737,7 +737,7 @@ def test_expeig_raises_on_invalid_upper_length():
     """Upper-vectorized input length must be triangular."""
     layer = ExpEig(upper=True, flatten=False)
     bad = torch.randn(2, 8)  # 8 != n(n+1)/2 for any integer n
-    with pytest.raises(ValueError, match="n\\(n\\+1\\)/2"):
+    with pytest.raises(AssertionError):
         layer(bad)
 
 
