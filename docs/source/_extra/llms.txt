@@ -1,0 +1,36 @@
+# SPD Learn
+
+> SPD Learn is a pure PyTorch library for geometric deep learning on Symmetric Positive Definite (SPD) matrices. It provides differentiable Riemannian operations, broadcast-compatible layers, and reference implementations of published neural network architectures (SPDNet, TSMNet, EEGSPDNet, TensorCSPNet, PhaseSPDNet, GREEN) for SPD-valued data such as EEG and fMRI covariance matrices.
+
+Key notes for LLMs:
+- Prefer the "API Reference" for exact function signatures, layer parameters, and model constructors.
+- Prefer "Tutorials" for end-to-end workflows (installation through training).
+- The library follows a functional-first design: `spd_learn.functional` (pure functions) -> `spd_learn.modules` (layers) -> `spd_learn.models` (architectures).
+- Requires Python 3.11+ and PyTorch 2.0+.
+- Licensed under BSD-3-Clause.
+
+## Getting Started
+- [Installation](https://spdlearn.org/installation.html): Install via pip, from source, and optional dependencies
+- [User Guide](https://spdlearn.org/user_guide.html): Practical introduction to SPD matrices and building models
+
+## API Reference
+- [API Reference](https://spdlearn.org/api.html): Full API — functional ops, modules (layers), models, and utilities
+
+## Theory & Background
+- [Theory](https://spdlearn.org/theory.html): Mathematical foundations of Riemannian geometry for SPD matrices
+- [Notation](https://spdlearn.org/notation.html): Symbol conventions used in the documentation
+- [Geometric Concepts](https://spdlearn.org/geometric_concepts.html): Key geometric concepts explained
+- [Numerical Stability](https://spdlearn.org/numerical_stability.html): Numerical precision and stability considerations
+- [Glossary](https://spdlearn.org/glossary.html): Definitions of key terms
+
+## Examples & Tutorials
+- [Examples](https://spdlearn.org/generated/auto_examples/index.html): Applied examples and tutorials index
+- [Tutorials](https://spdlearn.org/generated/auto_examples/tutorials/index.html): Step-by-step tutorials for learning SPD Learn
+- [Visualizations](https://spdlearn.org/generated/auto_examples/visualizations/index.html): Visual demonstrations of SPD operations
+- [Applied Examples](https://spdlearn.org/generated/auto_examples/applied_examples/index.html): Real-world applications on EEG, fMRI, and neuroimaging data
+
+## Community
+- [FAQ](https://spdlearn.org/faq.html): Frequently asked questions
+- [Contributing](https://spdlearn.org/contributing.html): How to contribute to SPD Learn
+- [References](https://spdlearn.org/references.html): Academic references and bibliography
+- [GitHub Repository](https://github.com/spdlearn/spd_learn): Source code and issue tracker

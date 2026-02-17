@@ -26,6 +26,7 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "matplotlib.sphinxext.plot_directive",
     "sphinx_sitemap",  # SEO: Generate sitemap.xml
+    "sphinxext.opengraph",  # SEO: Open Graph metadata for social previews
 ]
 
 # -- BibTeX configuration -----------------------------------------------------
@@ -302,8 +303,14 @@ html_copy_source = False
 # Point 6: SEO - Add canonical URLs
 html_baseurl = "https://spdlearn.org/"
 
-# Point 7: Prevent duplicate images - don't copy extra files
-html_extra_path = []
+# Point 7: Copy root-level site files (robots.txt, BingSiteAuth.xml, etc.)
+html_extra_path = ["_extra"]
+
+# Point 8: Open Graph metadata for social media previews
+ogp_site_url = "https://spdlearn.org/"
+ogp_image = "https://spdlearn.org/_static/spd_learn.png"
+ogp_description_length = 200
+ogp_type = "website"
 
 # -- Linkcheck configuration -------------------------------------------------
 

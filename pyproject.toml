@@ -60,6 +60,7 @@ docs = [
     'sphinx_gallery',
     'sphinx-copybutton',
     'sphinx-sitemap',
+    'sphinxext-opengraph',
     'sphinxcontrib-bibtex',
     'numpydoc',
     'memory_profiler',
