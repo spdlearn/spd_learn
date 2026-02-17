@@ -28,7 +28,7 @@ Seven state-of-the-art deep learning architectures for SPD matrix data:
 | **TSMNet** | Tangent Space Mapping Network with convolutional features and SPD batch normalization | Kobler et al., 2022 |
 | **TensorCSPNet** | Multi-band EEG feature extraction using Tensor Common Spatial Patterns | Ju, C. et al. 2022 |
 | **PhaseSPDNet** | Phase-space embedding combined with SPDNet for geometric EEG dynamics analysis | Carrara et al., 2024 |
-| **GREEN** | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry | Paillard, J. et al., 2025 |
+| **Green** | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry | Paillard, J. et al., 2025 |
 | **MAtt** | Manifold Attention mechanism for SPD matrices | Pan, Yue-Ting, et al. 2022|
 
 #### SPD Neural Network Layers
@@ -36,25 +36,34 @@ Seven state-of-the-art deep learning architectures for SPD matrix data:
 A comprehensive set of differentiable layers that respect SPD geometry:
 
 - **BiMap** — Bilinear mapping layer for SPD dimension reduction
+- **BiMapIncreaseDim** — Bilinear mapping layer for SPD dimension increase
 - **ReEig** — Eigenvalue rectification to ensure positive definiteness
 - **LogEig** — Logarithmic map to tangent space (Euclidean)
 - **ExpEig** — Exponential map from tangent space back to SPD manifold
-- **SqrtEig** — Matrix square root via eigendecomposition
-- **InvSqrtEig** — Inverse matrix square root
-- **PowerEig** — Matrix power function
-- **VecMat** — Vectorization/matricization operations
 - **CovLayer** — Differentiable covariance matrix estimation
 - **Shrinkage** — Regularized covariance estimation (Ledoit-Wolf, Oracle)
+- **TraceNorm** — Trace normalization for SPD matrices
+- **SPDDropout** — Dropout layer for SPD matrices
+- **LogEuclideanResidual** — Residual connection in Log-Euclidean space
+- **WaveletConv** — Gabor wavelet convolution layer
+- **PatchEmbeddingLayer** — Patch embedding for SPD matrices
+- **Vec** — Full matrix vectorization
+- **Vech** — Half-vectorization (upper triangular)
+
+#### Manifold Parametrizations
+
+PyTorch parametrizations for constraining weight matrices:
+
+- **SymmetricPositiveDefinite** — Constrains a parameter to be SPD
+- **PositiveDefiniteScalar** — Constrains a scalar parameter to be positive
 
 #### Batch Normalization
 
 SPD-specific batch normalization layers respecting Riemannian geometry:
 
-- **SPDBatchNorm** — Standard SPD batch normalization
-- **TSMBatchNorm** — Batch normalization for Tangent Space Mapping
-- **AdaMomSPDBatchNorm** — Adaptive momentum batch normalization
-- **DomainSPDBatchNorm** — Domain-specific batch normalization for transfer learning
-- **TrackingMeanBatchNorm** — Batch normalization with running mean tracking
+- **SPDBatchNormMean** — SPD batch normalization using Riemannian mean centering
+- **SPDBatchNormMeanVar** — SPD batch normalization with both mean centering and tangent space variance normalization
+- **BatchReNorm** — SPD batch renormalization with relaxed constraints for small batches
 
 #### Riemannian Metrics
 
@@ -67,21 +76,31 @@ Four Riemannian metrics for SPD manifolds:
 | **LogCholesky** | Metric based on Cholesky decomposition |
 | **BuresWasserstein** | Optimal transport metric between Gaussians |
 
-Each metric provides:
-- Geodesic distance computation
-- Exponential and logarithmic maps
-- Parallel transport along geodesics
-- Fréchet/Karcher mean computation
+Each metric provides geodesic distance computation and Fréchet mean computation. Additionally:
+- **AIRM**: Exponential/logarithmic maps, parallel transport, Karcher mean iteration
+- **Log-Euclidean**: Geodesics, Lie group operations (`log_euclidean_multiply`, `log_euclidean_scalar_multiply`)
+- **Log-Cholesky**: Cholesky log/exp maps, parallel transport
+- **Bures-Wasserstein**: Optimal transport map for domain adaptation (not Riemannian parallel transport)
+
+Parallel transport is available for AIRM, Log-Euclidean, and Log-Cholesky metrics, plus metric-agnostic numerical methods (Schild's ladder, pole ladder).
 
 #### Functional Operations
 
 Low-level differentiable operations in `spd_learn.functional`:
 
-- **Matrix Operations**: `logm`, `expm`, `sqrtm`, `invsqrtm`, `powm`
-- **Geodesics**: `geodesic`, `log_map`, `exp_map`
-- **Statistics**: `frechet_mean`, `log_euclidean_mean`
-- **Parallel Transport**: `parallel_transport`
-- **Covariance**: `covariance`, `scm`, `shrinkage_covariance`
+- **Matrix Operations**: `matrix_log`, `matrix_exp`, `matrix_sqrt`, `matrix_inv_sqrt`, `matrix_power`
+- **Fréchet Derivatives**: `frechet_derivative_log`, `frechet_derivative_exp`
+- **Metric-specific Geodesics**: `airm_geodesic`, `log_euclidean_geodesic`
+- **Metric-specific Maps**: `exp_map_airm`, `log_map_airm`
+- **Statistics**: `log_euclidean_mean`, `bures_wasserstein_mean`, `karcher_mean_iteration`
+- **Parallel Transport**: `parallel_transport_airm`, `parallel_transport_lem`, `parallel_transport_log_cholesky`, `schild_ladder`, `pole_ladder`, `transport_tangent_vector`
+- **Covariance**: `sample_covariance`, `ledoit_wolf`
+- **Bilinear**: `bimap_transform`, `bimap_increase_dim`
+- **Regularization**: `trace_normalization`, `dropout_spd`
+- **Batch Normalization Utilities**: `spd_centering`, `spd_rebiasing`, `tangent_space_variance`
+- **Adversarial**: `spd_rpgd_attack`
+- **Wavelets**: `compute_gabor_wavelet`
+- **Numerical Stability**: `NumericalConfig`, `NumericalContext`
 
 #### Additional Features
 
