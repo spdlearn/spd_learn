@@ -217,47 +217,10 @@
 
             .. raw:: html
 
+               <span class="hf-venue">AAAI 2017</span>
                <span class="hf-tag">BiMap</span>
                <span class="hf-tag">ReEig</span>
                <span class="hf-tag">LogEig</span>
-
-      .. grid-item-card:: EEGSPDNet
-         :link: generated/spd_learn.models.EEGSPDNet
-         :link-type: doc
-         :class-card: hf-dataset-card
-
-         .. image:: _static/models/eegspdnet.jpeg
-            :alt: EEGSPDNet Architecture
-            :class: sd-card-img-top
-
-         Specialized for EEG signal classification. Combines convolutional with covariance SPD network layers for Brain-Computer Interface applications.
-
-         .. container:: hf-card-tags
-
-            .. raw:: html
-
-               <span class="hf-tag">Covariance</span>
-               <span class="hf-tag">BiMap</span>
-               <span class="hf-tag">ReEig</span>
-
-      .. grid-item-card:: TSMNet
-         :link: generated/spd_learn.models.TSMNet
-         :link-type: doc
-         :class-card: hf-dataset-card
-
-         .. image:: _static/models/tsmnet.png
-            :alt: TSMNet Architecture
-            :class: sd-card-img-top
-
-         Tangent Space Mapping Network (TSMNet) combining convolutional features with SPD batch normalization.
-
-         .. container:: hf-card-tags
-
-            .. raw:: html
-
-               <span class="hf-tag">BatchNorm</span>
-               <span class="hf-tag">LogEig</span>
-               <span class="hf-tag">Transfer</span>
 
       .. grid-item-card:: TensorCSPNet
          :link: generated/spd_learn.models.TensorCSPNet
@@ -274,9 +237,50 @@
 
             .. raw:: html
 
+               <span class="hf-venue">IEEE TNNLS 2022</span>
                <span class="hf-tag">Multi-band</span>
                <span class="hf-tag">CSP</span>
                <span class="hf-tag">BiMap</span>
+
+      .. grid-item-card:: TSMNet
+         :link: generated/spd_learn.models.TSMNet
+         :link-type: doc
+         :class-card: hf-dataset-card
+
+         .. image:: _static/models/tsmnet.png
+            :alt: TSMNet Architecture
+            :class: sd-card-img-top
+
+         Tangent Space Mapping Network (TSMNet) combining convolutional features with SPD batch normalization.
+
+         .. container:: hf-card-tags
+
+            .. raw:: html
+
+               <span class="hf-venue">NeurIPS 2022</span>
+               <span class="hf-tag">BatchNorm</span>
+               <span class="hf-tag">LogEig</span>
+               <span class="hf-tag">Transfer</span>
+
+      .. grid-item-card:: MAtt
+         :link: generated/spd_learn.models.MAtt
+         :link-type: doc
+         :class-card: hf-dataset-card
+
+         .. image:: _static/models/matt.png
+            :alt: MAtt Architecture
+            :class: sd-card-img-top
+
+         Manifold Attention Network that applies attention mechanisms directly on the SPD manifold using Log-Euclidean distances for temporal weighting.
+
+         .. container:: hf-card-tags
+
+            .. raw:: html
+
+               <span class="hf-venue">NeurIPS 2022</span>
+               <span class="hf-tag">Attention</span>
+               <span class="hf-tag">LogEuclidean</span>
+               <span class="hf-tag">TraceNorm</span>
 
       .. grid-item-card:: PhaseSPDNet
          :link: generated/spd_learn.models.PhaseSPDNet
@@ -293,17 +297,38 @@
 
             .. raw:: html
 
+               <span class="hf-venue">J. Neural Eng. 2024</span>
                <span class="hf-tag">Phase</span>
                <span class="hf-tag">Dynamic System</span>
                <span class="hf-tag">BiMap</span>
 
-      .. grid-item-card:: GREEN
+      .. grid-item-card:: EEGSPDNet
+         :link: generated/spd_learn.models.EEGSPDNet
+         :link-type: doc
+         :class-card: hf-dataset-card
+
+         .. image:: _static/models/eegspdnet.jpeg
+            :alt: EEGSPDNet Architecture
+            :class: sd-card-img-top
+
+         Specialized for EEG signal classification. Combines convolutional with covariance SPD network layers for Brain-Computer Interface applications.
+
+         .. container:: hf-card-tags
+
+            .. raw:: html
+
+               <span class="hf-venue">Imaging Neuroscience 2025</span>
+               <span class="hf-tag">Covariance</span>
+               <span class="hf-tag">BiMap</span>
+               <span class="hf-tag">ReEig</span>
+
+      .. grid-item-card:: Green
          :link: generated/spd_learn.models.Green
          :link-type: doc
          :class-card: hf-dataset-card
 
          .. image:: _static/models/green.png
-            :alt: GREEN Architecture
+            :alt: Green Architecture
             :class: sd-card-img-top
 
          Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry for interpretable EEG decoding.
@@ -312,6 +337,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">Patterns 2025</span>
                <span class="hf-tag">Gabor</span>
                <span class="hf-tag">Wavelet</span>
                <span class="hf-tag">Shrinkage</span>
