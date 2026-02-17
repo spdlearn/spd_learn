@@ -233,6 +233,18 @@ For convenience, here are BibTeX entries for citing the main works:
      doi={10.1109/TNNLS.2022.3172108}
    }
 
+   @article{carrara2024eegspd,
+     title={Geometric neural network based on phase space for BCI-EEG decoding},
+     author={Carrara*, Igor and Aristimunha*, Bruno and Corsi, Marie-Constance and
+             de Camargo, Raphael Y. and Chevallier, Sylvain and Papadopoulo, Th{\'e}odore},
+     journal={Journal of Neural Engineering},
+     volume={21},
+     number={6},
+     pages={016049},
+     year={2024},
+     doi={10.1088/1741-2552/ad88a2}
+   }
+
   @article{ju2026spdmatrixlearningneuroimaging,
         title={SPD Matrix Learning for Neuroimaging Analysis: Perspectives, Methods, and Challenges},
         author={Ce Ju and Reinmar Kobler and Antoine Collas and Motoaki Kawanabe and Cuntai Guan and Bertrand Thirion},
