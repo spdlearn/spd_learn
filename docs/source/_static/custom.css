@@ -3233,6 +3233,26 @@ html[data-theme="dark"] article .highlight-bibtex pre {
   margin-top: 1rem;
 }
 
+/* Venue Badge */
+.hf-venue {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--pst-font-family-monospace);
+  letter-spacing: 0.03em;
+  color: var(--eegdash-primary);
+  background: rgba(238, 76, 44, 0.08);
+  border: 1px solid rgba(238, 76, 44, 0.2);
+}
+
+html[data-theme="dark"] .hf-venue {
+  background: rgba(255, 127, 102, 0.1);
+  border-color: rgba(255, 127, 102, 0.25);
+}
+
 /* Section Separators with Gradient */
 .bd-article > hr + .raw-html-m2r + .sd-container-fluid,
 .bd-article > hr + * {
