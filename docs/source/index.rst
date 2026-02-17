@@ -217,6 +217,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">AAAI 2017</span>
                <span class="hf-tag">BiMap</span>
                <span class="hf-tag">ReEig</span>
                <span class="hf-tag">LogEig</span>
@@ -236,6 +237,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">Imaging Neuroscience 2025</span>
                <span class="hf-tag">Covariance</span>
                <span class="hf-tag">BiMap</span>
                <span class="hf-tag">ReEig</span>
@@ -255,6 +257,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">NeurIPS 2022</span>
                <span class="hf-tag">BatchNorm</span>
                <span class="hf-tag">LogEig</span>
                <span class="hf-tag">Transfer</span>
@@ -274,6 +277,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">IEEE TNNLS 2022</span>
                <span class="hf-tag">Multi-band</span>
                <span class="hf-tag">CSP</span>
                <span class="hf-tag">BiMap</span>
@@ -293,6 +297,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">J. Neural Eng. 2024</span>
                <span class="hf-tag">Phase</span>
                <span class="hf-tag">Dynamic System</span>
                <span class="hf-tag">BiMap</span>
@@ -312,6 +317,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">Patterns 2025</span>
                <span class="hf-tag">Gabor</span>
                <span class="hf-tag">Wavelet</span>
                <span class="hf-tag">Shrinkage</span>
@@ -331,6 +337,7 @@
 
             .. raw:: html
 
+               <span class="hf-venue">NeurIPS 2022</span>
                <span class="hf-tag">Attention</span>
                <span class="hf-tag">LogEuclidean</span>
                <span class="hf-tag">TraceNorm</span>
