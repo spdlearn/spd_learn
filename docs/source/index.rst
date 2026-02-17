@@ -297,13 +297,13 @@
                <span class="hf-tag">Dynamic System</span>
                <span class="hf-tag">BiMap</span>
 
-      .. grid-item-card:: GREEN
+      .. grid-item-card:: Green
          :link: generated/spd_learn.models.Green
          :link-type: doc
          :class-card: hf-dataset-card
 
          .. image:: _static/models/green.png
-            :alt: GREEN Architecture
+            :alt: Green Architecture
             :class: sd-card-img-top
 
          Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry for interpretable EEG decoding.
@@ -315,6 +315,25 @@
                <span class="hf-tag">Gabor</span>
                <span class="hf-tag">Wavelet</span>
                <span class="hf-tag">Shrinkage</span>
+
+      .. grid-item-card:: MAtt
+         :link: generated/spd_learn.models.MAtt
+         :link-type: doc
+         :class-card: hf-dataset-card
+
+         .. image:: _static/models/matt.png
+            :alt: MAtt Architecture
+            :class: sd-card-img-top
+
+         Manifold Attention Network that applies attention mechanisms directly on the SPD manifold using Log-Euclidean distances for temporal weighting.
+
+         .. container:: hf-card-tags
+
+            .. raw:: html
+
+               <span class="hf-tag">Attention</span>
+               <span class="hf-tag">LogEuclidean</span>
+               <span class="hf-tag">TraceNorm</span>
 
 ----
 
