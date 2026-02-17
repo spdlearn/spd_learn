@@ -3,8 +3,10 @@ import torch
 
 from torch.testing import assert_close
 
+from spd_learn.functional import sym_to_upper
 from spd_learn.models.phase_spdnet import PhaseDelay
 from spd_learn.modules.bilinear import BiMap, BiMapIncreaseDim
+from spd_learn.modules.modeig import ExpEig, LogEig
 from spd_learn.modules.residual import LogEuclideanResidual
 
 from .constants import EXAMPLE_2X2_SPD_MATRIX
@@ -569,3 +571,187 @@ def test_log_euclidean_residual_gradient_flow():
     assert Y.grad is not None, "Gradient not computed for Y"
     assert not torch.allclose(X.grad, torch.zeros_like(X.grad)), "X gradient is zero"
     assert not torch.allclose(Y.grad, torch.zeros_like(Y.grad)), "Y gradient is zero"
+
+
+# =============================================================================
+# LogEig / ExpEig shape and round-trip tests
+# =============================================================================
+
+
+@pytest.mark.parametrize(
+    "upper,flatten,expected_ndim",
+    [
+        (True, True, 1),  # (batch, n(n+1)/2)
+        (True, False, 1),  # upper takes precedence -> (batch, n(n+1)/2)
+        (False, True, 1),  # (batch, n*n)
+        (False, False, 2),  # (batch, n, n)
+    ],
+)
+def test_logeig_output_shape(upper, flatten, expected_ndim, random_spd_matrix):
+    """Verify LogEig output ndim for all upper/flatten combinations."""
+    n = 5
+    X = random_spd_matrix(batch_size=3, n_channels=n)
+    layer = LogEig(upper=upper, flatten=flatten)
+    Y = layer(X)
+
+    # expected_ndim counts the non-batch dimensions
+    assert Y.ndim - 1 == expected_ndim, (
+        f"upper={upper}, flatten={flatten}: expected {expected_ndim} "
+        f"non-batch dims, got {Y.ndim - 1}"
+    )
+
+
+@pytest.mark.parametrize(
+    "upper,flatten",
+    [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ],
+)
+def test_logeig_output_dimension(upper, flatten, random_spd_matrix):
+    """Verify LogEig output vector length matches expected formula."""
+    n = 5
+    X = random_spd_matrix(batch_size=3, n_channels=n)
+    layer = LogEig(upper=upper, flatten=flatten)
+    Y = layer(X)
+
+    if upper:
+        expected_last = n * (n + 1) // 2
+        assert Y.shape[-1] == expected_last
+    elif flatten:
+        expected_last = n * n
+        assert Y.shape[-1] == expected_last
+    else:
+        assert Y.shape[-2:] == (n, n)
+
+
+@pytest.mark.parametrize(
+    "upper,flatten",
+    [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ],
+)
+def test_expeig_output_shape(upper, flatten, random_spd_matrix):
+    """Verify ExpEig always outputs (batch, n, n) SPD matrices."""
+    n = 5
+    X = random_spd_matrix(batch_size=3, n_channels=n)
+
+    # Get LogEig output to feed into ExpEig
+    log_layer = LogEig(upper=upper, flatten=flatten)
+    X_log = log_layer(X)
+
+    exp_layer = ExpEig(upper=upper, flatten=flatten)
+    X_exp = exp_layer(X_log)
+
+    assert X_exp.shape == (3, n, n), (
+        f"upper={upper}, flatten={flatten}: expected (3, {n}, {n}), got {X_exp.shape}"
+    )
+
+
+@pytest.mark.parametrize(
+    "upper,flatten",
+    [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ],
+)
+def test_logeig_expeig_roundtrip_shape(upper, flatten, random_spd_matrix):
+    """Verify LogEig -> ExpEig round-trip recovers the original matrix."""
+    n = 5
+    X = random_spd_matrix(batch_size=3, n_channels=n)
+
+    log_layer = LogEig(upper=upper, flatten=flatten)
+    exp_layer = ExpEig(upper=upper, flatten=flatten)
+
+    X_reconstructed = exp_layer(log_layer(X))
+
+    assert X_reconstructed.shape == X.shape, (
+        f"Round-trip shape mismatch: {X_reconstructed.shape} vs {X.shape}"
+    )
+    assert_close(
+        X_reconstructed,
+        X,
+        atol=1e-4,
+        rtol=1e-4,
+        msg=f"Round-trip value mismatch for upper={upper}, flatten={flatten}",
+    )
+
+
+@pytest.mark.parametrize("n_channels", [3, 5, 10])
+@pytest.mark.parametrize(
+    "upper,flatten",
+    [
+        (True, True),
+        (False, True),
+        (False, False),
+    ],
+)
+def test_logeig_expeig_shape_across_sizes(
+    n_channels, upper, flatten, random_spd_matrix
+):
+    """Verify shape consistency across different matrix dimensions."""
+    X = random_spd_matrix(batch_size=2, n_channels=n_channels)
+
+    log_layer = LogEig(upper=upper, flatten=flatten)
+    exp_layer = ExpEig(upper=upper, flatten=flatten)
+
+    X_log = log_layer(X)
+    X_roundtrip = exp_layer(X_log)
+
+    assert X_roundtrip.shape == X.shape, (
+        f"n={n_channels}, upper={upper}, flatten={flatten}: "
+        f"roundtrip shape {X_roundtrip.shape} != input shape {X.shape}"
+    )
+
+
+def test_expeig_accepts_upper_vectorized_input(random_spd_matrix):
+    """Verify ExpEig decodes upper-triangular vectors before exp."""
+    X = random_spd_matrix(batch_size=2, n_channels=4)
+    tangent = LogEig(upper=False, flatten=False)(X)
+
+    expected = ExpEig(upper=False, flatten=False)(tangent)
+    got = ExpEig(upper=True, flatten=False)(sym_to_upper(tangent))
+
+    assert_close(got, expected, atol=1e-6, rtol=1e-6)
+
+
+def test_expeig_accepts_flattened_input(random_spd_matrix):
+    """Verify ExpEig decodes flattened matrices before exp."""
+    X = random_spd_matrix(batch_size=2, n_channels=4)
+    tangent = LogEig(upper=False, flatten=False)(X)
+
+    expected = ExpEig(upper=False, flatten=False)(tangent)
+    got = ExpEig(upper=False, flatten=True)(tangent.flatten(start_dim=-2))
+
+    assert_close(got, expected, atol=1e-6, rtol=1e-6)
+
+
+def test_expeig_raises_on_invalid_upper_length():
+    """Upper-vectorized input length must be triangular."""
+    layer = ExpEig(upper=True, flatten=False)
+    bad = torch.randn(2, 8)  # 8 != n(n+1)/2 for any integer n
+    with pytest.raises(AssertionError):
+        layer(bad)
+
+
+def test_expeig_raises_on_invalid_flatten_length():
+    """Flattened input length must be a perfect square."""
+    layer = ExpEig(upper=False, flatten=True)
+    bad = torch.randn(2, 10)  # 10 != n*n for any integer n
+    with pytest.raises(ValueError, match="n\\*n"):
+        layer(bad)
+
+
+def test_expeig_raises_on_non_square_matrix():
+    """Matrix input must be square when upper/flatten are disabled."""
+    layer = ExpEig(upper=False, flatten=False)
+    bad = torch.randn(2, 3, 4)
+    with pytest.raises(ValueError, match="shape \\(\\.\\.\\., n, n\\)"):
+        layer(bad)

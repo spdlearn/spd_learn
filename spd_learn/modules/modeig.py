@@ -1,13 +1,18 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+import math
+
 import torch
 import torch.nn as nn
+
+from einops import rearrange
 
 from ..functional import (
     clamp_eigvals,
     matrix_exp,
     matrix_log,
     sym_to_upper,
+    vec_to_sym,
 )
 from ..functional.autograd import (
     clamp_eigvals_func,
@@ -358,10 +363,13 @@ class ExpEig(nn.Module):
     Parameters
     ----------
     upper : bool, default=False
-        If `True`, assumes input is vectorized upper triangular and reconstructs
-        symmetric matrix before applying exponential.
+        If `True`, assumes the input is an upper-triangular vectorized
+        symmetric matrix of shape ``(..., n(n+1)/2)`` and reconstructs the
+        full symmetric matrix before applying the exponential.
     flatten : bool, default=False
-        If `True`, the output is flattened.
+        If `True`, assumes the input is a flattened symmetric matrix of
+        shape ``(..., n*n)`` and reshapes it to ``(..., n, n)`` before
+        applying the exponential.
     autograd : bool, default=False
         Whether to use the autograd backend.
 
@@ -394,21 +402,36 @@ class ExpEig(nn.Module):
         Parameters
         ----------
         X : torch.Tensor
-            Input matrix in the tangent space.
+            Input symmetric matrix or vectorized tangent vector.
+            If ``upper=True``, expects upper-triangular vectorized input
+            of shape ``(..., n(n+1)/2)``.
+            If ``flatten=True``, expects flattened input of shape
+            ``(..., n*n)``.
+            Otherwise, expects a full symmetric matrix ``(..., n, n)``.
 
         Returns
         -------
         torch.Tensor
-            The output SPD matrix.
+            The output SPD matrix of shape ``(..., n, n)``.
         """
+        if self.upper:
+            X = vec_to_sym(X)
+        elif self.flatten:
+            n = math.isqrt(X.shape[-1])
+            if n * n != X.shape[-1]:
+                raise ValueError(
+                    f"ExpEig(flatten=True) expects last dimension n*n, got {X.shape[-1]}."
+                )
+            X = rearrange(X, "... (n1 n2) -> ... n1 n2", n1=n, n2=n)
+        elif X.ndim < 2 or X.shape[-1] != X.shape[-2]:
+            raise ValueError(
+                "ExpEig expects matrix input with shape (..., n, n) when "
+                "upper=False and flatten=False."
+            )
+
         if self.autograd_:
             X_exp = matrix_exp_func(X)
         else:
             X_exp = matrix_exp.apply(X)
-
-        if self.upper:
-            X_exp = sym_to_upper(X_exp)
-        elif self.flatten:
-            X_exp = X_exp.flatten(start_dim=-2)
 
         return X_exp.to(device=self.device)
