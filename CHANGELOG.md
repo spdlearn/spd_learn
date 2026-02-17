@@ -24,12 +24,12 @@ Seven state-of-the-art deep learning architectures for SPD matrix data:
 | Model | Description | Reference |
 |-------|-------------|-----------|
 | **SPDNet** | Foundational architecture for deep learning on SPD manifolds with dimension reduction | Huang & Van Gool, AAAI 2017 |
-| **EEGSPDNet** | Specialized for EEG classification, combining covariance estimation with SPD layers | - |
+| **EEGSPDNet** | Specialized for EEG classification, combining covariance estimation with SPD layers | Wilson, D. et al., 2024 |
 | **TSMNet** | Tangent Space Mapping Network with convolutional features and SPD batch normalization | Kobler et al., 2022 |
-| **TensorCSPNet** | Multi-band EEG feature extraction using Tensor Common Spatial Patterns | - |
+| **TensorCSPNet** | Multi-band EEG feature extraction using Tensor Common Spatial Patterns | Ju, C. et al. 2022 |
 | **PhaseSPDNet** | Phase-space embedding combined with SPDNet for geometric EEG dynamics analysis | Carrara et al., 2024 |
-| **GREEN** | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry | Chambon et al. |
-| **MAtt** | Manifold Attention mechanism for SPD matrices | - |
+| **GREEN** | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry | Paillard, J. et al., 2025 |
+| **MAtt** | Manifold Attention mechanism for SPD matrices | Pan, Yue-Ting, et al. 2022|
 
 #### SPD Neural Network Layers
 
