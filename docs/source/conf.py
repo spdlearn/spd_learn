@@ -192,7 +192,7 @@ switcher_version_match = "dev" if release.endswith("dev0") else version
 
 html_theme_options = {
     # SEO: Add proper meta description
-    "analytics": {"google_analytics_id": ""},  # Add GA ID if available
+    "analytics": {"google_analytics_id": "G-2R19VLKJCR"},  # Add GA ID if available
     "icon_links_label": "External Links",  # for screen reader
     "use_edit_page_button": False,
     "navigation_with_keys": False,
