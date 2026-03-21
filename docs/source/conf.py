@@ -250,6 +250,18 @@ html_context = {
 from sphinx_gallery.sorting import ExplicitOrder
 
 
+def _reset_torch_defaults(gallery_conf, fname):
+    """Reset torch global state between sphinx-gallery examples.
+
+    Some examples call ``torch.set_default_dtype(torch.float64)`` which
+    persists across examples when run in the same worker process and
+    causes dtype-mismatch errors in subsequent examples.
+    """
+    import torch
+
+    torch.set_default_dtype(torch.float32)
+
+
 sphinx_gallery_conf = {
     "examples_dirs": ["../../examples"],
     "gallery_dirs": ["generated/auto_examples"],
@@ -258,10 +270,11 @@ sphinx_gallery_conf = {
     # Point 3: Image optimization - compress images and reduce thumbnail size
     "compress_images": ("images", "thumbnails"),
     "thumbnail_size": (400, 280),  # Smaller thumbnails for faster loading
-    # Order: tutorials first, then visualizations, then applied examples
+    # Order: tutorials, how-to guides, visualizations, then applied examples
     "subsection_order": ExplicitOrder(
         [
             "../../examples/tutorials",
+            "../../examples/howto",
             "../../examples/visualizations",
             "../../examples/applied_examples",
         ]
@@ -277,6 +290,8 @@ sphinx_gallery_conf = {
     # Include both plot_* files and tutorial_* files
     "filename_pattern": r"/(plot_|tutorial_)",
     "ignore_pattern": r"(__init__|spd_visualization_utils)\.py",
+    # Reset torch default dtype between examples to prevent float64 leakage
+    "reset_modules": ("matplotlib", "seaborn", _reset_torch_defaults),
     # Show signature link template (includes Colab launcher)
     "show_signature": False,
     # First cell in generated notebooks (for Colab compatibility)

@@ -1,12 +1,11 @@
 """
 .. _liebn-batch-normalization:
 
-Lie Group Batch Normalization for SPD Matrices
-===============================================
+Reproducing LieBN Paper Results (Table 4)
+==========================================
 
-This tutorial implements Lie Group Batch Normalization (LieBN) for Symmetric
-Positive Definite (SPD) matrices and reproduces the SPDNet experiments from
-Table 4 of Chen et al., "A Lie Group Approach to Riemannian Batch
+This example reproduces the SPDNet experiments from Table 4 of
+Chen et al., "A Lie Group Approach to Riemannian Batch
 Normalization", ICLR 2024 :cite:p:`chen2024liebn`.
 
 We compare batch normalization strategies on HDM05 (7 configs), Radar
@@ -15,11 +14,19 @@ paper's evaluation protocol (10 independent random-split runs with
 batch-mean accuracy). AFEW uses a fixed train/val split (10 runs varying
 only model initialization).
 
+**Configurations benchmarked:**
+
 - **SPDNet**: No batch normalization
 - **SPDNetBN**: Riemannian BN (Brooks et al. + variance normalization)
 - **LieBN-AIM**: LieBN under the Affine-Invariant Metric (theta=1, 1.5)
 - **LieBN-LEM**: LieBN under the Log-Euclidean Metric
 - **LieBN-LCM**: LieBN under the Log-Cholesky Metric (theta=1, 0.5, -0.5)
+
+.. note::
+
+   New to SPD batch normalization? Start with the
+   :ref:`tutorial-batch-normalization` tutorial for an introduction, or
+   see :ref:`howto-add-batchnorm` for a quick integration guide.
 
 .. contents:: This example covers:
    :local:
@@ -28,44 +35,8 @@ only model initialization).
 """
 
 ######################################################################
-# Introduction & Theory
-# ---------------------
-#
-# LieBN exploits the Lie group structure of the SPD manifold to define
-# a metric-dependent batch normalization pipeline. For each Riemannian
-# metric, the forward pass follows five steps:
-#
-# 1. **Deformation** --- map SPD matrices to a codomain
-# 2. **Centering** --- translate batch to zero/identity mean
-# 3. **Scaling** --- normalize variance by a learnable dispersion
-# 4. **Biasing** --- translate by a learnable location parameter
-# 5. **Inverse Deformation** --- map back to the SPD manifold
-#
-# The three metrics differ in their deformation and group action:
-#
-# .. list-table::
-#    :header-rows: 1
-#    :widths: 15 25 25 25
-#
-#    * - Metric
-#      - Deformation
-#      - Mean
-#      - Group Action
-#    * - **LEM**
-#      - :math:`\log(X)`
-#      - Euclidean (closed-form)
-#      - Additive
-#    * - **LCM**
-#      - Cholesky + log-diag
-#      - Euclidean (closed-form)
-#      - Additive
-#    * - **AIM**
-#      - :math:`X^\theta`
-#      - Karcher (iterative)
-#      - Cholesky congruence
-#
 # Setup and Imports
-# ~~~~~~~~~~~~~~~~~
+# -----------------
 #
 
 import json
@@ -122,88 +93,10 @@ def set_reproducibility(seed=1024):
         torch.backends.cudnn.benchmark = False
 
 
-torch.set_default_dtype(torch.float64)
 GLOBAL_SEED = 1024
 set_reproducibility(GLOBAL_SEED)
 DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
-
-######################################################################
-# SPDBatchNormLie Implementation
-# -----------------------
-#
-# The reusable LieBN implementation now lives in ``spd_learn.modules`` and is
-# imported above to avoid keeping a second copy in this example.
-
-
-######################################################################
-# Sanity Check
-# ~~~~~~~~~~~~
-#
-# Verify that SPDBatchNormLie produces valid SPD output and that gradients flow
-# for all three metrics.
-#
-
-torch.manual_seed(42)
-A = torch.randn(8, 4, 4)
-X_sanity = (A @ A.mT + 0.1 * torch.eye(4)).requires_grad_(True)
-
-for metric in ["AIM", "LEM", "LCM"]:
-    bn = SPDBatchNormLie(4, metric=metric)
-    bn.train()
-    out = bn(X_sanity)
-    loss = (out * out).sum()
-    loss.backward()
-    eigvals = torch.linalg.eigvalsh(out.detach())
-    print(
-        f"{metric}: min_eigval={eigvals.min():.2e}, "
-        f"grad_norm={X_sanity.grad.norm():.4f}"
-    )
-    X_sanity.grad = None
-
-######################################################################
-# Running Variance Convergence
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# We simulate several training epochs on a fixed synthetic dataset and
-# plot the convergence of running variance across metrics.
-#
-
-n_var = 4
-n_epochs_var = 50
-batch_size_var = 32
-n_samples_var = 128
-
-torch.manual_seed(123)
-A_var = torch.randn(n_samples_var, n_var, n_var)
-dataset_var = A_var @ A_var.mT + 1e-2 * torch.eye(n_var)
-
-variance_results = {}
-for metric in ["LEM", "LCM", "AIM"]:
-    bn = SPDBatchNormLie(n_var, metric=metric, momentum=0.1)
-    bn.train()
-    variances = []
-    for epoch in range(n_epochs_var):
-        perm = torch.randperm(n_samples_var)
-        for i in range(0, n_samples_var, batch_size_var):
-            batch = dataset_var[perm[i : i + batch_size_var]]
-            if batch.shape[0] < 2:
-                continue
-            _ = bn(batch)
-        variances.append(bn.running_var.item())
-    variance_results[metric] = variances
-
-fig, ax = plt.subplots(figsize=(8, 4))
-for metric, variances in variance_results.items():
-    ax.plot(variances, label=metric)
-ax.set_xlabel("Epoch")
-ax.set_ylabel("Running variance")
-ax.set_title("Running variance convergence across metrics")
-ax.legend()
-ax.grid(True, alpha=0.3)
-plt.tight_layout()
-plt.show()
-
 
 ######################################################################
 # SPDNet Architecture & Training Setup
