@@ -693,6 +693,104 @@ where :math:`\frechet` is the Fréchet mean of the batch.
 See :ref:`sphx_glr_generated_auto_examples_visualizations_plot_batchnorm_animation.py`
 
 
+Batch Normalization on SPD Manifolds
+=====================================
+
+In Euclidean deep learning, batch normalization centers activations to zero mean
+and unit variance, stabilizing gradient flow and accelerating convergence. On the
+SPD manifold, the same principle applies — but "mean" and "variance" must respect
+the curved Riemannian geometry.
+
+Why Euclidean BN Fails for SPD Matrices
+----------------------------------------
+
+Standard batch normalization computes :math:`\hat{x} = (x - \mu) / \sigma`. For SPD
+matrices this is problematic:
+
+- **Subtraction breaks SPD**: :math:`X - M` (with :math:`M` the arithmetic mean) may not
+  be positive definite.
+- **The swelling effect**: The Euclidean mean of SPD matrices can have a larger determinant
+  than any individual matrix, distorting the data distribution.
+- **Scale mismatch**: SPD matrices from different subjects or sessions can have vastly
+  different spectral profiles; Euclidean normalization ignores this geometric structure.
+
+Riemannian Batch Normalization
+-------------------------------
+
+:class:`~spd_learn.modules.SPDBatchNormMeanVar` addresses these issues by replacing
+Euclidean operations with their Riemannian counterparts under the AIRM:
+
+1. **Centering**: Compute the Fréchet mean :math:`\frechet` of the batch, then
+   apply congruence :math:`\tilde{X}_i = \frechet^{-1/2} X_i \frechet^{-1/2}` to center
+   the batch around the identity matrix.
+2. **Variance scaling**: Compute a scalar dispersion and normalize by a learnable weight.
+3. **Biasing**: Apply a learnable SPD bias via congruence.
+
+This preserves the SPD structure at every step.
+
+Lie Group Batch Normalization (LieBN)
+--------------------------------------
+
+:class:`~spd_learn.modules.SPDBatchNormLie` :cite:p:`chen2024liebn` generalizes
+Riemannian BN by exploiting the Lie group structure of :math:`\spd`. The key insight
+is that each Riemannian metric induces a different group action for centering and biasing.
+
+The LieBN forward pass follows five steps:
+
+1. **Deformation** — Map SPD matrices to a codomain via the metric
+   (e.g., :math:`\log(X)` for LEM, Cholesky + log-diagonal for LCM, :math:`X^\theta` for AIM).
+2. **Centering** — Translate the batch to zero/identity mean using the group action.
+3. **Scaling** — Normalize variance by a learnable dispersion parameter.
+4. **Biasing** — Translate by a learnable location parameter.
+5. **Inverse deformation** — Map back to the SPD manifold.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 25 25 25
+
+   * - Metric
+     - Deformation
+     - Mean Computation
+     - Group Action
+   * - **LEM**
+     - :math:`\log(X)`
+     - Euclidean (closed-form)
+     - Additive
+   * - **LCM**
+     - Cholesky + log-diag
+     - Euclidean (closed-form)
+     - Additive
+   * - **AIM**
+     - :math:`X^\theta`
+     - Karcher (iterative)
+     - Cholesky congruence
+
+**Choosing a metric for batch normalization:**
+
+- **LEM**: Fastest (closed-form mean), good default for most tasks.
+- **AIM**: Full affine invariance, best when data scale varies (e.g., cross-subject EEG).
+- **LCM**: Fast like LEM, with Cholesky-based numerical stability.
+
+.. code-block:: python
+
+   from spd_learn.modules import SPDBatchNormLie
+
+   # LEM is the fastest — good default
+   bn_lem = SPDBatchNormLie(num_features=32, metric="LEM")
+
+   # AIM for affine-invariant normalization
+   bn_aim = SPDBatchNormLie(num_features=32, metric="AIM", theta=1.0)
+
+   # LCM for Cholesky stability
+   bn_lcm = SPDBatchNormLie(num_features=32, metric="LCM")
+
+.. seealso::
+
+   :ref:`tutorial-batch-normalization` — Hands-on tutorial comparing all BN strategies,
+   :ref:`howto-add-batchnorm` — Quick integration guide,
+   :ref:`liebn-batch-normalization` — Full benchmark reproduction across 3 datasets
+
+
 References
 ==========
 

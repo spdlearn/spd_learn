@@ -362,6 +362,7 @@ or related representations.
 
    SPDBatchNormMean
    SPDBatchNormMeanVar
+   SPDBatchNormLie
    BatchReNorm
 
 

@@ -96,74 +96,9 @@ warnings.filterwarnings("ignore")
 # SPDIM Geometric Operations
 # --------------------------
 #
-# We define two core geometric operations needed for the SPDIM pipeline.
-# These will be included in a future release of ``spd_learn.functional``.
+# The Fréchet mean and geodesic distances used by SPDIM are available
+# directly from ``spd_learn.functional``.
 #
-
-from spd_learn.functional import (
-    get_epsilon,
-    matrix_exp,
-    matrix_log,
-    matrix_sqrt_inv,
-)
-
-
-def frechet_mean(X, max_iter=50, return_distances=False):
-    r"""Compute the Fréchet mean under the AIRM.
-
-    .. math::
-
-        \bar{X} = \arg\min_{G \in \mathcal{S}_{++}^n}
-        \sum_{i=1}^{N} d_{\text{AIRM}}^2(G, X_i)
-
-    Uses adaptive step-size Karcher flow.
-    """
-    eps = get_epsilon(X.dtype, "eigval_log")
-    n_samples = X.shape[0]
-
-    if n_samples == 1:
-        mean = X[:1]
-        if return_distances:
-            return mean, torch.zeros(X.shape[:-2], dtype=X.dtype, device=X.device)
-        return mean
-
-    w = torch.ones((*X.shape[:-2], 1, 1), dtype=X.dtype, device=X.device)
-    w = w / n_samples
-    G = (X * w).sum(dim=0, keepdim=True)
-
-    nu = 1.0
-    tau = float("inf")
-
-    for _ in range(max_iter):
-        G_sqrt, G_invsqrt = matrix_sqrt_inv.apply(G)
-        X_tangent = matrix_log.apply(G_invsqrt @ X @ G_invsqrt)
-        G_tangent = (X_tangent * w).sum(dim=0, keepdim=True)
-
-        crit = torch.norm(G_tangent, p="fro", dim=(-2, -1)).max().item()
-        if crit <= eps:
-            break
-
-        G = G_sqrt @ matrix_exp.apply(nu * G_tangent) @ G_sqrt
-
-        h = nu * crit
-        if h < tau:
-            nu = 0.95 * nu
-            tau = h
-        else:
-            nu = 0.5 * nu
-
-        if nu <= eps:
-            break
-
-    if return_distances:
-        G_sqrt, G_invsqrt = matrix_sqrt_inv.apply(G)
-        X_tangent = matrix_log.apply(G_invsqrt @ X @ G_invsqrt)
-        G_tangent = (X_tangent * w).sum(dim=0, keepdim=True)
-        distances = torch.norm(X_tangent - G_tangent, p="fro", dim=(-2, -1))
-        return G, distances
-
-    return G
-
 
 ######################################################################
 # Loading the Dataset
@@ -179,11 +114,12 @@ def frechet_mean(X, max_iter=50, return_distances=False):
 # - **Source domain**: Session A (training with labels)
 # - **Target domain**: Session B (adaptation without labels)
 #
-
 from braindecode.datasets import create_from_X_y
 from moabb.datasets import BNCI2015_001
 from moabb.paradigms import MotorImagery
 from sklearn.preprocessing import LabelEncoder
+
+from spd_learn.functional import frechet_mean
 
 
 dataset = BNCI2015_001()

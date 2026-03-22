@@ -21,6 +21,7 @@ mandatory_parameters_per_module = {
     "SPDBatchNormMean": dict(num_features=10),
     "BatchReNorm": dict(num_features=10),
     "SPDBatchNormMeanVar": dict(num_features=10),
+    "SPDBatchNormLie": dict(num_features=10),
     "PatchEmbeddingLayer": dict(n_chans=10, n_patches=2),
     "BiMapIncreaseDim": dict(in_features=10, out_features=20),
     "Shrinkage": dict(n_chans=10),
@@ -141,6 +142,8 @@ def test_module_dtype(module_name, dtype, device):
         pytest.skip(
             "PositiveDefiniteScalar is a scalar parametrization, not a matrix layer."
         )
+    if module_name == "SPDBatchNormLie" and dtype.is_complex:
+        pytest.skip("SPDBatchNormLie only supports real-valued SPD matrices.")
 
     module_class = getattr(spd_learn.modules, module_name)
     mandatory_param = mandatory_parameters_per_module.get(module_name, {})

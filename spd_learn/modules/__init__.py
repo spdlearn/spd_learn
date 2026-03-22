@@ -4,6 +4,7 @@ from .batchnorm import BatchReNorm, SPDBatchNormMean, SPDBatchNormMeanVar
 from .bilinear import BiMap, BiMapIncreaseDim
 from .covariance import CovLayer
 from .dropout import SPDDropout
+from .liebn import SPDBatchNormLie
 from .manifold import PositiveDefiniteScalar, SymmetricPositiveDefinite
 from .modeig import ExpEig, LogEig, ReEig
 from .regularize import Shrinkage, TraceNorm
@@ -29,6 +30,7 @@ __all__ = [
     "SPDBatchNormMean",
     "BatchReNorm",
     "SPDBatchNormMeanVar",
+    "SPDBatchNormLie",
     # dropout
     "SPDDropout",
     # residual

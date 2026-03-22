@@ -13,7 +13,7 @@ from ..functional import (
     matrix_sqrt,
 )
 from ..functional.batchnorm import (
-    karcher_mean_iteration,
+    frechet_mean,
     spd_centering,
     spd_rebiasing,
     tangent_space_variance,
@@ -194,10 +194,7 @@ class SPDBatchNormMean(nn.Module):
 
         """
         if self.training:
-            mean = input.mean(dim=0, keepdim=True)
-            if input.shape[0] > 1:
-                for _ in range(self.n_iter):
-                    mean = karcher_mean_iteration(input, mean)
+            mean = frechet_mean(input, max_iter=self.n_iter)
             with torch.no_grad():
                 self.running_mean = airm_geodesic(
                     self.running_mean, mean, self.momentum
@@ -478,14 +475,8 @@ class SPDBatchNormMeanVar(nn.Module):
             Normalized tensor of the same shape as the input.
 
         """
-        n_samples = input.shape[0]
         if self.training:
-            # Kobler et al. SPDMBN/SPDBN: estimate batch Fréchet mean via Karcher step
-            batch_mean = input.mean(dim=0, keepdim=True)
-            if n_samples > 1:
-                for _ in range(self.n_iter):
-                    # Kobler et al. (Eq. 4): P2 L132-145; Karcher flow note: P2 L163-165
-                    batch_mean = karcher_mean_iteration(input, batch_mean)
+            batch_mean = frechet_mean(input, max_iter=self.n_iter)
 
             # Scalar dispersion: mean squared Frobenius norm of log at the mean (a single scalar, not variance matrix)
             mean_inv_sqrt = matrix_inv_sqrt.apply(batch_mean)
