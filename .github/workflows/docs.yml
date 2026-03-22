@@ -54,6 +54,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-data
 
+      - name: Restore Sphinx-Gallery Cache
+        uses: actions/cache@v4
+        with:
+          path: docs/source/generated/
+          key: ${{ runner.os }}-gallery-${{ hashFiles('examples/**/*.py') }}
+          restore-keys: |
+            ${{ runner.os }}-gallery-
+
       - name: Build Docs
         run: make -C docs html
 
