@@ -122,7 +122,8 @@ def test_matrix_power():
 
     assert matrix_power.apply(X, 3.0).allclose(X @ X @ X)
     X.requires_grad_(True)
-    assert gradcheck(safe_matrix_power, (X, 0.1))
+    exponent = torch.tensor(0.1, dtype=torch.double, requires_grad=True)
+    assert gradcheck(safe_matrix_power, (X, exponent))
 
 
 def test_matrix_sqrt():
