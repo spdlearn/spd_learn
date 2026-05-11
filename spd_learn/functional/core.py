@@ -377,7 +377,7 @@ class matrix_power(Function):
     ----------
     X : torch.Tensor
         Symmetric matrix of shape `(..., n, n)`.
-    exponent : float
+    exponent : torch.Tensor
         Exponent to raise the matrix to.
 
     Returns
@@ -425,16 +425,16 @@ class matrix_power(Function):
         exponent = ctx.exponent
         threshold = get_epsilon(s.dtype, "eigval_power")
 
-        # Gradient wrt the exponent
-        G = U.transpose(-1,-2) @ grad_output @ U
-        diag_G = torch.diagonal(G, dim1 = -2, dim2= -1)
+        # Gradient w.r.t the exponent
+        G = U.transpose(-1, -2) @ grad_output @ U
+        diag_G = torch.diagonal(G, dim1=-2, dim2=-1)
 
-        s_safe = s.clamp(min = threshold)
+        s_safe = s.clamp(min=threshold)
         exp_g = s_modified * torch.log(s_safe)
 
-        grad_exponent = torch.sum(diag_G * exp_g).view(1, 1)
+        grad_exponent = torch.sum(diag_G * exp_g, dim=-1).sum().reshape_as(exponent)
 
-        # Gradient wrt X
+        # Gradient w.r.t X
         grad_X = modeig_backward(
             grad_output, s, U, s_modified, matrix_power.derivative, exponent
         )
