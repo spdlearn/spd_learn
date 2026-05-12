@@ -426,7 +426,7 @@ class matrix_power(Function):
         threshold = get_epsilon(s.dtype, "eigval_power")
 
         # Gradient w.r.t the exponent
-        G = U.transpose(-1, -2) @ grad_output @ U
+        G = U.mT @ grad_output @ U
         diag_G = torch.diagonal(G, dim1=-2, dim2=-1)
 
         s_safe = s.clamp(min=threshold)
