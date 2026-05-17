@@ -125,6 +125,16 @@ def test_matrix_power():
     exponent = torch.tensor(0.1, dtype=torch.double, requires_grad=True)
     assert gradcheck(safe_matrix_power, (X, exponent))
 
+    # Python-scalar exponent: backward must not crash
+    safe_matrix_power(X.detach().requires_grad_(True), 0.5).sum().backward()
+
+    # Near-singular input: exponent grad must follow subgradient-0 like X grad
+    X_tiny = torch.diag(torch.tensor([1e-30, 0.5, 1.0, 2.0], dtype=torch.double))
+    X_tiny.requires_grad_(True)
+    e_tiny = torch.tensor(-0.5, dtype=torch.double, requires_grad=True)
+    safe_matrix_power(X_tiny, e_tiny).sum().backward()
+    assert e_tiny.grad.abs().item() < 1.0
+
 
 def test_matrix_sqrt():
     from spd_learn.functional import ensure_sym, matrix_sqrt
