@@ -437,9 +437,7 @@ class matrix_power(Function):
             exp_g = s_modified * torch.log(s.clamp(min=threshold))
             # match the X-gradient: subgradient 0 at clamped eigenvalues
             exp_g = torch.where(s > threshold, exp_g, 0.0)
-            grad_exponent = (
-                torch.sum(diag_G * exp_g, dim=-1).sum().reshape_as(exponent)
-            )
+            grad_exponent = torch.sum(diag_G * exp_g, dim=-1).sum().reshape_as(exponent)
 
         return grad_X, grad_exponent
 
