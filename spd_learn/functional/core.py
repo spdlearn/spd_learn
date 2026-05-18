@@ -377,8 +377,9 @@ class matrix_power(Function):
     ----------
     X : torch.Tensor
         Symmetric matrix of shape `(..., n, n)`.
-    exponent : torch.Tensor
-        Exponent to raise the matrix to.
+    exponent : float or torch.Tensor
+        Exponent to raise the matrix to. Python scalars are cast internally
+        to a 0-d tensor.
 
     Returns
     -------
@@ -414,6 +415,7 @@ class matrix_power(Function):
 
     @staticmethod
     def forward(ctx, X, exponent):
+        exponent = torch.as_tensor(exponent, dtype=X.dtype, device=X.device)
         output, s, U, s_modified = modeig_forward(X, matrix_power.applied_fct, exponent)
         ctx.save_for_backward(s, U, s_modified)
         ctx.exponent = exponent
@@ -423,21 +425,19 @@ class matrix_power(Function):
     def backward(ctx, grad_output):
         s, U, s_modified = ctx.saved_tensors
         exponent = ctx.exponent
-        threshold = get_epsilon(s.dtype, "eigval_power")
 
-        # Gradient w.r.t the exponent
-        G = U.mT @ grad_output @ U
-        diag_G = torch.diagonal(G, dim1=-2, dim2=-1)
-
-        s_safe = s.clamp(min=threshold)
-        exp_g = s_modified * torch.log(s_safe)
-
-        grad_exponent = torch.sum(diag_G * exp_g, dim=-1).sum().reshape_as(exponent)
-
-        # Gradient w.r.t X
         grad_X = modeig_backward(
             grad_output, s, U, s_modified, matrix_power.derivative, exponent
         )
+
+        grad_exponent = None
+        if ctx.needs_input_grad[1]:
+            threshold = get_epsilon(s.dtype, "eigval_power")
+            diag_G = torch.diagonal(U.mT @ grad_output @ U, dim1=-2, dim2=-1)
+            exp_g = s_modified * torch.log(s.clamp(min=threshold))
+            # match the X-gradient: subgradient 0 at clamped eigenvalues
+            exp_g = torch.where(s > threshold, exp_g, 0.0)
+            grad_exponent = torch.sum(diag_G * exp_g, dim=-1).sum().reshape_as(exponent)
 
         return grad_X, grad_exponent
 
