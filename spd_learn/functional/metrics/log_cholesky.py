@@ -78,6 +78,7 @@ Examples
 
 import torch
 
+from pyriemann.geometry.geodesic import geodesic_logchol
 from torch.autograd import Function
 
 from ..numerical import get_epsilon
@@ -348,6 +349,8 @@ def log_cholesky_distance(A, B):
     >>> print(f"Distance: {dist.item():.4f}")
     Distance: 1.2012
     """
+    # Kept in spd_learn (not delegated): built on spd_learn's stable cholesky_log
+    # so all distances share one numerically-robust code path.
     log_chol_A = cholesky_log.apply(A)
     log_chol_B = cholesky_log.apply(B)
 
@@ -480,10 +483,9 @@ def log_cholesky_geodesic(A, B, t):
     >>> print(f"Midpoint diagonal: {torch.diag(mid)}")
     Midpoint diagonal: tensor([2., 2., 2.])
     """
-    log_chol_A = cholesky_log.apply(A)
-    log_chol_B = cholesky_log.apply(B)
-
-    # Linear interpolation in Log-Cholesky space
-    log_chol_interp = (1 - t) * log_chol_A + t * log_chol_B
-
-    return cholesky_exp.apply(log_chol_interp)
+    # A 0-d tensor t broadcasts over batched inputs (pyriemann requires alpha to
+    # match the batch shape); expand it so a scalar t still works on batches.
+    if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
+        t = t.expand(A.shape[:-2])
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return geodesic_logchol(A, B, alpha=t)

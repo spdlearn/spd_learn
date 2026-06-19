@@ -12,7 +12,103 @@ matrices, organized into:
 - **Regularization**: Covariance regularization utilities
 - **Vectorization**: Batch vectorization and (un)vectorization helpers
 - **Numerical**: Numerical stability configuration
+
+pyriemann (>=0.12) is a core dependency, and its broader geometry toolkit is
+re-exported here so the full SPD/Riemannian API is available from a single
+namespace. The low-level matrix-function primitives ``logm``/``expm``/``sqrtm``/
+``invsqrtm``/``powm`` are intentionally **not** re-exported: use spd_learn's
+numerically-stable :func:`matrix_log`/:func:`matrix_exp`/... instead, which keep
+gradients well-behaved near degenerate eigenvalues. ``ddlogm``/``ddexpm`` are
+likewise not re-exported under those names; use the equivalent thin wrappers
+:func:`frechet_derivative_log`/:func:`frechet_derivative_exp`.
 """
+
+from pyriemann.geometry.ajd import ajd, ajd_pham, rjd, uwedge
+from pyriemann.geometry.base import nearest_sym_pos_def
+from pyriemann.geometry.distance import (
+    distance,
+    distance_chol,
+    distance_euclid,
+    distance_harmonic,
+    distance_kullback,
+    distance_kullback_right,
+    distance_kullback_sym,
+    distance_logchol,
+    distance_logdet,
+    distance_logeuclid,
+    distance_mahalanobis,
+    distance_poweuclid,
+    distance_riemann,
+    distance_thompson,
+    distance_wasserstein,
+    pairwise_distance,
+)
+from pyriemann.geometry.geodesic import (
+    geodesic,
+    geodesic_chol,
+    geodesic_euclid,
+    geodesic_logchol,
+    geodesic_logeuclid,
+    geodesic_riemann,
+    geodesic_thompson,
+    geodesic_wasserstein,
+)
+from pyriemann.geometry.kernel import (
+    kernel,
+    kernel_euclid,
+    kernel_logeuclid,
+    kernel_riemann,
+)
+from pyriemann.geometry.mean import (
+    gmean,
+    maskedmean_riemann,
+    mean_ale,
+    mean_alm,
+    mean_bmp,
+    mean_cheap,
+    mean_chol,
+    mean_euclid,
+    mean_harmonic,
+    mean_kullback_sym,
+    mean_logchol,
+    mean_logdet,
+    mean_logeuclid,
+    mean_power,
+    mean_poweuclid,
+    mean_riemann,
+    mean_thompson,
+    mean_wasserstein,
+    nanmean_riemann,
+)
+from pyriemann.geometry.tangentspace import (
+    exp_map,
+    exp_map_euclid,
+    exp_map_logchol,
+    exp_map_logeuclid,
+    exp_map_riemann,
+    exp_map_wasserstein,
+    innerproduct,
+    innerproduct_euclid,
+    innerproduct_logchol,
+    innerproduct_logeuclid,
+    innerproduct_riemann,
+    log_map,
+    log_map_euclid,
+    log_map_logchol,
+    log_map_logeuclid,
+    log_map_riemann,
+    log_map_wasserstein,
+    norm,
+    tangent_space,
+    transport,
+    transport_euclid,
+    transport_logchol,
+    transport_logeuclid,
+    transport_riemann,
+    untangent_space,
+    unupper,
+    upper,
+)
 
 from .autograd import modeig_backward, modeig_forward
 from .batchnorm import (
@@ -194,4 +290,90 @@ __all__ = [
     "recommend_dtype_for_spd",
     # Attacks
     "spd_rpgd_attack",
+    # ----- Re-exported pyriemann geometry (Array API; run on torch tensors) -----
+    "nearest_sym_pos_def",
+    # Additional distances
+    "distance",
+    "distance_chol",
+    "distance_euclid",
+    "distance_harmonic",
+    "distance_kullback",
+    "distance_kullback_right",
+    "distance_kullback_sym",
+    "distance_logchol",
+    "distance_logdet",
+    "distance_logeuclid",
+    "distance_mahalanobis",
+    "distance_poweuclid",
+    "distance_riemann",
+    "distance_thompson",
+    "distance_wasserstein",
+    "pairwise_distance",
+    # Additional geodesics
+    "geodesic",
+    "geodesic_chol",
+    "geodesic_euclid",
+    "geodesic_logchol",
+    "geodesic_logeuclid",
+    "geodesic_riemann",
+    "geodesic_thompson",
+    "geodesic_wasserstein",
+    # Additional means
+    "gmean",
+    "maskedmean_riemann",
+    "mean_ale",
+    "mean_alm",
+    "mean_bmp",
+    "mean_cheap",
+    "mean_chol",
+    "mean_euclid",
+    "mean_harmonic",
+    "mean_kullback_sym",
+    "mean_logchol",
+    "mean_logdet",
+    "mean_logeuclid",
+    "mean_power",
+    "mean_poweuclid",
+    "mean_riemann",
+    "mean_thompson",
+    "mean_wasserstein",
+    "nanmean_riemann",
+    # Tangent space, inner products, transport (generic)
+    "exp_map",
+    "exp_map_euclid",
+    "exp_map_logchol",
+    "exp_map_logeuclid",
+    "exp_map_riemann",
+    "exp_map_wasserstein",
+    "innerproduct",
+    "innerproduct_euclid",
+    "innerproduct_logchol",
+    "innerproduct_logeuclid",
+    "innerproduct_riemann",
+    "log_map",
+    "log_map_euclid",
+    "log_map_logchol",
+    "log_map_logeuclid",
+    "log_map_riemann",
+    "log_map_wasserstein",
+    "norm",
+    "tangent_space",
+    "transport",
+    "transport_euclid",
+    "transport_logchol",
+    "transport_logeuclid",
+    "transport_riemann",
+    "untangent_space",
+    "unupper",
+    "upper",
+    # Kernels
+    "kernel",
+    "kernel_euclid",
+    "kernel_logeuclid",
+    "kernel_riemann",
+    # Approximate joint diagonalization
+    "ajd",
+    "ajd_pham",
+    "rjd",
+    "uwedge",
 ]

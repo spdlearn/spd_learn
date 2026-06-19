@@ -67,8 +67,24 @@ How is SPD Learn different from pyRiemann?
 - GPU acceleration via PyTorch
 - Integration with modern DL frameworks (Braindecode, skorch)
 
-They are **complementary**: you can use pyRiemann for preprocessing and
-SPD Learn for deep learning.
+Since pyRiemann (>= 0.12) adopted the Python Array API, the two are no longer
+merely complementary — **SPD Learn builds on pyRiemann**. pyRiemann is a core
+dependency that runs natively on PyTorch tensors with autograd; SPD Learn
+delegates the geometry it does not need to keep numerically special — geodesics,
+parallel transport, and Fréchet derivatives — to it, and also re-exports
+pyRiemann's broader geometry toolkit from :py:mod:`spd_learn.functional`. On top
+of that shared backend SPD Learn adds:
+
+- ``nn.Module`` layers (BiMap, ReEig, LogEig, SPD batch norm, LieBN, ...)
+- Numerically-stable, custom-autograd matrix-function primitives, distances, and
+  means that keep gradients well-behaved (and forwards finite) near clustered or
+  near-singular eigenvalues — where the generic ``eigh`` backward and unclamped
+  ``log`` are unstable — essential for training SPDNets.
+
+So pyRiemann remains the place to look for the broader classical toolkit
+(MDM/FgMDM classifiers, tangent-space pipelines, ``pyriemann.datasets``,
+estimators, and many more metrics) — all of which interoperate with SPD Learn
+on the same PyTorch tensors.
 
 
 Technical Questions

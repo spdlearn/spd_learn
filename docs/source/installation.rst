@@ -25,6 +25,24 @@ Dependencies
 - `PyTorch <https://pytorch.org/>`_ - Deep learning framework
 - `einops <https://einops.rocks/>`_ - Flexible tensor operations
 - `NumPy <https://numpy.org/>`_ - Numerical computing
+- `pyRiemann <https://pyriemann.readthedocs.io/>`_ (>= 0.12) - SPD/Riemannian
+  geometry. SPD Learn delegates geodesics, parallel transport, and Fréchet
+  derivatives to pyRiemann's Array API backend (which runs natively on PyTorch
+  tensors) and re-exports pyRiemann's broader toolkit. It keeps its own
+  numerically-stable, custom-autograd matrix-function primitives
+  (``matrix_log``/``matrix_exp``/``matrix_sqrt``/...), distances, and means,
+  which stay finite/stable on ill-conditioned inputs — important for training.
+
+.. note::
+
+   The Array API (PyTorch) backend lives in pyRiemann **0.12+**, which is not
+   yet on PyPI. SPD Learn therefore pins pyRiemann to its git ``master``::
+
+       pyriemann @ git+https://github.com/pyRiemann/pyRiemann.git
+
+   Because this is a direct-URL dependency, ``pip install spd_learn`` from PyPI
+   is unavailable until pyRiemann 0.12 is released — install from source (see
+   below) meanwhile. The pin becomes ``pyriemann>=0.12`` once 0.12 ships.
 
 Installing from Source
 ----------------------
@@ -55,7 +73,8 @@ This installs:
 
 - `Braindecode <https://braindecode.org/>`_ - Deep learning for EEG
 - `Nilearn <https://nilearn.github.io/>`_ - Machine learning for neuroimaging
-- `pyRiemann <https://pyriemann.readthedocs.io/>`_ - Riemannian geometry for BCI
+
+(pyRiemann is now a **core** dependency — see above — so it is always installed.)
 
 Documentation
 ^^^^^^^^^^^^^

@@ -41,6 +41,11 @@ dependencies = [
     "torch",
     "einops",
     "numpy",
+    # Array API support (torch backend) lives on pyriemann master / 0.12.
+    # Hard-pinned to git until 0.12 is released on PyPI. NOTE: a direct-URL
+    # dependency blocks uploading spd_learn to PyPI; swap to "pyriemann>=0.12"
+    # once 0.12 ships.
+    "pyriemann @ git+https://github.com/pyRiemann/pyRiemann.git",
 ]
 
 [project.optional-dependencies]
@@ -52,7 +57,6 @@ tests = [
     'codecov',
     'pytest_cases',
     'mypy',
-    'pyriemann',
 ]
 docs = [
     'sphinx',
@@ -75,7 +79,6 @@ brain = [
     'moabb',
     'braindecode',
     'nilearn',
-    'pyriemann',
     'skada',
 ]
 dev = [

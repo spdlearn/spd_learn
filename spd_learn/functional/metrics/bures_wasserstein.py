@@ -70,6 +70,7 @@ import warnings
 
 import torch
 
+from pyriemann.geometry.geodesic import geodesic_wasserstein
 from torch.autograd import Function
 
 from ..core import matrix_inv_sqrt, matrix_sqrt, matrix_sqrt_inv
@@ -231,6 +232,8 @@ def bures_wasserstein_distance(A, B):
     :func:`~spd_learn.functional.log_euclidean_distance` : Distance under Log-Euclidean metric.
     :func:`~spd_learn.functional.log_cholesky_distance` : Distance under Log-Cholesky metric.
     """
+    # Kept in spd_learn (not delegated): custom autograd with an analytic
+    # backward and a subgradient-0 guard at distance 0 (A == B).
     return _BuresWassersteinDistanceFunction.apply(A, B)
 
 
@@ -291,38 +294,12 @@ def bures_wasserstein_geodesic(A, B, t):
     :func:`~spd_learn.functional.airm_geodesic` : Geodesic under AIRM.
     :func:`~spd_learn.functional.log_cholesky_geodesic` : Geodesic under Log-Cholesky metric.
     """
-    # Ensure t is a tensor
-    if not torch.is_tensor(t):
-        t = torch.tensor(t, dtype=A.dtype, device=A.device)
-    else:
-        t = t.to(dtype=A.dtype, device=A.device)
-
-    # Handle edge cases exactly for scalar t
-    if t.numel() == 1:
-        t_item = t.item()
-        if t_item == 0.0:
-            return A.clone()
-        if t_item == 1.0:
-            return B.clone()
-
-    # Expand t for broadcasting
-    t = t.reshape(t.shape + (1,) * 2)
-
-    # Compute A^{1/2} and A^{-1/2}
-    A_sqrt, A_inv_sqrt = matrix_sqrt_inv.apply(A)
-
-    # Compute M = (A^{1/2} B A^{1/2})^{1/2}
-    ABA = A_sqrt @ B @ A_sqrt
-    M = matrix_sqrt.apply(ABA)
-
-    # (AB)^{1/2} = A^{1/2} M A^{-1/2}
-    AB12 = A_sqrt @ M @ A_inv_sqrt
-
-    # Geodesic: (1-t)^2 A + t^2 B + t(1-t)((AB)^{1/2} + (BA)^{1/2})
-    result = (1 - t) ** 2 * A + t**2 * B + t * (1 - t) * (AB12 + AB12.transpose(-1, -2))
-
-    # Ensure symmetry
-    return ensure_sym(result)
+    # A 0-d tensor t broadcasts over batched inputs (pyriemann requires alpha to
+    # match the batch shape); expand it so a scalar t still works on batches.
+    if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
+        t = t.expand(A.shape[:-2])
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return geodesic_wasserstein(A, B, alpha=t)
 
 
 def bures_wasserstein_mean(

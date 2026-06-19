@@ -50,64 +50,15 @@ See :cite:p:`pennec2006riemannian` and :cite:p:`lorenzi2014efficient` for more
 details on parallel transport and numerical approximation methods.
 """
 
-import torch
-
-from .core import (
-    matrix_inv_sqrt,
-    matrix_log,
-    matrix_sqrt,
-    matrix_sqrt_inv,
+from pyriemann.geometry.tangentspace import (
+    transport_logchol,
+    transport_logeuclid,
+    transport_riemann,
 )
-from .frechet import frechet_derivative_exp, frechet_derivative_log
+
+from .core import matrix_sqrt, matrix_sqrt_inv
 from .metrics.affine_invariant import exp_map_airm, log_map_airm
 from .utils import ensure_sym
-
-
-def _parallel_transport_airm_functional(v, p, q):
-    r"""Parallel transport under AIRM with full autograd support.
-
-    This functional implementation leverages PyTorch's autograd by using
-    operations that already have proper backward passes defined. This allows
-    gradients to flow through all inputs (v, p, q).
-
-    **Formula Relationship**
-
-    The transport operator is :math:`E = (Q P^{-1})^{1/2}` (principal square
-    root). Since :math:`Q P^{-1}` is non-symmetric when :math:`P \neq Q`, we
-    use the equivalent stable formula:
-
-    .. math::
-
-        E = Q^{1/2} (Q^{-1/2} P Q^{-1/2})^{-1/2} Q^{-1/2}
-
-    This computes only symmetric matrix square roots, which are well-defined
-    for SPD matrices. The equivalence follows from :math:`E^2 = Q P^{-1}`,
-    which can be verified by direct computation (see :func:`parallel_transport_airm`).
-
-    Parameters
-    ----------
-    v : torch.Tensor
-        Tangent vector at p, shape (..., n, n). Must be symmetric.
-    p : torch.Tensor
-        Source point on SPD manifold, shape (..., n, n).
-    q : torch.Tensor
-        Target point on SPD manifold, shape (..., n, n).
-
-    Returns
-    -------
-    torch.Tensor
-        Transported tangent vector at q, shape (..., n, n).
-    """
-    # Compute E = Q^{1/2} @ (Q^{-1/2} @ P @ Q^{-1/2})^{-1/2} @ Q^{-1/2}
-    # This is the principal square root of Q @ P^{-1}
-    q_sqrt, q_invsqrt = matrix_sqrt_inv.apply(q)
-    inner = q_invsqrt @ p @ q_invsqrt
-    inner_invsqrt = matrix_inv_sqrt.apply(inner)
-    E = q_sqrt @ inner_invsqrt @ q_invsqrt
-
-    # Transport: v' = E @ v @ E^T
-    v_transported = E @ v @ E.transpose(-2, -1)
-    return ensure_sym(v_transported)
 
 
 def parallel_transport_airm(v, p, q):
@@ -220,7 +171,8 @@ def parallel_transport_airm(v, p, q):
     :func:`~spd_learn.functional.airm_distance` : Distance under AIRM.
     :class:`~spd_learn.modules.SPDBatchNormMeanVar` : Uses parallel transport for centering.
     """
-    return _parallel_transport_airm_functional(v, p, q)
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return transport_riemann(v, p, q)
 
 
 def parallel_transport_lem(v, p, q):
@@ -240,7 +192,8 @@ def parallel_transport_lem(v, p, q):
     at :math:`P` and :math:`D\exp(\log Q)` is the Frechet derivative of the
     matrix exponential at :math:`\log Q`. The intermediate step maps the
     ambient tangent vector into the flat log-space, where transport is trivial,
-    then maps back to the ambient tangent space at :math:`Q`.
+    then maps back to the ambient tangent space at :math:`Q`. This is delegated
+    to :func:`pyriemann.geometry.tangentspace.transport_logeuclid`.
 
     Parameters
     ----------
@@ -288,12 +241,8 @@ def parallel_transport_lem(v, p, q):
     :func:`~spd_learn.functional.frechet.frechet_derivative_exp` : Frechet derivative of exp.
     :func:`~spd_learn.functional.log_euclidean_distance` : Distance under Log-Euclidean metric.
     """
-    # Step 1: Map v from ambient T_P to log-space via D_log(P)[V]
-    w = frechet_derivative_log(p, v)
-    # Step 2: Map w from log-space back to ambient T_Q via D_exp(log(Q))[W]
-    log_q = matrix_log.apply(q)
-    v_transported = frechet_derivative_exp(log_q, w)
-    return ensure_sym(v_transported)
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return transport_logeuclid(v, p, q)
 
 
 def parallel_transport_log_cholesky(v, p, q):
@@ -371,46 +320,8 @@ def parallel_transport_log_cholesky(v, p, q):
     :func:`~spd_learn.functional.log_cholesky_distance` : Distance under Log-Cholesky metric.
     :func:`~spd_learn.functional.log_cholesky_mean` : Mean under Log-Cholesky metric.
     """
-    # Cholesky decompose P and Q
-    L_P = torch.linalg.cholesky(p)
-    L_Q = torch.linalg.cholesky(q)
-
-    # Step 1: Pull V back to the Cholesky tangent space
-    # Compute S = L_P^{-1} V L_P^{-T} (symmetric)
-    # First: X = L_P^{-1} V  (solve L_P X = V)
-    X = torch.linalg.solve_triangular(L_P, v, upper=False)
-    # Then: S = X L_P^{-T}  (solve L_P S^T = X^T, then transpose)
-    S = torch.linalg.solve_triangular(L_P, X.transpose(-2, -1), upper=False).transpose(
-        -2, -1
-    )
-
-    # B = strictly_lower(S) + 0.5 * diag(S)
-    B = S.tril(-1) + torch.diagonal(S, dim1=-2, dim2=-1).unsqueeze(
-        -2
-    ) * 0.5 * torch.eye(S.shape[-1], dtype=S.dtype, device=S.device)
-
-    # dL = L_P @ B (lower triangular)
-    dL = L_P @ B
-
-    # Step 2: Convert to log-Cholesky tangent coordinates
-    diag_L_P = torch.diagonal(L_P, dim1=-2, dim2=-1)
-    diag_dL = torch.diagonal(dL, dim1=-2, dim2=-1)
-    # dY = strictly_lower(dL) + diag(diag(dL) / diag(L_P))
-    dY = dL.tril(-1) + torch.diag_embed(diag_dL / diag_L_P)
-
-    # Step 3: Transport in flat log-Cholesky space is identity (dY stays the same)
-
-    # Step 4: Convert back at Q
-    diag_L_Q = torch.diagonal(L_Q, dim1=-2, dim2=-1)
-    diag_dY = torch.diagonal(dY, dim1=-2, dim2=-1)
-    # dL_Q = strictly_lower(dY) + diag(diag(dY) * diag(L_Q))
-    dL_Q = dY.tril(-1) + torch.diag_embed(diag_dY * diag_L_Q)
-
-    # Step 5: Push forward to ambient tangent space at Q
-    # V' = dL_Q @ L_Q^T + L_Q @ dL_Q^T
-    v_transported = dL_Q @ L_Q.transpose(-2, -1) + L_Q @ dL_Q.transpose(-2, -1)
-
-    return ensure_sym(v_transported)
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return transport_logchol(v, p, q)
 
 
 def _geodesic_midpoint_airm(p, q):
