@@ -41,18 +41,25 @@ dependencies = [
     "torch",
     "einops",
     "numpy",
+    # Array API support (torch backend) lives on pyriemann master / 0.12.
+    # Hard-pinned to git until 0.12 is released on PyPI. NOTE: a direct-URL
+    # dependency blocks uploading spd_learn to PyPI; swap to "pyriemann>=0.12"
+    # once 0.12 ships.
+    "pyriemann @ git+https://github.com/pyRiemann/pyRiemann.git",
 ]
 
 [project.optional-dependencies]
 tests = [
-    'pytest',
+    # pytest 9.1 changed IdMaker's signature, which pytest_cases (<= 3.10.1)
+    # still calls the old way -> TypeError at collection time. Cap pytest until
+    # pytest_cases ships 9.1 support.
+    'pytest<9.1',
     'pytest-cov',
     'pytest-codeblocks',
     'sybil',
     'codecov',
     'pytest_cases',
     'mypy',
-    'pyriemann',
 ]
 docs = [
     'sphinx',
@@ -75,7 +82,6 @@ brain = [
     'moabb',
     'braindecode',
     'nilearn',
-    'pyriemann',
     'skada',
 ]
 dev = [

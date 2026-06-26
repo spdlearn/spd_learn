@@ -55,13 +55,9 @@ more details.
 
 import torch
 
-from ..core import (
-    matrix_exp,
-    matrix_inv_sqrt,
-    matrix_log,
-    matrix_power,
-    matrix_sqrt_inv,
-)
+from pyriemann.geometry.geodesic import geodesic_riemann
+
+from ..core import matrix_exp, matrix_inv_sqrt, matrix_log, matrix_sqrt_inv
 from ..numerical import get_epsilon
 from ..utils import ensure_sym
 
@@ -120,6 +116,8 @@ def airm_distance(A, B):
     ----------
     See :cite:p:`pennec2006riemannian`, :cite:p:`bhatia2007positive` for more details.
     """
+    # Kept in spd_learn (not delegated): clamps eigenvalues for stability on
+    # ill-conditioned inputs, which pyriemann's distance_riemann does not.
     Ainvsqrt = matrix_inv_sqrt.apply(A)
     eigenvalues = torch.linalg.eigvalsh(Ainvsqrt @ B @ Ainvsqrt)
     threshold = get_epsilon(eigenvalues.dtype, "eigval_log")
@@ -184,12 +182,12 @@ def airm_geodesic(A, B, t):
     ----------
     See :cite:p:`pennec2006riemannian`, :cite:p:`bhatia2007positive` for more details.
     """
-    rm_sq, rm_invsq = matrix_sqrt_inv.apply(A)
-    return (
-        rm_sq
-        @ matrix_power.apply(rm_invsq @ B @ rm_invsq, torch.tensor(t).to(A))
-        @ rm_sq
-    )
+    # A 0-d tensor t broadcasts over batched inputs (pyriemann requires alpha to
+    # match the batch shape); expand it so a scalar t still works on batches.
+    if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
+        t = t.expand(A.shape[:-2])
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return geodesic_riemann(A, B, alpha=t)
 
 
 def exp_map_airm(P, V, t=1.0):

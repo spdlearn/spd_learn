@@ -1,9 +1,20 @@
-"""Comparison tests between spd_learn (PyTorch) and pyriemann (NumPy).
+"""Comparison tests between spd_learn (PyTorch) and pyriemann.
 
-Validates that spd_learn's implementations produce numerically equivalent
-results to pyriemann's established NumPy implementations for all shared
-SPD matrix operations: matrix functions, distances, geodesics, means,
-and log/exp maps.
+As of the pyriemann (>=0.12) Array API migration, spd_learn delegates most of
+its SPD geometry math to pyriemann (matrix functions, distances, geodesics,
+several means, tangent maps, transport, Frechet derivatives). These tests
+therefore serve two purposes:
+
+1. For *delegated* ops, they lock spd_learn's public API to pyriemann's
+   reference values (cross-backend: spd_learn on torch vs pyriemann on numpy).
+2. For ops still implemented in spd_learn (``cholesky_log``/``cholesky_exp``,
+   the weighted ``log_euclidean_mean``/``bures_wasserstein_mean``, AIRM
+   ``exp_map``/``log_map``), they verify those remain numerically equivalent to
+   pyriemann. (The ``schild_ladder``/``pole_ladder`` approximations are also
+   kept in spd_learn but have no pyriemann counterpart to compare against.)
+
+Imports come from ``pyriemann.geometry.*`` (``pyriemann.utils.*`` is deprecated
+and removed in pyriemann 0.14).
 """
 
 import numpy as np
@@ -13,26 +24,29 @@ import torch
 
 pyriemann = pytest.importorskip("pyriemann")
 
-from pyriemann.utils.base import expm, invsqrtm, logm, powm, sqrtm  # noqa: E402
-from pyriemann.utils.distance import (  # noqa: E402
+from pyriemann.geometry.base import expm, invsqrtm, logm, powm, sqrtm  # noqa: E402
+from pyriemann.geometry.distance import (  # noqa: E402
     distance_logchol,
     distance_logeuclid,
     distance_riemann,
     distance_wasserstein,
 )
-from pyriemann.utils.geodesic import (  # noqa: E402
+from pyriemann.geometry.geodesic import (  # noqa: E402
     geodesic_logchol,
     geodesic_logeuclid,
     geodesic_riemann,
     geodesic_wasserstein,
 )
-from pyriemann.utils.mean import (  # noqa: E402
+from pyriemann.geometry.mean import (  # noqa: E402
     mean_logchol,
     mean_logeuclid,
     mean_riemann,
     mean_wasserstein,
 )
-from pyriemann.utils.tangentspace import exp_map_riemann, log_map_riemann  # noqa: E402
+from pyriemann.geometry.tangentspace import (  # noqa: E402
+    exp_map_riemann,
+    log_map_riemann,
+)
 
 from spd_learn.functional import (  # noqa: E402
     airm_distance,
@@ -338,3 +352,36 @@ def test_batched_distances(n):
         np.testing.assert_allclose(
             result[i], distance_riemann(A_list[i], B_list[i]), **STRICT_TOL
         )
+
+
+# ---------------------------------------------------------------------------
+# 7. pyriemann delegation: autograd behaviour (documented known ceiling)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("n", SIZES)
+def test_delegated_gradients_finite_well_conditioned(n):
+    """Delegated ops backprop through pyriemann's eigh autograd.
+
+    The *delegated* ops (geodesics, parallel transport, Fréchet derivatives)
+    inherit torch's ``eigh`` backward, and pyriemann does not clamp eigenvalues.
+    spd_learn's own matrix-function primitives (``matrix_log``/``matrix_exp``/...)
+    AND its distances are deliberately **not** delegated and keep their
+    numerically-stable, eigenvalue-clamped implementations. This test drives both
+    layers in one graph (``matrix_log`` = kept/stable, ``airm_geodesic`` =
+    delegated): for well-conditioned SPD inputs the gradient is finite.
+    Near-degenerate eigenvalues are a KNOWN ceiling of the *delegated* ops
+    (pyriemann's eigh backward scales as ``1 / (lambda_i - lambda_j)``); callers
+    needing stable gradients there should keep eigenvalues well separated
+    (e.g. via ReEig / ``clamp_eigvals``, also not delegated).
+    """
+    rng = np.random.RandomState(SEED)
+    A = to_torch(make_spd_np(n, rng)).requires_grad_(True)
+    B = to_torch(make_spd_np(n, rng))
+
+    # matrix_log = kept (stable) primitive; airm_geodesic = delegated op.
+    loss = matrix_log.apply(A).pow(2).sum() + airm_geodesic(A, B, 0.5).pow(2).sum()
+    loss.backward()
+
+    assert A.grad is not None
+    assert torch.isfinite(A.grad).all()

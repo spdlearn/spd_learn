@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 import torch
 
+from pyriemann.geometry.geodesic import geodesic_logeuclid
+
 from ..core import matrix_exp, matrix_log
 
 
@@ -54,6 +56,8 @@ def log_euclidean_distance(A, B):
     ----------
     See :cite:p:`arsigny2007geometric` for more details.
     """
+    # Kept in spd_learn (not delegated): uses spd_learn's stable, eigenvalue-
+    # clamped matrix_log, robust on ill-conditioned inputs.
     inner_term = matrix_log.apply(A) - matrix_log.apply(B)
     final = torch.linalg.norm(inner_term, ord="fro", dim=(-2, -1))
     return final
@@ -141,9 +145,12 @@ def log_euclidean_geodesic(A, B, t):
     ----------
     See :cite:p:`arsigny2007geometric` for more details.
     """
-    log_A = matrix_log.apply(A)
-    log_B = matrix_log.apply(B)
-    return matrix_exp.apply((1 - t) * log_A + t * log_B)
+    # A 0-d tensor t broadcasts over batched inputs (pyriemann requires alpha to
+    # match the batch shape); expand it so a scalar t still works on batches.
+    if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
+        t = t.expand(A.shape[:-2])
+    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
+    return geodesic_logeuclid(A, B, alpha=t)
 
 
 def exp_map_lem(P, V):

@@ -129,6 +129,7 @@ under congruence transformations.
    airm_geodesic
    exp_map_airm
    log_map_airm
+   spd_egrad2rgrad
 
 
 Log-Euclidean Metric
@@ -194,6 +195,28 @@ manifold, essential for operations like domain adaptation.
    transport_tangent_vector
 
 
+Fréchet Derivatives
+-------------------
+Directional (Fréchet) derivatives of the matrix logarithm and exponential,
+used for parallel transport under the Log-Euclidean metric.
+
+.. autosummary::
+   :toctree: generated/frechet_functional
+
+   frechet_derivative_log
+   frechet_derivative_exp
+
+
+Adversarial Robustness
+----------------------
+Riemannian projected gradient descent (PGD) attack for SPD-matrix inputs.
+
+.. autosummary::
+   :toctree: generated/attacks_functional
+
+   spd_rpgd_attack
+
+
 Vectorization Utilities
 -----------------------
 Vectorization helpers for batching, (un)vectorizing matrices, and symmetric matrix
@@ -237,10 +260,13 @@ Functions for Riemannian batch normalization computations on SPD manifolds.
 .. autosummary::
    :toctree: generated/batchnorm_functional
 
+   frechet_mean
    karcher_mean_iteration
    spd_centering
    spd_rebiasing
+   spd_cholesky_congruence
    tangent_space_variance
+   lie_group_variance
 
 
 Bilinear Operations
@@ -283,6 +309,146 @@ for detailed guidance.
    check_spd_eigenvalues
    is_half_precision
    recommend_dtype_for_spd
+
+
+pyRiemann Geometry (re-exported)
+--------------------------------
+Since pyRiemann (>= 0.12) is a core dependency and runs on PyTorch tensors via
+the Python Array API, its broader geometry toolkit is re-exported from
+:py:mod:`spd_learn.functional`, so the full SPD/Riemannian API is reachable from
+a single namespace. These run on torch tensors (with autograd) like the native
+functions above.
+
+.. note::
+
+   The low-level matrix-function primitives (``logm``/``expm``/``sqrtm``/
+   ``invsqrtm``/``powm``/``ddlogm``/``ddexpm``) are intentionally **not**
+   re-exported. Use spd_learn's numerically-stable :func:`matrix_log`,
+   :func:`matrix_exp`, :func:`matrix_sqrt`, ... and :func:`frechet_derivative_log` /
+   :func:`frechet_derivative_exp`, which keep gradients stable near degenerate
+   eigenvalues. The re-exported distances/means/maps inherit pyRiemann's generic
+   ``eigh`` backward (see :doc:`/numerical_stability`).
+
+Additional distances:
+
+.. autosummary::
+   :toctree: generated/pyriemann_distance
+
+   distance
+   distance_chol
+   distance_euclid
+   distance_harmonic
+   distance_kullback
+   distance_kullback_right
+   distance_kullback_sym
+   distance_logchol
+   distance_logdet
+   distance_logeuclid
+   distance_mahalanobis
+   distance_poweuclid
+   distance_riemann
+   distance_thompson
+   distance_wasserstein
+   pairwise_distance
+
+Additional geodesics:
+
+.. autosummary::
+   :toctree: generated/pyriemann_geodesic
+
+   geodesic
+   geodesic_chol
+   geodesic_euclid
+   geodesic_logchol
+   geodesic_logeuclid
+   geodesic_riemann
+   geodesic_thompson
+   geodesic_wasserstein
+
+Additional means and barycenters:
+
+.. autosummary::
+   :toctree: generated/pyriemann_mean
+
+   gmean
+   maskedmean_riemann
+   mean_ale
+   mean_alm
+   mean_bmp
+   mean_cheap
+   mean_chol
+   mean_euclid
+   mean_harmonic
+   mean_kullback_sym
+   mean_logchol
+   mean_logdet
+   mean_logeuclid
+   mean_power
+   mean_poweuclid
+   mean_riemann
+   mean_thompson
+   mean_wasserstein
+   nanmean_riemann
+
+Tangent space, inner products, and transport:
+
+.. autosummary::
+   :toctree: generated/pyriemann_tangent
+
+   exp_map
+   exp_map_euclid
+   exp_map_logchol
+   exp_map_logeuclid
+   exp_map_riemann
+   exp_map_wasserstein
+   innerproduct
+   innerproduct_euclid
+   innerproduct_logchol
+   innerproduct_logeuclid
+   innerproduct_riemann
+   log_map
+   log_map_euclid
+   log_map_logchol
+   log_map_logeuclid
+   log_map_riemann
+   log_map_wasserstein
+   norm
+   tangent_space
+   transport
+   transport_euclid
+   transport_logchol
+   transport_logeuclid
+   transport_riemann
+   untangent_space
+   unupper
+   upper
+
+Kernels:
+
+.. autosummary::
+   :toctree: generated/pyriemann_kernel
+
+   kernel
+   kernel_euclid
+   kernel_logeuclid
+   kernel_riemann
+
+Approximate joint diagonalization:
+
+.. autosummary::
+   :toctree: generated/pyriemann_ajd
+
+   ajd
+   ajd_pham
+   rjd
+   uwedge
+
+Matrix utilities:
+
+.. autosummary::
+   :toctree: generated/pyriemann_base
+
+   nearest_sym_pos_def
 
 
 Modules
@@ -447,6 +613,17 @@ building blocks from :py:mod:`spd_learn.modules`.
     SPDNet
     TensorCSPNet
     TSMNet
+
+
+Model Building Blocks
+---------------------
+Sub-modules used inside the models above, exposed for reuse and customization.
+
+.. autosummary::
+   :toctree: generated/
+
+   AttentionManifold
+   PhaseDelay
 
 
 Model Selection Guide
