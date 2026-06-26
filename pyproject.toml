@@ -50,7 +50,10 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    'pytest',
+    # pytest 9.1 changed IdMaker's signature, which pytest_cases (<= 3.10.1)
+    # still calls the old way -> TypeError at collection time. Cap pytest until
+    # pytest_cases ships 9.1 support.
+    'pytest<9.1',
     'pytest-cov',
     'pytest-codeblocks',
     'sybil',
