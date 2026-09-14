@@ -317,7 +317,7 @@ def test_bimap_instantiation_and_shape(
     # Check output shape: (batch_size, out_features, out_features)
     expected_shape = (batch_size, out_f, out_f)
     assert Y.shape == expected_shape, f"Failed shape check for {desc}"
-    assert Y.device == device, f"Failed device check for {desc}"
+    assert Y.device == X.device, f"Failed device check for {desc}"
     assert Y.dtype == dtype, f"Failed dtype check for {desc}"
 
 

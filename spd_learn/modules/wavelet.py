@@ -129,7 +129,7 @@ class WaveletConv(nn.Module):
         self.stride = stride
         self.scaling = scaling
         self.dtype = dtype
-        self.device = device if device is not None else torch.device("cpu")
+        device = device if device is not None else torch.device("cpu")
 
         tmax = kernel_width_s / 2.0
         tmin = -tmax
@@ -204,5 +204,9 @@ class WaveletConv(nn.Module):
             X_conv = X_conv.permute(0, 3, 2, 1, 4).contiguous()
             n_batch, n_freqs, n_sensors, n_epochs, n_times = X_conv.shape
             X_conv = X_conv.view(n_batch, n_freqs, n_sensors, n_epochs * n_times)
+        else:
+            raise ValueError(
+                f"Wavelet expects a 3D or 4D input, but received shape {tuple(X.shape)}"
+            )
 
         return X_conv.to(device=X.device, dtype=self.dtype)

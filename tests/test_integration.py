@@ -167,7 +167,7 @@ def test_module_dtype(module_name, dtype, device):
     elif module_name == "WaveletConv":
         # WaveletConv processes raw time series, not covariance matrices
         # It uses complex wavelets internally but outputs the dtype it was initialized with
-        x = torch.randn(2, 10, 1000, dtype=dtype)
+        x = torch.randn(2, 10, 1000, dtype=dtype, device=device)
         with torch.no_grad():
             out = module(x)
         assert out.dtype == dtype
