@@ -35,14 +35,10 @@ Dependencies
 
 .. note::
 
-   The Array API (PyTorch) backend lives in pyRiemann **0.12+**, which is not
-   yet on PyPI. SPD Learn therefore pins pyRiemann to its git ``master``::
+   SPD Learn uses pyRiemann from PyPI, with version 0.12 or newer required
+   for its Array API (PyTorch) backend::
 
-       pyriemann @ git+https://github.com/pyRiemann/pyRiemann.git
-
-   Because this is a direct-URL dependency, ``pip install spd_learn`` from PyPI
-   is unavailable until pyRiemann 0.12 is released — install from source (see
-   below) meanwhile. The pin becomes ``pyriemann>=0.12`` once 0.12 ships.
+       pyriemann>=0.12
 
 Installing from Source
 ----------------------
