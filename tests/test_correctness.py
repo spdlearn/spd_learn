@@ -7,8 +7,6 @@ import numpy as np
 import pytest
 import torch
 
-from braindecode.classifier import EEGClassifier
-from braindecode.util import set_random_seeds
 from mne.io import concatenate_raws
 from skorch.callbacks import LRScheduler
 from skorch.helper import predefined_split
@@ -123,6 +121,13 @@ def filterbank_data(raw_data):
 
 @pytest.mark.parametrize("model_name", model_list)
 def test_correctness_spd_learn(epoch_data, filterbank_data, model_name):
+    try:
+        # Soft dependency
+        from braindecode import EEGClassifier
+        from braindecode.util import set_random_seeds
+    except ImportError:
+        pytest.skip("braindecode is not installed")
+
     seed = 42
 
     set_random_seeds(seed=seed, cuda=False)
