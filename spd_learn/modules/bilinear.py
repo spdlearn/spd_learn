@@ -65,8 +65,8 @@ class BiMap(nn.Module):
     parametrized : bool, default=True
         If `True`, the weight matrix `W` is parametrized as an orthogonal
         matrix via projection/retraction on the Stiefel manifold.
-    orthogonal_map : str, optional
-        The method used for orthogonal parametrization.
+    orthogonal_map : {"cayley", "matrix_exp", "householder"}, optional
+        The method used for orthogonal parametrization. If `None`, defaults to "cayley".
     init_method : {"kaiming_uniform", "orthogonal", "stiefel"}, default="kaiming_uniform"
         The initialization method for the weight matrix.
     seed : int, optional
@@ -161,7 +161,7 @@ class BiMap(nn.Module):
         out_features: int,
         depthwise: int = 1,
         parametrized: bool = True,
-        orthogonal_map: Optional[str] = None,
+        orthogonal_map: Optional[Literal["cayley", "matrix_exp", "householder"]] = None,
         init_method: Literal[
             "kaiming_uniform", "orthogonal", "stiefel"
         ] = "kaiming_uniform",
@@ -211,7 +211,11 @@ class BiMap(nn.Module):
 
         if self.parametrized:
             parametrizations.orthogonal(
-                module=self, name="weight", orthogonal_map=self.orthogonal_map
+                module=self,
+                name="weight",
+                orthogonal_map=(
+                    "cayley" if self.orthogonal_map is None else self.orthogonal_map
+                ),
             )
 
     @torch.no_grad()
