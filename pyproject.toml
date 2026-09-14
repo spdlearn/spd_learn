@@ -75,7 +75,7 @@ docs = [
     'nbformat',
 ]
 brain = [
-    'moabb',
+    'moabb>=1.7.2',
     'braindecode',
     'nilearn',
     'skada',
