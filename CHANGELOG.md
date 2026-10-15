@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Replace the `seed` argument of `stiefel_` with an optional `generator` argument
+  and remove `BiMap`'s `seed` argument. Use `torch.manual_seed` for reproducible
+  initialization, or pass a `torch.Generator` directly to `stiefel_`.
+
 ### Fixed
 
 - Reset BiMap weights through the orthogonal parametrization instead of modifying a derived temporary tensor.
 - Initialize each depthwise BiMap matrix independently when using orthogonal initialization.
+- Improve Stiefel initialization accuracy by computing the polar decomposition
+  in float64 before converting back to the input dtype.
 
 ## [0.2.1] - 2026-10-11
 

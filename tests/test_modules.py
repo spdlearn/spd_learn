@@ -17,15 +17,15 @@ from .constants import EXAMPLE_2X2_SPD_MATRIX
 
 test_configs = [
     # User Examples + Variations
-    (64, 32, "kaiming_uniform", True, None, "Kaiming (Parametrized)"),
-    (64, 32, "orthogonal", True, None, "Orthogonal (Parametrized)"),
-    (64, 32, "stiefel", False, 42, "Stiefel (Non-Param)"),
-    (64, 32, "orthogonal", False, None, "Orthogonal (Non-Param)"),
+    (64, 32, "kaiming_uniform", True, "Kaiming (Parametrized)"),
+    (64, 32, "orthogonal", True, "Orthogonal (Parametrized)"),
+    (64, 32, "stiefel", False, "Stiefel (Non-Param)"),
+    (64, 32, "orthogonal", False, "Orthogonal (Non-Param)"),
     # Additional cases
-    # (16, 16, "stiefel", True, 123, "Square Stiefel (Parametrized)"),
-    (16, 16, "orthogonal", False, None, "Square Orthogonal (Non-Param)"),
-    (10, 20, "kaiming_uniform", True, None, "Dim Increase Kaiming (Param)"),
-    (10, 20, "orthogonal", False, None, "Dim Increase Orthogonal (Non-Param)"),
+    (16, 16, "stiefel", True, "Square Stiefel (Parametrized)"),
+    (16, 16, "orthogonal", False, "Square Orthogonal (Non-Param)"),
+    (10, 20, "kaiming_uniform", True, "Dim Increase Kaiming (Param)"),
+    (10, 20, "orthogonal", False, "Dim Increase Orthogonal (Non-Param)"),
 ]
 
 
@@ -312,12 +312,12 @@ def test_delay_order(order, lag):
 
 
 @pytest.mark.parametrize(
-    "in_f, out_f, init, param, seed, desc",
+    "in_f, out_f, init, param, desc",
     test_configs,
     ids=[c[-1] for c in test_configs],  # Use description as test ID
 )
 def test_bimap_instantiation_and_shape(
-    in_f, out_f, init, param, seed, desc, input_data, device, dtype
+    in_f, out_f, init, param, desc, input_data, device, dtype
 ):
     """Tests if BiMap layer instantiates and produces correct output shape."""
     layer = BiMap(
@@ -325,7 +325,6 @@ def test_bimap_instantiation_and_shape(
         out_features=out_f,
         init_method=init,
         parametrized=param,
-        seed=seed,
         device=device,
         dtype=dtype,
     )
@@ -344,13 +343,11 @@ def test_bimap_instantiation_and_shape(
 
 
 @pytest.mark.parametrize(
-    "in_f, out_f, init, param, seed, desc",
+    "in_f, out_f, init, param, desc",
     test_configs,
     ids=[c[-1] for c in test_configs],
 )
-def test_bimap_orthogonality_property(
-    in_f, out_f, init, param, seed, desc, device, dtype
-):
+def test_bimap_orthogonality_property(in_f, out_f, init, param, desc, device, dtype):
     """Tests the orthogonality property (W^T W = I) of the weight matrix W.
     - If parametrized=True, the *effective* weight should be orthogonal.
     - If parametrized=False, the *raw* weight depends on the init_method.
@@ -369,7 +366,6 @@ def test_bimap_orthogonality_property(
         out_features=out_f,
         init_method=init,
         parametrized=param,
-        seed=seed,
         device=device,
         dtype=dtype,
     )
@@ -429,32 +425,29 @@ def test_bimap_orthogonality_property(
 
 
 @pytest.mark.parametrize(
-    "in_f, out_f, init, param, seed, desc",
+    "in_f, out_f, init, param, desc",
     # Select a few representative cases for gradient check
     [
-        (10, 5, "kaiming_uniform", True, None, "Grad Kaiming (Param)"),
-        (10, 5, "stiefel", False, 42, "Grad Stiefel (Non-Param)"),
-        (5, 10, "orthogonal", True, None, "Grad Dim Increase (Param)"),
+        (10, 5, "kaiming_uniform", True, "Grad Kaiming (Param)"),
+        (10, 5, "stiefel", False, "Grad Stiefel (Non-Param)"),
+        (5, 10, "orthogonal", True, "Grad Dim Increase (Param)"),
     ],
     ids=[
         c[-1]
         for c in [  # Manually create IDs for this subset
-            (10, 5, "kaiming_uniform", True, None, "Grad Kaiming (Param)"),
-            (10, 5, "stiefel", False, 42, "Grad Stiefel (Non-Param)"),
-            (5, 10, "orthogonal", True, None, "Grad Dim Increase (Param)"),
+            (10, 5, "kaiming_uniform", True, "Grad Kaiming (Param)"),
+            (10, 5, "stiefel", False, "Grad Stiefel (Non-Param)"),
+            (5, 10, "orthogonal", True, "Grad Dim Increase (Param)"),
         ]
     ],
 )
-def test_bimap_gradient_flow(
-    in_f, out_f, init, param, seed, desc, input_data, device, dtype
-):
+def test_bimap_gradient_flow(in_f, out_f, init, param, desc, input_data, device, dtype):
     """Tests if gradients flow back to the layer's weights."""
     layer = BiMap(
         in_features=in_f,
         out_features=out_f,
         init_method=init,
         parametrized=param,
-        seed=seed,
         device=device,
         dtype=dtype,
     ).to(device)  # Ensure layer is on the correct device

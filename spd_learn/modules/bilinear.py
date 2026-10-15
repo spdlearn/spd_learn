@@ -72,9 +72,6 @@ class BiMap(nn.Module):
         coordinates can destroy orthogonality in PyTorch.
     init_method : {"kaiming_uniform", "orthogonal", "stiefel"}, default="kaiming_uniform"
         The initialization method for the weight matrix.
-    seed : int, optional
-        The seed for the random number generator used during Stiefel
-        initialization.
 
     Notes
     -----
@@ -168,7 +165,6 @@ class BiMap(nn.Module):
         init_method: Literal[
             "kaiming_uniform", "orthogonal", "stiefel"
         ] = "kaiming_uniform",
-        seed: Optional[int] = None,
         device=None,
         dtype=None,
     ):
@@ -190,7 +186,6 @@ class BiMap(nn.Module):
         self.increase_dim = None
         self.orthogonal_map = orthogonal_map
         self.init_method = init_method
-        self.seed = seed
 
         if out_features > in_features:
             self.increase_dim = BiMapIncreaseDim(
@@ -237,7 +232,7 @@ class BiMap(nn.Module):
             for w in weight:
                 nn.init.orthogonal_(w)
         elif self.init_method == "stiefel":
-            spd_init.stiefel_(weight, seed=self.seed)
+            spd_init.stiefel_(weight)
         else:
             raise ValueError(
                 f"Internal error: Invalid init_method '{self.init_method}'"

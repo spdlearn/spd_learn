@@ -19,15 +19,13 @@ Examples
 >>> import torch
 >>> from spd_learn import init as spd_init
 >>> W = torch.empty(8, 4)
->>> spd_init.stiefel_(W, seed=42)
+>>> spd_init.stiefel_(W)
 >>> # W is now on the Stiefel manifold: W^T @ W = I
 >>> torch.allclose(W.T @ W, torch.eye(4), atol=1e-5)
 True
 """
 
 import logging
-
-from typing import Optional
 
 import torch
 
@@ -38,7 +36,10 @@ logger = logging.getLogger(__name__)
 
 
 @torch.no_grad()
-def stiefel_(tensor: torch.Tensor, seed: Optional[int] = None) -> torch.Tensor:
+def stiefel_(
+    tensor: torch.Tensor,
+    generator: torch.Generator | None = None,
+) -> torch.Tensor:
     r"""Initialize tensor on the Stiefel manifold (in-place).
 
     Projects a random matrix to orthonormal columns via polar decomposition.
@@ -56,9 +57,9 @@ def stiefel_(tensor: torch.Tensor, seed: Optional[int] = None) -> torch.Tensor:
     ----------
     tensor : torch.Tensor
         Tensor to initialize, with shape `(..., n, k)` where `n >= k`.
-    seed : int, optional
-        Random seed for reproducibility. If None, a warning is logged and
-        seed 0 is used.
+    generator : torch.Generator, optional
+        Generator used for random sampling. If None, the default PyTorch
+        random number generator is used.
 
     Returns
     -------
@@ -67,8 +68,9 @@ def stiefel_(tensor: torch.Tensor, seed: Optional[int] = None) -> torch.Tensor:
 
     Notes
     -----
-    Uses dtype-aware eigenvalue clamping from the unified numerical
-    configuration to ensure numerical stability during initialization.
+    Computes the polar factor in float64 to improve numerical accuracy,
+    then casts the result to the input dtype. For MPS tensors, the
+    decomposition runs on CPU because MPS does not support float64.
 
     If the eigendecomposition fails (rare), falls back to QR decomposition.
 
@@ -77,7 +79,7 @@ def stiefel_(tensor: torch.Tensor, seed: Optional[int] = None) -> torch.Tensor:
     >>> import torch
     >>> from spd_learn import init as spd_init
     >>> W = torch.empty(10, 5)
-    >>> spd_init.stiefel_(W, seed=42)
+    >>> spd_init.stiefel_(W)
     >>> # Verify orthonormality
     >>> torch.allclose(W.T @ W, torch.eye(5), atol=1e-5)
     True
@@ -88,35 +90,22 @@ def stiefel_(tensor: torch.Tensor, seed: Optional[int] = None) -> torch.Tensor:
     :class:`~spd_learn.modules.BiMap` : Bilinear mapping layer using
         Stiefel initialization.
     """
-    if seed is None:
-        logger.warning(
-            "No seed provided for Stiefel initialization. "
-            "Using default seed 0 for reproducibility."
-        )
-        seed = 0
-
-    generator = torch.Generator(device=tensor.device).manual_seed(seed)
     _W = torch.randn(
         *tensor.shape, dtype=tensor.dtype, device=tensor.device, generator=generator
     )
+    work = _W.cpu() if _W.device.type == "mps" else _W
+    work = work.to(torch.float64)
+
     try:
-        stiefel_W = orthogonal_polar_factor(_W)
+        stiefel_W = orthogonal_polar_factor(work)
     except torch.linalg.LinAlgError as e:
         logger.warning(
             f"Stiefel initialization via eigh failed ({e}). "
-            f"Falling back to QR decomposition for orthogonalization."
+            "Falling back to QR decomposition for orthogonalization."
         )
-        Q_list = []
-        if _W.ndim > 2:
-            for i in range(_W.shape[0]):
-                q, _ = torch.linalg.qr(_W[i])
-                Q_list.append(q[..., : _W.shape[-1]])
-            stiefel_W = torch.stack(Q_list, dim=0)
-        else:
-            q, _ = torch.linalg.qr(_W)
-            stiefel_W = q[..., : _W.shape[-1]]
+        stiefel_W, _ = torch.linalg.qr(work, mode="reduced")
 
-    tensor.copy_(stiefel_W)
+    tensor.copy_(stiefel_W.to(dtype=tensor.dtype, device=tensor.device))
     return tensor
 
 

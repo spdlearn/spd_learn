@@ -12,22 +12,37 @@ import spd_learn.init as spd_init
 
 def _assert_orthonormal_columns(W):
     eye = torch.eye(W.shape[-1], dtype=W.dtype).expand(*W.shape[:-2], -1, -1)
-    torch.testing.assert_close(W.mT @ W, eye, atol=1e-4, rtol=1e-4)
+    torch.testing.assert_close(W.mT @ W, eye, atol=1e-5, rtol=1e-5)
 
 
-@pytest.mark.parametrize("shape", [(6, 3), (2, 6, 3)])
-def test_stiefel_is_orthonormal_and_reproducible(shape):
-    W1 = spd_init.stiefel_(torch.empty(shape), seed=7)
-    W2 = spd_init.stiefel_(torch.empty(shape), seed=7)
+@pytest.mark.parametrize(
+    "shape, seed", [((6, 3), 7), ((2, 6, 3), 7), ((1, 16, 16), 123)]
+)
+def test_stiefel_is_orthonormal_and_reproducible(shape, seed):
+    generator = torch.Generator(device="cpu").manual_seed(seed)
+    W1 = spd_init.stiefel_(
+        torch.empty(shape, dtype=torch.float32, device="cpu"), generator=generator
+    )
+
+    generator.manual_seed(seed)
+    W2 = spd_init.stiefel_(
+        torch.empty(shape, dtype=torch.float32, device="cpu"), generator=generator
+    )
     _assert_orthonormal_columns(W1)
     torch.testing.assert_close(W1, W2)
 
 
-def test_stiefel_without_seed_warns_and_uses_seed_zero(caplog):
-    with caplog.at_level(logging.WARNING, logger=spd_init.logger.name):
-        W = spd_init.stiefel_(torch.empty(5, 2))
-    assert "No seed provided" in caplog.text
-    torch.testing.assert_close(W, spd_init.stiefel_(torch.empty(5, 2), seed=0))
+def test_stiefel_uses_default_rng():
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(123)
+        first = spd_init.stiefel_(torch.empty(16, 8))
+        second = spd_init.stiefel_(torch.empty(16, 8))
+
+        assert not torch.equal(first, second)
+
+        torch.manual_seed(123)
+        torch.testing.assert_close(spd_init.stiefel_(torch.empty(16, 8)), first)
+        torch.testing.assert_close(spd_init.stiefel_(torch.empty(16, 8)), second)
 
 
 @pytest.mark.parametrize("shape", [(6, 3), (2, 6, 3)])
@@ -37,7 +52,7 @@ def test_stiefel_falls_back_to_qr(monkeypatch, caplog, shape):
 
     monkeypatch.setattr(spd_init, "orthogonal_polar_factor", failing_polar_factor)
     with caplog.at_level(logging.WARNING, logger=spd_init.logger.name):
-        W = spd_init.stiefel_(torch.empty(shape), seed=1)
+        W = spd_init.stiefel_(torch.empty(shape))
     assert "Falling back to QR" in caplog.text
     assert W.shape == shape
     _assert_orthonormal_columns(W)
