@@ -303,6 +303,8 @@ class LogEig(nn.Module):
         self.register_buffer(
             "autograd_", torch.tensor(autograd, device=device, dtype=dtype)
         )
+        self._use_autograd = bool(autograd)
+        self.register_load_state_dict_post_hook(_cache_autograd_backend)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of the LogEig layer.
@@ -317,7 +319,7 @@ class LogEig(nn.Module):
         torch.Tensor
             The vectorized output in the tangent space.
         """
-        if self.autograd_:
+        if self._use_autograd:
             X_log = matrix_log_func(X)
         else:
             X_log = matrix_log.apply(X)
@@ -395,6 +397,8 @@ class ExpEig(nn.Module):
         self.register_buffer(
             "autograd_", torch.tensor(autograd, device=device, dtype=dtype)
         )
+        self._use_autograd = bool(autograd)
+        self.register_load_state_dict_post_hook(_cache_autograd_backend)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of the ExpEig layer.
@@ -429,9 +433,14 @@ class ExpEig(nn.Module):
                 "upper=False and flatten=False."
             )
 
-        if self.autograd_:
+        if self._use_autograd:
             X_exp = matrix_exp_func(X)
         else:
             X_exp = matrix_exp.apply(X)
 
         return X_exp.to(device=self.device)
+
+
+def _cache_autograd_backend(module, incompatible_keys):
+    """Read the checkpoint's backend flag once, outside the forward hot path."""
+    module._use_autograd = bool(module.autograd_)

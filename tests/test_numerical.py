@@ -3,6 +3,8 @@
 
 """Tests for the unified numerical stability configuration."""
 
+import warnings
+
 import pytest
 import torch
 
@@ -413,3 +415,45 @@ class TestEdgeCases:
         torch.testing.assert_close(
             result_f32.double(), result_f64, rtol=1e-5, atol=1e-5
         )
+
+
+@pytest.mark.parametrize("requires_grad", [False, True])
+def test_matrix_log_cpu_clamping_warning(requires_grad):
+    from spd_learn.functional import matrix_log
+
+    x = torch.diag(torch.tensor([0.0, 1.0])).requires_grad_(requires_grad)
+    with (
+        NumericalContext(warn_on_clamp=True),
+        pytest.warns(UserWarning, match="clamping"),
+    ):
+        result = matrix_log.apply(x)
+    assert torch.isfinite(result).all()
+    with (
+        NumericalContext(warn_on_clamp=False),
+        warnings.catch_warnings(record=True) as caught,
+    ):
+        matrix_log.apply(x)
+    assert not caught
+
+
+@pytest.mark.gpu
+def test_matrix_log_cuda_warning_policy(cuda_device):
+    from torch.profiler import ProfilerActivity, profile
+
+    from spd_learn.functional import matrix_log
+
+    x = torch.diag(torch.tensor([0.0, 1.0], device=cuda_device)).requires_grad_()
+    with NumericalContext(warn_on_clamp=True):
+        with warnings.catch_warnings(record=True) as caught:
+            with profile(activities=[ProfilerActivity.CPU]) as events:
+                result = matrix_log.apply(x)
+        assert not caught
+        assert "aten::is_nonzero" not in {event.key for event in events.key_averages()}
+        result.sum().backward()
+        assert torch.isfinite(x.grad).all()
+        with pytest.warns(UserWarning, match="clamping"):
+            matrix_log.apply(x.detach())
+        # Grad mode alone does not override an input's gradient requirement.
+        with torch.no_grad(), warnings.catch_warnings(record=True) as caught:
+            matrix_log.apply(x)
+        assert not caught

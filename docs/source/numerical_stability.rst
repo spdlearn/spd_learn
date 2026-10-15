@@ -280,6 +280,13 @@ Configuration Parameters
      - True
      - Emit warnings when eigenvalues are clamped
 
+``matrix_log`` skips clamping warnings for CUDA inputs requiring gradients,
+because checking a device scalar would synchronize every training step. CPU
+inputs and CUDA inputs without gradient requirements retain the warning. To
+diagnose clamping during CUDA training, evaluate ``matrix_log.apply(X.detach())``
+with ``warn_on_clamp=True`` outside the timed training loop. This policy also
+applies under ``torch.no_grad()`` when the input still has ``requires_grad=True``.
+
 **How thresholds are computed:**
 
 .. code-block:: python

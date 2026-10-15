@@ -168,6 +168,12 @@ class matrix_log(Function):
     torch.Tensor
         Matrix logarithm of `X`.
 
+    Notes
+    -----
+    Clamping warnings are skipped for CUDA inputs requiring gradients to avoid
+    host synchronization during training. Detached CUDA inputs and CPU inputs
+    retain the diagnostic when ``warn_on_clamp=True``.
+
     See Also
     --------
     :class:`matrix_exp` : Inverse operation, maps back to SPD manifold.
@@ -194,14 +200,19 @@ class matrix_log(Function):
     def forward(ctx, X):
         output, s, U, s_modified = modeig_forward(X, matrix_log.applied_fct)
         threshold = get_epsilon(s.dtype, "eigval_log")
-        min_eigenvalue = s.min()
-        if numerical_config.warn_on_clamp and threshold > min_eigenvalue:
-            warnings.warn(
-                f"Eigenvalue clamping occurred in matrix_log: threshold "
-                f"({threshold:.2e}) > min eigenvalue ({min_eigenvalue:.2e}). "
-                f"This might lead to inaccurate results.",
-                UserWarning,
-            )
+        # Custom Function.forward runs with grad mode disabled, even during
+        # training. Input gradient requirements are available on the context.
+        if numerical_config.warn_on_clamp and (
+            not s.is_cuda or not ctx.needs_input_grad[0]
+        ):
+            min_eigenvalue = s.min()
+            if threshold > min_eigenvalue:
+                warnings.warn(
+                    f"Eigenvalue clamping occurred in matrix_log: threshold "
+                    f"({threshold:.2e}) > min eigenvalue ({min_eigenvalue:.2e}). "
+                    f"This might lead to inaccurate results.",
+                    UserWarning,
+                )
         ctx.save_for_backward(s, U, s_modified)
         return output
 
@@ -565,9 +576,10 @@ class matrix_sqrt_inv(Function):
     def forward(ctx, X):
         output_sqrt, s, U, s_sqrt = modeig_forward(X, matrix_sqrt.applied_fct)
         s_invsqrt = matrix_inv_sqrt.applied_fct(s)
-        output_invsqrt = (
-            U @ torch.diag_embed(s_invsqrt).to(dtype=X.dtype) @ U.transpose(-1, -2)
-        )
+        scaled = U * s_invsqrt.to(dtype=X.dtype).unsqueeze(-2)
+        if X.is_cuda:
+            scaled = scaled.contiguous()
+        output_invsqrt = scaled @ U.mT
         ctx.save_for_backward(s, U, s_sqrt, s_invsqrt)
         return output_sqrt, output_invsqrt
 

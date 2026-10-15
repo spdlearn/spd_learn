@@ -35,7 +35,12 @@ def modeig_forward(X, applied_fct, *args):
     """
     s, U = torch.linalg.eigh(X)
     s_modified = applied_fct(s, *args)
-    output = U @ torch.diag_embed(s_modified).to(dtype=X.dtype) @ U.transpose(-1, -2)
+    scaled = U * s_modified.to(dtype=X.dtype).unsqueeze(-2)
+    if X.is_cuda:
+        # Match the old diagonal-matmul layout. A different CUDA GEMM layout
+        # can amplify float32 rounding differences in a chain of SPD layers.
+        scaled = scaled.contiguous()
+    output = scaled @ U.mT
     return output, s, U, s_modified
 
 
@@ -80,31 +85,33 @@ def modeig_backward(grad_output, s, U, s_modified, derivative, *args):
     "equal" eigenvalues that scales with the magnitude of the eigenvalues.
     """
     # Compute Loewner matrix with adaptive threshold
-    denominator = s.unsqueeze(-1) - s.unsqueeze(-1).transpose(-1, -2)
+    denominator = s.unsqueeze(-1) - s.unsqueeze(-2)
 
     # Use adaptive threshold that scales with eigenvalue magnitude
     threshold = get_loewner_threshold(s)
     is_eq = denominator.abs() < threshold
-    denominator[is_eq] = 1.0
+    use_sparse_updates = s.device.type == "cpu"
+    if use_sparse_updates:
+        denominator[is_eq] = 1.0
 
     # Case: sigma_i != sigma_j
-    numerator = s_modified.unsqueeze(-1) - s_modified.unsqueeze(-1).transpose(-1, -2)
+    numerator = s_modified.unsqueeze(-1) - s_modified.unsqueeze(-2)
 
     # Case: sigma_i == sigma_j (use derivative instead)
     s_derivative = derivative(s, *args)
-    numerator[is_eq] = (
-        0.5
-        * (s_derivative.unsqueeze(-1) + s_derivative.unsqueeze(-1).transpose(-1, -2))[
-            is_eq
-        ]
-    )
-    L = numerator / denominator
+    if use_sparse_updates:
+        numerator[is_eq] = (
+            0.5 * (s_derivative.unsqueeze(-1) + s_derivative.unsqueeze(-2))[is_eq]
+        )
+        L = numerator / denominator
+    else:
+        equal_eigenvalue_derivative = 0.5 * (
+            s_derivative.unsqueeze(-1) + s_derivative.unsqueeze(-2)
+        )
+        denominator.masked_fill_(is_eq, 1.0)
+        L = torch.where(is_eq, equal_eigenvalue_derivative, numerator / denominator)
 
-    grad_input = (
-        U
-        @ (L * (U.transpose(-1, -2) @ ensure_sym(grad_output) @ U))
-        @ U.transpose(-1, -2)
-    )
+    grad_input = U @ (L * (U.mT @ ensure_sym(grad_output) @ U)) @ U.mT
 
     return grad_input
 

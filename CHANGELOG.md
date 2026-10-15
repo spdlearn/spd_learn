@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Skip matrix-log clamping warnings for CUDA inputs requiring gradients.
+
 ### Fixed
 
 - Reset BiMap weights through the orthogonal parametrization instead of modifying a derived temporary tensor.
 - Initialize each depthwise BiMap matrix independently when using orthogonal initialization.
+
+### Performance
+
+- Reduce spectral reconstruction and backward allocations, and cache backend dispatch.
 
 ## [0.2.1] - 2026-10-11
 
@@ -104,15 +112,15 @@ SPD Learn provides differentiable Riemannian operations, broadcast-compatible la
 
 Seven state-of-the-art deep learning architectures for SPD matrix data:
 
-| Model | Description | Reference |
-|-------|-------------|-----------|
-| **SPDNet** | Foundational architecture for deep learning on SPD manifolds with dimension reduction | Huang & Van Gool, AAAI 2017 |
-| **EEGSPDNet** | Specialized for EEG classification, combining covariance estimation with SPD layers | Wilson, D. et al., 2024 |
-| **TSMNet** | Tangent Space Mapping Network with convolutional features and SPD batch normalization | Kobler et al., 2022 |
-| **TensorCSPNet** | Multi-band EEG feature extraction using Tensor Common Spatial Patterns | Ju, C. et al. 2022 |
-| **PhaseSPDNet** | Phase-space embedding combined with SPDNet for geometric EEG dynamics analysis | Carrara et al., 2024 |
-| **Green** | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry | Paillard, J. et al., 2025 |
-| **MAtt** | Manifold Attention mechanism for SPD matrices | Pan, Yue-Ting, et al. 2022|
+| Model            | Description                                                                           | Reference                   |
+| ---------------- | ------------------------------------------------------------------------------------- | --------------------------- |
+| **SPDNet**       | Foundational architecture for deep learning on SPD manifolds with dimension reduction | Huang & Van Gool, AAAI 2017 |
+| **EEGSPDNet**    | Specialized for EEG classification, combining covariance estimation with SPD layers   | Wilson, D. et al., 2024     |
+| **TSMNet**       | Tangent Space Mapping Network with convolutional features and SPD batch normalization | Kobler et al., 2022         |
+| **TensorCSPNet** | Multi-band EEG feature extraction using Tensor Common Spatial Patterns                | Ju, C. et al. 2022          |
+| **PhaseSPDNet**  | Phase-space embedding combined with SPDNet for geometric EEG dynamics analysis        | Carrara et al., 2024        |
+| **Green**        | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry                | Paillard, J. et al., 2025   |
+| **MAtt**         | Manifold Attention mechanism for SPD matrices                                         | Pan, Yue-Ting, et al. 2022  |
 
 #### SPD Neural Network Layers
 
@@ -152,12 +160,12 @@ SPD-specific batch normalization layers respecting Riemannian geometry:
 
 Four Riemannian metrics for SPD manifolds:
 
-| Metric | Description |
-|--------|-------------|
-| **AffineInvariantRiemannian** | The canonical metric on SPD manifolds (AIRM) |
-| **LogEuclidean** | Computationally efficient metric via matrix logarithm |
-| **LogCholesky** | Metric based on Cholesky decomposition |
-| **BuresWasserstein** | Optimal transport metric between Gaussians |
+| Metric                        | Description                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| **AffineInvariantRiemannian** | The canonical metric on SPD manifolds (AIRM)          |
+| **LogEuclidean**              | Computationally efficient metric via matrix logarithm |
+| **LogCholesky**               | Metric based on Cholesky decomposition                |
+| **BuresWasserstein**          | Optimal transport metric between Gaussians            |
 
 Each metric provides geodesic distance computation and Fréchet mean computation. Additionally:
 - **AIRM**: Exponential/logarithmic maps, parallel transport, Karcher mean iteration
