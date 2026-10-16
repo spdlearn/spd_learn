@@ -14,7 +14,7 @@ repository: https://github.com/GitZH-Chen/LieBN/tree/main/LieBN
 import torch
 
 from torch import nn
-from torch.nn.utils.parametrize import register_parametrization
+from torch.nn.utils.parametrize import is_parametrized, register_parametrization
 
 from ..functional import (
     airm_geodesic,
@@ -269,11 +269,31 @@ class SPDBatchNormLie(nn.Module):
         self.reset_parameters()
         self._parametrize()
 
+    def reset_running_stats(self):
+        self.running_var.fill_(1.0)
+        self.running_mean.zero_()
+        if self.metric == "AIM":
+            self.running_mean.diagonal(dim1=-2, dim2=-1).fill_(1.0)
+
     @torch.no_grad()
     def reset_parameters(self):
-        self.bias.zero_()
-        self.bias[0].fill_diagonal_(1.0)
-        self.shift.fill_(1.0)
+        self.reset_running_stats()
+        identity = torch.eye(
+            self.num_features,
+            device=self.running_mean.device,
+            dtype=self.running_mean.dtype,
+        ).unsqueeze(0)
+
+        if is_parametrized(self, "bias"):
+            self.bias = identity
+        else:
+            self.bias.copy_(identity)
+
+        shift = self.running_var.new_ones(())
+        if is_parametrized(self, "shift"):
+            self.shift = shift
+        else:
+            self.shift.copy_(shift)
 
     def _parametrize(self):
         register_parametrization(self, "bias", SymmetricPositiveDefinite())

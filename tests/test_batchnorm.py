@@ -229,3 +229,37 @@ def test_karcher_mean_iteration_backward_compatibility():
 
     # Results should be identical
     assert torch.allclose(new_mean_default, new_mean_explicit)
+
+
+@pytest.mark.parametrize("rebias", [False, True])
+def test_batch_norm_rebias(rebias):
+    """Optional identity bias must leave the analytically centered batch intact."""
+    x = torch.diag_embed(torch.tensor([[1.0, 4.0], [9.0, 16.0]], dtype=torch.float64))
+    # Diagonal matrices have coordinatewise geometric means: diag(3, 8).
+    expected = torch.diag_embed(x.new_tensor([[1 / 3, 1 / 2], [3.0, 2.0]]))
+    layer = SPDBatchNormMean(2, momentum=1.0, rebias=rebias, dtype=x.dtype)
+
+    if rebias:
+        assert torch.allclose(layer.bias, torch.eye(2, dtype=x.dtype).unsqueeze(0))
+    else:
+        assert layer.bias is None
+        assert list(layer.parameters()) == []
+
+    with torch.no_grad():
+        assert torch.allclose(layer(x), expected)
+        layer.eval()
+        assert torch.allclose(layer(x), expected)
+
+
+@pytest.mark.parametrize("layer_class", [SPDBatchNormMean, SPDBatchNormMeanVar])
+def test_spd_batch_norm_applies_assigned_bias(layer_class):
+    """Both SPD normalizers must apply their enabled nonidentity bias."""
+    layer = layer_class(2, dtype=torch.float64).eval()
+    bias = torch.diag(torch.tensor([4.0, 9.0], dtype=torch.float64)).unsqueeze(0)
+
+    with torch.no_grad():
+        layer.bias = bias
+        # The initial evaluation mean is identity, so identity input returns bias.
+        output = layer(torch.eye(2, dtype=bias.dtype).unsqueeze(0))
+
+    assert torch.allclose(output, bias)

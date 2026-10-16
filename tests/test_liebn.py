@@ -314,3 +314,38 @@ def test_default_initialization(metric):
     assert layer.shift.dtype == DTYPE
     assert layer.running_mean.dtype == DTYPE
     assert layer.running_var.dtype == DTYPE
+
+
+@pytest.mark.parametrize("metric", METRICS)
+@pytest.mark.parametrize("with_features", [False, True], ids=["3d", "4d"])
+def test_reset_parameters_after_training(metric, with_features):
+    """Reset learned parameters and statistics after either supported input rank."""
+    x = torch.diag_embed(
+        torch.tensor([[1.0, 4.0, 9.0], [4.0, 16.0, 36.0]], dtype=DTYPE)
+    )
+    if with_features:
+        x = torch.stack((x, 2 * x), dim=1)
+    layer = SPDBatchNormLie(3, metric=metric, momentum=1.0, dtype=DTYPE)
+    parameters_before = tuple(layer.parameters())
+
+    with torch.no_grad():
+        layer(x)
+        layer.parametrizations.bias.original.fill_(0.4)
+        layer.parametrizations.shift.original.fill_(0.7)
+        layer.running_var.fill_(7.0)
+
+    expected_mean = torch.zeros_like(layer.running_mean)
+    if metric == "AIM":
+        expected_mean = torch.eye(3, dtype=DTYPE).expand_as(layer.running_mean)
+
+    layer.reset_parameters()
+
+    assert torch.allclose(layer.bias, torch.eye(3, dtype=DTYPE).unsqueeze(0))
+    assert torch.allclose(layer.shift, torch.ones((), dtype=DTYPE))
+    assert torch.allclose(layer.running_mean, expected_mean)
+    assert torch.allclose(layer.running_var, torch.ones_like(layer.running_var))
+    # Resetting must preserve the parameter objects already held by an optimizer.
+    assert all(
+        before is after
+        for before, after in zip(parameters_before, layer.parameters(), strict=True)
+    )
