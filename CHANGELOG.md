@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reset BiMap weights through the orthogonal parametrization instead of modifying a derived temporary tensor.
 - Initialize each depthwise BiMap matrix independently when using orthogonal initialization.
+- Compute Loewner equality thresholds per matrix so unrelated batch members cannot change another sample's gradient.
 - Stop applying a trainable bias in `SPDBatchNormMean` when `rebias=False`.
 - Reset parametrized biases and scales correctly in `SPDBatchNormMean`,
   `SPDBatchNormMeanVar`, and `SPDBatchNormLie`.

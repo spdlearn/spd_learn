@@ -1,9 +1,22 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+import pytest
 import torch
 
 from torch.autograd import gradcheck
+
+
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+def test_matrix_log_gradient_independent_of_batch_scale(dtype):
+    """An unrelated high-scale matrix must not change this matrix's derivative."""
+    from spd_learn.functional import matrix_log
+
+    x = torch.diag(torch.tensor([1.0, 2.0], dtype=dtype)).requires_grad_()
+    matrix_log.apply(x).sum().backward()
+    batched = torch.stack([x.detach(), 1e16 * x.detach()]).requires_grad_()
+    matrix_log.apply(batched).sum().backward()
+    torch.testing.assert_close(batched.grad[0], x.grad)
 
 
 def test_matrix_log():
