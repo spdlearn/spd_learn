@@ -25,6 +25,9 @@ from spd_learn.models import __filter_bank_models__ as filter_bank_models
 
 mne.set_log_level("ERROR")
 
+# Downloads PhysioNet EEGBCI and trains every model: run by the CI integration job.
+pytestmark = pytest.mark.integration
+
 
 @pytest.fixture()
 def raw_data():
