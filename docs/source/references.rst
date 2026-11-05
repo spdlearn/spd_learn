@@ -150,6 +150,14 @@ with each color representing a distinct model family implemented in SPD Learn.
          <div class="legend-ref">Carrara et al., 2024</div>
        </div>
      </div>
+     <div class="legend-item">
+       <div class="legend-dot" style="background: #EC4899;"></div>
+       <div class="legend-content">
+         <div class="legend-title">STaRNet</div>
+         <div class="legend-desc">Spatio-temporal convolution branches combined with covariance pooling and Riemannian feature extraction for motor imagery decoding.</div>
+         <div class="legend-ref">Wang et al., 2024</div>
+       </div>
+     </div>
    </div>
 
 ----

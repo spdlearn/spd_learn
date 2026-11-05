@@ -623,6 +623,35 @@ from :cite:t:`lezcano2019trivializations`:
 
 
 
+Enabling Periodic Updates
+-------------------------
+
+Call :func:`~spd_learn.modules.step_dynamic_trivialization` after every K
+optimizer updates to recenter BiMap weights and exponential SPD biases:
+
+.. code-block:: python
+
+   from spd_learn.modules import step_dynamic_trivialization
+
+   # After loss.backward() and optimizer.step():
+   if step % K == 0:
+       step_dynamic_trivialization(model, optimizer)
+
+The first call enables moving SPD charts; defaults stay unchanged until called.
+Passing the optimizer restarts only recentered parameters' adaptive/momentum
+state; their gradients are cleared. Call outside ``parametrize.cached()``.
+Frozen supported parameters retain their effective values. Softplus, positive
+scalars and nonparametrized BiMaps are unchanged; TensorCSPNet can opt in with
+``parametrized=True``. Green needs ``bi_out`` to contain a BiMap.
+
+SPD bases use Cholesky factors; BiMap reuses PyTorch's orthogonal reassignment.
+Explicit Householder maps still require excluding sign coordinates from decay.
+To load a dynamic checkpoint, initialize existing normalization buffers with the
+saved input layout and call the helper before strict loading. Load static
+checkpoints before opting in; save the optimizer-step count and RNG state to
+resume the K schedule and rectangular QR randomness.
+
+
 Practical Implications
 ----------------------
 

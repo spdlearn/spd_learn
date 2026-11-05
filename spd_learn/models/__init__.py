@@ -4,8 +4,8 @@ from .coratt import CorAtt, CorrAttention  # noqa: F401
 from .cornet import CorNet
 from .deepgeocca import DeepGeoCCA, GeodesicCCALoss  # noqa: F401
 from .eegspdnet import EEGSPDNet
-from .gbwatt import GBWAtt, GBWAttention  # noqa: F401
-from .graph_cspnet import GraphCSPNet
+from .gbwatt import GBWAtt
+from .graphcsp import GraphCSPNet
 from .green import Green
 from .gyroatt import GyroSPDAtt, GyroSPDAttention, SymSPDAttention  # noqa: F401
 from .gyrospd import GyroSPD, GyroSPDLayer  # noqa: F401
@@ -19,10 +19,10 @@ from .spd_metaformer import SPDMetaFormer, SPDMetaFormerBlock  # noqa: F401
 from .spdnet import SPDNet
 from .spdnet_ae import SPDDecoderBlock, SPDNetAE  # noqa: F401
 from .spdresnet import AdaptiveLogEuclidean, SPDResBlock, SPDResNet  # noqa: F401
-from .spdtransnet import SPDTransNet
+from .spdtransnet import SPDTransNet  # noqa: F401 (sequence-native registry below)
 from .spnn import SPNN
 from .ssgcnet import SSGCNet, TangentGraphSPDAggregation  # noqa: F401
-from .starnet import SqueezeExcitation, STaRNet  # noqa: F401
+from .starnet import STaRNet
 from .tensorcsp import TensorCSPNet
 from .tsmnet import TSMNet
 
@@ -35,23 +35,22 @@ from .tsmnet import TSMNet
 # instantiate full models.
 __all__ = [
     "TensorCSPNet",
+    "GraphCSPNet",
     "SPDNet",
     "TSMNet",
     "MAtt",
+    "GBWAtt",
     "EEGSPDNet",
     "PhaseSPDNet",
     "Green",
+    "RCEEGNet",
+    "STaRNet",
     "CorAtt",
     "CorNet",
     "SPNN",
     "GyroSPDAtt",
-    "GraphCSPNet",
-    "GBWAtt",
-    "SPDTransNet",
     "SPDMetaFormer",
     "DeepGeoCCA",
-    "RCEEGNet",
-    "STaRNet",
     "SPDResNet",
     "GyroSPD",
     "SPDNetAE",
@@ -59,3 +58,6 @@ __all__ = [
 ]
 
 __filter_bank_models__ = ["TensorCSPNet", "GraphCSPNet"]
+
+# Prepared SPD context models have a different contract from raw-EEG models.
+__sequence_models__ = ["SPDTransNet"]

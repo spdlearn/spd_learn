@@ -13,6 +13,11 @@ from spd_learn.modules import CovLayer
 from spd_learn.modules import __all__ as module_list
 
 
+module_list = [
+    name for name in module_list if inspect.isclass(getattr(spd_learn.modules, name))
+]
+
+
 # parameters for wavelet initialization
 n_freqs_init = 10
 oct_min = 0.5
@@ -60,12 +65,15 @@ def test_integration(model_name):
     model_class = getattr(spd_learn.models, model_name)
 
     params = {"sfreq": 125} if model_name == "Green" else {}
-    if model_name == "TensorCSPNet":
+    if model_name in spd_learn.models.__filter_bank_models__:
         x = torch.randn(2, 9, 22, 1000)
     else:
         x = torch.randn(2, 22, 1000)
 
     model = model_class(n_chans=22, n_outputs=2, **params)
+
+    if model_name == "GraphCSPNet":
+        model.fit_graph(x)
 
     with torch.no_grad():
         out = model(x)
@@ -272,13 +280,16 @@ def test_module_output_device(module_name, device):
 def test_integration_on_device(model_name, device):
     """Create a model, move it to the target device, and verify output shape and device."""
     params = {"sfreq": 125} if model_name == "Green" else {}
-    if model_name == "TensorCSPNet":
+    if model_name in spd_learn.models.__filter_bank_models__:
         x = torch.randn(2, 9, 22, 1000, device=device)
     else:
         x = torch.randn(2, 22, 1000, device=device)
 
     model = getattr(spd_learn.models, model_name)(n_chans=22, n_outputs=2, **params)
     model.to(device)
+
+    if model_name == "GraphCSPNet":
+        model.fit_graph(x)
 
     with torch.no_grad():
         out = model(x)

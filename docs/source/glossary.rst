@@ -144,6 +144,11 @@ This glossary defines key terms used throughout SPD Learn documentation.
       to input signals before SPDNet processing, capturing nonlinear
       dynamical structure.
 
+   STaRNet
+      **Spatio-Temporal Riemannian Network**. A model that combines parallel
+      spatial and temporal convolution branches with covariance pooling,
+      bilinear SPD projection, and a tangent-space classifier for EEG decoding.
+
    Phase-Space Embedding
       Reconstruction of a dynamical system's state space from a single time
       series using time-delayed copies: :math:`[x(t), x(t-\tau), x(t-2\tau), \ldots]`.

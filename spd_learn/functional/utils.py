@@ -20,7 +20,7 @@ def ensure_sym(matrix):
     torch.Tensor
         The symmetric version of the input matrix.
     """
-    return (matrix + matrix.mT) / 2
+    return (matrix + matrix.mT) * 0.5
 
 
 def vec_batch(X: torch.Tensor) -> torch.Tensor:
@@ -52,6 +52,6 @@ def unvec_batch(X_vec: torch.Tensor, n: int) -> torch.Tensor:
     Returns
     -------
     torch.Tensor
-        A batch of matrices with shape `(..., n, k)`.
+        A batch of unvectorized matrices with shape `(..., n, k)`.
     """
     return X_vec.reshape(*X_vec.shape[:-1], n, -1)

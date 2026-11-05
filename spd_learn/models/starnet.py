@@ -1,231 +1,149 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+
+from collections.abc import Sequence
+from warnings import warn
+
 import torch
 import torch.nn as nn
 
-from spd_learn.modules import (
-    BiMap,
-    CovLayer,
-    LogEig,
-    PatchEmbeddingLayer,
-    ReEig,
-    Shrinkage,
-    TraceNorm,
-)
-
-
-class SqueezeExcitation(nn.Module):
-    r"""Squeeze-and-Excitation channel attention block.
-
-    This module recalibrates channel-wise feature responses adaptively by
-    explicitly modeling interdependencies between convolutional channels.
-
-    Parameters
-    ----------
-    channels : int
-        Number of input channels.
-    reduction : int, default=4
-        Reduction ratio for the bottleneck layer.
-    """
-
-    def __init__(self, channels: int, reduction: int = 4):
-        super().__init__()
-        reduced = max(1, channels // reduction)
-        self.fc = nn.Sequential(
-            nn.AdaptiveAvgPool2d((1, 1)),
-            nn.Conv2d(channels, reduced, kernel_size=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(reduced, channels, kernel_size=1),
-            nn.Sigmoid(),
-        )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of SqueezeExcitation.
-
-        Parameters
-        ----------
-        x : torch.Tensor
-            Input tensor of shape ``(batch, channels, height, width)``.
-
-        Returns
-        -------
-        torch.Tensor
-            Channel-reweighted tensor of shape ``(batch, channels, height, width)``.
-        """
-        return x * self.fc(x)
+from spd_learn.modules import BiMap, CovLayer, LogEig
 
 
 class STaRNet(nn.Module):
-    r"""Spatio-Temporal and Riemannian Network (STaRNet).
+    r"""Spatio-Temporal Riemannian Network (STaRNet).
 
-    This class implements the STaRNet model :cite:p:`wang2024starnet`, a hybrid
-    dual-branch architecture for high-performance motor imagery decoding in EEG
-    brain-computer interfaces.
+    This class implements the STaRNet :cite:p:`wang2024starnet`.
+    STaRNet is a neural network model designed for EEG signal classification,
+    combining multi-scale spatial and temporal convolution branches with a
+    covariance-based SPD feature extraction module.
 
     .. figure:: /_static/models/starnet.png
        :align: center
        :alt: STaRNet Architecture
 
-    The model synergistically couples a multi-scale spatio-temporal convolution
-    frontend with two complementary processing streams:
-
-    1. **Frontend:** Temporal convolution followed by depthwise spatial
-       filtering across EEG electrodes, batch normalization, and ELU activation.
-    2. **Riemannian Branch:** Temporal segmentation into patches via
-       :class:`~spd_learn.modules.PatchEmbeddingLayer`, regularized covariance
-       estimation via :class:`~spd_learn.modules.CovLayer`,
-       :class:`~spd_learn.modules.TraceNorm`, and :class:`~spd_learn.modules.Shrinkage`,
-       followed by patch-wise bilinear dimensionality reduction
-       (:class:`~spd_learn.modules.BiMap` with ``depthwise=n_patches``),
-       eigenvalue rectification (:class:`~spd_learn.modules.ReEig`), and tangent
-       space projection (:class:`~spd_learn.modules.LogEig` with ``upper=True``).
-    3. **Euclidean Temporal Branch:** Temporal average pooling, 2D convolution,
-       batch normalization, ELU, and Squeeze-and-Excitation (SE) channel
-       attention, pooled into compact temporal representations via
-       :class:`nn.AdaptiveAvgPool2d((1, 8))`.
-    4. **Feature Fusion & Classification:** Concatenation of Riemannian tangent
-       features and Euclidean temporal features, followed by dropout and a
-       linear classification head.
-
     Parameters
     ----------
-    n_chans : int, default=22
+    n_chans : int
         Number of input EEG channels (electrodes).
-    n_outputs : int, default=2
+    n_outputs : int
         Number of output classes for classification.
-    n_patches : int, default=4
-        Number of temporal patches for the Riemannian branch.
-    temporal_filters : int, default=16
-        Number of temporal convolution filters in the frontend.
-    spatial_filters : int, default=16
-        Number of spatial filters in the frontend.
-    bimap_dim : int, default=12
-        Output dimension for the BiMap layer in the Riemannian branch.
-    drop_prob : float, default=0.2
-        Dropout probability before the final linear layer.
-    temporal_kernel_size : int, default=31
-        Kernel size for the temporal convolution in the frontend.
+    spatial_kernel_sizes : Sequence[int], optional, default=(3, 11, 22)
+        List of kernel sizes for the spatial convolutional layers.
+    spatial_expansion_coeff : int, optional, default=44
+        Expansion coefficient for the spatial convolutional layers.
+    depth_spatial_fusion : int, optional, default=8
+        Depth of the spatial fusion convolutional layer.
+    depth_temporal_map : int, optional, default=4
+        Depth of the temporal mapping convolutional layers.
+    temporal_kernel_sizes : Sequence[int], optional, default=(25, 65, 125)
+        List of kernel sizes for the temporal convolutional layers.
+    bimap_reduced_dimension : int, optional, default=48
+        Reduced dimension for the BiMap layer in the SPD feature extraction module.
+
+    Notes
+    -----
+    The default dimensions are an engineering configuration for 22-channel EEG.
+    The STaRNet paper does not report every architecture dimension, so these
+    values should not be treated as an exact reproduction of the authors' model.
     """
 
     def __init__(
         self,
-        n_chans: int = 22,
-        n_outputs: int = 2,
-        n_patches: int = 4,
-        temporal_filters: int = 16,
-        spatial_filters: int = 16,
-        bimap_dim: int = 12,
-        drop_prob: float = 0.2,
-        temporal_kernel_size: int = 31,
+        n_chans: int,
+        n_outputs: int,
+        spatial_kernel_sizes: Sequence[int] = (3, 11, 22),
+        spatial_expansion_coeff: int = 44,
+        depth_spatial_fusion: int = 8,
+        depth_temporal_map: int = 4,
+        temporal_kernel_sizes: Sequence[int] = (25, 65, 125),
+        bimap_reduced_dimension: int = 48,
     ):
         super().__init__()
-        self.n_chans = n_chans
-        self.n_outputs = n_outputs
-        self.n_patches = n_patches
-        self.temporal_filters = temporal_filters
-        self.spatial_filters = spatial_filters
-        self.bimap_dim = bimap_dim
-        self.drop_prob = drop_prob
-        self.temporal_kernel_size = temporal_kernel_size
+        assert all(kernel_size <= n_chans for kernel_size in spatial_kernel_sizes)
 
-        # 1. Spatio-temporal frontend
-        temporal_padding = temporal_kernel_size // 2
-        self.temporal_conv = nn.Conv2d(
-            1,
-            temporal_filters,
-            kernel_size=(1, temporal_kernel_size),
-            padding=(0, temporal_padding),
+        spatial_dimensions = [n_chans - h_i + 1 for h_i in spatial_kernel_sizes]
+        raw_depths_spatial_maps = [
+            spatial_expansion_coeff // S_i for S_i in spatial_dimensions
+        ]
+        depths_spatial_maps = [max(1, depth) for depth in raw_depths_spatial_maps]
+
+        if depths_spatial_maps != raw_depths_spatial_maps:
+            warn(
+                "spatial_expansion_coeff produced zero spatial filters for some "
+                f"branches. Using depths {depths_spatial_maps} instead of "
+                f"{raw_depths_spatial_maps}.",
+                UserWarning,
+                stacklevel=2,
+            )
+
+        self.conv_spatial = nn.ModuleList(
+            [
+                nn.Conv2d(
+                    in_channels=1,
+                    out_channels=d,
+                    kernel_size=(h, 1),
+                    bias=False,
+                )
+                for h, d in zip(spatial_kernel_sizes, depths_spatial_maps)
+            ]
+        )
+
+        spatial_height = sum(
+            d * s for d, s in zip(depths_spatial_maps, spatial_dimensions)
+        )
+        self.conv_spatial_fusion = nn.Conv2d(
+            in_channels=1,
+            out_channels=depth_spatial_fusion,
+            kernel_size=(spatial_height, 1),
             bias=False,
         )
-        groups = (
-            temporal_filters
-            if (spatial_filters % temporal_filters == 0)
-            else 1
-        )
-        self.spatial_conv = nn.Conv2d(
-            temporal_filters,
-            spatial_filters,
-            kernel_size=(n_chans, 1),
-            groups=groups,
-            bias=False,
-        )
-        self.bn_frontend = nn.BatchNorm2d(spatial_filters)
-        self.elu = nn.ELU()
 
-        # 2. Riemannian Branch
-        self.patch_embed = PatchEmbeddingLayer(
-            n_chans=spatial_filters, n_patches=n_patches
+        self.conv_temporal = nn.ModuleList(
+            [
+                nn.Conv2d(
+                    in_channels=1,
+                    out_channels=depth_temporal_map,
+                    kernel_size=(1, w_j),
+                    padding="same",
+                    bias=False,
+                )
+                for w_j in temporal_kernel_sizes
+            ]
         )
-        self.cov = CovLayer()
-        self.trace_norm = TraceNorm()
-        self.shrinkage = Shrinkage(n_chans=spatial_filters)
-        self.bimap = BiMap(spatial_filters, bimap_dim, depthwise=n_patches)
-        self.reeig = ReEig()
-        self.logeig = LogEig(upper=True)
-        self.flatten_riemann = nn.Flatten()
-
-        tangent_dim = bimap_dim * (bimap_dim + 1) // 2
-        self.n_riemann_features = n_patches * tangent_dim
-
-        # 3. Euclidean Temporal Branch
-        self.euclid_branch = nn.Sequential(
-            nn.AvgPool2d(kernel_size=(1, 4), stride=(1, 4)),
-            nn.Conv2d(
-                spatial_filters,
-                spatial_filters,
-                kernel_size=(1, 15),
-                padding=(0, 7),
-                bias=False,
-            ),
-            nn.BatchNorm2d(spatial_filters),
-            nn.ELU(),
-            SqueezeExcitation(spatial_filters),
-            nn.AdaptiveAvgPool2d((1, 8)),
-            nn.Flatten(),
+        temporal_height = (
+            len(temporal_kernel_sizes) * depth_spatial_fusion * depth_temporal_map
         )
-        self.n_euclid_features = spatial_filters * 8
-
-        # 4. Fusion and classification
-        total_features = self.n_riemann_features + self.n_euclid_features
-        self.classifier = nn.Sequential(
-            nn.Dropout(p=drop_prob),
-            nn.Linear(total_features, n_outputs),
+        self.spd_features = nn.Sequential(
+            CovLayer(),
+            BiMap(temporal_height, bimap_reduced_dimension),
+            LogEig(),
+        )
+        self.classifier = nn.Linear(
+            in_features=(bimap_reduced_dimension * (bimap_reduced_dimension + 1)) // 2,
+            out_features=n_outputs,
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of STaRNet.
+        """Apply the network to raw EEG epochs.
 
         Parameters
         ----------
         x : torch.Tensor
-            Input tensor of shape ``(batch, n_chans, n_times)`` or
-            ``(batch, 1, n_chans, n_times)``.
+            Input tensor with shape ``(batch_size, n_chans, n_times)``.
 
         Returns
         -------
         torch.Tensor
-            Classification logits of shape ``(batch, n_outputs)``.
+            Class logits with shape ``(batch_size, n_outputs)``.
         """
-        if x.dim() == 3:
-            x = x.unsqueeze(1)
-
-        # Frontend: (batch, spatial_filters, 1, n_times)
-        feat = self.elu(self.bn_frontend(self.spatial_conv(self.temporal_conv(x))))
-
-        # Riemannian branch
-        x_r = feat.squeeze(2)  # (batch, spatial_filters, n_times)
-        x_r = self.patch_embed(x_r)
-        x_r = self.cov(x_r)
-        x_r = self.trace_norm(x_r)
-        x_r = self.shrinkage(x_r)
-        x_r = self.bimap(x_r)
-        x_r = self.reeig(x_r)
-        x_r = self.logeig(x_r)
-        x_r = self.flatten_riemann(x_r)
-
-        # Euclidean branch
-        x_e = self.euclid_branch(feat)
-
-        # Fusion
-        x_fused = torch.cat([x_r, x_e], dim=1)
-        return self.classifier(x_fused)
+        x = x.unsqueeze(1)
+        branches = [conv(x).flatten(1, 2).unsqueeze(1) for conv in self.conv_spatial]
+        x = torch.cat(branches, dim=2)
+        x = self.conv_spatial_fusion(x)
+        x = x.flatten(1, 2).unsqueeze(1)
+        branches = [conv(x).flatten(1, 2).unsqueeze(1) for conv in self.conv_temporal]
+        x = torch.cat(branches, dim=2).squeeze(1)
+        x = self.spd_features(x)
+        x = self.classifier(x)
+        return x

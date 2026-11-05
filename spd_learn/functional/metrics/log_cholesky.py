@@ -78,7 +78,6 @@ Examples
 
 import torch
 
-from pyriemann.geometry.geodesic import geodesic_logchol
 from torch.autograd import Function
 
 from ..numerical import get_epsilon
@@ -142,8 +141,8 @@ class cholesky_log(Function):
         log_diag = diag_L_clamped.log()
 
         # Create output: strictly lower triangular + log(diagonal)
-        output = L.tril(-1)  # strictly lower triangular part
-        output = output + torch.diag_embed(log_diag)
+        output = L.tril(-1)
+        output.diagonal(dim1=-2, dim2=-1).copy_(log_diag)
 
         # Save for backward
         ctx.save_for_backward(L)
@@ -169,7 +168,8 @@ class cholesky_log(Function):
 
         # Gradient through strictly lower triangular part is identity
         # grad_L is the gradient w.r.t. L (before log_chol transformation)
-        grad_L = grad_output.tril(-1) + torch.diag_embed(grad_diag_L)
+        grad_L = grad_output.tril(-1)
+        grad_L.diagonal(dim1=-2, dim2=-1).copy_(grad_diag_L)
 
         # Backprop through Cholesky decomposition: X = L @ L.T
         # We use PyTorch's built-in Cholesky backward which is numerically stable.
@@ -179,25 +179,22 @@ class cholesky_log(Function):
         # and the result is symmetrized.
 
         # Compute S = L.T @ grad_L
-        S = L.transpose(-1, -2) @ grad_L
+        S = L.mT @ grad_L
 
         # Phi operation: take lower triangular and halve the diagonal
         Phi_S = S.tril()
-        diag_Phi = torch.diagonal(Phi_S, dim1=-2, dim2=-1)
-        Phi_S = Phi_S - 0.5 * torch.diag_embed(diag_Phi)
+        Phi_S.diagonal(dim1=-2, dim2=-1).mul_(0.5)
 
         # Compute L^{-T} @ Phi_S @ L^{-1} via solving triangular systems
         # First: solve L.T @ temp1 = Phi_S for temp1 (temp1 = L^{-T} @ Phi_S)
-        temp1 = torch.linalg.solve_triangular(L.transpose(-1, -2), Phi_S, upper=True)
+        temp1 = torch.linalg.solve_triangular(L.mT, Phi_S, upper=True)
         # Then: solve temp1 @ L = grad_X for grad_X (grad_X = temp1 @ L^{-1})
         # Transpose to solve: L.T @ grad_X.T = temp1.T => grad_X.T = L^{-T} @ temp1.T
-        grad_X_T = torch.linalg.solve_triangular(
-            L.transpose(-1, -2), temp1.transpose(-1, -2), upper=True
-        )
-        grad_X = grad_X_T.transpose(-1, -2)
+        grad_X_T = torch.linalg.solve_triangular(L.mT, temp1.mT, upper=True)
+        grad_X = grad_X_T.mT
 
         # Symmetrize the gradient (since X is symmetric, grad must be symmetric)
-        grad_X = 0.5 * (grad_X + grad_X.transpose(-1, -2))
+        grad_X = 0.5 * (grad_X + grad_X.mT)
 
         return grad_X
 
@@ -247,10 +244,11 @@ class cholesky_exp(Function):
         diag_L = log_diag.exp()
 
         # Reconstruct L: strictly lower triangular + exp(diagonal)
-        L = Y.tril(-1) + torch.diag_embed(diag_L)
+        L = Y.tril(-1)
+        L.diagonal(dim1=-2, dim2=-1).copy_(diag_L)
 
         # Compute X = L @ L.T
-        X = L @ L.transpose(-1, -2)
+        X = L @ L.mT
 
         # Save for backward
         ctx.save_for_backward(L, diag_L)
@@ -262,29 +260,11 @@ class cholesky_exp(Function):
         L, diag_L = ctx.saved_tensors
 
         # Backprop through X = L @ L.T
-        # grad_L = 2 * tril(grad_X @ L)  (from the symmetric formula)
-        # But we need to be careful: grad_output might not be symmetric
-        # Ensure symmetry first
-        grad_X_sym = 0.5 * (grad_output + grad_output.transpose(-1, -2))
-
-        # Gradient through L @ L.T
-        # d(L @ L.T) = dL @ L.T + L @ dL.T
-        # For symmetric grad_X: grad_L = 2 * tril(grad_X @ L)
-        grad_L = 2 * (grad_X_sym @ L).tril()
-
-        # But this counts the diagonal twice, so we need to halve it:
-        # Actually, let's be more careful.
-        # The adjoint: tr(grad_X.T @ (dL @ L.T + L @ dL.T))
-        # = tr(grad_X.T @ dL @ L.T) + tr(grad_X.T @ L @ dL.T)
-        # = tr(L.T @ grad_X.T @ dL) + tr(dL.T @ grad_X.T @ L)
-        # = tr(L.T @ grad_X @ dL) + tr(L.T @ grad_X.T @ dL)  (using cyclic property)
-        # = tr((grad_X @ L + grad_X.T @ L).T @ dL)
-        # = tr((2 * sym(grad_X) @ L).T @ dL)
-        # So grad_L = 2 * sym(grad_X) @ L
+        grad_X_sym = 0.5 * (grad_output + grad_output.mT)
 
         # But L is lower triangular, so we only care about the lower triangular part
         # grad_L = tril(2 * sym(grad_X) @ L)
-        grad_L = (2 * grad_X_sym @ L).tril()
+        grad_L = (2.0 * grad_X_sym @ L).tril()
 
         # Backprop through the exponential on the diagonal
         # grad_Y_diag = grad_L_diag * diag_L  (chain rule for exp)
@@ -292,7 +272,8 @@ class cholesky_exp(Function):
         grad_Y_diag = grad_L_diag * diag_L
 
         # Backprop through strictly lower triangular (identity)
-        grad_Y = grad_L.tril(-1) + torch.diag_embed(grad_Y_diag)
+        grad_Y = grad_L.tril(-1)
+        grad_Y.diagonal(dim1=-2, dim2=-1).copy_(grad_Y_diag)
 
         return grad_Y
 
@@ -429,10 +410,11 @@ def log_cholesky_mean(matrices, weights=None):
     weight_shape = (N,) + (1,) * (matrices.ndim - 1)
     weights = weights.view(weight_shape)
 
-    # Compute Log-Cholesky representations
+    # Compute Log-Cholesky representation for each matrix
+    # Shape of log_chol_matrices: (N, ..., n, n)
     log_chol_matrices = cholesky_log.apply(matrices)
 
-    # Weighted average in Log-Cholesky space
+    # Weighted average in Euclidean space
     weighted_mean = (weights * log_chol_matrices).sum(dim=0)
 
     # Map back to SPD manifold
@@ -440,52 +422,71 @@ def log_cholesky_mean(matrices, weights=None):
 
 
 def log_cholesky_geodesic(A, B, t):
-    r"""Geodesic interpolation in the Log-Cholesky metric.
+    r"""Geodesic interpolation under the Log-Cholesky metric.
 
     Computes the point on the geodesic between SPD matrices :math:`A` and
-    :math:`B` at parameter :math:`t`:
+    :math:`B` at parameter :math:`t \in [0, 1]` under the Log-Cholesky metric.
+
+    Under the Log-Cholesky metric, geodesics correspond to linear interpolation
+    in the Log-Cholesky space:
 
     .. math::
 
-        \gamma(t) = \exp_{\text{chol}}\left((1-t) \log_{\text{chol}}(L_A) +
-                     t \log_{\text{chol}}(L_B)\right)
+        \gamma(t) = \exp_{\text{chol}}((1-t)\log_{\text{chol}}(L_A) + t\log_{\text{chol}}(L_B))
 
-    where :math:`t \\in [0, 1]`.
+    where :math:`A = L_A L_A^T` and :math:`B = L_B L_B^T`.
 
     Parameters
     ----------
     A : torch.Tensor
-        Starting SPD matrix of shape `(..., n, n)`.
+        Starting SPD matrices with shape `(..., n, n)`.
     B : torch.Tensor
-        Ending SPD matrix of shape `(..., n, n)`.
+        Ending SPD matrices with shape `(..., n, n)`. Must be broadcastable with `A`.
     t : float or torch.Tensor
-        Interpolation parameter. For t=0, returns A. For t=1, returns B.
+        Interpolation parameter, typically in `[0, 1]`. When `t=0`, returns `A`;
+        when `t=1`, returns `B`. Can be a scalar or a tensor broadcastable
+        with the batch dimensions of `A` and `B`.
 
     Returns
     -------
     torch.Tensor
-        Interpolated SPD matrix of shape `(..., n, n)`.
+        Interpolated SPD matrices with shape `(..., n, n)`.
+
+    Notes
+    -----
+    Delegates to pyriemann's `geodesic_logchol` when inputs are NumPy arrays,
+    and implements a pure-PyTorch version for torch tensors to support GPU
+    execution and autograd.
 
     See Also
     --------
-    :func:`log_cholesky_distance` : Distance under Log-Cholesky metric.
-    :func:`log_cholesky_mean` : Fréchet mean under Log-Cholesky metric.
+    :func:`log_cholesky_distance` : Distance along the geodesic.
+    :func:`log_cholesky_mean` : Midpoint is the geodesic mean for t=0.5.
     :func:`~spd_learn.functional.airm_geodesic` : Geodesic under AIRM.
-    :func:`~spd_learn.functional.bures_wasserstein_geodesic` : Geodesic under Bures-Wasserstein metric.
 
     Examples
     --------
     >>> import torch
+    >>> from spd_learn.functional import log_cholesky_geodesic
     >>> A = torch.eye(3)
     >>> B = 4 * torch.eye(3)
-    >>> # Midpoint
-    >>> mid = log_cholesky_geodesic(A, B, 0.5)
-    >>> print(f"Midpoint diagonal: {torch.diag(mid)}")
-    Midpoint diagonal: tensor([2., 2., 2.])
+    >>> midpoint = log_cholesky_geodesic(A, B, 0.5)
+    >>> # Under Log-Cholesky, diag is exp(0.5*log(1) + 0.5*log(2)) = sqrt(2)
+    >>> # so midpoint = L @ L.T has diagonal 2
+    >>> torch.allclose(torch.diag(midpoint), torch.tensor([2., 2., 2.]))
+    True
     """
-    # A 0-d tensor t broadcasts over batched inputs (pyriemann requires alpha to
-    # match the batch shape); expand it so a scalar t still works on batches.
-    if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
-        t = t.expand(A.shape[:-2])
-    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
-    return geodesic_logchol(A, B, alpha=t)
+    # Kept in spd_learn (not delegated): built on spd_learn's stable cholesky_log
+    # so all geodesics share one numerically-robust code path.
+    log_chol_A = cholesky_log.apply(A)
+    log_chol_B = cholesky_log.apply(B)
+
+    # Handle tensor t with proper broadcasting
+    if isinstance(t, torch.Tensor):
+        t = t.to(device=A.device, dtype=A.dtype)
+        # Reshape t to broadcast with (..., n, n)
+        while t.ndim < A.ndim:
+            t = t.unsqueeze(-1)
+
+    interpolated_log_chol = (1 - t) * log_chol_A + t * log_chol_B
+    return cholesky_exp.apply(interpolated_log_chol)

@@ -1,6 +1,5 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
-from .attention import SPDTransformerEncoderLayer, SPMultiheadAttention
 from .batchnorm import (
     BatchReNorm,
     SPDBatchNormBW,
@@ -9,16 +8,36 @@ from .batchnorm import (
     SPDBatchNormMean,
     SPDBatchNormMeanVar,
 )
-from .bilinear import BiMap, BiMapIncreaseDim, GraphBiMap
+from .bilinear import BiMap, BiMapIncreaseDim
 from .covariance import CovLayer
 from .dropout import SPDDropout
+from .gbw import GBWAttention, GBWGeometry, GBWPatchCovariance  # noqa: F401
+from .graph import (  # noqa: F401
+    GraphBiMap,
+    TimeFrequencyCovariances,
+    TimeFrequencyGraph,
+)
 from .liebn import SPDBatchNormLie
-from .manifold import PositiveDefiniteScalar, SymmetricPositiveDefinite
+from .manifold import (
+    PositiveDefiniteScalar,
+    SymmetricPositiveDefinite,
+    step_dynamic_trivialization,
+)
 from .modeig import ExpEig, LogEig, ReEig
 from .pooling import GaussianSPDDescriptor, RiemannianHighOrderPooling
 from .regularize import Shrinkage, TraceNorm
 from .residual import LogEuclideanResidual
 from .rietrans import SPDLinear, SPDRMLR
+from .spdtransnet import (  # noqa: F401
+    LearnedSinusoidalPosition,
+    SPDInterEpochEncoder,
+    SPDIntraEpochEncoder,
+    SPDLogTokenizer,
+    SPDTemporalEncoder,
+    SPDTransformerEncoderLayer,
+    SPMultiheadAttention,
+    StructurePreservingMultiheadAttention,
+)
 from .utils import PatchEmbeddingLayer, Vec, Vech
 from .wavelet import WaveletConv
 
@@ -29,6 +48,7 @@ __all__ = [
     # manifold parametrization
     "SymmetricPositiveDefinite",
     "PositiveDefiniteScalar",
+    "step_dynamic_trivialization",
     # modeig
     "LogEig",
     "ReEig",
@@ -36,7 +56,6 @@ __all__ = [
     # bilinear
     "BiMap",
     "BiMapIncreaseDim",
-    "GraphBiMap",
     # batchnorm
     "SPDBatchNormMean",
     "BatchReNorm",
@@ -45,9 +64,6 @@ __all__ = [
     "SPDBatchNormHarmonicArithmetic",
     "SPDBatchNormBW",
     "SPDBatchNormCholesky",
-    # attention
-    "SPMultiheadAttention",
-    "SPDTransformerEncoderLayer",
     # pooling
     "GaussianSPDDescriptor",
     "RiemannianHighOrderPooling",
@@ -67,4 +83,15 @@ __all__ = [
     "Shrinkage",
     # wavelet
     "WaveletConv",
+]
+
+# Sequence modules operate on explicit token axes, not generic covariance inputs.
+__sequence_modules__ = [
+    "SPDLogTokenizer",
+    "StructurePreservingMultiheadAttention",
+    "SPDTransformerEncoderLayer",
+    "LearnedSinusoidalPosition",
+    "SPDTemporalEncoder",
+    "SPDIntraEpochEncoder",
+    "SPDInterEpochEncoder",
 ]

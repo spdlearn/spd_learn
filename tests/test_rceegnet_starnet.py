@@ -3,23 +3,16 @@
 import pytest
 import torch
 
-from spd_learn.models import RCEEGNet, STaRNet, SqueezeExcitation
+from spd_learn.models import RCEEGNet, STaRNet
 
 
 def test_rceegnet_default_forward():
-    """Test RCEEGNet default initialization and forward pass with 3D and 4D inputs."""
+    """Test RCEEGNet default initialization and forward pass."""
     model = RCEEGNet(n_chans=22, n_outputs=2)
-    # 3D input: (batch, n_chans, n_times)
-    x3d = torch.randn(2, 22, 1000)
-    out3d = model(x3d)
-    assert out3d.shape == (2, 2)
-    assert not torch.isnan(out3d).any()
-
-    # 4D input: (batch, 1, n_chans, n_times)
-    x4d = torch.randn(3, 1, 22, 500)
-    out4d = model(x4d)
-    assert out4d.shape == (3, 2)
-    assert not torch.isnan(out4d).any()
+    x = torch.randn(2, 22, 1000)
+    out = model(x)
+    assert out.shape == (2, 2)
+    assert not torch.isnan(out).any()
 
 
 def test_rceegnet_backward_gradient_flow():
@@ -27,10 +20,8 @@ def test_rceegnet_backward_gradient_flow():
     model = RCEEGNet(
         n_chans=8,
         n_outputs=3,
-        n_filters=8,
-        bimap_dims=(8, 6),
-        conv_channels=4,
-        drop_prob=0.1,
+        n_spatial_filters=8,
+        reduced_dim=6,
     )
     x = torch.randn(2, 8, 250, requires_grad=True)
     out = model(x)
@@ -48,15 +39,14 @@ def test_rceegnet_backward_gradient_flow():
             assert not torch.isnan(param.grad).any(), f"NaN in gradient of {name}"
 
 
-@pytest.mark.parametrize("bimap_dims", [(8,), (12, 8), (16, 12, 8)])
-def test_rceegnet_custom_bimap_dims(bimap_dims):
-    """Test RCEEGNet with various bimap dimension configurations."""
+@pytest.mark.parametrize("reduced_dim", [4, 6, 8])
+def test_rceegnet_custom_reduced_dim(reduced_dim):
+    """Test RCEEGNet with various reduced_dim configurations."""
     model = RCEEGNet(
         n_chans=10,
         n_outputs=4,
-        n_filters=16,
-        bimap_dims=bimap_dims,
-        conv_channels=4,
+        n_spatial_filters=12,
+        reduced_dim=reduced_dim,
     )
     x = torch.randn(2, 10, 500)
     out = model(x)
@@ -65,7 +55,7 @@ def test_rceegnet_custom_bimap_dims(bimap_dims):
 
 def test_rceegnet_train_and_eval_modes():
     """Test RCEEGNet behaves correctly in train and eval modes."""
-    model = RCEEGNet(n_chans=12, n_outputs=2)
+    model = RCEEGNet(n_chans=12, n_outputs=2, n_spatial_filters=12, reduced_dim=6)
     x = torch.randn(4, 12, 500)
 
     model.train()
@@ -81,9 +71,9 @@ def test_rceegnet_train_and_eval_modes():
 @pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
 def test_rceegnet_dtypes(dtype):
     """Test RCEEGNet with float32 and float64 dtypes."""
-    model = RCEEGNet(n_chans=8, n_outputs=2, n_filters=8, bimap_dims=(8, 6)).to(
-        dtype=dtype
-    )
+    model = RCEEGNet(
+        n_chans=8, n_outputs=2, n_spatial_filters=8, reduced_dim=6
+    ).to(dtype=dtype)
     x = torch.randn(2, 8, 300, dtype=dtype)
     out = model(x)
     assert out.shape == (2, 2)
@@ -91,31 +81,25 @@ def test_rceegnet_dtypes(dtype):
 
 
 def test_starnet_default_forward():
-    """Test STaRNet default initialization and forward pass with 3D and 4D inputs."""
+    """Test STaRNet default initialization and forward pass."""
     model = STaRNet(n_chans=22, n_outputs=2)
-    # 3D input: (batch, n_chans, n_times)
-    x3d = torch.randn(2, 22, 1000)
-    out3d = model(x3d)
-    assert out3d.shape == (2, 2)
-    assert not torch.isnan(out3d).any()
-
-    # 4D input: (batch, 1, n_chans, n_times)
-    x4d = torch.randn(3, 1, 22, 500)
-    out4d = model(x4d)
-    assert out4d.shape == (3, 2)
-    assert not torch.isnan(out4d).any()
+    x = torch.randn(2, 22, 1000)
+    out = model(x)
+    assert out.shape == (2, 2)
+    assert not torch.isnan(out).any()
 
 
 def test_starnet_backward_gradient_flow():
-    """Test STaRNet backward pass and gradient flow through both branches."""
+    """Test STaRNet backward pass and gradient flow through all branches."""
     model = STaRNet(
         n_chans=8,
         n_outputs=3,
-        n_patches=2,
-        temporal_filters=8,
-        spatial_filters=8,
-        bimap_dim=6,
-        drop_prob=0.1,
+        spatial_kernel_sizes=(2, 4, 8),
+        spatial_expansion_coeff=16,
+        depth_spatial_fusion=4,
+        depth_temporal_map=2,
+        temporal_kernel_sizes=(15, 31),
+        bimap_reduced_dimension=8,
     )
     x = torch.randn(2, 8, 200, requires_grad=True)
     out = model(x)
@@ -133,17 +117,14 @@ def test_starnet_backward_gradient_flow():
             assert not torch.isnan(param.grad).any(), f"NaN in gradient of {name}"
 
 
-@pytest.mark.parametrize("n_patches", [2, 4])
-@pytest.mark.parametrize("bimap_dim", [8, 12])
-def test_starnet_custom_configs(n_patches, bimap_dim):
-    """Test STaRNet with different patches and BiMap dimensions."""
+@pytest.mark.parametrize("bimap_reduced_dimension", [8, 12])
+def test_starnet_custom_configs(bimap_reduced_dimension):
+    """Test STaRNet with different BiMap reduced dimensions."""
     model = STaRNet(
         n_chans=12,
         n_outputs=4,
-        n_patches=n_patches,
-        temporal_filters=16,
-        spatial_filters=16,
-        bimap_dim=bimap_dim,
+        spatial_kernel_sizes=(3, 6, 12),
+        bimap_reduced_dimension=bimap_reduced_dimension,
     )
     x = torch.randn(2, 12, 500)
     out = model(x)
@@ -152,7 +133,12 @@ def test_starnet_custom_configs(n_patches, bimap_dim):
 
 def test_starnet_train_and_eval_modes():
     """Test STaRNet in train and eval modes."""
-    model = STaRNet(n_chans=12, n_outputs=2)
+    model = STaRNet(
+        n_chans=12,
+        n_outputs=2,
+        spatial_kernel_sizes=(3, 6, 12),
+        bimap_reduced_dimension=12,
+    )
     x = torch.randn(4, 12, 500)
 
     model.train()
@@ -171,21 +157,14 @@ def test_starnet_dtypes(dtype):
     model = STaRNet(
         n_chans=8,
         n_outputs=2,
-        n_patches=2,
-        temporal_filters=8,
-        spatial_filters=8,
-        bimap_dim=6,
+        spatial_kernel_sizes=(2, 4, 8),
+        spatial_expansion_coeff=16,
+        depth_spatial_fusion=4,
+        depth_temporal_map=2,
+        temporal_kernel_sizes=(15, 31),
+        bimap_reduced_dimension=6,
     ).to(dtype=dtype)
     x = torch.randn(2, 8, 300, dtype=dtype)
     out = model(x)
     assert out.shape == (2, 2)
     assert out.dtype == dtype
-
-
-def test_squeeze_excitation():
-    """Test SqueezeExcitation module forward pass and shape preservation."""
-    se = SqueezeExcitation(channels=16, reduction=4)
-    x = torch.randn(2, 16, 1, 100)
-    out = se(x)
-    assert out.shape == x.shape
-    assert not torch.isnan(out).any()

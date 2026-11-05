@@ -1,6 +1,3 @@
-# Copyright (c) 2024-now SPD Learn Developers
-# SPDX-License-Identifier: BSD-3-Clause
-
 """
 .. _moabb-hydra-benchmark:
 
@@ -75,20 +72,16 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 import matplotlib.pyplot as plt
+import moabb.datasets as md
 import numpy as np
 import pandas as pd
 import torch
 
 from braindecode import EEGClassifier
 from einops.layers.torch import Rearrange
-from moabb.datasets import BNCI2014_001
-from moabb.paradigms import MotorImagery
-from omegaconf import MISSING, OmegaConf
-from sklearn.metrics import (
-    accuracy_score,
-    balanced_accuracy_score,
-    confusion_matrix,
-)
+from moabb.paradigms import FilterBankMotorImagery, MotorImagery
+from omegaconf import OmegaConf
+from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 from skorch.callbacks import (
@@ -124,30 +117,7 @@ warnings.filterwarnings("ignore")
 
 
 @dataclass
-class ModelConfig:
-    """Base configuration for all models.
-
-    This dataclass defines the common parameters shared by all SPD Learn models.
-    Model-specific configurations inherit from this class and add their own
-    parameters.
-
-    Parameters
-    ----------
-    name : str
-        Name of the model (e.g., "SPDNet", "TSMNet", "EEGSPDNet").
-    n_chans : int
-        Number of input EEG channels.
-    n_outputs : int
-        Number of output classes for classification.
-    """
-
-    name: str = MISSING
-    n_chans: int = MISSING
-    n_outputs: int = MISSING
-
-
-@dataclass
-class SPDNetConfig(ModelConfig):
+class SPDNetConfig:
     """Configuration for SPDNet model.
 
     SPDNet operates on covariance matrices and can use higher learning rates.
@@ -166,7 +136,6 @@ class SPDNetConfig(ModelConfig):
         If True, use only upper triangular part in LogEig output.
     """
 
-    name: str = "SPDNet"
     input_type: str = "raw"
     subspacedim: Optional[int] = None
     threshold: float = 1e-4
@@ -174,7 +143,7 @@ class SPDNetConfig(ModelConfig):
 
 
 @dataclass
-class TSMNetConfig(ModelConfig):
+class TSMNetConfig:
     """Configuration for TSMNet model.
 
     TSMNet (Tangent Space Mapping Network) combines convolutional feature
@@ -201,7 +170,6 @@ class TSMNetConfig(ModelConfig):
         Eigenvalue threshold for ReEig to prevent numerical instability.
     """
 
-    name: str = "TSMNet"
     n_temp_filters: int = 8
     temp_kernel_length: int = 50
     n_spatiotemp_filters: int = 32
@@ -210,7 +178,7 @@ class TSMNetConfig(ModelConfig):
 
 
 @dataclass
-class EEGSPDNetConfig(ModelConfig):
+class EEGSPDNetConfig:
     """Configuration for EEGSPDNet model.
 
     EEGSPDNet uses channel-specific convolutions followed by covariance pooling
@@ -236,7 +204,6 @@ class EEGSPDNetConfig(ModelConfig):
         Standard dropout probability before the final classifier.
     """
 
-    name: str = "EEGSPDNet"
     n_filters: int = 4
     bimap_sizes: tuple = (2, 2)
     filter_time_length: int = 25
@@ -245,7 +212,7 @@ class EEGSPDNetConfig(ModelConfig):
 
 
 @dataclass
-class TensorCSPNetConfig(ModelConfig):
+class TensorCSPNetConfig:
     """Configuration for TensorCSPNet model.
 
     TensorCSPNet is designed for filter bank paradigms, processing
@@ -269,12 +236,21 @@ class TensorCSPNetConfig(ModelConfig):
         Dimensions for BiMap layers in the network.
     """
 
-    name: str = "TensorCSPNet"
     n_patches: int = 4
     n_freqs: int = 9
     use_mlp: bool = False
     tcn_channels: int = 16
     dims: tuple = (22, 36, 36, 22)
+
+
+@dataclass
+class ModelParamsConfig:
+    """Container holding hyperparameter specifications for all architectures."""
+
+    SPDNet: SPDNetConfig = field(default_factory=SPDNetConfig)
+    TSMNet: TSMNetConfig = field(default_factory=TSMNetConfig)
+    EEGSPDNet: EEGSPDNetConfig = field(default_factory=EEGSPDNetConfig)
+    TensorCSPNet: TensorCSPNetConfig = field(default_factory=TensorCSPNetConfig)
 
 
 @dataclass
@@ -310,6 +286,7 @@ class TrainingConfig:
         Random seed for reproducibility.
     """
 
+    optimizer: str = "Adam"
     batch_size: int = 32
     max_epochs: int = 150
     learning_rate: float = 1e-3
@@ -412,6 +389,7 @@ class ExperimentConfig:
     training: TrainingConfig = field(default_factory=TrainingConfig)
     data: DataConfig = field(default_factory=DataConfig)
     models: List[str] = field(default_factory=lambda: ["SPDNet", "TSMNet", "EEGSPDNet"])
+    model_params: ModelParamsConfig = field(default_factory=ModelParamsConfig)
     model_training_overrides: Dict[str, Any] = field(default_factory=dict)
     n_folds: int = 5
     use_session_split: bool = True
@@ -472,7 +450,7 @@ def create_model(
             n_chans=n_chans,
             n_outputs=n_outputs,
             input_type=kwargs.get("input_type", "raw"),
-            subspacedim=kwargs.get("subspacedim", n_chans),
+            subspacedim=kwargs.get("subspacedim"),
             threshold=kwargs.get("threshold", 1e-4),
             upper=kwargs.get("upper", True),
         )
@@ -541,27 +519,25 @@ def get_default_model_training_overrides() -> Dict[str, Dict[str, Any]]:
     """
     return {
         "SPDNet": {
-            "learning_rate": 1e-3,
-            "max_epochs": 20,  # Reduced from 100 for faster documentation build
-            "optimizer": "AdamW",
+            "max_epochs": 20,
+            "weight_decay": 0.0,
         },
         "TSMNet": {
             # TSMNet requires lower LR for stable SPD learning
             # Reference: plot_tsmnet_domain_adaptation.py
             "learning_rate": 1e-4,
-            "max_epochs": 30,  # Reduced from 150 for faster documentation build
-            "optimizer": "Adam",
+            "max_epochs": 30,
+            "optimizer": "AdamW",
         },
         "EEGSPDNet": {
             # EEGSPDNet requires lower LR for channel-specific convolutions
             # Reference: plot_eegspdnet.py
             "learning_rate": 1e-4,
-            "max_epochs": 30,  # Reduced from 150 for faster documentation build
+            "max_epochs": 30,
             "optimizer": "Adam",
         },
         "TensorCSPNet": {
-            "learning_rate": 1e-3,
-            "max_epochs": 20,  # Reduced from 100 for faster documentation build
+            "max_epochs": 20,
             "optimizer": "AdamW",
         },
     }
@@ -709,13 +685,22 @@ print(f"\nUsing device: {device}")
 torch.manual_seed(config.training.seed)
 np.random.seed(config.training.seed)
 
-# Load dataset
-dataset = BNCI2014_001()
-paradigm = MotorImagery(
-    n_classes=config.data.n_classes,
-    fmin=config.data.fmin,
-    fmax=config.data.fmax,
-)
+# Load dataset using configuration from `DataConfig`
+dataset_cls = md.dataset_dict[config.data.dataset_name]
+dataset = dataset_cls()
+if config.data.paradigm == "MotorImagery":
+    paradigm = MotorImagery(
+        n_classes=config.data.n_classes,
+        fmin=config.data.fmin,
+        fmax=config.data.fmax,
+        resample=config.data.resample,
+    )
+elif config.data.paradigm == "FilterBankMotorImagery":
+    paradigm = FilterBankMotorImagery(
+        n_classes=config.data.n_classes,
+        filters=config.data.filters,
+        resample=config.data.resample,
+    )
 
 # Cache configuration for faster repeated runs
 # Note: Cross-platform compatible cache configuration
@@ -801,8 +786,8 @@ class SPDLearnBenchmark:
     Examples
     --------
     >>> benchmark = SPDLearnBenchmark(config, X, y, meta, device="cuda")
-    >>> results_df = benchmark.run_benchmark(model_configs)
-    >>> print(results_df[["Model", "Accuracy", "Balanced Accuracy"]])
+    >>> results_df = benchmark.run_benchmark()
+    >>> print(results_df[["Model", "Accuracy"]])
     """
 
     def __init__(
@@ -818,6 +803,7 @@ class SPDLearnBenchmark:
         self.config = config
         self.X = X
         self.y = y
+        self.n_outputs = len(np.unique(y))
         self.meta = meta
         self.device = device
         self.label_encoder = label_encoder
@@ -898,9 +884,10 @@ class SPDLearnBenchmark:
         learning_rate = overrides.get(
             "learning_rate", self.config.training.learning_rate
         )
+        weight_decay = overrides.get("weight_decay", self.config.training.weight_decay)
         max_epochs = overrides.get("max_epochs", self.config.training.max_epochs)
         batch_size = overrides.get("batch_size", self.config.training.batch_size)
-        optimizer_name = overrides.get("optimizer", "AdamW")
+        optimizer_name = overrides.get("optimizer", self.config.training.optimizer)
         optimizer_class = self._get_optimizer_class(optimizer_name)
 
         # Build callbacks
@@ -955,6 +942,7 @@ class SPDLearnBenchmark:
                         f_pickle=None,
                         dirname=os.path.dirname(checkpoint_path),
                         f_params=os.path.basename(checkpoint_path),
+                        load_best=True,
                     ),
                 )
             )
@@ -964,7 +952,7 @@ class SPDLearnBenchmark:
             criterion=torch.nn.CrossEntropyLoss,
             optimizer=optimizer_class,
             optimizer__lr=learning_rate,
-            optimizer__weight_decay=self.config.training.weight_decay,
+            optimizer__weight_decay=weight_decay,
             train_split=ValidSplit(
                 self.config.training.validation_split,
                 stratified=True,
@@ -1021,7 +1009,7 @@ class SPDLearnBenchmark:
 
         - Creating fresh model instances for each fold
         - Applying model-specific training configurations
-        - Computing accuracy, balanced accuracy, and per-class metrics
+        - Computing accuracy and per-class metrics
         - Saving training history and confusion matrices
 
         Parameters
@@ -1039,8 +1027,6 @@ class SPDLearnBenchmark:
             - model: Model name
             - mean_accuracy: Mean accuracy across folds
             - std_accuracy: Standard deviation of accuracy
-            - mean_balanced_accuracy: Mean balanced accuracy
-            - std_balanced_accuracy: Standard deviation of balanced accuracy
             - per_class_accuracy: Per-class accuracy breakdown
             - fold_results: Detailed results for each fold
             - model_params: Parameters used for the model
@@ -1058,7 +1044,7 @@ class SPDLearnBenchmark:
         overrides = self.model_training_overrides.get(model_name, {})
         lr = overrides.get("learning_rate", self.config.training.learning_rate)
         epochs = overrides.get("max_epochs", self.config.training.max_epochs)
-        optimizer = overrides.get("optimizer", "AdamW")
+        optimizer = overrides.get("optimizer", self.config.training.optimizer)
 
         print(f"\n{'=' * 60}")
         print(f"Evaluating: {model_name}")
@@ -1072,20 +1058,33 @@ class SPDLearnBenchmark:
 
         if self.config.use_session_split:
             # Use session-based split (train on session 0, test on session 1)
-            train_idx = self.meta.query("session == '0train'").index.to_numpy()
-            test_idx = self.meta.query("session == '1test'").index.to_numpy()
+            splits = [
+                (
+                    self.meta.query("session == '0train'").index.to_numpy(),
+                    self.meta.query("session == '1test'").index.to_numpy(),
+                )
+            ]
+        else:
+            skf = StratifiedKFold(
+                n_splits=self.config.n_folds,
+                shuffle=True,
+                random_state=self.config.training.seed,
+            )
+            splits = list(skf.split(self.X, self.y))
 
+        for fold_idx, (train_idx, test_idx) in enumerate(splits):
+            # Create fresh model
             try:
-                # Create fresh model
                 model = create_model(
                     model_name,
                     n_chans=n_chans,
-                    n_outputs=n_outputs,
+                    n_outputs=self.n_outputs,
                     **model_params,
                 )
 
                 checkpoint_path = os.path.join(
-                    self._checkpoint_dir, f"{model_name}_fold0_best.pt"
+                    self._checkpoint_dir,
+                    f"{model_name}_fold{fold_idx}_best.pt",
                 )
                 clf = self.create_classifier(model, model_name, checkpoint_path)
 
@@ -1099,7 +1098,6 @@ class SPDLearnBenchmark:
                 # Evaluate
                 y_pred = clf.predict(self.X[test_idx])
                 acc = accuracy_score(self.y[test_idx], y_pred)
-                bal_acc = balanced_accuracy_score(self.y[test_idx], y_pred)
                 per_class_acc = self._compute_per_class_accuracy(
                     self.y[test_idx], y_pred
                 )
@@ -1110,9 +1108,8 @@ class SPDLearnBenchmark:
 
                 fold_results.append(
                     {
-                        "fold": 0,
+                        "fold": fold_idx,
                         "accuracy": acc,
-                        "balanced_accuracy": bal_acc,
                         "per_class_accuracy": per_class_acc,
                         "n_train": len(train_idx),
                         "n_test": len(test_idx),
@@ -1121,76 +1118,12 @@ class SPDLearnBenchmark:
                     }
                 )
 
-                print(f"  Accuracy: {acc:.4f}, Balanced Acc: {bal_acc:.4f}")
+                print(f"  Accuracy: {acc:.4f}")
                 print(f"  Per-class: {per_class_acc}")
 
             except Exception as e:
                 print(f"  ERROR: Training failed - {str(e)}")
-                failed_folds.append((0, str(e)))
-
-        else:
-            # Use k-fold cross-validation
-            skf = StratifiedKFold(
-                n_splits=self.config.n_folds,
-                shuffle=True,
-                random_state=self.config.training.seed,
-            )
-
-            for fold_idx, (train_idx, test_idx) in enumerate(skf.split(self.X, self.y)):
-                print(f"\nFold {fold_idx + 1}/{self.config.n_folds}")
-
-                try:
-                    # Create fresh model for each fold
-                    model = create_model(
-                        model_name,
-                        n_chans=n_chans,
-                        n_outputs=n_outputs,
-                        **model_params,
-                    )
-
-                    checkpoint_path = os.path.join(
-                        self._checkpoint_dir,
-                        f"{model_name}_fold{fold_idx}_best.pt",
-                    )
-                    clf = self.create_classifier(model, model_name, checkpoint_path)
-
-                    print(f"  Training on {len(train_idx)} samples...")
-                    clf.fit(self.X[train_idx], self.y[train_idx])
-
-                    # Get actual epochs trained
-                    actual_epochs = len(clf.history)
-                    print(f"  Completed in {actual_epochs} epochs")
-
-                    # Evaluate
-                    y_pred = clf.predict(self.X[test_idx])
-                    acc = accuracy_score(self.y[test_idx], y_pred)
-                    bal_acc = balanced_accuracy_score(self.y[test_idx], y_pred)
-                    per_class_acc = self._compute_per_class_accuracy(
-                        self.y[test_idx], y_pred
-                    )
-
-                    # Store predictions for confusion matrix
-                    all_y_true.extend(self.y[test_idx])
-                    all_y_pred.extend(y_pred)
-
-                    fold_results.append(
-                        {
-                            "fold": fold_idx,
-                            "accuracy": acc,
-                            "balanced_accuracy": bal_acc,
-                            "per_class_accuracy": per_class_acc,
-                            "n_train": len(train_idx),
-                            "n_test": len(test_idx),
-                            "actual_epochs": actual_epochs,
-                            "history": clf.history,
-                        }
-                    )
-
-                    print(f"  Accuracy: {acc:.4f}, Balanced Acc: {bal_acc:.4f}")
-
-                except Exception as e:
-                    print(f"  ERROR: Fold {fold_idx + 1} failed - {str(e)}")
-                    failed_folds.append((fold_idx, str(e)))
+                failed_folds.append((fold_idx, str(e)))
 
         # Check if any folds succeeded
         if not fold_results:
@@ -1199,8 +1132,6 @@ class SPDLearnBenchmark:
                 "model": model_name,
                 "mean_accuracy": 0.0,
                 "std_accuracy": 0.0,
-                "mean_balanced_accuracy": 0.0,
-                "std_balanced_accuracy": 0.0,
                 "per_class_accuracy": {},
                 "fold_results": [],
                 "model_params": model_params,
@@ -1233,12 +1164,6 @@ class SPDLearnBenchmark:
             "model": model_name,
             "mean_accuracy": np.mean([r["accuracy"] for r in fold_results]),
             "std_accuracy": np.std([r["accuracy"] for r in fold_results]),
-            "mean_balanced_accuracy": np.mean(
-                [r["balanced_accuracy"] for r in fold_results]
-            ),
-            "std_balanced_accuracy": np.std(
-                [r["balanced_accuracy"] for r in fold_results]
-            ),
             "per_class_accuracy": mean_per_class_acc,
             "fold_results": fold_results,
             "model_params": model_params,
@@ -1250,34 +1175,20 @@ class SPDLearnBenchmark:
         self.results.append(result)
         return result
 
-    def run_benchmark(
-        self, model_configs: Optional[Dict[str, Dict[str, Any]]] = None
-    ) -> pd.DataFrame:
+    def run_benchmark(self) -> pd.DataFrame:
         """Run benchmark on all configured models.
-
-        Parameters
-        ----------
-        model_configs : dict, optional
-            Dictionary mapping model names to their architecture parameters.
-            Training parameters are handled separately via model_training_overrides.
 
         Returns
         -------
         pd.DataFrame
             DataFrame containing benchmark results for all models.
-
-        Examples
-        --------
-        >>> model_configs = {
-        ...     "SPDNet": {"subspacedim": 22},
-        ...     "TSMNet": {"n_temp_filters": 8},
-        ... }
-        >>> results_df = benchmark.run_benchmark(model_configs)
         """
-        model_configs = model_configs or {}
-
         for model_name in self.config.models:
-            params = model_configs.get(model_name, {})
+            if hasattr(self.config.model_params, model_name):
+                model_cfg = getattr(self.config.model_params, model_name)
+                params = OmegaConf.to_container(model_cfg, resolve=True)
+            else:
+                params = {}
             try:
                 self.evaluate_model(model_name, params)
             except Exception as e:
@@ -1288,8 +1199,6 @@ class SPDLearnBenchmark:
                         "model": model_name,
                         "mean_accuracy": 0.0,
                         "std_accuracy": 0.0,
-                        "mean_balanced_accuracy": 0.0,
-                        "std_balanced_accuracy": 0.0,
                         "per_class_accuracy": {},
                         "fold_results": [],
                         "model_params": params,
@@ -1320,13 +1229,12 @@ class SPDLearnBenchmark:
             # Get training info
             overrides = r.get("training_overrides", {})
             lr = overrides.get("learning_rate", self.config.training.learning_rate)
-            optimizer = overrides.get("optimizer", "AdamW")
+            optimizer = overrides.get("optimizer", self.config.training.optimizer)
 
             records.append(
                 {
                     "Model": r["model"],
                     "Accuracy": f"{r['mean_accuracy']:.4f} +/- {r['std_accuracy']:.4f}",
-                    "Balanced Accuracy": f"{r['mean_balanced_accuracy']:.4f} +/- {r['std_balanced_accuracy']:.4f}",
                     "Mean Acc": r["mean_accuracy"],
                     "Std Acc": r["std_accuracy"],
                     "Per-Class Acc": per_class_str,
@@ -1346,29 +1254,6 @@ class SPDLearnBenchmark:
 # Note the model-specific configurations for optimal performance.
 #
 
-# Define model-specific architecture configurations
-model_configs = {
-    "SPDNet": {
-        "subspacedim": n_chans,
-        "threshold": 1e-4,
-    },
-    "TSMNet": {
-        # Architecture parameters from plot_tsmnet_domain_adaptation.py
-        "n_temp_filters": 8,
-        "temp_kernel_length": 50,  # 200ms at 250Hz
-        "n_spatiotemp_filters": 32,
-        "n_bimap_filters": 16,
-    },
-    "EEGSPDNet": {
-        # Architecture parameters from plot_eegspdnet.py
-        "n_filters": 4,
-        "bimap_sizes": (2, 2),
-        "filter_time_length": 25,  # 100ms at 250Hz
-        "spd_drop_prob": 0.0,  # Disable SPD dropout for stability
-        "final_layer_drop_prob": 0.5,
-    },
-}
-
 # Create benchmark instance
 benchmark = SPDLearnBenchmark(
     config=config,
@@ -1380,7 +1265,7 @@ benchmark = SPDLearnBenchmark(
 )
 
 # Run benchmark
-results_df = benchmark.run_benchmark(model_configs)
+results_df = benchmark.run_benchmark()
 
 ######################################################################
 # Results Summary
@@ -1393,11 +1278,7 @@ results_df = benchmark.run_benchmark(model_configs)
 print("\n" + "=" * 80)
 print("Benchmark Results Summary")
 print("=" * 80)
-print(
-    results_df[["Model", "Accuracy", "Balanced Accuracy", "LR", "Optimizer"]].to_string(
-        index=False
-    )
-)
+print(results_df[["Model", "Accuracy", "LR", "Optimizer"]].to_string(index=False))
 
 print("\n" + "-" * 80)
 print("Per-Class Accuracy Breakdown")
@@ -1414,47 +1295,42 @@ for r in benchmark.results:
 # We create visualizations to compare model performance.
 #
 
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+fig, (ax1, ax2) = plt.subplots(
+    1,
+    2,
+    figsize=(16, 5),
+    width_ratios=[1, 2],
+)
 
 # Extract data for plotting
 models = [r["model"] for r in benchmark.results]
 mean_accs = [r["mean_accuracy"] for r in benchmark.results]
 std_accs = [r["std_accuracy"] for r in benchmark.results]
-mean_bal_accs = [r["mean_balanced_accuracy"] for r in benchmark.results]
-std_bal_accs = [r["std_balanced_accuracy"] for r in benchmark.results]
 
 # Plot 1: Accuracy comparison with error bars
-ax1 = axes[0]
-x_pos = np.arange(len(models))
-bar_width = 0.35
-
 bars1 = ax1.bar(
-    x_pos - bar_width / 2,
+    models,
     mean_accs,
-    bar_width,
     yerr=std_accs,
     label="Accuracy",
     color="#3498db",
     edgecolor="black",
     capsize=5,
 )
-bars2 = ax1.bar(
-    x_pos + bar_width / 2,
-    mean_bal_accs,
-    bar_width,
-    yerr=std_bal_accs,
-    label="Balanced Accuracy",
-    color="#2ecc71",
-    edgecolor="black",
-    capsize=5,
-)
 
-ax1.axhline(y=0.25, color="red", linestyle="--", label="Chance (4 classes)", alpha=0.7)
+
+chance_level = 1.0 / config.data.n_classes
+ax1.axhline(
+    y=chance_level,
+    color="red",
+    linestyle="--",
+    label=f"Chance ({chance_level:.0%})",
+    alpha=0.7,
+)
+ax1.tick_params(axis="x", rotation=15)
 ax1.set_xlabel("Model", fontsize=12)
 ax1.set_ylabel("Score", fontsize=12)
 ax1.set_title("Model Performance Comparison", fontsize=14)
-ax1.set_xticks(x_pos)
-ax1.set_xticklabels(models, rotation=15, ha="right")
 ax1.set_ylim([0, 1])
 ax1.legend(fontsize=10)
 ax1.grid(True, alpha=0.3, axis="y")
@@ -1471,46 +1347,35 @@ for bar in bars1:
         fontsize=9,
     )
 
-# Plot 2: Radar chart for multi-dimensional comparison
-ax2 = axes[1]
+# Plot 2: Per-class accuracy comparison across models
+per_class_df = pd.DataFrame(
+    [r["per_class_accuracy"] for r in benchmark.results],
+    index=models,
+)
 
-# Create ranking-based scores (normalized)
-metrics = ["Accuracy", "Bal. Accuracy", "Training Stability"]
-n_metrics = len(metrics)
-
-# Calculate stability as inverse of std (lower std = more stable)
-max_std = max(std_accs) if max(std_accs) > 0 else 1
-stability_scores = [1 - (s / max_std) if max_std > 0 else 1 for s in std_accs]
-
-# Create data for radar chart
-angles = np.linspace(0, 2 * np.pi, n_metrics, endpoint=False).tolist()
-angles += angles[:1]  # Complete the loop
-
-colors = ["#3498db", "#e74c3c", "#2ecc71", "#9b59b6", "#f39c12"]
-
-for idx, model in enumerate(models):
-    values = [mean_accs[idx], mean_bal_accs[idx], stability_scores[idx]]
-    values += values[:1]  # Complete the loop
-
-    ax2.plot(
-        angles,
-        values,
-        "o-",
-        linewidth=2,
-        label=model,
-        color=colors[idx % len(colors)],
-    )
-    ax2.fill(angles, values, alpha=0.1, color=colors[idx % len(colors)])
-
-ax2.set_xticks(angles[:-1])
-ax2.set_xticklabels(metrics, fontsize=10)
+per_class_df.T.plot(
+    kind="bar",
+    ax=ax2,
+    rot=0,
+    edgecolor="black",
+    alpha=0.85,
+)
+ax2.axhline(
+    y=chance_level,
+    color="red",
+    linestyle="--",
+    label=f"Chance ({chance_level:.0%})",
+    alpha=0.7,
+)
+ax2.set_xlabel("Class", fontsize=12)
+ax2.set_ylabel("Accuracy", fontsize=12)
+ax2.set_title("Per-Class Accuracy Comparison", fontsize=14)
 ax2.set_ylim([0, 1])
-ax2.set_title("Multi-Metric Comparison", fontsize=14)
-ax2.legend(loc="upper right", bbox_to_anchor=(1.3, 1), fontsize=10)
-ax2.grid(True, alpha=0.3)
+ax2.legend(fontsize=10)
+ax2.grid(True, alpha=0.3, axis="y")
 
-plt.tight_layout()
-plt.suptitle("SPD Learn Model Benchmark Results", fontsize=16, y=1.02)
+plt.tight_layout(rect=[0, 0, 1, 0.94])
+plt.suptitle("SPD Learn Model Benchmark Results", fontsize=16, y=0.98)
 plt.show()
 
 ######################################################################
@@ -1520,7 +1385,11 @@ plt.show()
 # We can also visualize the per-fold results to understand variance.
 #
 
-if not config.use_session_split and len(benchmark.results[0]["fold_results"]) > 1:
+if (
+    not config.use_session_split
+    and benchmark.results
+    and len(benchmark.results[0]["fold_results"]) > 1
+):
     fig, ax = plt.subplots(figsize=(10, 5))
 
     for idx, result in enumerate(benchmark.results):
@@ -1616,28 +1485,34 @@ print("Filter Bank Configuration Example")
 print("=" * 60)
 
 # Define filter bank configuration
-filterbank_config = OmegaConf.create(
-    {
-        "paradigm": "FilterBankMotorImagery",
-        "filters": [
-            [4, 8],
-            [8, 12],
-            [12, 16],
-            [16, 20],
-            [20, 24],
-            [24, 28],
-            [28, 32],
-            [32, 36],
-            [36, 40],
-        ],
-        "model": {
-            "name": "TensorCSPNet",
-            "n_patches": 4,
-            "n_freqs": 9,
-            "use_mlp": False,
-            "tcn_channels": 16,
-        },
-    }
+filterbank_config = OmegaConf.structured(
+    ExperimentConfig(
+        data=DataConfig(
+            dataset_name="BNCI2014_001",
+            subjects=[1],
+            paradigm="FilterBankMotorImagery",
+            filters=[
+                [4, 8],
+                [8, 12],
+                [12, 16],
+                [16, 20],
+                [20, 24],
+                [24, 28],
+                [28, 32],
+                [32, 36],
+                [36, 40],
+            ],
+        ),
+        models=["TensorCSPNet"],
+        model_params=ModelParamsConfig(
+            TensorCSPNet=TensorCSPNetConfig(
+                n_patches=4,
+                n_freqs=9,
+                use_mlp=False,
+                tcn_channels=16,
+            )
+        ),
+    )
 )
 
 print("Filter Bank Configuration:")
@@ -1649,13 +1524,13 @@ print(OmegaConf.to_yaml(filterbank_config))
 #
 # fb_paradigm = FilterBankMotorImagery(
 #     n_classes=4,
-#     filters=filterbank_config.filters,
+#     filters=filterbank_config.data.filters,
 # )
 # X_fb, labels_fb, meta_fb = fb_paradigm.get_data(...)
 #
 # Then create the model with:
 # model = create_model("TensorCSPNet", n_chans=n_chans, n_outputs=n_outputs,
-#                      n_freqs=len(filterbank_config.filters))
+#                      n_freqs=len(filterbank_config.data.filters))
 
 ######################################################################
 # Extending the Benchmark with New Models
@@ -1668,13 +1543,21 @@ print(OmegaConf.to_yaml(filterbank_config))
 # .. code-block:: python
 #
 #    @dataclass
-#    class MyNewModelConfig(ModelConfig):
+#    class MyNewModelConfig:
 #        """Configuration for MyNewModel."""
-#        name: str = "MyNewModel"
 #        param1: int = 10
 #        param2: float = 0.1
 #
-# 2. **Add the model to create_model()** factory function:
+# 2. **Add the model parameters to the experiment configuration**:
+#
+# .. code-block:: python
+#
+#    @dataclass
+#    class ModelParamsConfig:
+#        # ... existing models ...
+#        MyNewModel: MyNewModelConfig = field(default_factory=MyNewModelConfig)
+#
+# 3. **Add the model to create_model()** factory function:
 #
 # .. code-block:: python
 #
@@ -1688,7 +1571,7 @@ print(OmegaConf.to_yaml(filterbank_config))
 #                param2=kwargs.get("param2", 0.1),
 #            )
 #
-# 3. **Add training overrides** if your model needs special training:
+# 4. **Add training overrides** if your model needs special training:
 #
 # .. code-block:: python
 #
@@ -1701,29 +1584,6 @@ print(OmegaConf.to_yaml(filterbank_config))
 #                "optimizer": "AdamW",
 #            },
 #        }
-#
-# 4. **Add the model to the experiment configuration**:
-#
-# .. code-block:: python
-#
-#    config = OmegaConf.structured(
-#        ExperimentConfig(
-#            models=["SPDNet", "TSMNet", "EEGSPDNet", "MyNewModel"],
-#            # ...
-#        )
-#    )
-#
-# 5. **Provide model architecture parameters**:
-#
-# .. code-block:: python
-#
-#    model_configs = {
-#        # ... existing models ...
-#        "MyNewModel": {
-#            "param1": 20,
-#            "param2": 0.05,
-#        },
-#    }
 #
 
 ######################################################################

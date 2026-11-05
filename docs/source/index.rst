@@ -187,7 +187,7 @@
 
          .. rst-class:: hf-stat-text
 
-            Implementations of SPDNet, TensorCSPNet, EEGSPDNet, TSMNet, and more state-of-the-art architectures.
+            Implementations of SPDNet, TensorCSPNet, EEGSPDNet, TSMNet, STaRNet, and more state-of-the-art architectures.
 
 ----
 
@@ -341,6 +341,29 @@
                <span class="hf-tag">Gabor</span>
                <span class="hf-tag">Wavelet</span>
                <span class="hf-tag">Shrinkage</span>
+
+      .. grid-item-card:: STaRNet
+         :link: generated/spd_learn.models.STaRNet
+         :link-type: doc
+         :class-card: hf-dataset-card
+
+         .. image:: _static/models/starnet.png
+            :alt: STaRNet Architecture
+            :class: sd-card-img-top
+
+         Multi-scale spatio-temporal convolution with Riemannian feature extraction for EEG decoding.
+
+         .. container:: hf-card-tags
+
+            .. raw:: html
+
+               <span class="hf-venue">Neural Networks 2024</span>
+               <span class="hf-tag">Multi-scale</span>
+               <span class="hf-tag">Spatio-Temporal</span>
+               <span class="hf-tag">Covariance</span>
+               <span class="hf-tag">BiMap</span>
+               <span class="hf-tag">LogEig</span>
+
 
 ----
 

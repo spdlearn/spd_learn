@@ -31,7 +31,7 @@ A PyTorch library providing differentiable Riemannian operations and neural netw
 
 | 🐍 **Pure PyTorch** | 🌐 **Riemannian Geometry** | 📦 **Model Zoo** |
 |:---:|:---:|:---:|
-| Built entirely on PyTorch for seamless integration, automatic differentiation, and GPU acceleration out of the box. | Efficient exponential maps, logarithms, parallel transport, and geodesic distance computations on SPD manifolds. | Implementations of SPDNet, TensorCSPNet, EEGSPDNet, TSMNet, and more state-of-the-art architectures. |
+| Built entirely on PyTorch for seamless integration, automatic differentiation, and GPU acceleration out of the box. | Efficient exponential maps, logarithms, parallel transport, and geodesic distance computations on SPD manifolds. | Implementations of SPDNet, TensorCSPNet, EEGSPDNet, TSMNet, STaRNet, and more state-of-the-art architectures. |
 
 ---
 
@@ -47,6 +47,7 @@ State-of-the-art deep learning models for SPD matrix data.
 | **[TensorCSPNet](https://spdlearn.org/generated/spd_learn.models.TensorCSPNet.html)** | SPDNet variant with Tensor Common Spatial Patterns for multi-band EEG feature extraction. | `Multi-band` `CSP` `BiMap` |
 | **[PhaseSPDNet](https://spdlearn.org/generated/spd_learn.models.PhaseSPDNet.html)** | Phase-based SPDNet that leverages instantaneous phase information from analytic signals. | `Phase` `Hilbert` `BiMap` |
 | **[GREEN](https://spdlearn.org/generated/spd_learn.models.Green.html)** | Gabor Riemann EEGNet combining Gabor wavelets with Riemannian geometry for robust EEG decoding. | `Gabor` `Wavelet` `Shrinkage` |
+| **[STaRNet](https://spdlearn.org/generated/spd_learn.models.STaRNet.html)** | Multi-scale spatio-temporal Riemannian network for EEG decoding. Integrates multiple spatial and temporal convolutional layers with SPD feature extraction. | `Multi-scale` `Covariance` `BiMap` `LogEig` |
 
 ---
 
