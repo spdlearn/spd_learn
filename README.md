@@ -76,9 +76,13 @@ pip install spd_learn
 Or install from source:
 
 ```bash
-git clone https://github.com/spdlearn/spd_learn
-cd spd_learn && pip install -e .
+git clone --depth 1 --branch main https://github.com/spdlearn/spd_learn.git
+cd spd_learn
+pip install -e .
 ```
+
+This downloads the latest source snapshot. For development with full history,
+follow the [contributing guide](CONTRIBUTING.md).
 
 Works with Python 3.11+ and PyTorch 2.0+.
 

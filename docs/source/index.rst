@@ -465,8 +465,9 @@
 
          .. code-block:: bash
 
-            git clone https://github.com/spdlearn/spd_learn
-            cd spd_learn && pip install -e .
+            git clone --depth 1 --branch main https://github.com/spdlearn/spd_learn.git
+            cd spd_learn
+            pip install -e .
 
          .. raw:: html
 
