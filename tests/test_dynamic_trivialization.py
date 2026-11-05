@@ -132,6 +132,34 @@ def test_rebase_selective_optimizer_state():
     assert all(torch.isfinite(p).all() for p in model.parameters())
 
 
+@pytest.mark.parametrize("mismatch", ["dtype", "shape", "device"])
+def test_rejected_spd_assignment_preserves_chart(mismatch):
+    layer = SPDBatchNormMean(2, dtype=torch.float32).eval()
+    step_dynamic_trivialization(layer)
+    base = layer.parametrizations.bias[0].base_factor.clone()
+    original = layer.parametrizations.bias.original.detach().clone()
+    x = torch.eye(2).unsqueeze(0)
+    before = layer(x).detach()
+    value = 2 * torch.eye(2).unsqueeze(0)
+    if mismatch == "dtype":
+        value = value.double()
+    elif mismatch == "shape":
+        value = torch.eye(3).unsqueeze(0)
+    else:
+        if not torch.cuda.is_available():
+            pytest.skip("CUDA unavailable")
+        value = value.cuda()
+    with pytest.raises(ValueError):
+        layer.bias = value
+    assert_close(layer.parametrizations.bias[0].base_factor, base)
+    assert_close(layer.parametrizations.bias.original, original)
+    assert_close(layer(x), before)
+    layer.double()
+    with torch.no_grad():
+        layer.bias = 2 * torch.eye(2, dtype=torch.float64).unsqueeze(0)
+    assert_close(layer.bias, 2 * torch.eye(2, dtype=torch.float64).unsqueeze(0))
+
+
 def test_rebase_skips_unrelated_parameters():
     plain = BiMap(3, 2, parametrized=False, dtype=torch.float64)
     holder = nn.Module()

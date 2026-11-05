@@ -4,7 +4,7 @@ On this synthetic task, recentering did not meaningfully improve final loss. K=5
 
 ## Reproduce
 
-Apple M4 Max, macOS 27.0.1 arm64, Python 3.12.12, PyTorch 2.6.0; CPU, one PyTorch thread. Source revision: `b5fbf689bb2b11ad5f3ea053775ed1f468718697`. No datasets or new dependencies.
+Apple M4 Max, macOS 27.0.1 arm64, Python 3.12.12, PyTorch 2.6.0; CPU, one PyTorch thread. Source revision: `b5fbf689bb2b11ad5f3ea053775ed1f468718697`. No datasets or new dependencies. Later review fixes add pre-mutation assignment compatibility checks and typing casts; the recorded timings refer to the revision above, with the same chart formulas.
 
 ```bash
 PYTHONPATH=. OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python examples/applied_examples/benchmark_dynamic_trivialization.py
@@ -104,7 +104,7 @@ Ten warmups then `Timer.blocked_autorange(min_run_time=1.0)`. Median ± within-r
 
 ## Verification
 
-- `OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python -m pytest tests/ --ignore=tests/test_correctness.py -k "not braindecode" -q`: 857 passed, 148 skipped, 7 deselected. Slow/GPU/optional cases follow project skip rules; dataset correctness and Braindecode integration excluded.
+- `OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python -m pytest tests/ --ignore=tests/test_correctness.py -k "not braindecode" -q`: 859 passed, 149 skipped, 7 deselected. Slow/GPU/optional cases follow project skip rules; dataset correctness and Braindecode integration excluded.
 - Ruff lint and formatting checks passed for changed Python files; targeted mypy passed for `modules/manifold.py`.
 - Documentation collection encountered an installed-plugin conflict; `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest docs/ -q` passed (1 item). The new RST training/checkpoint example was executed separately and restored outputs matched.
 - Existing MeanVar running buffers change shape on the first training forward. The checkpoint example initializes the restored model with the saved input layout before strict loading; this PR preserves that existing behavior.

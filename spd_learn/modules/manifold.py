@@ -108,6 +108,15 @@ class SymmetricPositiveDefinite(nn.Module):
             The corresponding tangent symmetric matrix.
         """
         if self.use_trivialization:
+            # PyTorch validates returned coordinates only after this method runs.
+            if self.base_factor is not None and (
+                X.shape != self.base_factor.shape
+                or X.dtype != self.base_factor.dtype
+                or X.device != self.base_factor.device
+            ):
+                raise ValueError(
+                    "SPD assignment must match the base shape, dtype and device; use .to() to change dtype/device"
+                )
             if X.ndim < 2 or X.shape[-2] != X.shape[-1]:
                 raise ValueError("Expected square SPD matrices")
             if not torch.isfinite(X).all() or not torch.allclose(X, X.mT):
@@ -151,7 +160,10 @@ def step_dynamic_trivialization(
     for module in model.modules():
         if not parametrize.is_parametrized(module):
             continue
-        for name, chain in cast(nn.ModuleDict, module.parametrizations).items():
+        for name, parametrization in cast(
+            nn.ModuleDict, module.parametrizations
+        ).items():
+            chain = cast(parametrize.ParametrizationList, parametrization)
             is_bimap = isinstance(module, BiMap) and name == "weight"
             is_spd = any(
                 isinstance(p, SymmetricPositiveDefinite) and p.mapping == "exp"
@@ -171,9 +183,10 @@ def step_dynamic_trivialization(
         if is_spd:
             chain[0].use_trivialization = True
         setattr(module, name, getattr(module, name))
-        chain.original.grad = None
+        original = cast(torch.Tensor, chain.original)
+        original.grad = None
         if optimizer is not None:
-            optimizer.state.pop(chain.original, None)
+            optimizer.state.pop(original, None)
 
 
 class PositiveDefiniteScalar(nn.Module):
