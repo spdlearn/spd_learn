@@ -1,8 +1,11 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+from typing import cast
+
 import torch
 
 from torch import nn
+from torch.nn.utils import parametrize
 
 from ..functional import ensure_sym, matrix_exp, matrix_log
 from ..functional.core import (
@@ -11,6 +14,7 @@ from ..functional.core import (
     matrix_softplus,
     softplus,
 )
+from .bilinear import BiMap
 
 
 class SymmetricPositiveDefinite(nn.Module):
@@ -28,12 +32,13 @@ class SymmetricPositiveDefinite(nn.Module):
         Options are: "exp" and "softplus"
     device : torch.device, optional
         Device for the module. Default is None.
-        Note: This parametrization class has no parameters or buffers,
-        so device is accepted for API consistency but not used.
+        Accepted for API consistency; the base follows assigned tensors.
     dtype : torch.dtype, optional
         Data type for the module. Default is None.
-        Note: This parametrization class has no parameters or buffers,
-        so dtype is accepted for API consistency but not used.
+        Accepted for API consistency; the base follows assigned tensors.
+    use_trivialization : bool, default=False
+        Enable a moving exponential chart. Assignment stores a Cholesky base
+        factor and resets tangent coordinates. Only supported for ``"exp"``.
 
     Examples
     --------
@@ -48,13 +53,17 @@ class SymmetricPositiveDefinite(nn.Module):
     >>> S = spd_softplus(X)
     """
 
-    def __init__(self, mapping="exp", device=None, dtype=None) -> None:
+    def __init__(
+        self, mapping="exp", device=None, dtype=None, *, use_trivialization=False
+    ) -> None:
         super().__init__()
         if mapping not in ["softplus", "exp"]:
             raise ValueError(f"mapping must be 'softplus' or 'exp', got '{mapping}'")
+        if use_trivialization and mapping != "exp":
+            raise ValueError("Dynamic trivialization requires mapping='exp'")
         self.mapping = mapping
-        # device and dtype are accepted for API consistency but not used
-        # since this parametrization class has no parameters or buffers
+        self.use_trivialization = use_trivialization
+        self.register_buffer("base_factor", None)
         self.device = device
         self.dtype = dtype
         if self.mapping == "softplus":
@@ -77,10 +86,13 @@ class SymmetricPositiveDefinite(nn.Module):
         torch.Tensor
             The projected SPD matrix of shape (..., n, n).
         """
-        return self._spd_fun(ensure_sym(X))
+        output = self._spd_fun(ensure_sym(X))
+        if self.use_trivialization and self.base_factor is not None:
+            output = self.base_factor @ output @ self.base_factor.mT
+        return ensure_sym(output) if self.use_trivialization else output
 
     def right_inverse(self, X):
-        """Map from the SPD manifold onto the tangent space at identity.
+        """Map from SPD matrices to coordinates, rebasing if enabled.
 
         This is useful for initializing parameters from SPD matrices
         when using this module as a parametrization.
@@ -95,7 +107,73 @@ class SymmetricPositiveDefinite(nn.Module):
         torch.Tensor
             The corresponding tangent symmetric matrix.
         """
+        if self.use_trivialization:
+            # PyTorch validates returned coordinates only after this method runs.
+            if self.base_factor is not None and (
+                X.shape != self.base_factor.shape
+                or X.dtype != self.base_factor.dtype
+                or X.device != self.base_factor.device
+            ):
+                raise ValueError(
+                    "SPD assignment must match the base shape, dtype and device; use .to() to change dtype/device"
+                )
+            if X.ndim < 2 or X.shape[-2] != X.shape[-1]:
+                raise ValueError("Expected square SPD matrices")
+            if not torch.isfinite(X).all() or not torch.allclose(X, X.mT):
+                raise ValueError("Expected finite symmetric SPD matrices")
+            with torch.no_grad():
+                self.base_factor = torch.linalg.cholesky(ensure_sym(X))
+            return torch.zeros_like(X)
         return self._tangent_fun(X)
+
+
+@torch.no_grad()
+def step_dynamic_trivialization(
+    model: nn.Module, optimizer: torch.optim.Optimizer | None = None
+) -> None:
+    """Recenter native BiMap and exponential SPD charts, enabling SPD on first call.
+
+    Call after K completed optimizer updates and backward, outside
+    ``parametrize.cached()``. Effective values and Parameter identities remain
+    unchanged, including frozen parameters. Unsupported target chains raise.
+    Nonparametrized BiMaps, softplus and positive scalars stay unchanged.
+
+    Passing ``optimizer`` restarts only recentered Parameters' state; their
+    gradients are always cleared. Omit only before training or for stateless
+    optimizers. Enable a fresh model before loading dynamic checkpoint bases;
+    save the update count/RNG separately to resume K and rectangular QR.
+    """
+    targets = []
+    for module in model.modules():
+        if not parametrize.is_parametrized(module):
+            continue
+        for name, parametrization in cast(
+            nn.ModuleDict, module.parametrizations
+        ).items():
+            chain = cast(parametrize.ParametrizationList, parametrization)
+            is_bimap = isinstance(module, BiMap) and name == "weight"
+            is_spd = any(
+                isinstance(p, SymmetricPositiveDefinite) and p.mapping == "exp"
+                for p in chain
+            )
+            if not (is_bimap or is_spd):
+                continue
+            if len(chain) != 1:
+                raise ValueError(
+                    "Dynamic trivialization requires a single parametrization"
+                )
+            if is_bimap and not hasattr(chain[0], "base"):
+                raise ValueError("BiMap requires use_trivialization=True")
+            targets.append((module, name, chain, is_spd))
+
+    for module, name, chain, is_spd in targets:
+        if is_spd:
+            cast(SymmetricPositiveDefinite, chain[0]).use_trivialization = True
+        setattr(module, name, getattr(module, name))
+        original = cast(torch.Tensor, chain.original)
+        original.grad = None
+        if optimizer is not None:
+            optimizer.state.pop(original, None)
 
 
 class PositiveDefiniteScalar(nn.Module):

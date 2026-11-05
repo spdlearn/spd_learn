@@ -504,6 +504,7 @@ softplus mappings from symmetric matrices to SPD matrices.
 
    SymmetricPositiveDefinite
    PositiveDefiniteScalar
+   step_dynamic_trivialization
 
 
 Bilinear Mappings

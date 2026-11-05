@@ -57,6 +57,8 @@ class TensorCSPNet(nn.Module):
         Dimensions for the BiMap layers.
     momentum : float, default=0.1
         Momentum factor for the Riemannian Brooks Batch Normalization.
+    parametrized : bool, default=False
+        Constrain BiMap weights orthogonally, enabling dynamic trivialization.
     """
 
     def __init__(
@@ -69,6 +71,8 @@ class TensorCSPNet(nn.Module):
         tcn_channels: int = 16,
         dims: Tuple[int, int, int, int] = (22, 36, 36, 22),
         momentum: float = 0.1,
+        *,
+        parametrized: bool = False,
     ):
         super().__init__()
 
@@ -107,7 +111,7 @@ class TensorCSPNet(nn.Module):
                         depthwise=self.depthwise,
                         in_features=dim_in,
                         out_features=dim_out,
-                        parametrized=False,
+                        parametrized=parametrized,
                     )
                 )
                 layers.append(ReEig())
@@ -119,7 +123,7 @@ class TensorCSPNet(nn.Module):
                 depthwise=self.depthwise,
                 in_features=dim_in,
                 out_features=dim_out,
-                parametrized=False,
+                parametrized=parametrized,
             )
         )
         layers.append(Rearrange("batch depth cov1 cov2 -> (batch depth) cov1 cov2"))
