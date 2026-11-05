@@ -47,9 +47,12 @@ For the latest development version, you can install directly from GitHub:
 
 .. code-block:: bash
 
-   git clone https://github.com/spdlearn/spd_learn.git
+   git clone --depth 1 --branch main https://github.com/spdlearn/spd_learn.git
    cd spd_learn
    pip install -e .
+
+This downloads the latest source snapshot. To fetch its full history later, run
+``git fetch --unshallow origin main``. For contributing, see :doc:`contributing`.
 
 Optional Dependencies
 ---------------------
@@ -134,11 +137,13 @@ For contributing to SPD Learn:
 
 .. code-block:: bash
 
-   git clone https://github.com/spdlearn/spd_learn.git
+   git clone --single-branch --branch main https://github.com/spdlearn/spd_learn.git
    cd spd_learn
    pip install -e ".[all]"
 
 This installs the package in editable mode with all dependencies for development, testing, and documentation.
+The clone includes the full history of ``main`` without downloading deployment
+branches.
 
 Troubleshooting
 ---------------

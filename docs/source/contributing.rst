@@ -22,8 +22,10 @@ Setting Up Development Environment
 
    .. code-block:: bash
 
-      git clone https://github.com/spdlearn/spd_learn.git
+      git clone --single-branch --branch main https://github.com/spdlearn/spd_learn.git
       cd spd_learn
+
+   This includes the full history of ``main`` without downloading deployment branches.
 
 2. **Create a virtual environment**:
 
