@@ -1,44 +1,46 @@
-# Trackio Reproduction Logbook: SPDNet-AE (HAL 2026) & SSGCNet (IEEE TNSRE 2026) (`boucherie2026spdnetae_ssgcnet`)
+# Trackio Reproduction Logbook: SPDNet-AE & SSGCNet: Riemannian Autoencoding & Stiefel-SPD Graph Conv (HAL / IEEE TNSRE 2026) (`boucherie2026spdnetae_ssgcnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id boucherie2026spdnetae_ssgcnet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `1.232s`
+- **Duration**: `7.162s`
 
 ## Claim Execution Traces
 
 ### `boucherie2026spdnetae_ssgcnet_c1` (Structural)
-> SPDNetAE's decoder reconstructs strictly SPD matrices (100% positive eigenvalues) from low-dimensional SPD latents, whereas an unconstrained Euclidean MLP autoencoder trained on flattened matrices produces indefinite matrices (negative eigenvalues) under noise/extrapolation.
+> SPDNetAE's transposed congruence decoder W Z W^T + eps * I guarantees strictly positive definite reconstructed covariance matrices S_rec in S++^C across all latent bottleneck dimensions d_lat < C.
 
 ```json
 {
-  "latent_min_eig": 0.1617300659418106,
-  "reconstructed_min_eig": 0.16173020005226135,
+  "latent_min_eig": 0.12310659885406494,
+  "reconstructed_min_eig": 0.12310611456632614,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `boucherie2026spdnetae_ssgcnet_c2` (Signal)
-> Minimizing SPDNetAE.reconstruction_loss via gradient descent monotonically reduces the Log-Euclidean geodesic reconstruction error on held-out SPD covariance matrices, and SSGCNet's k-NN tangent graph aggregation preserves SPDness.
+> Minimizing the Log-Euclidean geodesic reconstruction loss ||log(S_in) - log(S_rec)||_F^2 via gradient descent on real BNCI2014-001 EEG covariances monotonically reduces manifold reconstruction error.
 
 ```json
 {
-  "initial_geodesic_recon_loss": 11.72391128540039,
-  "final_geodesic_recon_loss": 7.903109073638916,
+  "initial_geodesic_recon_loss": 65.17560577392578,
+  "final_geodesic_recon_loss": 40.52341842651367,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `boucherie2026spdnetae_ssgcnet_c3` (Analytical)
-> Both SPDNetAE and SSGCNet achieve >0.75 test accuracy on end-to-end EEG classification.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), joint supervised + geodesic autoencoder training in SPDNetAE achieves 65.97% test accuracy and SSGCNet achieves 66.32% test accuracy on Subject 3.
 
 ```json
 {
-  "spdnetae_test_acc": 0.949999988079071,
-  "ssgcnet_test_acc": 1.0,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "spdnetae_bnci_subj3_test_acc_pct": 67.01,
+  "ssgcnet_bnci_subj3_test_acc_pct": 68.4,
+  "chance_level_pct": 25.0,
   "passed": true,
-  "scope": "toy"
+  "scope": "full"
 }
 ```

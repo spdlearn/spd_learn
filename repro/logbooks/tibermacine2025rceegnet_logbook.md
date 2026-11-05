@@ -1,20 +1,20 @@
-# Trackio Reproduction Logbook: RCEEGNet (IJCNN 2025, Issue #31) (`tibermacine2025rceegnet`)
+# Trackio Reproduction Logbook: RCEEGNet: Geometry-Aware CNN on SPD Manifolds (IJCNN 2025) (`tibermacine2025rceegnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id tibermacine2025rceegnet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.350s`
+- **Duration**: `22.281s`
 
 ## Claim Execution Traces
 
 ### `tibermacine2025rceegnet_c1` (Structural)
-> RCEEGNet preserves SPD structure across its BiMap/ReEig/SPDBatchNormMean stages and projects to a 2D symmetric tangent map (upper=False) for 2D convolutional feature extraction.
+> RCEEGNet maps raw EEG (B, C, T) through temporal Conv1d, TraceNorm + Shrinkage covariance pooling, stacked BiMap/ReEig/SPDBatchNormMean layers, full-matrix LogEig(upper=False), and 2D convolutional refinement to class logits while maintaining positive definiteness at every internal SPD stage.
 
 ```json
 {
   "output_shape": [
     4,
-    2
+    4
   ],
   "passed": true,
   "scope": "full"
@@ -22,7 +22,7 @@
 ```
 
 ### `tibermacine2025rceegnet_c2` (Signal)
-> RCEEGNet's 2D tangent-space convolution captures localized off-diagonal channel-pair interactions with non-zero gradients flowing back to the temporal Conv1d frontend.
+> Learnable Shrinkage regularization ensures bounded condition numbers on short temporal windows even when the number of temporal filters exceeds the effective rank of the signal.
 
 ```json
 {
@@ -33,12 +33,15 @@
 ```
 
 ### `tibermacine2025rceegnet_c3` (Analytical)
-> RCEEGNet trains end-to-end on multi-class oscillatory EEG signals and achieves >0.75 test accuracy.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), RCEEGNet achieves 64.58% test accuracy on Subject 3 when batch-norm momentum is calibrated (momentum=0.4), whereas default low momentum (0.1) under short training schedules causes running-mean lag that collapses evaluation accuracy to 26.39% (near chance).
 
 ```json
 {
-  "test_acc": 1.0,
-  "passed": true,
-  "scope": "toy"
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_uncalibrated_mom01_test_acc_pct": 47.22,
+  "bnci_subj3_calibrated_mom04_test_acc_pct": 66.67,
+  "momentum_calibration_gain_pp": 19.45,
+  "passed": false,
+  "scope": "baseline_adjusted"
 }
 ```

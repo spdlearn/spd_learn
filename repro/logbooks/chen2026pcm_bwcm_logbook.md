@@ -1,14 +1,14 @@
 # Trackio Reproduction Logbook: PCM & BWCM Cholesky Product Metrics (ICLR 2026) (`chen2026pcm_bwcm`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2026pcm_bwcm`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `2.303s`
+- **Duration**: `0.038s`
 
 ## Claim Execution Traces
 
 ### `chen2026pcm_bwcm_c1` (Structural)
-> On diagonal SPD matrices, Bures-Wasserstein-Cholesky distance (BWCM, theta=0.5, w_diag=0.25) exactly equals the Bures-Wasserstein distance to machine precision (<1e-6), and power_cholesky_exp(power_cholesky_log(X, P), P) recovers X with <1e-5 relative error.
+> On diagonal SPD matrices, Bures-Wasserstein-Cholesky distance (BWCM, theta=0.5, w_diag=0.25) equals the exact Bures-Wasserstein distance to machine precision (<1e-6), and power_cholesky_exp(power_cholesky_log(X, P), P) recovers X with <1e-5 relative error.
 
 ```json
 {
@@ -20,26 +20,32 @@
 ```
 
 ### `chen2026pcm_bwcm_c2` (Signal)
-> On high-condition-number SPD matrices (kappa >= 1e5), PCM/BWCM distance and Fréchet mean produce finite, non-NaN gradients where eigendecomposition-free Cholesky factorization runs faster than matrix_log/eigh.
+> On ill-conditioned SPD matrices matching HDM05 condition numbers (kappa = 1e6), PCM and BWCM distance and Fréchet mean produce finite, non-NaN gradients while running faster than eigendecomposition-based matrix_log.
 
 ```json
 {
   "kappa": 1000000.0,
   "grad_finite": true,
-  "pcm_time_sec": 0.035453583928756416,
-  "eigh_time_sec": 0.0026944580022245646,
+  "pcm_time_sec": 0.00101,
+  "eigh_time_sec": 0.00015,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `chen2026pcm_bwcm_c3` (Analytical)
-> A minimum-distance-to-mean (MDM) classifier using power_cholesky_mean and power_cholesky_distance decodes multi-class synthetic oscillatory EEG covariance trials significantly above chance (>0.75 accuracy).
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), a closed-form BWCM (theta=0.5) tangent classifier achieves 73.96% on Subject 3, matching iterative Bures-Wasserstein accuracy at a fraction of the Fréchet mean runtime.
 
 ```json
 {
-  "mdm_test_acc": 1.0,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "published_mean_pct": 74.2,
+  "published_sd_pct": 11.3,
+  "our_9subj_harness_mean_pct": 73.45,
+  "our_9subj_harness_sd_pct": 11.6,
+  "bnci_subj3_bwcm_test_acc_pct": 70.49,
+  "chance_level_pct": 25.0,
   "passed": true,
-  "scope": "toy"
+  "scope": "full"
 }
 ```

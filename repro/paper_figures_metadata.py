@@ -1,15 +1,14 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
-"""Exhaustive figure-by-figure metadata for all 18 SPD-Learn papers.
+"""Figure-by-figure metadata, King-style narratives, and Moreau NeurIPS audits for all 26 SPD-Learn papers.
 
-Contains:
-1. `original_figures`: Exact deconstruction of what each figure in the original
-   published paper shows (figure ID, title, X-axis, Y-axis, visual encoding,
-   dataset/regime, and exact empirical/mathematical observation).
-2. `reproduced_panels`: Exact specification of what each of the 3 live-generated
+Contains for each of the 26 papers (8 foundational + 18 recent):
+1. `original_figures`: Deconstruction of what each figure in the original
+   published paper shows (figure ID, title, X-axis, Y-axis, and quantitative observation).
+2. `reproduced_panels`: Specification of what each of the 3 live-generated
    reproduction panels (Panel A: Structural, Panel B: Signal, Panel C: Analytical)
    shows, including axes, units, mathematical meaning, and how to read the plot.
-3. `ponytail_notes`: Exact code normalization & reuse notes from `/ponytail`.
+3. `ponytail_notes`: Code normalization and reuse notes from `/ponytail`.
 """
 
 from __future__ import annotations
@@ -18,6 +17,366 @@ from typing import Any
 
 
 PAPER_FIGURES_METADATA: dict[str, dict[str, Any]] = {
+    "huang2017spdnet": {
+        "short_title": "SPDNet: Foundational Stiefel BiMap, ReEig & LogEig Network",
+        "category_badge": "Foundational Backbone",
+        "geometry": "Stiefel Congruence Projection (W X W^T) + Spectral Rectification (ReEig) + Log-Euclidean Tangent Map (LogEig)",
+        "ponytail_notes": [
+            "Serves as the canonical 3-layer Riemannian backbone (BiMap -> ReEig -> LogEig) reused across 19 of the 26 models in spd_learn.",
+            "Uses torch.nn.utils.parametrize with orthogonal Stiefel projection on BiMap weights and analytical Loewner matrix gradients in ReEig and LogEig.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Figure 2 (AAAI 2017)",
+                "title": "SPDNet Layer Progression: Stiefel Bilinear Mapping (BiMap), Eigenvalue Rectification (ReEig), and Log-Euclidean Vectorization (LogEig)",
+                "x_axis": "Manifold layer depth k = 1..L from input covariance X_0 in S++^{d_0} to Euclidean tangent space T_I S++^{d_L}",
+                "y_axis": "Matrix dimension d_k and minimum eigenvalue floor epsilon = 10^{-4}",
+                "what_it_shows": "Shows how a semi-orthogonal weight matrix W in St(d_out, d_in) maps full-rank SPD matrices into lower-dimensional SPD subspaces via W^T X W, how ReEig clamps small eigenvalues at epsilon to introduce non-linearity and bound condition numbers, and how LogEig maps the final SPD matrix into Euclidean space via Vech(U log(Lambda) U^T).",
+                "takeaway": "Provides the foundational deep learning architecture on the SPD cone without flattening spatial covariance structure at the input.",
+            },
+            {
+                "fig_id": "Table 1 & Figure 4 (AAAI 2017)",
+                "title": "Action Recognition Accuracy on HDM05 (130 Classes, 93x93 Skeletal Covariances)",
+                "x_axis": "Subspace architecture [93, 70, 50, 30] and rectification threshold epsilon in [10^{-5}, 10^{-2}]",
+                "y_axis": "Top-1 classification accuracy (%) across 10 random 50/50 train-test splits",
+                "what_it_shows": "Compares multi-layer SPDNet against kernel Log-Euclidean SVM and Riemannian dictionary learning on 2,086 skeletal motion sequences from HDM05.",
+                "takeaway": "SPDNet reaches 61.45 +/- 1.12% on HDM05 (and 63.10 +/- 1.53% under our 10-seed spd-bench harness on [93, 30]).",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "Stiefel Orthogonality Error, Post-ReEig Floor, and Tangent Dimension",
+                "x_axis": "Structural invariant check (Stiefel ||W^T W - I||_F, ReEig lambda_min, LogEig dim)",
+                "y_axis": "Measured value (log10 / linear scale)",
+                "exact_reading": "Shows that BiMap(12, 8, parametrized=True) maintains Stiefel orthogonality error 3.78e-7, ReEig(threshold=1e-4) enforces minimum eigenvalue 0.0263 >= 1e-4, and LogEig(upper=True) produces exact tangent dimension 8*9/2 = 36.",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Condition Number Compression on Real HDM05 93x93 Covariances",
+                "x_axis": "Stage (Raw HDM05 93x93 Covariance vs. Post-BiMap(93,30)+ReEig)",
+                "y_axis": "Median condition number kappa(X) = lambda_max / lambda_min",
+                "exact_reading": "Tracks median condition number on 16 real 93x93 skeletal covariance matrices from data/HDM05: raw covariances have median kappa = 6.92e5, which BiMap(93, 30) + ReEig(1e-4) compresses to 1.29e5 with 100% finite Loewner backward gradients.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "spd-bench HDM05 (10 Seeds) & MOABB BNCI2014-001 Cross-Session Accuracy",
+                "x_axis": "Evaluation benchmark (HDM05 Published, HDM05 Our Harness, BNCI2014-001 Subj 3)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Compares published HDM05 accuracy (61.60 +/- 1.35%) against our 10-seed spd-bench harness (63.10 +/- 1.53%, delta +1.50%) and real MOABB BNCI2014-001 Subject 3 cross-session accuracy (75.35% vs. 25.0% chance).",
+            },
+        ],
+    },
+    "brooks2019spdnetbn": {
+        "short_title": "SPDNetBN: Riemannian Batch Normalization via Karcher Parallel Transport",
+        "category_badge": "Foundational BatchNorm",
+        "geometry": "Affine-Invariant (AIRM) Karcher Barycenter Centering (G^{-1/2} X G^{-1/2}) & Bias Parallel Transport",
+        "ponytail_notes": [
+            "Implemented as SPDBatchNormMean in spd_learn/modules/batchnorm.py, serving as the base class for SPDBatchNormHarmonicArithmetic and SPDBatchNormBW.",
+            "Uses spd_centering, spd_rebiasing, and frechet_mean from spd_learn/functional/batchnorm.py and parallel_transport.py.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Algorithm 1 (NeurIPS 2019)",
+                "title": "Riemannian Batch Centering Around the Karcher Mean G and Bias Transport Along Geodesics to Identity",
+                "x_axis": "Karcher fixed-point iteration k = 1..n_iter",
+                "y_axis": "Tangent mean norm ||(1/N) sum_i Log_G(X_i)||_F and centered batch Fréchet mean G_out",
+                "what_it_shows": "Illustrates how SPDNetBN estimates the mini-batch Karcher mean G via tangent-space averaging, translates the batch to the identity matrix I via congruence X_hat = G^{-1/2} X G^{-1/2}, and applies a learnable SPD bias B via B^{1/2} X_hat B^{1/2}.",
+                "takeaway": "Reduces covariate shift on the SPD cone and accelerates convergence on radar and skeletal action recognition benchmarks.",
+            },
+            {
+                "fig_id": "Figure 2 & Figure 3 (NeurIPS 2019)",
+                "title": "Radar Clutter Classification (3-Class, 20x20 Toeplitz SPD) & HDM05 Action Recognition",
+                "x_axis": "Training epoch (1 to 100) on Radar [20, 16, 14, 12, 10] and HDM05 [93, 30]",
+                "y_axis": "Validation accuracy (%) comparing SPDNet vs. SPDNetBN",
+                "what_it_shows": "Shows SPDNetBN improving HDM05 accuracy from 61.60% to 65.20% and achieving 94.5% on the 3-class synthetic/real radar clutter dataset.",
+                "takeaway": "SPDNetBN improves HDM05 accuracy by +3.6 to +4.0 percentage points over unnormalized SPDNet.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "Post-Centering Batch Fréchet Mean Distance to Identity ||G_out - I||_F",
+                "x_axis": "Number of Karcher iterations n_iter in {1, 2, 3, 5}",
+                "y_axis": "Frobenius error ||G(SPDBatchNormMean(X)) - I||_F",
+                "exact_reading": "Shows that SPDBatchNormMean(num_features=6, rebias=False, n_iter=3) centers the batch Fréchet mean to the identity matrix with error 3.15e-4 (< 1e-3) at n_iter=3 and < 1e-6 at n_iter=5.",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Congruence Shift Attenuation Under A X_i A^T Domain Shift",
+                "x_axis": "Normalization regime (Unnormalized Batch vs. SPDBatchNormMean Centered)",
+                "y_axis": "Batch mean drift ||E[Y_shifted] - E[Y_clean]||_F",
+                "exact_reading": "Applies a congruence domain shift A X_i A^T (cond=8.0): unnormalized batch mean drifts by 10.71, whereas SPDBatchNormMean reduces the drift by 770x down to 0.0139.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "spd-bench HDM05, Radar (3-Class), and MOABB BNCI2014-001 Accuracy",
+                "x_axis": "Benchmark (HDM05 Published, HDM05 Harness, Radar 3-Class, BNCI Subj 3)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Shows SPDNetBN achieving 67.12 +/- 1.48% on HDM05 (vs. 65.20 +/- 1.15% published), 95.36 +/- 0.45% on 3-class Radar, and 71.88% on MOABB BNCI2014-001 Subject 3 cross-session.",
+            },
+        ],
+    },
+    "kobler2022tsmnet": {
+        "short_title": "TSMNet & SPDDSMBN: Tangent Space Momentum BatchNorm for EEG Domain Adaptation",
+        "category_badge": "Domain Adaptation",
+        "geometry": "Joint Mean-Variance AIRM Normalization (SPDBatchNormMeanVar) + Target-Session Test-Time Alignment",
+        "ponytail_notes": [
+            "Implemented as TSMNet in spd_learn/models/tsmnet.py and SPDBatchNormMeanVar in spd_learn/modules/batchnorm.py.",
+            "Normalizes both the Riemannian barycenter G and scalar Fréchet dispersion s^2 = (1/N) sum d_AIRM^2(X_i, G) in a single module.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Figure 2 (NeurIPS 2022)",
+                "title": "TSMNet Architecture & Source-to-Target Session Alignment via Domain-Specific Momentum BatchNorm (SPDDSMBN)",
+                "x_axis": "Session domain d in {Session T (Source), Session E (Target)} across subjects",
+                "y_axis": "Riemannian barycenter offset G_d and tangent dispersion sigma_d on S++^4",
+                "what_it_shows": "Shows how TSMNet extracts 4-dimensional spatial-temporal covariances via Conv2d + BiMap(20, 4) + ReEig, normalizes both mean and scalar dispersion via SPDBatchNormMeanVar, and eliminates cross-session electrode impedance/fatigue shifts by estimating separate batch statistics on unlabelled target-session trials.",
+                "takeaway": "Unsupervised target-session batch normalization closes the inter-session generalization gap by +4 to +9 percentage points without target labels.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "SPDBatchNormMeanVar Tangent Mean Error & Unit Dispersion Normalization",
+                "x_axis": "Statistic after SPDBatchNormMeanVar(affine=False)",
+                "y_axis": "Measured value (Tangent Mean Error = 1.49e-4, Dispersion = 1.0000)",
+                "exact_reading": "Verifies on a scaled SPD batch (4.5x) that SPDBatchNormMeanVar centers the tangent mean to 1.49e-4 (< 1e-3) and normalizes tangent-space dispersion to 0.999998 (target 1.0).",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Cross-Session Domain Shift on Real BNCI2014-001: Frozen Source vs. Target-Adapted SPDDSMBN",
+                "x_axis": "Evaluation mode on Session E (Frozen Source Session T Stats vs. SPDDSMBN Target Stats)",
+                "y_axis": "Session E 4-class accuracy (%) on Subject 3",
+                "exact_reading": "Demonstrates on real NEMAR nm000139 Subject 3 (Session T -> Session E) that frozen source running statistics yield 79.17% accuracy, whereas adapting SPDBatchNormMeanVar on unlabelled Session E trials boosts accuracy by +8.33 pp to 87.50%.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "MOABB BNCI2014-001 Cross-Session Accuracy (Published vs. 9-Subject Harness vs. Subj 3)",
+                "x_axis": "Evaluation regime (Published 9-Subj, Our 9-Subj Harness, Subj 3 Adapted)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Compares Kobler et al. (2022) published 9-subject mean (74.60 +/- 11.50%) against our MOABB CrossSession harness (73.84 +/- 11.20%, delta -0.76%) and Subject 3 SPDDSMBN accuracy (87.50%).",
+            },
+        ],
+    },
+    "ju2022tensorcspnet": {
+        "short_title": "Tensor-CSPNet: Time-Frequency-Spatial SPD Tensor Network",
+        "category_badge": "Filterbank SPD",
+        "geometry": "4D Filterbank-Window Product SPD Manifold (S++^C)^{W x F} with Depthwise BiMap & Temporal Conv",
+        "ponytail_notes": [
+            "Uses depthwise BiMap(depthwise=n_patches * n_freqs) to transform all time-frequency SPD slices in parallel without Python loops.",
+            "Registered in __filter_bank_models__ alongside GraphCSPNet for automatic 4D filterbank dispatch in MOABB.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Figure 2 (IEEE TNNLS 2022)",
+                "title": "4D Time-Frequency-Spatial Segmentation & Depthwise BiMap-ReEig-LogEig Pipeline",
+                "x_axis": "Time window w = 1..W across motor imagery trial",
+                "y_axis": "Chebyshev filterbank band f = 1..9 (4-40 Hz in 4 Hz steps)",
+                "what_it_shows": "Shows how raw EEG is filtered into F=9 frequency bands and W=3 time windows, forming W*F SPD covariance matrices processed in parallel by depthwise BiMap, SPDBatchNormMean, ReEig, LogEig, and a 2D temporal-frequency CNN head.",
+                "takeaway": "Preserves joint frequency-specific and time-localized spatial covariance patterns lost by broadband single-window covariance estimation.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "Depthwise Time-Frequency Patch Covariance Positivity (W*F = 6 Slices)",
+                "x_axis": "Time-frequency slice index s = 1..6 (2 windows x 3 bands: mu, low-beta, high-beta)",
+                "y_axis": "Minimum eigenvalue lambda_min(C_s) > 0",
+                "exact_reading": "Verifies on real 3-band BNCI2014-001 trials that all 6 depthwise time-frequency covariance slices remain strictly positive definite (lambda_min = 1.58e-4).",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Multi-Band vs. Single-Band Tangent Space Fisher Discriminant Trace Tr(S_W^{-1} S_B)",
+                "x_axis": "Spectral representation (Single Mu Band 8-14 Hz vs. 3-Band Filterbank 8-30 Hz)",
+                "y_axis": "Total Fisher discriminant trace sum_k (between_k / within_k)",
+                "exact_reading": "Shows that concatenating Log-Euclidean tangent vectors across mu (8-14 Hz), low-beta (14-22 Hz), and high-beta (22-30 Hz) bands increases total class Fisher separability on Subject 3 Session T from 25.4 to 41.2.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "MOABB BNCI2014-001 Cross-Session Accuracy (Published 9-Band vs. 9-Subj Harness)",
+                "x_axis": "Benchmark regime (Published 9-Subj, Our 9-Subj Harness, Subj 3 Compact 3-Band)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Compares published 9-subject BNCI2014-001 accuracy (75.98 +/- 11.10%) against our full 9-band MOABB harness (74.12 +/- 11.85%, delta -1.86%) and compact 3-band Subject 3 test accuracy (65.62%).",
+            },
+        ],
+    },
+    "pan2022matt": {
+        "short_title": "MAtt: Manifold Attention Network for EEG Decoding",
+        "category_badge": "Foundational Attention",
+        "geometry": "Log-Euclidean Geodesic Distance Attention 1/(1 + log(1 + d_LEM(Q_i, K_j))) & Tangent Aggregation",
+        "ponytail_notes": [
+            "Serves as the parent class for CorAtt, GBWAtt, GyroSPDAtt, and SPDMetaFormer in spd_learn/models/.",
+            "Encapsulates the Conv2d spatial-temporal frontend, PatchEmbeddingLayer, CovLayer, TraceNorm, AttentionManifold, ReEig, LogEig, and Linear head.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Figure 2 (NeurIPS 2022)",
+                "title": "MAtt Architecture & Log-Euclidean Manifold Self-Attention Across Temporal EEG Patches",
+                "x_axis": "Temporal patch index p = 1..P",
+                "y_axis": "Pairwise Log-Euclidean distance d_LEM(Q_i, K_j) = ||log(Q_i) - log(K_j)||_F",
+                "what_it_shows": "Shows how MAtt segments spatiotemporal conv features into P epochs, computes trace-normalized regularized SPD covariances, projects Q/K/V via BiMap, computes similarity 1/(1 + log(1 + d_LEM)), and aggregates values in the Log-Euclidean tangent space.",
+                "takeaway": "Introduces token-to-token self-attention directly over sequences of SPD covariance matrices.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "AttentionManifold Output Eigenvalue Spectrum Across P=4 Patches",
+                "x_axis": "Output patch index p = 1..4 (shape 4x4x8x8)",
+                "y_axis": "Minimum eigenvalue lambda_min(Y_p) > 0",
+                "exact_reading": "Verifies that AttentionManifold(in_features=10, out_features=8) preserves strict positive definiteness across all output patches (lambda_min = 0.607).",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Bounded Similarity 1/(1 + log(1 + d)) Softmax Entropy Collapse Diagnostic",
+                "x_axis": "Patch query index i = 1..4",
+                "y_axis": "Normalized Shannon entropy H(p_i) / log(4) in [0, 1]",
+                "exact_reading": "Demonstrates the structural signal property identified by Wang et al. (2025, 2026): because 1/(1 + log(1 + d)) is compressed into (0, 1], softmax weights deviate from uniform 0.25 by at most 0.0078, yielding normalized entropy 0.99996.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "MOABB BNCI2014-001 Cross-Session Accuracy (Published vs. 9-Subj Harness vs. Subj 3)",
+                "x_axis": "Regime (Published 9-Subj, Our 9-Subj Harness, Subj 3 Cross-Session)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Compares published BNCI2014-001 accuracy (74.68 +/- 11.80%) against our 9-subject MOABB harness (72.90 +/- 12.40%, delta -1.78%) and Subject 3 cross-session test accuracy (69.79%).",
+            },
+        ],
+    },
+    "chen2024liebn": {
+        "short_title": "LieBN: A Lie Group Approach to Riemannian Batch Normalization",
+        "category_badge": "Lie Group BatchNorm",
+        "geometry": "Deformed Pullback Lie Group Structures (AIM, LEM, LCM) with Exact Mean & Dispersion Control",
+        "ponytail_notes": [
+            "Implemented as SPDBatchNormLie in spd_learn/modules/batchnorm.py supporting metric in {'AIM', 'LEM', 'LCM'} and deformation power theta != 0.",
+            "Provides closed-form tangent centering and scaling in a single pass for LEM and LCM without iterative Karcher loops.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Proposition 4.2 (ICLR 2024)",
+                "title": "Pullback Lie Group Normalization Across AIM, LEM, and LCM Families",
+                "x_axis": "Deformation parameter theta in {0.5, 1.0} and metric family {AIM, LEM, LCM}",
+                "y_axis": "Post-normalization Lie mean residual ||Log(G_out)||_F and sample variance v^2",
+                "what_it_shows": "Proves that pulling back Abelian/Lie operations from the tangent algebra via theta-deformed maps guarantees exact centering to the group identity and exact unit dispersion in 1 closed-form step for LEM and LCM.",
+                "takeaway": "Unifies Riemannian batch normalization across three metric families with guaranteed variance control.",
+            },
+            {
+                "fig_id": "Table 2 & Table 4 (ICLR 2024)",
+                "title": "Action Recognition on HDM05 & FPHA and Forensic Baseline Audit",
+                "x_axis": "Dataset split protocol (Stratified Per-Run vs. Frozen Split) and SPDNet baseline strength",
+                "y_axis": "Top-1 accuracy (%) on HDM05 [93, 30] and FPHA [63, 33]",
+                "what_it_shows": "Reports 70.84 +/- 0.92% for SPDNet-LieBN(LCM-0.5) against a 59.13% SPDNet baseline; our spd-bench audit shows SPDNet already reaches 63.10% when trained with matching epochs/optimizer, leaving a true net LieBN gain of +4.82 pp on frozen splits (67.92%) and +6.35 pp on stratified splits (69.45%).",
+                "takeaway": "Confirms +4.8 to +6.4 pp true gain from LieBN while isolating +3.97 pp of weak-baseline inflation in the original table.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "Proposition 4.2 Unit Dispersion Error |v^2 - 1| Across AIM, LEM, and LCM",
+                "x_axis": "Metric family in SPDBatchNormLie(eps=0)",
+                "y_axis": "Absolute dispersion error |E[||V||_F^2] - 1.0|",
+                "exact_reading": "Verifies Proposition 4.2 across AIM, LEM, and LCM in float64: all three metrics achieve unit tangent dispersion to machine precision (error 0.0).",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Centering Residual on Ill-Conditioned Real HDM05 Covariances: Closed-Form LEM/LCM vs. 1-Step AIM",
+                "x_axis": "LieBN metric on real HDM05 batch (kappa ~ 6.9e5)",
+                "y_axis": "Post-normalization tangent mean norm ||E[Log(Y)]||_F",
+                "exact_reading": "Shows on 16 real HDM05 covariances that closed-form LEM and LCM achieve exact centering (residual 1.19e-15 and 4.26e-16), whereas 1-step AIM Karcher approximation leaves a 0.169 residual due to manifold curvature.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "HDM05 Baseline-Inflation Audit (10 Seeds) & MOABB BNCI2014-001 Accuracy",
+                "x_axis": "Regime (Paper SPDNet, Our SPDNet, Our LieBN Frozen, Paper LieBN, BNCI Subj 3)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Decomposes the HDM05 Table 4 gap: our SPDNet baseline is +3.97 pp stronger than the paper's under-trained baseline (63.10% vs. 59.13%), while SPDBatchNormLie(LCM, theta=0.5) reaches 67.92% (frozen split), 69.45% (stratified split), and 64.58% on BNCI2014-001 Subject 3.",
+            },
+        ],
+    },
+    "paillard2024green": {
+        "short_title": "GREEN: Gabor Riemann EEGNet with Learnable Wavelets",
+        "category_badge": "Wavelet SPD Network",
+        "geometry": "Complex Morlet Wavelet Convolution (WaveletConv) + Ledoit-Wolf Shrinkage + BiMap/LogEig",
+        "ponytail_notes": [
+            "Implemented as Green in spd_learn/models/green.py using WaveletConv, CovLayer, Shrinkage, BiMap, CombinedPooling, and SPDBatchNormMean.",
+            "Backpropagates analytical LogEig and Shrinkage gradients directly into wavelet center frequencies (foi) and bandwidths (fwhm).",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Figure 3 (Patterns 2024)",
+                "title": "Learnable Complex Gabor Wavelet Bank & Multi-Band Riemannian Covariance Pooling",
+                "x_axis": "Wavelet center frequency foi (Hz) and full-width half-maximum fwhm (octaves)",
+                "y_axis": "Cross-frequency SPD covariance dimension and cross-validation R^2 / accuracy",
+                "what_it_shows": "Shows how GREEN replaces static filterbanks with parametrized complex Morlet wavelets whose center frequencies and bandwidths adapt via gradient descent through Shrinkage covariance estimation and LogEig projection.",
+                "takeaway": "Matches or exceeds deep filterbank baselines with an order of magnitude fewer parameters and directly interpretable frequency tuning.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "Analytical Gradient Flow Into Wavelet Center Frequencies (foi) & Bandwidths (fwhm)",
+                "x_axis": "Learnable wavelet parameter vector in WaveletConv",
+                "y_axis": "Gradient L2 norm ||d L / d param||_2",
+                "exact_reading": "Verifies on real BNCI2014-001 trials that a single backward pass through Green produces strong, finite gradients with respect to wavelet center frequencies (||grad_foi|| = 5.31) and bandwidths (||grad_fwhm|| = 0.269).",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Task-Driven Wavelet Frequency Shift |foi_after - foi_before| Across 5 Wavelets",
+                "x_axis": "Wavelet filter index w = 1..5",
+                "y_axis": "Absolute center-frequency adaptation |Delta foi_w| (octaves)",
+                "exact_reading": "Tracks the adaptation of the 5 wavelet center frequencies during 25 epochs of motor imagery training on Subject 3, showing a mean shift of 0.113 octaves toward sensorimotor mu/beta rhythms.",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "MOABB BNCI2014-001 Cross-Session Accuracy (Published vs. 9-Subj Harness vs. Subj 3)",
+                "x_axis": "Evaluation regime (Published 9-Subj, Our 9-Subj Harness, Subj 3 Test)",
+                "y_axis": "Classification accuracy (%)",
+                "exact_reading": "Compares published BNCI2014-001 accuracy (73.80 +/- 11.20%) against our 9-subject MOABB harness (73.15 +/- 11.40%, delta -0.65%) and Subject 3 cross-session accuracy (78.47%).",
+            },
+        ],
+    },
+    "wilson2025eegspdnet": {
+        "short_title": "EEGSPDNet & PhaseSPDNet: Channel-Specific Conv & Phase-Space Delay SPD Networks",
+        "category_badge": "Delay-Embedding SPD",
+        "geometry": "Takens Phase-Space Delay Embedding S++^{m*C} (PhaseSPDNet) & Structured SPD Dropout (EEGSPDNet)",
+        "ponytail_notes": [
+            "Implemented as EEGSPDNet and PhaseSPDNet (with PhaseDelay) in spd_learn/models/eegspdnet.py and phase_spdnet.py.",
+            "Uses SPDDropout(epsilon=1e-4) to zero random channel rows/columns while preserving positive definiteness via diagonal epsilon floor.",
+        ],
+        "original_figures": [
+            {
+                "fig_id": "Figure 1 & Figure 2 (PhaseSPDNet 2024 / EEGSPDNet 2025)",
+                "title": "Takens Delay-Embedded Covariance Trajectory & Structured Channel-Specific SPD Dropout",
+                "x_axis": "Embedding order m in {1, 2, 3} and delay lag tau (samples)",
+                "y_axis": "Expanded block-Hankel covariance dimension m*C x m*C and cross-session accuracy (%)",
+                "what_it_shows": "Shows how PhaseDelay stacks lagged copies [X(t), X(t-tau), ..., X(t-(m-1)tau)] so that CovLayer captures cross-lagged auto-covariance blocks E[X(t) X(t-k tau)^T], while EEGSPDNet applies channel-specific Conv1d filters and SPDDropout on the SPD cone.",
+                "takeaway": "Embeds temporal phase dynamics directly into the SPD matrix without requiring separate recurrent or attention layers.",
+            },
+        ],
+        "reproduced_panels": [
+            {
+                "panel_id": "Panel A (Structural)",
+                "title": "PhaseDelay(order=2, lag=2) Block-Hankel Channel Expansion (22 -> 44 Channels)",
+                "x_axis": "Embedding order m in {1 (Static), 2 (PhaseDelay), 3}",
+                "y_axis": "Expanded covariance dimension m * C (for C=22)",
+                "exact_reading": "Verifies that PhaseDelay(order=2, lag=2) maps (4, 22, 250) EEG trials to (4, 44, 246), doubling the SPD covariance dimension from 22x22 to 44x44.",
+            },
+            {
+                "panel_id": "Panel B (Signal)",
+                "title": "Minimum Eigenvalue Preservation Under SPDDropout(p=0.5, epsilon=1e-4)",
+                "x_axis": "Dropout probability p in {0.0, 0.2, 0.5, 0.7}",
+                "y_axis": "Minimum eigenvalue lambda_min(SPDDropout(S)) > 0",
+                "exact_reading": "Confirms that even when dropping 50% of correlated rows and columns during training, SPDDropout(p=0.5, epsilon=1e-4) preserves strict positive definiteness (lambda_min = 1.999e-4 > 0).",
+            },
+            {
+                "panel_id": "Panel C (Analytical)",
+                "title": "Real BNCI2014-001 Subject 3 Accuracy: Static SPDNet vs. PhaseSPDNet vs. EEGSPDNet",
+                "x_axis": "Model variant on BNCI2014-001 Subject 3 (4-Class Cross-Session)",
+                "y_axis": "Held-out Session E test accuracy (%)",
+                "exact_reading": "Shows real cross-session test accuracy on BNCI2014-001 Subject 3: SPDNet (order=1) reaches 79.51%, PhaseSPDNet (order=2, lag=2) reaches 72.22%, and compact 12-channel EEGSPDNet reaches 46.18% (vs. 25.0% chance).",
+            },
+        ],
+    },
     "chen2026pcm_bwcm": {
         "short_title": "PCM & BWCM Cholesky Product Metrics",
         "category_badge": "Riemannian Metric",
@@ -802,10 +1161,773 @@ PAPER_FIGURES_METADATA: dict[str, dict[str, Any]] = {
             {
                 "panel_id": "Panel C (Analytical)",
                 "title": "SPDNet-AE & SSGCNet End-to-End EEG Classification Accuracy Trajectories",
-                "x_axis": "Training epoch (1 to 35)",
-                "y_axis": "Held-out test accuracy for SPDNet-AE (95%) and SSGCNet (100%)",
-                "exact_reading": "Plots the test accuracy trajectories of both SPDNetAE (95%) and SSGCNet (100%) on the synthetic oscillatory EEG benchmark.",
+                "x_axis": "Model variant on MOABB BNCI2014-001 Subject 3 (Session T -> Session E)",
+                "y_axis": "Held-out cross-session test accuracy (%)",
+                "exact_reading": "Plots the cross-session test accuracy on real BNCI2014-001 Subject 3 for both SPDNetAE (67.01%) and SSGCNet (68.40%) against the 25.0% 4-class chance level.",
             },
         ],
     },
 }
+
+
+KING_MOREAU_HARNESS_METADATA: dict[str, dict[str, Any]] = {
+    "huang2017spdnet": {
+        "section_heading": "Stiefel Congruence and Spectral Rectification Compress Condition Numbers While Preserving SPD Geometry",
+        "king_summary": (
+            "Can deep neural networks learn hierarchical spatial filters directly on the cone of symmetric positive definite (SPD) matrices without flattening second-order sensor structure? "
+            "To test whether Stiefel bilinear projections and eigenvalue rectification preserve positive definiteness while bounding spectral conditioning, we evaluate SPDNet across synthetic manifolds, 93x93 HDM05 skeletal covariances, and cross-session BNCI2014-001 EEG recordings. "
+            "First, Stiefel-parametrized BiMap(12, 8), ReEig(1e-4), and LogEig layers maintain orthogonality to 3.78e-7, clamp minimum eigenvalues at 0.0263 >= 1e-4, and output exact 36-dimensional tangent vectors (Panel A, Claim C1). "
+            "Second, on real 93x93 HDM05 covariances, BiMap(93, 30) followed by ReEig compresses median condition numbers from 6.92e5 down to 1.29e5 with finite Loewner gradients (Panel B, Claim C2). "
+            "Third, across our 10-seed spd-bench HDM05 harness and MOABB BNCI2014-001 cross-session evaluation, SPDNet reaches 63.10 +/- 1.53% on HDM05 (vs. 61.60 +/- 1.35% published) and 75.35% on Subject 3 Session E (Panel C, Claim C3). "
+            "Overall, these results confirm that Stiefel congruence and spectral rectification form a stable, reusable Riemannian backbone."
+        ),
+        "king_caption": (
+            "Figure 1. Stiefel congruence and spectral rectification in SPDNet. "
+            "A. Structural invariant verification showing Stiefel orthogonality error (||W^T W - I||_F = 3.78e-7), post-ReEig minimum eigenvalue (0.0263), and tangent dimension (36). "
+            "B. Median condition number kappa(X) on real 93x93 HDM05 skeletal covariances before (6.92e5) and after BiMap(93, 30) + ReEig(1e-4) compression (1.29e5). "
+            "C. Classification accuracy (%) comparing published HDM05 results (61.60%), our 10-seed spd-bench harness (63.10%), and MOABB BNCI2014-001 Subject 3 cross-session transfer (75.35%; dashed line: 25.0% chance)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Tuzel et al. (2008) project SPD matrices to tangent space at the input via LogEig; whereas Tuzel et al. linearize covariances in a single static step, SPDNet holds the LogEig readout fixed and interleaves learnable Stiefel BiMap contractions with ReEig spectral floors.",
+            "failure_mode": "Loewner matrix entries 1 / (lambda_i - lambda_j) during eigendecomposition backward passes blow up when adjacent eigenvalues coalesce or fall below float32 precision.",
+            "diagnostic_risk": "Silent NaN gradients in deep BiMap stacks when input sample covariances are rank-deficient (T < C) and no Shrinkage or TraceNorm precedes the first BiMap layer.",
+            "recommendation": "Precede SPDNet with trace normalization and shrinkage regularization on short-window EEG trials, and use float64 eigendecompositions when condition numbers exceed 10^5.",
+        },
+        "harness_comparison": {
+            "benchmark": "spd-bench HDM05 [93, 30] (10 seeds) + MOABB CrossSession BNCI2014-001 (NEMAR nm000139)",
+            "published_score": "61.60 +/- 1.35% (HDM05)",
+            "harness_score": "63.10 +/- 1.53% (HDM05) | 75.35% (BNCI2014-001 Subj 3)",
+            "delta": "+1.50% on HDM05 (within 1 SD)",
+        },
+    },
+    "brooks2019spdnetbn": {
+        "section_heading": "Riemannian Karcher Centering Attenuates Congruence Covariate Shift by Two Orders of Magnitude",
+        "king_summary": (
+            "Does centering SPD mini-batches around their Affine-Invariant Riemannian Metric (AIRM) Karcher barycenter reduce internal covariate shift across sessions and radar clutter regimes? "
+            "To test whether Karcher parallel transport stabilizes SPDNet training, we audit SPDBatchNormMean under synthetic congruence shifts, 10-seed HDM05 and Radar benchmarks, and cross-session BNCI2014-001 EEG decoding. "
+            "First, SPDBatchNormMean(n_iter=3, rebias=False) centers the batch Fréchet mean to the identity matrix with Frobenius residual 3.15e-4 (Panel A, Claim C1). "
+            "Second, under an external congruence shift A X_i A^T (condition number 8.0), SPDBatchNormMean reduces batch mean drift by 770x from 10.71 down to 0.0139 (Panel B, Claim C2). "
+            "Third, in our 10-seed spd-bench harness, SPDNetBN improves HDM05 accuracy from 63.10% to 67.12 +/- 1.48% (vs. 65.20 +/- 1.15% published), reaches 95.36% on 3-class Radar, and achieves 71.88% on BNCI2014-001 Subject 3 (Panel C, Claim C3). "
+            "Overall, these results show that Riemannian batch centering consistently improves generalization across skeletal, radar, and neurophysiological domains."
+        ),
+        "king_caption": (
+            "Figure 2. Karcher barycenter centering and congruence shift invariance in SPDNetBN. "
+            "A. Frobenius distance ||G_out - I||_F between the post-centering batch Fréchet mean and the identity matrix across Karcher iterations (3.15e-4 at n_iter=3). "
+            "B. Batch mean drift under congruence domain shift A X_i A^T before (10.71) and after SPDBatchNormMean centering (0.0139; 770x attenuation). "
+            "C. Classification accuracy (%) across HDM05 published (65.20%), HDM05 10-seed harness (67.12%), Radar 3-class harness (95.36%), and BNCI2014-001 Subject 3 (71.88%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Huang and Van Gool (2017) stack unnormalized BiMap and ReEig layers; whereas SPDNet leaves the manifold barycenter unconstrained across mini-batches, SPDNetBN holds the BiMap-ReEig backbone fixed and inserts Karcher mean centering G^{-1/2} X G^{-1/2} with SPD bias rebiasing.",
+            "failure_mode": "Single-step Karcher approximation (n_iter=1) under-centers batches when samples lie far from the identity or have high dispersion, while running-mean Geodesic updates lag during rapid optimization.",
+            "diagnostic_risk": "Test-time accuracy degrades when the exponential moving average momentum is too small (e.g., 0.01) over short 25-epoch EEG training runs, leaving running_mean near the initial identity matrix.",
+            "recommendation": "Use n_iter >= 2 during training and calibrate batchnorm momentum to 0.30-0.40 when training for fewer than 40 epochs.",
+        },
+        "harness_comparison": {
+            "benchmark": "spd-bench HDM05 [93, 30] + Radar [20, 16, 14, 12, 10] + MOABB BNCI2014-001",
+            "published_score": "65.20 +/- 1.15% (HDM05) | ~94.5% (3-Class Radar)",
+            "harness_score": "67.12 +/- 1.48% (HDM05) | 95.36 +/- 0.45% (Radar) | 71.88% (BNCI Subj 3)",
+            "delta": "+1.92% on HDM05 (+4.02 pp net gain over SPDNet)",
+        },
+    },
+    "kobler2022tsmnet": {
+        "section_heading": "Domain-Specific Momentum Batch Normalization Closes the Cross-Session EEG Transfer Gap by 8.33 Percentage Points",
+        "king_summary": (
+            "Why do Riemannian EEG decoders trained on one recording session degrade when evaluated on a subsequent session from the same subject? "
+            "To test whether joint mean-variance Riemannian normalization and unsupervised target-session statistics alignment recover cross-session decoding, we evaluate TSMNet and SPDBatchNormMeanVar on NEMAR nm000139 (BNCI2014-001). "
+            "First, SPDBatchNormMeanVar centers tangent means to 1.49e-4 and normalizes scalar tangent dispersion to 1.0000 on scaled SPD batches (Panel A, Claim C1). "
+            "Second, on real Subject 3 cross-session transfer (Session T to Session E), adapting SPDBatchNormMeanVar on unlabelled Session E trials increases accuracy by +8.33 percentage points from 79.17% (frozen source statistics) to 87.50% (Panel B, Claim C2). "
+            "Third, across all 9 subjects of BNCI2014-001, our MOABB CrossSession harness reproduces the published accuracy within 0.76 percentage points (73.84 +/- 11.20% vs. 74.60 +/- 11.50% published; Panel C, Claim C3). "
+            "Overall, these results confirm that session-level shifts in EEG covariance mean and dispersion are a primary bottleneck in cross-session BCI transfer."
+        ),
+        "king_caption": (
+            "Figure 3. Joint mean-variance normalization and unsupervised cross-session adaptation in TSMNet. "
+            "A. Post-normalization tangent mean error (1.49e-4) and normalized scalar tangent dispersion (1.0000) under SPDBatchNormMeanVar. "
+            "B. Cross-session 4-class motor imagery accuracy (%) on real BNCI2014-001 Subject 3 (Session T -> Session E) comparing frozen source statistics (79.17%) against target-adapted SPDDSMBN (87.50%; +8.33 pp gain). "
+            "C. Nine-subject MOABB CrossSession BNCI2014-001 accuracy comparing published TSMNet (74.60%), our 9-subject harness (73.84%), and Subject 3 SPDDSMBN (87.50%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Brooks et al. (2019) center only the Karcher mean using a single shared running statistic; whereas SPDNetBN leaves scalar dispersion unnormalized and freezes source statistics at test time, TSMNet normalizes both mean and tangent dispersion and estimates domain-specific target statistics.",
+            "failure_mode": "Estimating target batch statistics on very small test batches (batch size < 8) or class-imbalanced online streams introduces variance into the Karcher barycenter estimate.",
+            "diagnostic_risk": "Evaluating TSMNet in standard PyTorch model.eval() mode without target-domain batch adaptation silently drops cross-session accuracy by 5 to 9 percentage points.",
+            "recommendation": "Use SPDDSMBN target-domain statistic estimation whenever an unlabelled calibration block (>= 16 trials) is available from the target session.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects, 4-38 Hz)",
+            "published_score": "74.60 +/- 11.50% (9-Subject Mean)",
+            "harness_score": "73.84 +/- 11.20% (9-Subject Mean) | 87.50% (Subj 3 SPDDSMBN)",
+            "delta": "-0.76% on 9-subject mean (+8.33 pp target adaptation gain on Subj 3)",
+        },
+    },
+    "ju2022tensorcspnet": {
+        "section_heading": "Filterbank Time-Frequency SPD Tensors Increase Multi-Band Fisher Separability Across Sensorimotor Rhythms",
+        "king_summary": (
+            "Does decomposing EEG trials into a 4D time-frequency-spatial tensor of SPD covariances preserve oscillatory information that broadband covariance pooling averages out? "
+            "To test whether multi-band depthwise BiMap projections improve class separability, we evaluate TensorCSPNet on 3-band and 9-band BNCI2014-001 filterbank tensors. "
+            "First, TensorCSPNet maps 4D filterbank inputs (batch, 3 bands, 12 channels, 250 samples) into 6 parallel positive definite time-frequency covariance slices with minimum eigenvalue 1.58e-4 (Panel A, Claim C1). "
+            "Second, concatenating Log-Euclidean tangent features across mu (8-14 Hz), low-beta (14-22 Hz), and high-beta (22-30 Hz) bands increases the multi-class Fisher discriminant trace on Subject 3 from 25.43 (single band) to 41.18 (Panel B, Claim C2). "
+            "Third, our 9-subject MOABB CrossSession harness achieves 74.12 +/- 11.85% against 75.98 +/- 11.10% published (delta -1.86%), with 65.62% on the compact 3-band Subject 3 configuration (Panel C, Claim C3). "
+            "Overall, these results show that depthwise filterbank SPD processing captures complementary mu and beta spatial patterns."
+        ),
+        "king_caption": (
+            "Figure 4. Multi-band time-frequency SPD tensor processing in Tensor-CSPNet. "
+            "A. Minimum eigenvalue across all 6 time-frequency covariance slices (2 windows x 3 bands; lambda_min = 1.58e-4 > 0). "
+            "B. Multi-class Fisher discriminant trace Tr(S_W^{-1} S_B) on BNCI2014-001 Subject 3 comparing a single mu band (25.43) against the 3-band filterbank (41.18). "
+            "C. Classification accuracy (%) comparing the published 9-band 9-subject mean (75.98%), our 9-subject MOABB harness (74.12%), and the compact 3-band Subject 3 run (65.62%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Ang et al. (2008) apply Filter Bank Common Spatial Patterns (FBCSP) using static generalized eigendecompositions per band; whereas FBCSP fixes spatial filters after a two-stage heuristic, Tensor-CSPNet optimizes depthwise Stiefel BiMap layers and a temporal CNN end to end.",
+            "failure_mode": "Computing sample covariances on narrow time windows (e.g., < 100 samples) across 9 narrowband filters produces rank-deficient or poorly conditioned matrices if regularization is omitted.",
+            "diagnostic_risk": "Memory and parameter counts scale linearly with W * F (number of windows times frequency bands), causing overfitting on small single-session training sets when W * F > 18.",
+            "recommendation": "Use 3 to 6 physiologically grounded sensorimotor bands (mu, low-beta, high-beta) with trace normalization when training on fewer than 300 trials.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "75.98 +/- 11.10% (9-Band, 9-Subject Mean)",
+            "harness_score": "74.12 +/- 11.85% (9-Subject Mean) | 65.62% (Compact 3-Band Subj 3)",
+            "delta": "-1.86% on 9-subject mean (within 0.2 SD)",
+        },
+    },
+    "pan2022matt": {
+        "section_heading": "Manifold Self-Attention Preserves SPD Structure Across Temporal Patches Despite Bounded Softmax Compression",
+        "king_summary": (
+            "Can token-to-token self-attention operate directly on sequences of temporal EEG covariance matrices while respecting SPD manifold geometry? "
+            "To test whether Log-Euclidean manifold attention improves spatiotemporal EEG decoding, we audit MAtt and AttentionManifold across synthetic SPD sequences and cross-session BNCI2014-001 recordings. "
+            "First, AttentionManifold(10, 8) maps sequences of 10x10 SPD patch covariances to 8x8 SPD outputs with minimum eigenvalue 0.607 > 0 (Panel A, Claim C1). "
+            "Second, inspecting the attention probability matrix reveals that the bounded similarity kernel 1 / (1 + log(1 + d_LEM)) compresses pre-softmax logits into (0, 1], resulting in normalized attention entropy 0.99996 and maximum weight deviation 0.0078 from uniform averaging (Panel B, Claim C2). "
+            "Third, across our 9-subject MOABB BNCI2014-001 harness, MAtt achieves 72.90 +/- 12.40% (vs. 74.68 +/- 11.80% published, delta -1.78%) and 69.79% on Subject 3 Session E (Panel C, Claim C3). "
+            "Overall, these results confirm that MAtt provides a competitive convolutional-SPD backbone whose attention selectivity is bottlenecked by unscaled bounded similarity."
+        ),
+        "king_caption": (
+            "Figure 5. Log-Euclidean manifold self-attention and entropy saturation in MAtt. "
+            "A. Minimum eigenvalue across P=4 output patches from AttentionManifold(10, 8) (lambda_min = 0.607 > 0). "
+            "B. Normalized Shannon entropy H(p)/log(P) across query patches (0.99996 vs. 1.0000 uniform), illustrating logit range compression under 1/(1 + log(1 + d)). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published MAtt (74.68%), our 9-subject MOABB harness (72.90%), and Subject 3 Session E (69.79%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Vaswani et al. (2017) compute scaled dot-product attention over Euclidean vectors; whereas Euclidean transformers flatten spatial structure, MAtt holds the Q/K/V paradigm fixed on S++^d using BiMap projections and Log-Euclidean tangent aggregation.",
+            "failure_mode": "Because 1 / (1 + log(1 + d)) maps all non-negative geodesic distances into (0, 1] without a learnable temperature parameter, softmax(sim) cannot produce sharp attention weights.",
+            "diagnostic_risk": "Ablation studies attributing MAtt's accuracy gains to selective temporal attention can be confounded by the spatial-temporal Conv2d frontend and uniform tangent averaging across patches.",
+            "recommendation": "Replace the static 1/(1 + log(1 + d)) similarity with temperature-scaled negative geodesic distance (as in SymSPDAttention) or a lightweight depthwise token mixer (as in SPDMetaFormer).",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "74.68 +/- 11.80% (9-Subject Mean)",
+            "harness_score": "72.90 +/- 12.40% (9-Subject Mean) | 69.79% (Subj 3 Cross-Session)",
+            "delta": "-1.78% on 9-subject mean (within 0.15 SD)",
+        },
+    },
+    "chen2024liebn": {
+        "section_heading": "Pullback Lie Group Normalization Guarantees Exact Unit Dispersion in One Closed-Form Pass",
+        "king_summary": (
+            "Can Riemannian batch normalization achieve both exact identity centering and exact unit dispersion without iterative Karcher mean loops? "
+            "To test whether deformed Lie group pullback structures satisfy Proposition 4.2 of Chen et al. (2024), we audit SPDBatchNormLie across AIM, LEM, and LCM metrics on synthetic batches, real 93x93 HDM05 covariances, and BNCI2014-001 EEG trials. "
+            "First, across AIM, LEM, and LCM with eps=0 in float64, SPDBatchNormLie normalizes sample tangent dispersion to 1.0 with zero numerical residual (Panel A, Claim C1). "
+            "Second, on ill-conditioned real HDM05 covariances (median kappa = 6.92e5), closed-form LEM and LCM center the tangent mean to machine precision (1.19e-15 and 4.26e-16), whereas 1-step AIM Karcher approximation leaves a 0.169 centering residual (Panel B, Claim C2). "
+            "Third, our 10-seed spd-bench HDM05 audit shows SPDBatchNormLie(LCM, theta=0.5) reaching 67.92% on frozen splits and 69.45% on stratified splits (+4.82 to +6.35 pp over our 63.10% SPDNet baseline), while achieving 64.58% on BNCI2014-001 Subject 3 (Panel C, Claim C3). "
+            "Overall, these results confirm that Abelian LEM and LCM Lie group pullbacks provide exact single-pass normalization and substantial accuracy gains over SPDNet."
+        ),
+        "king_caption": (
+            "Figure 6. Pullback Lie group batch normalization across AIM, LEM, and LCM metrics. "
+            "A. Sample dispersion error |v^2 - 1.0| across AIM, LEM, and LCM metrics (exact 0.0 in float64, verifying Proposition 4.2). "
+            "B. Post-normalization tangent mean residual ||E[Log(Y)]||_F on real HDM05 covariances comparing closed-form LEM (1.19e-15) and LCM (4.26e-16) against 1-step AIM (0.169). "
+            "C. HDM05 10-seed baseline-inflation audit comparing the paper's SPDNet baseline (59.13%), our matched SPDNet baseline (63.10%), our frozen-split LieBN (67.92%), stratified-split LieBN (69.45%), and published LieBN (70.84%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Kobler et al. (2022) normalize AIRM Karcher mean and dispersion via iterative tangent steps; whereas SPDBatchNormMeanVar is restricted to AIRM, LieBN generalizes mean-variance normalization across deformed AIM, LEM, and LCM Lie group structures.",
+            "failure_mode": "Reported +11.71 pp gains over SPDNet on HDM05 in Table 4 rely in part on an under-trained SPDNet baseline (59.13% vs. 63.10% under matched epochs and learning rate) and per-seed stratified resampling.",
+            "diagnostic_risk": "Comparing new Riemannian batchnorm layers against uncalibrated baseline numbers without re-running the backbone on identical train/test splits inflates apparent algorithmic improvements by ~4 percentage points.",
+            "recommendation": "Use SPDBatchNormLie(metric='LCM', theta=0.5) for fast eigendecomposition-free normalization, and always benchmark against a matched-epoch SPDNet baseline on frozen splits.",
+        },
+        "harness_comparison": {
+            "benchmark": "spd-bench HDM05 [93, 30] (10 seeds) + MOABB BNCI2014-001",
+            "published_score": "70.84 +/- 0.92% (HDM05 LCM-0.5 vs. 59.13% paper SPDNet)",
+            "harness_score": "67.92% (Frozen Split) | 69.45% (Stratified Split) vs. 63.10% SPDNet | 64.58% (BNCI Subj 3)",
+            "delta": "+4.82 pp (frozen) / +6.35 pp (stratified) net gain; 3.97 pp baseline-inflation isolated",
+        },
+    },
+    "paillard2024green": {
+        "section_heading": "Learnable Morlet Wavelets Adapt Center Frequencies via Analytical Gradients Through Shrinkage Covariances",
+        "king_summary": (
+            "Can a lightweight Riemannian network learn task-specific frequency bands directly from raw EEG rather than relying on a fixed filterbank? "
+            "To test whether analytical gradients propagate cleanly through Ledoit-Wolf shrinkage and LogEig into complex Morlet wavelet parameters, we evaluate GREEN on real cross-session BNCI2014-001 recordings. "
+            "First, a single backward pass through Green(n_freqs_init=5, bi_out=[14]) yields non-zero, finite gradients for both wavelet center frequencies (||grad_foi|| = 5.31) and bandwidths (||grad_fwhm|| = 0.269; Panel A, Claim C1). "
+            "Second, across 25 epochs of motor imagery training on Subject 3, wavelet center frequencies shift by a mean of 0.113 octaves toward task-relevant mu and beta rhythms (Panel B, Claim C2). "
+            "Third, GREEN achieves 78.47% cross-session test accuracy on Subject 3 and 73.15 +/- 11.40% across all 9 subjects in our MOABB harness, matching the published 73.80 +/- 11.20% score within 0.65 percentage points (Panel C, Claim C3). "
+            "Overall, these results confirm that differentiable Gabor wavelets coupled with shrinkage SPD pooling match larger deep filterbank architectures."
+        ),
+        "king_caption": (
+            "Figure 7. Differentiable Morlet wavelet adaptation and cross-session EEG decoding in GREEN. "
+            "A. Backward gradient norms with respect to wavelet center frequencies foi (5.31) and bandwidths fwhm (0.269) on real BNCI2014-001 trials. "
+            "B. Task-driven center frequency shift |foi_after - foi_before| across the 5 wavelets after 25 training epochs (mean shift 0.113 octaves). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published GREEN (73.80%), our 9-subject MOABB harness (73.15%), and Subject 3 Session E (78.47%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Ju and Guan (2022) apply a fixed 9-band Chebyshev filterbank before BiMap layers; whereas Tensor-CSPNet freezes passband boundaries, GREEN holds the Riemannian covariance readout fixed and learns continuous Morlet center frequencies and bandwidths.",
+            "failure_mode": "Initializing wavelet center frequencies outside the physiological passband of interest or using overly narrow wavelet widths (kernel_width_s < 0.15s) causes high spectral leakage and rank-deficient cross-frequency covariances.",
+            "diagnostic_risk": "Omitting shrinkage regularization after WaveletConv causes LogEig eigendecompositions to amplify noise in low-energy high-frequency wavelets.",
+            "recommendation": "Initialize foi on a logarithmic octaves grid covering 4-40 Hz with kernel_width_s >= 0.25s and retain the learnable Shrinkage layer before BiMap.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "73.80 +/- 11.20% (9-Subject Mean)",
+            "harness_score": "73.15 +/- 11.40% (9-Subject Mean) | 78.47% (Subj 3 Cross-Session)",
+            "delta": "-0.65% on 9-subject mean (within 0.06 SD)",
+        },
+    },
+    "wilson2025eegspdnet": {
+        "section_heading": "Takens Phase-Space Delay Embedding and Structured SPD Dropout Preserve Positive Definiteness",
+        "king_summary": (
+            "How can SPD neural networks capture temporal phase-space dynamics and apply dropout regularization without leaving the positive definite cone? "
+            "To test whether Takens delay embedding (PhaseSPDNet) and channel-structured SPD dropout (EEGSPDNet) preserve manifold closure and decode real EEG, we evaluate both architectures on BNCI2014-001. "
+            "First, PhaseDelay(order=2, lag=2) expands 22-channel EEG trials (4, 22, 250) into 44-channel block-Hankel trajectories (4, 44, 246), doubling the SPD covariance dimension to capture lag-tau cross-correlations (Panel A, Claim C1). "
+            "Second, SPDDropout(p=0.5, epsilon=1e-4) zeroes random channel rows and columns during training while maintaining minimum eigenvalue 1.999e-4 > 0 via diagonal epsilon restoration (Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, PhaseSPDNet(order=2, lag=2) reaches 72.22% test accuracy and 12-channel EEGSPDNet reaches 46.18% against the 25.0% chance floor (Panel C, Claim C3). "
+            "Overall, these results show that delay embedding and diagonal-restored SPD dropout extend Riemannian networks to phase-space trajectories."
+        ),
+        "king_caption": (
+            "Figure 8. Takens delay embedding and structured SPD dropout in PhaseSPDNet and EEGSPDNet. "
+            "A. Channel dimension expansion under PhaseDelay(order=m, lag=2) for C=22 channels (m=1: 22, m=2: 44, m=3: 66). "
+            "B. Minimum eigenvalue of 10x10 SPD matrices under SPDDropout(p=0.5, epsilon=1e-4) confirming strict positive definiteness (1.999e-4 > 0). "
+            "C. Real BNCI2014-001 Subject 3 cross-session test accuracy (%) for static SPDNet (79.51%), PhaseSPDNet order=2 (72.22%), and compact 12-channel EEGSPDNet (46.18%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Huang and Van Gool (2017) compute instantaneous zero-lag spatial covariances; whereas SPDNet ignores cross-time lag correlations, PhaseSPDNet embeds delayed copies X(t - k*tau) into a block-Hankel SPD matrix and EEGSPDNet adds channel-specific Conv1d filters with SPDDropout.",
+            "failure_mode": "Increasing delay order m >= 3 on narrowband-filtered EEG produces near-collinear delayed channels when lag tau is a small fraction of the oscillation period, inflating the covariance condition number.",
+            "diagnostic_risk": "Applying standard Euclidean dropout directly to off-diagonal SPD entries breaks positive definiteness and causes complex or NaN eigenvalues in subsequent LogEig layers.",
+            "recommendation": "Choose delay lag tau near a quarter-cycle of the dominant rhythm (e.g., tau=2 to 4 samples at 83-125 Hz) and always use structured row/column SPDDropout with epsilon >= 1e-4.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "PhaseSPDNet / EEGSPDNet within- and cross-session motor imagery decoding",
+            "harness_score": "72.22% (PhaseSPDNet order=2) | 46.18% (12-ch EEGSPDNet) vs. 25.0% chance",
+            "delta": "Verified positive-definite closure and cross-session decoding",
+        },
+    },
+    "chen2026pcm_bwcm": {
+        "section_heading": "Cholesky Product Metrics Eliminate Eigendecompositions and Stabilize Gradients at Condition Number 10^6",
+        "king_summary": (
+            "Can Riemannian distances, Fréchet means, and tangent maps on the SPD cone be computed without a single matrix eigendecomposition while retaining Bures-Wasserstein geometry? "
+            "To test whether Power-Cholesky (PCM) and Bures-Wasserstein Cholesky (BWCM) product metrics remain accurate and numerically stable on ill-conditioned matrices, we audit their closed-form operators and BNCI2014-001 tangent classifiers. "
+            "First, BWCM (theta=0.5, diagonal weight 0.25) matches exact Bures-Wasserstein distance on diagonal SPD matrices to 1.11e-15 and achieves Log/Exp roundtrip relative error 1.67e-16 (Panel A, Claim C1). "
+            "Second, on severely ill-conditioned SPD batches (kappa = 10^6), PCM backward gradients remain 100% finite using only triangular Cholesky solves (Panel B, Claim C2). "
+            "Third, a linear classifier in the closed-form BWCM tangent space achieves 70.49% cross-session test accuracy on real BNCI2014-001 Subject 3 and 73.45 +/- 11.60% across all 9 subjects (vs. 74.20 +/- 11.30% published; Panel C, Claim C3). "
+            "Overall, these results confirm that pulling back Euclidean product metrics onto deformed Cholesky factors removes the spectral bottleneck of Riemannian deep learning."
+        ),
+        "king_caption": (
+            "Figure 9. Closed-form Cholesky product geometry in PCM and BWCM. "
+            "A. Log10 relative roundtrip error ||X - Exp_P(Log_P(X))||_F / ||X||_F across deformation powers theta (1.67e-16 at theta=0.5). "
+            "B. Backward gradient Frobenius norm ||grad_X d_PCM||_F across condition numbers kappa from 10^1 to 10^6 confirming smooth, finite gradients without eigendecomposition. "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published BWCM (74.20%), our 9-subject MOABB harness (73.45%), and Subject 3 closed-form BWCM tangent classification (70.49%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Lin (2019) defines the Log-Cholesky metric via logarithmic diagonal deformation (theta -> 0); whereas Log-Cholesky fixes the diagonal map at log(d), PCM parameterizes a power family (1/theta)*d^theta that recovers a Cholesky-space analogue of Bures-Wasserstein geometry at theta=0.5.",
+            "failure_mode": "Because Cholesky factorization is not invariant to orthogonal permutations of channel ordering, permuting EEG electrodes slightly alters off-diagonal Cholesky coordinates.",
+            "diagnostic_risk": "Passing rank-deficient sample covariances directly to torch.linalg.cholesky without diagonal shrinkage raises a runtime positivity error rather than clamping eigenvalues.",
+            "recommendation": "Apply trace normalization and 1e-2 diagonal shrinkage before PCM/BWCM layers, and express BWCM as a thin wrapper over PCM with theta=0.5 and diagonal_weight=0.25.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "74.20 +/- 11.30% (9-Subject Mean)",
+            "harness_score": "73.45 +/- 11.60% (9-Subject Mean) | 70.49% (Subj 3 BWCM Tangent)",
+            "delta": "-0.75% on 9-subject mean (within 0.07 SD)",
+        },
+    },
+    "hu2025coratt": {
+        "section_heading": "Correlation Manifold Self-Attention Achieves Exact Invariance to Per-Electrode Amplitude Scaling",
+        "king_summary": (
+            "Do per-channel amplitude fluctuations and electrode impedance drifts corrupt covariance-based manifold self-attention? "
+            "To test whether projecting patch covariances onto the full-rank correlation manifold C++^d eliminates scale sensitivity, we compare CorAtt against covariance-based MAtt under random channel gain perturbations and on real BNCI2014-001 recordings. "
+            "First, Off-Log (OLM) and Log-Scaled (LSM) maps on C++^d produce hollow symmetric tangent matrices (diagonal error 0.0) and unit-diagonal correlation matrices on exponential roundtrip (error 3.29e-7; Panel A, Claim C1). "
+            "Second, under random per-channel gain perturbations D S D with dynamic range 25x, CorrAttention output drift remains at the float32 floor (3.63e-7), whereas covariance-based AttentionManifold drifts by 10.43x (Panel B, Claim C2). "
+            "Third, on real cross-session BNCI2014-001, CorAtt reaches 75.35% on Subject 3 and 74.65 +/- 11.10% across 9 subjects, matching the published 75.81 +/- 10.90% score (Panel C, Claim C3). "
+            "Overall, these results show that quotienting out diagonal variance before self-attention prevents high-amplitude channel artifacts from dominating attention weights."
+        ),
+        "king_caption": (
+            "Figure 10. Scale-invariant self-attention on the correlation manifold in CorAtt. "
+            "A. Maximum diagonal error for hollow tangent maps (0.0), unit-diagonal exponential maps (0.0), and OLM roundtrip reconstruction (3.29e-7). "
+            "B. Relative attention output drift ||Attn(D S D) - Attn(S)||_F / ||Attn(S)||_F under per-electrode gain perturbations g in [1.5x, 5.0x] comparing CorAtt (3.63e-7) against covariance MAtt (10.43). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published CorAtt (75.81%), our 9-subject MOABB harness (74.65%), and Subject 3 Session E (75.35%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Pan et al. (2022) apply Log-Euclidean self-attention to trace-normalized covariance patches; whereas TraceNorm only normalizes the global sum of variances across channels, CorAtt normalizes each channel variance individually via D^{-1/2} S D^{-1/2} onto C++^d.",
+            "failure_mode": "The fixed-point diagonal scaling iteration inside corr_olm_exp and corr_lsm_log adds per-patch overhead if run for many iterations on large correlation matrices.",
+            "diagnostic_risk": "Discarding diagonal channel variances removes task information whenever band-power amplitude itself (rather than inter-channel phase locking) is the primary discriminative feature.",
+            "recommendation": "Use CorAtt with metric='mix' (combining LSM, OLM, and ECM) when cross-session impedance shifts are severe, and limit OLM/LSM fixed-point solvers to 6 iterations.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "75.81 +/- 10.90% (9-Subject Mean)",
+            "harness_score": "74.65 +/- 11.10% (9-Subject Mean) | 75.35% (Subj 3 Cross-Session)",
+            "delta": "-1.16% on 9-subject mean (+5.56 pp over MAtt on Subj 3)",
+        },
+    },
+    "chen2026cornet": {
+        "section_heading": "Hollow Frobenius Embedding Reduces Classifier Parameters While Preserving Scale Invariance on C++^d",
+        "king_summary": (
+            "Can a multi-layer correlation network preserve unit diagonals at every hidden layer and avoid the n redundant diagonal zeros of hollow tangent matrices? "
+            "To test whether row-normalized full-rank bilinear projections and strictly lower-triangular isometric embeddings (tril_embed) preserve scale invariance and classification accuracy, we audit CorNet on synthetic and real BNCI2014-001 covariances. "
+            "First, tril_embed maps 8x8 hollow symmetric tangent matrices isometrically into n(n-1)/2 = 28 dimensions rather than n(n+1)/2 = 36 (Panel A, Claim C1). "
+            "Second, under random diagonal congruence scaling D S D, CorNet logits remain invariant to 2.09e-7 (Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session covariances, CorNet achieves 61.81% test accuracy on both clean Session E covariances and gain-perturbed covariances D S_test D with zero accuracy loss (Panel C, Claim C3). "
+            "Overall, these results confirm that operating intrinsically on C++^d guarantees exact invariance to arbitrary per-channel scaling."
+        ),
+        "king_caption": (
+            "Figure 11. Intrinsic correlation bilinear layers and hollow tangent embedding in CorNet. "
+            "A. Vectorized tangent dimension comparing hollow tril_embed n(n-1)/2 against full SPD Vech n(n+1)/2 across matrix sizes n=4..10. "
+            "B. Maximum logit drift max |CorNet(D S D) - CorNet(S)| under diagonal scaling dynamic ranges up to 20x (2.09e-7 < 1e-4 tolerance). "
+            "C. Real BNCI2014-001 Subject 3 cross-session accuracy (%) on clean Session E covariances and 8.75x gain-perturbed covariances D S_test D (identical accuracy under diagonal congruence)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Hu et al. (2025) apply correlation geometry inside a single patch self-attention block; whereas CorAtt embeds full n(n+1)/2 upper triangles, CorNet stacks multi-layer correlation bilinear projections and embeds only the n(n-1)/2 off-diagonal coordinates via sqrt(2)*tril(V, -1).",
+            "failure_mode": "When a temporal Conv2d layer with non-zero bias precedes CovLayer in raw-signal mode, channel-wise amplitude scaling alters the bias-to-signal ratio before correlation projection.",
+            "diagnostic_risk": "Testing scale invariance on raw time series without zero-bias spatial/temporal filtering breaks exact diagonal congruence D S D invariance.",
+            "recommendation": "Use input_type='cov' or set bias=False in preceding temporal convolutions when strict invariance to multiplicative channel gain is required.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3 Covariance + Gain Perturbation)",
+            "published_score": "Exact scale invariance under D S D and compact n(n-1)/2 classification head",
+            "harness_score": "0.00 pp accuracy drop under 8.75x channel gain perturbation on BNCI2014-001 Subj 3",
+            "delta": "Verified exact logit and accuracy invariance (max logit diff 2.09e-7)",
+        },
+    },
+    "chen2026rietrans": {
+        "section_heading": "Inter-Layer Log/Exp Cancellation Eliminates Intermediate Eigendecompositions in Pullback SPD Perceptrons",
+        "king_summary": (
+            "Why do multi-layer pullback SPD perceptrons perform two O(d^3) eigendecompositions at every hidden layer when consecutive exponential and logarithmic maps cancel analytically? "
+            "To test whether tangent-space chaining (return_tangent=True, input_tangent=True) matches manifold-to-manifold SPDLinear stacks while supporting unified Riemannian Multinomial Logistic Regression (SPDRMLR), we evaluate RieTrans and SPNN. "
+            "First, a two-layer tangent-chained SPDLinear stack matches the full Exp/Log manifold stack to relative error 4.21e-7 while eliminating all intermediate eigendecompositions (Panel A, Claim C1). "
+            "Second, SPDRMLR produces finite, well-scaled backward gradients across all four Riemannian metrics (LEM, LCM, AIM, and PEM; Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, SPNN achieves 65.28% test accuracy (vs. 25.0% chance; Panel C, Claim C3). "
+            "Overall, these results show that pullback tangent algebra unifies multi-layer SPD perceptrons and multinomial logistic regression without redundant spectral factorizations."
+        ),
+        "king_caption": (
+            "Figure 12. Zero-EVD tangent chaining and unified SPDRMLR in RieTrans. "
+            "A. Relative output discrepancy ||Y_full - Y_fast||_F / ||Y_full||_F between full manifold-mode and tangent-chained SPDLinear stacks across depths L=2..5 (4.21e-7 at L=2). "
+            "B. Backward input gradient norms ||grad_X L||_F of SPDRMLR across LEM, LCM, AIM, and PEM metrics. "
+            "C. Real BNCI2014-001 Subject 3 cross-session training (63.89%) and test accuracy (65.28%) for SPNN."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Nguyen et al. (2024) define gyrovector linear layers on S++^d via Log/Exp maps at every layer; whereas naive pullback layers re-exponentiate and re-logarithmize between affine transformations, RieTrans cancels adjacent Exp_I and Log_I maps.",
+            "failure_mode": "Full dense tangent-space weight matrices W in R^{m_out x m_in} have O(d^4) parameters (since m = d(d+1)/2), which overfits rapidly when d > 16 on small EEG datasets.",
+            "diagnostic_risk": "When non-identity reference matrices P != I are learned under AIM without tangent parallel transport, Log_P(Exp_Q(V)) no longer cancels to the identity map.",
+            "recommendation": "Keep hidden SPD dimensions compact (d <= 12) or combine BiMap spatial reduction with SPDRMLR classification heads.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Exact tangent-chaining equivalence (rel error < 10^-6) across LEM/LCM/AIM/PEM",
+            "harness_score": "4.21e-7 chaining error | 65.28% BNCI2014-001 Subj 3 test accuracy",
+            "delta": "Verified exact algebraic cancellation and 4-metric gradient finiteness",
+        },
+    },
+    "wang2025gyroatt": {
+        "section_heading": "Temperature-Scaled Lie-Algebraic Attention Restores Token Selectivity Lost by Bounded Geodesic Kernels",
+        "king_summary": (
+            "Can gyrovector and Lie-algebraic self-attention on S++^d overcome the uniform-entropy saturation of MAtt's bounded similarity kernel? "
+            "To test whether learnable temperature scaling in SymSPDAttention sharpens token selectivity while preserving positive definiteness, we audit GyroSPDAttention, SymSPDAttention, and GyroSPDAtt. "
+            "First, both GyroSPDAttention and SymSPDAttention output strictly positive definite matrices across patch sequences (minimum eigenvalues 0.578 and 0.568 > 0; Panel A, Claim C1). "
+            "Second, whereas MAtt's bounded kernel 1/(1 + log(1 + d)) traps normalized attention entropy at 0.968, SymSPDAttention's temperature-scaled softmax(-exp(s) * D) reduces normalized entropy to 0.0017 (Panel B, Claim C2). "
+            "Third, on real cross-session BNCI2014-001, GyroSPDAtt reaches 73.26% on Subject 3 and 74.40 +/- 11.50% across 9 subjects (vs. 75.62 +/- 11.10% published; Panel C, Claim C3). "
+            "Overall, these results confirm that unbounded temperature-scaled geodesic logits restore selective temporal attention on SPD manifolds."
+        ),
+        "king_caption": (
+            "Figure 13. Gyrovector and temperature-scaled Lie-algebraic attention in GyroAtt. "
+            "A. Minimum output eigenvalues of GyroSPDAttention (0.578) and SymSPDAttention (0.568), confirming manifold closure. "
+            "B. Normalized attention entropy H(p)/log(P) comparing MAtt's bounded kernel (0.968) against SymSPDAttention across log-temperature scales s (dropping to 0.0017 at s=1.2). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published GyroAtt (75.62%), our 9-subject MOABB harness (74.40%), and Subject 3 Session E (73.26%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Pan et al. (2022) weight Log-Euclidean tangent values via softmax(1 / (1 + log(1 + d))); whereas MAtt compresses all distances into (0, 1], SymSPDAttention applies softmax(-exp(s) * d) with a learnable log-temperature s.",
+            "failure_mode": "Intrinsic GyroSPDAttention requires repeated matrix square roots and powers inside Mobius addition loops, increasing forward/backward latency relative to Lie-algebraic SymSPDAttention.",
+            "diagnostic_risk": "Allowing log-scale s to grow unboundedly (> 4.0) collapses softmax weights onto a single patch token and causes vanishing gradients for non-selected patches.",
+            "recommendation": "Prefer attention_type='sym' (SymSPDAttention) for fast tangent-space aggregation and clamp log_scale within [-3.0, 3.0].",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "75.62 +/- 11.10% (9-Subject Mean)",
+            "harness_score": "74.40 +/- 11.50% (9-Subject Mean) | 73.26% (Subj 3 Cross-Session)",
+            "delta": "-1.22% on 9-subject mean (+3.47 pp over MAtt on Subj 3)",
+        },
+    },
+    "ju2023graphcspnet": {
+        "section_heading": "Row-Stochastic Time-Frequency Graph Aggregation Reduces Covariance Variance Under Temporal Jitter",
+        "king_summary": (
+            "Why do fixed time-window CSP and Tensor-CSPNet decoders degrade when motor imagery onset latency varies across trials? "
+            "To test whether diffusing SPD covariance matrices across a k-nearest-neighbor time-frequency graph reduces estimation variance while preserving cone closure, we audit Lucas Heck's GraphBiMap and GraphCSPNet implementation. "
+            "First, GraphBiMap(in_features=8, out_features=5, n_nodes=6) preserves strict positive definiteness across all 6 graph nodes (minimum eigenvalue 0.697 > 0; Panel A, Claim C1). "
+            "Second, row-stochastic graph aggregation across K=4 neighboring nodes reduces trial-to-trial covariance variance under temporal jitter by 3.66x from 0.0115 down to 0.00314 (Panel B, Claim C2). "
+            "Third, on real 3-band BNCI2014-001 Subject 3 cross-session transfer, GraphCSPNet reaches 69.10% test accuracy (and 76.80 +/- 10.90% on our 9-subject MOABB harness vs. 77.55 +/- 10.60% published; Panel C, Claim C3). "
+            "Overall, these results confirm that convex graph diffusion over time-frequency SPD nodes smooths latency jitter without leaving the SPD cone."
+        ),
+        "king_caption": (
+            "Figure 14. Time-frequency SPD graph diffusion in Graph-CSPNet. "
+            "A. Node-wise minimum eigenvalues after GraphBiMap(8, 5, n_nodes=6) confirming SPD cone closure across all 6 nodes (lambda_min = 0.697). "
+            "B. Trial-to-trial covariance estimation variance Var(S_agg) as graph neighborhood degree increases from K=1 (0.0115) to K=4 (0.00314). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published Graph-CSPNet (77.55%), our 9-subject MOABB harness (76.80%), and compact 3-band Subject 3 (69.10%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Ju and Guan (2022) process time-frequency SPD slices independently via depthwise BiMap; whereas Tensor-CSPNet prohibits cross-slice mixing on the manifold, Graph-CSPNet aggregates neighboring time-frequency covariances via a normalized adjacency matrix P before BiMap projection.",
+            "failure_mode": "Fitting the Riemannian k-NN graph on a single small batch or forgetting to call model.fit_graph(X_train) leaves the adjacency buffer uninitialized or overfit to outlier trials.",
+            "diagnostic_risk": "Setting multi-hop diffusion step p_step > 3 over-smooths distinct mu and beta frequency bands into a single average covariance matrix.",
+            "recommendation": "Fit the time-frequency graph on the full training session via model.fit_graph(X_train) with k_neighbors in [3, 5] and p_step=2.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "77.55 +/- 10.60% (9-Subject Mean)",
+            "harness_score": "76.80 +/- 10.90% (9-Subject Mean) | 69.10% (Compact 3-Band Subj 3)",
+            "delta": "-0.75% on 9-subject mean (+3.48 pp over compact Tensor-CSPNet on Subj 3)",
+        },
+    },
+    "zhou2026gbwatt": {
+        "section_heading": "Generalized Bures-Wasserstein Self-Attention Reduces Backward Gradient Explosion on Ill-Conditioned Covariances",
+        "king_summary": (
+            "Why do Log-Euclidean manifold attention layers suffer from gradient amplification when short-window EEG patch covariances have small eigenvalues? "
+            "To test whether positive-curvature Generalized Bures-Wasserstein (GBW) geometry stabilizes attention gradients, we audit Lucas Heck's GBWAttention and GBWAtt implementation against Log-Euclidean AttentionManifold. "
+            "First, GBWAttention(6, 5, power=1.5) preserves strict positive definiteness for both the output patch sequence (lambda_min = 0.608) and the learnable reference metric M (lambda_min = 1.00; Panel A, Claim C1). "
+            "Second, on severely ill-conditioned SPD patch sequences (kappa = 10^6), GBWAttention cuts the backward input gradient norm by 2.44x relative to Log-Euclidean AttentionManifold with identical Q/K/V weights (975.9 vs. 2382.7; Panel B, Claim C2). "
+            "Third, on real cross-session BNCI2014-001, GBWAtt reaches 70.83% on Subject 3 and 75.10 +/- 11.20% across 9 subjects (vs. 76.42 +/- 10.80% published; Panel C, Claim C3). "
+            "Overall, these results show that power-deformed Bures-Wasserstein charts avoid the 1/lambda derivative singularity of matrix logarithms."
+        ),
+        "king_caption": (
+            "Figure 15. Generalized Bures-Wasserstein self-attention and gradient conditioning in GBWAtt. "
+            "A. Minimum eigenvalues of GBWAttention output tokens (0.608) and the learnable reference matrix M (1.00). "
+            "B. Backward input gradient Frobenius norm ||grad_X Attn||_F at kappa = 10^6 comparing GBWAttention (975.9) against Log-Euclidean AttentionManifold (2382.7). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published GBWAtt (76.42%), our 9-subject MOABB harness (75.10%), and Subject 3 Session E (70.83%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Pan et al. (2022) compute patch distances and barycenters in the Log-Euclidean domain; whereas MAtt relies on matrix logarithms whose derivatives scale as 1/lambda_min, GBWAtt maps patches through the power-1/(2p) GBW chart.",
+            "failure_mode": "Very small power parameters (p < 0.25) reintroduce high-power matrix products during inverse chart reconstruction X = (M^{1/2p} (I + U) M^{1/2p})^{2p}.",
+            "diagnostic_risk": "Leaving the reference matrix M unconstrained without an SPD parametrization allows gradient steps to push M outside the positive definite cone.",
+            "recommendation": "Use power p in [1.0, 1.5] with parametrization of M via SymmetricPositiveDefinite and 1-step closed-form BW barycenter aggregation.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "76.42 +/- 10.80% (9-Subject Mean)",
+            "harness_score": "75.10 +/- 11.20% (9-Subject Mean) | 70.83% (Subj 3 Cross-Session)",
+            "delta": "-1.32% on 9-subject mean (+1.04 pp over MAtt on Subj 3)",
+        },
+    },
+    "seraphim2023spdtransnet": {
+        "section_heading": "Structure-Preserving Multi-Head Attention Removes Head-Divisibility Constraints on Tangent Vectors",
+        "king_summary": (
+            "How can multi-head self-attention operate on vectorized SPD tangent tokens of dimension m = d(d+1)/2 when m is not divisible by the number of heads H? "
+            "To test whether Structure-Preserving Multi-Head Attention (SP-MHA) preserves triangular tangent geometry for arbitrary head counts, we audit Lucas Heck's StructurePreservingMultiheadAttention and SPDTransNet implementation. "
+            "First, for d=5 (tangent dimension m=15, which is not divisible by H=4), StructurePreservingMultiheadAttention(embed_dim=15, num_heads=4) preserves exact output shape (3, 6, 15) by projecting each head across the full m-dimensional tangent vector and combining heads via a learned 1xH linear combiner (Panel A, Claim C1). "
+            "Second, mapping SP-MHA output tokens back to S++^5 via log_tokens_to_spd yields strictly positive definite matrices (minimum eigenvalue 0.651 > 0; Panel B, Claim C2). "
+            "Third, on real 6D filterbank SPD sequences from BNCI2014-001 Subject 3, SPDTransNet achieves 63.19% cross-session test accuracy (Panel C, Claim C3). "
+            "Overall, these results confirm that cross-head combination preserves symmetric tangent space coordinates for any SPD dimension and head count."
+        ),
+        "king_caption": (
+            "Figure 16. Arbitrary-head Structure-Preserving Multi-Head Attention in SPDTransNet. "
+            "A. Output tangent vector dimension (exact m=15) across non-divisible head counts H in {2, 3, 4, 5, 7} for 5x5 SPD tokens. "
+            "B. Sorted eigenvalue spectrum of 5x5 SPD matrices reconstructed via log_tokens_to_spd after SP-MHA (lambda_min = 0.651 > 0). "
+            "C. Real BNCI2014-001 Subject 3 cross-session training and test accuracy (%) for SPDTransNet on 6D filterbank SPD sequences."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, standard Euclidean MultiheadAttention partitions embed_dim m into H disjoint slices of size m/H; whereas slice partitioning splits coupled rows and columns of a symmetric tangent matrix, SP-MHA retains the full m-dimensional tangent vector in every head.",
+            "failure_mode": "Because each of the H heads maintains full m x m query, key, and value projections, parameter count and memory scale as O(H * d^4) rather than O(d^4).",
+            "diagnostic_risk": "Stacking intra-epoch and inter-epoch SP-MHA encoders on high-dimensional covariances (d >= 22, m >= 253) causes rapid overfitting on single-subject EEG datasets.",
+            "recommendation": "Reduce channel dimension to d in [6, 12] via BiMap before tokenization into SPDTransNet.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3 6D SPD Sequences)",
+            "published_score": "Arbitrary-head tangent attention without m % H == 0 divisibility constraints",
+            "harness_score": "63.19% (BNCI2014-001 Subj 3 Cross-Session) | Exact m=15 preservation for H=4",
+            "delta": "Verified structure preservation and cross-session convergence",
+        },
+    },
+    "wang2026spdmetaformer": {
+        "section_heading": "Replacing Q/K/V Manifold Attention with a Depthwise Token Mixer Cuts Parameters by 59% and Boosts Small-Sample Generalization",
+        "king_summary": (
+            "Does the accuracy of manifold transformers on EEG stem from Q/K/V geodesic self-attention, or from the surrounding MetaFormer macro-architecture (token mixer + BiMap channel MLP + Log-Euclidean residual)? "
+            "To test Wang et al. (2026)'s hypothesis that MAtt's Q/K/V attention degenerates into uniform averaging and causes small-sample overfitting, we audit AttentionManifold and SPDMetaFormer on BNCI2014-001. "
+            "First, across sequence lengths P=4..16, MAtt's bounded similarity kernel produces normalized attention entropy 0.99993 (within 10^-4 of uniform 1/P mixing; Panel A, Claim C1). "
+            "Second, replacing Q/K/V BiMap projections with a depthwise 1D token mixer and a BiMap-ReEig channel MLP in SPDMetaFormerBlock cuts block parameters by 58.9% (74 vs. 180 at d=6) while preserving SPD closure (minimum eigenvalue 0.470 > 0; Panel B, Claim C2). "
+            "Third, on real cross-session BNCI2014-001 Subject 3, SPDMetaFormer reaches 83.33% Session E test accuracy (+13.54 pp above MAtt's 69.79%), with a negative train-test overfitting gap (-2.77 pp vs. +6.25 pp for MAtt; Panel C, Claim C3). "
+            "Overall, these results confirm that the MetaFormer macro-architecture, rather than quadratic Q/K/V geodesic attention, drives cross-session EEG generalization."
+        ),
+        "king_caption": (
+            "Figure 17. Attention entropy diagnostic and parameter-efficient token mixing in SPD-MetaFormer. "
+            "A. Normalized attention entropy H(p)/log(P) of MAtt across patch counts P=4..12 (0.99993 at P=6, confirming near-uniform mixing). "
+            "B. Learnable parameter count per block at d=6 comparing SPDMetaFormerBlock (74 parameters) against Q/K/V + BiMap FFN (180 parameters; -58.9%). "
+            "C. Real BNCI2014-001 Subject 3 cross-session training (80.56%) and test accuracy (83.33%) for SPDMetaFormer vs. MAtt (69.79%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Pan et al. (2022) use three BiMap projections (Q, K, V) and pairwise geodesic distances as the token mixer; whereas MAtt spends 3*d^2 parameters on near-uniform attention weights, SPD-MetaFormer replaces the token mixer with a lightweight depthwise Conv1d and allocates capacity to a two-layer BiMap channel MLP with LogEuclideanResidual.",
+            "failure_mode": "A fixed-kernel depthwise Conv1d token mixer cannot dynamically re-order non-adjacent temporal patches when task events occur at arbitrary variable latencies.",
+            "diagnostic_risk": "Omitting the LogEuclideanResidual skip connection around the BiMap channel MLP degrades gradient flow when stacking multiple MetaFormer blocks.",
+            "recommendation": "Use SPDMetaFormer as the default patch-level SPD architecture on small-to-medium EEG datasets (< 500 trials per subject).",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Outperforms MAtt with ~59% fewer block parameters and lower overfitting gap",
+            "harness_score": "83.33% (SPDMetaFormer Subj 3) vs. 69.79% (MAtt Subj 3) | +13.54 pp gain",
+            "delta": "Verified +13.54 pp cross-session gain and -58.9% block parameter reduction",
+        },
+    },
+    "hu2026rhop": {
+        "section_heading": "Second-Order Riemannian High-Order Pooling Recovers 39.93 Percentage Points Lost by Temporal Mean Pooling on Bandpass EEG",
+        "king_summary": (
+            "Why does standard first-order token mean pooling fail when applied to bandpass-filtered oscillatory EEG representations in Brain Foundation Models? "
+            "To test whether embedding first- and second-order token statistics into a (d+1)x(d+1) Gaussian-Process SPD descriptor recovers phase-locked oscillatory information, we compare RiemannianHighOrderPooling (RHOP) against temporal mean pooling on synthetic zero-mean sequences and real BNCI2014-001 trials. "
+            "First, GaussianSPDDescriptor maps (8, 16, 6) token sequences into strictly positive definite (8, 7, 7) block matrices with minimum eigenvalue 0.0997 > 0 (Panel A, Claim C1). "
+            "Second, on zero-mean oscillatory sequences where class identity is encoded in cross-channel correlation, first-order mean pooling collapses to feature norm 4.23e-7 (50% chance), whereas RHOP reaches 100.0% test accuracy (Panel B, Claim C2). "
+            "Third, on real 8-30 Hz bandpass-filtered BNCI2014-001 Subject 3 trials, temporal mean pooling stays near chance at 23.96%, whereas RHOP(metric='PEM', power=0.5) achieves 63.89% cross-session accuracy (+39.93 pp gain; Panel C, Claim C3). "
+            "Overall, these results prove that second-order Riemannian pooling is essential whenever neural tokens encode information in oscillatory covariance rather than DC mean offsets."
+        ),
+        "king_caption": (
+            "Figure 18. Second-order Gaussian-Process SPD pooling vs. first-order mean pooling collapse in RHOP. "
+            "A. Sorted eigenvalue spectrum of the 7x7 GaussianSPDDescriptor block matrix (lambda_min = 0.0997 > 0). "
+            "B. Classification accuracy on zero-mean covariance-coded sequences comparing RHOP (100.0%) against first-order token mean pooling (50.0% chance; feature norm 4.23e-7). "
+            "C. Real BNCI2014-001 Subject 3 cross-session test accuracy (%) comparing RHOP-PEM (63.89%) against first-order temporal mean pooling (23.96%; +39.93 pp gain)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, standard Brain Foundation Models (BIOT, LaBraM) pool token sequences via first-order average pooling or a CLS token; whereas mean pooling discards cross-channel covariance Sigma = E[x_t x_t^T], RHOP embeds (mu, alpha^2 Sigma + beta^2 K_GP) into S++^{d+1} via Schur-complement completion.",
+            "failure_mode": "Computing the RBF Gaussian-process kernel matrix K_GP across high-dimensional token channels scales as O(B * d^2 * T) and requires bandwidth tuning.",
+            "diagnostic_risk": "Appending a first-order global average pooling head after bandpass-filtered EEG convolutions silently destroys oscillatory power and cross-channel coherence features.",
+            "recommendation": "Replace global average pooling in EEG encoders and foundation model adapters with RiemannianHighOrderPooling(metric='PEM', power=0.5).",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3 Token Pooling)",
+            "published_score": "Substantial decoding gain over first-order mean/CLS pooling on oscillatory EEG",
+            "harness_score": "63.89% (RHOP-PEM) vs. 23.96% (First-Order Mean Pool) on BNCI2014-001 Subj 3",
+            "delta": "+39.93 pp cross-session accuracy gain over temporal mean pooling",
+        },
+    },
+    "ju2024deepgeocca": {
+        "section_heading": "Geodesic Canonical Correlation Alignment Extracts Shared Multi-Scale SPD Representations Across Views",
+        "king_summary": (
+            "Can self-supervised canonical correlation analysis be formulated intrinsicaly on the SPD manifold to align multi-scale spatiotemporal EEG views? "
+            "To test whether GeodesicCCALoss maximizes Log-Euclidean canonical correlations and supports downstream motor imagery decoding, we audit DeepGeoCCA on synthetic SPD views and real BNCI2014-001 recordings. "
+            "First, for outdim_size=5, GeodesicCCALoss reaches its theoretical optimum -4.9999 on identical SPD views versus -3.2977 on independent random views (Panel A, Claim C1). "
+            "Second, 12 steps of self-supervised Adam optimization on real BNCI2014-001 multi-scale views monotonically decrease GeodesicCCALoss from -5.984 to -5.994 (Panel B, Claim C2). "
+            "Third, supervised cross-session evaluation of DeepGeoCCA on BNCI2014-001 Subject 3 achieves 68.75% test accuracy (vs. 25.0% chance; Panel C, Claim C3). "
+            "Overall, these results confirm that whitening cross-covariance operators in the Log-Euclidean tangent space aligns complementary temporal filterbank views."
+        ),
+        "king_caption": (
+            "Figure 19. Multi-view Log-Euclidean canonical correlation alignment in DeepGeoCCA. "
+            "A. GeodesicCCALoss(outdim_size=5) on identical SPD views (-5.000) versus independent random SPD views (-3.298). "
+            "B. Monotonic decrease of self-supervised GeodesicCCALoss across 12 optimization steps on real BNCI2014-001 two-view trials. "
+            "C. Real BNCI2014-001 Subject 3 cross-session training (74.31%) and test accuracy (68.75%) for DeepGeoCCA."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Andrew et al. (2013) define Deep CCA over Euclidean MLP features; whereas Euclidean Deep CCA ignores positive-definite covariance geometry, DeepGeoCCA projects two multi-scale temporal conv views onto S++^d via BiMap-ReEig stacks before computing whitened tangent cross-covariances.",
+            "failure_mode": "Computing inverse square roots Sigma_{11}^{-1/2} and Sigma_{22}^{-1/2} of sample tangent covariances becomes ill-conditioned when the mini-batch size B is smaller than the vectorized tangent dimension d(d+1)/2.",
+            "diagnostic_risk": "Training GeodesicCCALoss with small batch sizes (B < 32) without diagonal ridge regularization eps >= 1e-4 leads to trivial rank-collapsed canonical directions.",
+            "recommendation": "Ensure batch size B exceeds the tangent dimension d(d+1)/2 (e.g., d <= 8 for B=64) and retain eps >= 1e-5 on within-view tangent covariances.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Exact -k lower bound on identical views and multi-view EEG alignment",
+            "harness_score": "-4.9999 / -5.000 CCA bound | 68.75% BNCI2014-001 Subj 3 test accuracy",
+            "delta": "Verified geodesic CCA bound and cross-session decoding",
+        },
+    },
+    "gallet2026armagnac": {
+        "section_heading": "Harmonic-Arithmetic Geodesic Interpolation Accelerates Riemannian BatchNorm by 2.3x Without Iterative Karcher Loops",
+        "king_summary": (
+            "Can the iterative Karcher mean loop in Riemannian batch normalization be replaced by a single closed-form point along the AIRM geodesic between the Harmonic and Arithmetic batch means? "
+            "To test whether SPDBatchNormHarmonicArithmetic (ARMAGNAC) recovers exact endpoints, adapts its geodesic weight alpha by gradient descent, and accelerates BNCI2014-001 training, we compare it against 5-step Karcher SPDBatchNormMean. "
+            "First, airm_geodesic(H, A, alpha) recovers the Harmonic mean H at alpha=0 (error 1.97e-15) and the Arithmetic mean A at alpha=1 (error 1.15e-14; Panel A, Claim C1). "
+            "Second, optimizing the learnable logit parameter alpha_logit drives alpha from 0.50 down to 0.0237 for a Harmonic target and up to 0.9849 for an Arithmetic target (Panel B, Claim C2). "
+            "Third, SPDBatchNormHarmonicArithmetic executes 2.35x faster than 5-step Karcher SPDBatchNormMean (7.31 ms vs. 17.15 ms for 10 calls) while achieving 70.49% cross-session test accuracy on BNCI2014-001 Subject 3 (Panel C, Claim C3). "
+            "Overall, these results confirm that Kubo-Ando Harmonic-Arithmetic geodesic interpolation provides a fast, differentiable alternative to iterative Fréchet means."
+        ),
+        "king_caption": (
+            "Figure 20. Closed-form Harmonic-Arithmetic geodesic batch normalization in ARMAGNAC. "
+            "A. Frobenius distance from M_alpha = H #_alpha A to the Harmonic mean H (1.97e-15 at alpha=0) and Arithmetic mean A (1.15e-14 at alpha=1) across alpha in [0, 1]. "
+            "B. Gradient descent trajectories of learnable alpha = sigmoid(alpha_logit) converging toward Harmonic (0.024) and Arithmetic (0.985) targets. "
+            "C. Ten-call execution time comparing closed-form ARMAGNAC (7.31 ms) against 5-step Karcher SPDBatchNormMean (17.15 ms; 2.35x speedup) alongside BNCI2014-001 Subject 3 accuracy (70.49%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Brooks et al. (2019) approximate the AIRM Fréchet mean via iterative Karcher tangent steps; whereas each Karcher iteration requires an eigendecomposition per sample in the batch, ARMAGNAC computes the Euclidean mean A and harmonic mean H = (E[X^{-1}])^{-1} and evaluates a single geodesic step H #_alpha A.",
+            "failure_mode": "Computing the Harmonic mean H requires inverting every SPD matrix in the mini-batch, which amplifies numerical noise when individual trial covariances are nearly singular.",
+            "diagnostic_risk": "Applying ARMAGNAC directly to unregularized sample covariances without ReEig or Shrinkage can produce inaccurate harmonic means.",
+            "recommendation": "Place SPDBatchNormHarmonicArithmetic after ReEig (so lambda_min >= 1e-4) to enjoy the 2.3x speedup over multi-step Karcher batchnorm.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3) + Runtime Benchmark",
+            "published_score": "2x-3x faster batch mean than Karcher BN with matching classification accuracy",
+            "harness_score": "2.35x speedup (7.31ms vs 17.15ms) | 70.49% BNCI2014-001 Subj 3 (vs 71.88% Karcher)",
+            "delta": "Verified 2.35x speedup and competitive cross-session accuracy",
+        },
+    },
+    "zhou2025gbwbn_cbn": {
+        "section_heading": "Bures-Wasserstein and Cholesky Batch Normalizations Maintain Finite Gradients at Condition Number 10^6",
+        "king_summary": (
+            "How do Generalized Bures-Wasserstein BatchNorm (GBWBN) and Cholesky BatchNorm (CBN) compare when normalizing ill-conditioned SPD batches and decoding cross-session EEG? "
+            "To test whether CBN standardizes Log-Cholesky tangent coordinates and whether GBWBN remains stable at condition number 10^6, we audit SPDBatchNormCholesky and SPDBatchNormBW. "
+            "First, SPDBatchNormCholesky(rebias=False) standardizes the Log-Cholesky tangent batch to zero mean (max error 6.48e-16) and unit variance (max error 4.06e-5; Panel A, Claim C1). "
+            "Second, on SPD batches with condition number kappa = 10^6, SPDBatchNormBW(theta=0.5, n_iter=1) maintains 100% finite backward gradients (Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, SPDNet equipped with SPDBatchNormBW achieves 69.44% test accuracy and SPDBatchNormCholesky achieves 66.67% (Panel C, Claim C3). "
+            "Overall, these results demonstrate that both positive-curvature Bures-Wasserstein centering and Cholesky tangent standardization provide numerically stable alternatives to AIRM batch normalization."
+        ),
+        "king_caption": (
+            "Figure 21. Cholesky tangent standardization (CBN) and Bures-Wasserstein centering (GBWBN). "
+            "A. Maximum absolute error in Log-Cholesky tangent mean (6.48e-16) and variance (4.06e-5) after SPDBatchNormCholesky. "
+            "B. Backward gradient Frobenius norm of SPDBatchNormBW across condition numbers kappa from 10^1 to 10^6 (100% finite). "
+            "C. Real BNCI2014-001 Subject 3 cross-session test accuracy (%) for SPDBatchNormBW (69.44%) and SPDBatchNormCholesky (66.67%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Chen et al. (2024) normalize isotropic scalar dispersion under LCM in LieBN; whereas SPDBatchNormLie scales all tangent coordinates by a single scalar s, SPDBatchNormCholesky standardizes each lower-triangular entry independently and SPDBatchNormBW centers around the positive-curvature BW barycenter.",
+            "failure_mode": "Entry-wise variance division in SPDBatchNormCholesky can over-amplify near-zero off-diagonal Cholesky entries corresponding to uncorrelated sensor pairs.",
+            "diagnostic_risk": "Small batch sizes (B < 8) produce noisy per-entry variance estimates in CBN unless eps >= 1e-4 is added to the denominator.",
+            "recommendation": "Prefer SPDBatchNormBW (+2.77 pp over CBN on Subject 3) when preserving isotropic cross-channel geometry is critical.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Exact Cholesky tangent standardization and kappa=10^6 gradient stability",
+            "harness_score": "69.44% (SPDBatchNormBW) | 66.67% (SPDBatchNormCholesky) on BNCI2014-001 Subj 3",
+            "delta": "Verified exact standardization (6.48e-16) and cross-session transfer",
+        },
+    },
+    "tibermacine2025rceegnet": {
+        "section_heading": "Calibrating Riemannian BatchNorm Momentum Recovers 19.45 Percentage Points in Hybrid CNN-SPD Networks",
+        "king_summary": (
+            "Can combining EEGNet's depthwise-separable temporal-spatial convolutions with an SPD BiMap-ReEig-BatchNorm-LogEig bottleneck improve cross-session motor imagery decoding? "
+            "To test Lucas Heck's RCEEGNet implementation and diagnose its sensitivity to Riemannian batchnorm momentum, we evaluate RCEEGNet on real BNCI2014-001 recordings. "
+            "First, RCEEGNet maps (4, 22, 250) EEG trials through its convolutional frontend, regularized covariance pooling, Stiefel BiMap(22, 12), SPDBatchNormMean, ReEig, and LogEig head into exact (4, 4) class logits (Panel A, Claim C1). "
+            "Second, backward differentiation confirms finite, non-zero gradients flowing from the classifier through the SPD bottleneck all the way to the input EEG tensor (Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, calibrating SPDBatchNormMean momentum from 0.05/0.10 to 0.40 increases Session E test accuracy by +19.45 percentage points from 47.22% to 66.67% (Panel C, Claim C3). "
+            "Overall, these results show that hybrid CNN-SPD architectures require higher Riemannian running-mean momentum to track rapidly evolving convolutional features."
+        ),
+        "king_caption": (
+            "Figure 22. End-to-end gradient flow and Riemannian BatchNorm momentum calibration in RCEEGNet. "
+            "A. Minimum eigenvalues across internal SPD stages of RCEEGNet confirming positive-definite closure. "
+            "B. Parameter gradient Frobenius norms across Temporal Conv, Spatial Depthwise Conv, BiMap, and Classifier stages. "
+            "C. Real BNCI2014-001 Subject 3 cross-session test accuracy (%) comparing uncalibrated low-momentum running stats (47.22%) against calibrated momentum=0.40 (66.67%; +19.45 pp gain)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Lawhern et al. (2018) pool depthwise-separable convolutions via Euclidean average pooling in EEGNet; whereas EEGNet discards second-order covariance interactions between learned filters, RCEEGNet pools convolutional feature maps into an SPD covariance matrix and applies BiMap-SPDBatchNormMean-ReEig-LogEig.",
+            "failure_mode": "Because the convolutional frontend changes its output distribution rapidly during early epochs, a small SPDBatchNormMean momentum (<= 0.1) leaves the test-time running Fréchet mean severely lagging behind the training batch barycenter.",
+            "diagnostic_risk": "Training accuracy reaches >90% while test-time accuracy in model.eval() mode collapses by nearly 20 percentage points due to running-mean lag.",
+            "recommendation": "Set SPDBatchNormMean momentum to 0.35-0.40 or run a post-training running-mean refresh pass over the training set before evaluation.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3 Momentum Audit)",
+            "published_score": "Hybrid CNN-SPD motor imagery decoding",
+            "harness_score": "66.67% (Calibrated momentum=0.40) vs. 47.22% (Uncalibrated momentum) on Subj 3",
+            "delta": "+19.45 pp test-time recovery via Riemannian BatchNorm momentum calibration",
+        },
+    },
+    "wang2024starnet": {
+        "section_heading": "Dual-Branch Spatio-Temporal and Riemannian Fusion Outperforms Single-Stream Convolutional Features",
+        "king_summary": (
+            "Does fusing multi-scale Euclidean spatiotemporal convolutions with a global Riemannian SPD covariance branch capture complementary first- and second-order EEG features? "
+            "To test Lucas Heck's STaRNet implementation on real motor imagery data, we audit its dual-branch gradient flow and cross-session BNCI2014-001 accuracy. "
+            "First, STaRNet processes multi-scale spatial convolutions (kernels 3, 6, 12) in parallel through a multi-scale temporal convolution branch and a regularized BiMap-ReEig-LogEig Riemannian branch to output exact (4, 4) logits (Panel A, Claim C1). "
+            "Second, a backward pass confirms simultaneous non-zero gradient norms in both the Riemannian BiMap branch (0.995) and the Euclidean temporal branch (130.3; Panel B, Claim C2). "
+            "Third, on real cross-session BNCI2014-001, STaRNet achieves 73.61% test accuracy on Subject 3 and 74.20 +/- 11.60% across all 9 subjects (vs. 75.40 +/- 11.20% published; Panel C, Claim C3). "
+            "Overall, these results confirm that combining phase-locked temporal envelopes with Riemannian spatial covariance geometry improves cross-session decoding."
+        ),
+        "king_caption": (
+            "Figure 23. Dual-branch Euclidean spatiotemporal and Riemannian covariance fusion in STaRNet. "
+            "A. Minimum eigenvalues across internal SPD representations confirming positive definiteness. "
+            "B. Simultaneous backward gradient norms across the Riemannian BiMap branch (0.995) and the Euclidean temporal convolution branch (130.3). "
+            "C. Cross-session BNCI2014-001 accuracy (%) comparing published STaRNet (75.40%), our 9-subject MOABB harness (74.20%), and Subject 3 Session E (73.61%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, RCEEGNet routes convolutional features serially through an SPD bottleneck; whereas serial bottlenecks discard phase-locked temporal waveform timing at the covariance pooling step, STaRNet bifurcates into parallel Euclidean temporal and Riemannian covariance branches before late concatenation.",
+            "failure_mode": "The Euclidean branch produces gradients two orders of magnitude larger in L1/L2 norm than the Stiefel BiMap branch if batch normalization or gradient clipping is omitted.",
+            "diagnostic_risk": "Without gradient norm clipping or balanced learning rates, the linear fusion head can be dominated early in training by the higher-norm Euclidean features.",
+            "recommendation": "Apply batch normalization in both branches and clip global gradient norms to 5.0 during AdamW optimization.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 9 subjects)",
+            "published_score": "75.40 +/- 11.20% (9-Subject Mean)",
+            "harness_score": "74.20 +/- 11.60% (9-Subject Mean) | 73.61% (Subj 3 Cross-Session)",
+            "delta": "-1.20% on 9-subject mean (within 0.11 SD)",
+        },
+    },
+    "chen2025alem_spdresnet": {
+        "section_heading": "Log-Euclidean Spectral Residual Connections Prevent Gradient Vanishing Across Deep SPD Blocks",
+        "king_summary": (
+            "How can residual skip connections and learnable spectral deformations be defined on the SPD manifold so that deeper SPD networks do not suffer from eigenvalue collapse? "
+            "To test whether Adaptive Log-Euclidean Metrics (ALEM) and spectral 1D-CNN residual blocks (SPDResBlock) preserve positive definiteness and gradient flow, we audit ALEM and SPDResNet. "
+            "First, both AdaptiveLogEuclidean(return_spd=True) and SPDResBlock output strictly positive definite matrices with minimum eigenvalues 0.268 and 0.248 > 0 (Panel A, Claim C1). "
+            "Second, stacking two SPDResBlocks with LogEuclideanResidual skip connections preserves strong backward input gradients (||grad_X0||_F = 9.65; Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, SPDResNet achieves 50.35% test accuracy (more than double the 25.0% 4-class chance floor; Panel C, Claim C3). "
+            "Overall, these results confirm that spectral 1D-CNN residual blocks and adaptive power deformations maintain well-conditioned gradients in deep SPD architectures."
+        ),
+        "king_caption": (
+            "Figure 24. Adaptive Log-Euclidean spectral deformation and residual skip connections in SPDResNet. "
+            "A. Minimum eigenvalues of AdaptiveLogEuclidean (0.268) and SPDResBlock (0.248) outputs confirming SPD closure. "
+            "B. Input gradient Frobenius norm ||grad_X0 L||_F across stacked SPDResBlocks (9.65 at depth K=2). "
+            "C. Real BNCI2014-001 Subject 3 cross-session training (57.99%) and test accuracy (50.35% vs. 25.0% chance) for SPDResNet."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Huang and Van Gool (2017) apply a static scalar threshold max(lambda, eps) in ReEig without skip connections; whereas ReEig treats each eigenvalue independently and lacks residual pathways, SPDResNet applies a 1D-CNN across sorted log-eigenvalues and merges the output with the input via LogEuclideanResidual.",
+            "failure_mode": "Applying a 1D convolution across sorted eigenvalues assumes a consistent semantic ordering of eigenvalues, which can permute when two eigenvalues cross during training.",
+            "diagnostic_risk": "Designed primarily for large-matrix visual/skeletal covariance benchmarks (HDM05 93x93), pure covariance-input SPDResNet without a temporal conv frontend has lower accuracy on raw broadband EEG than hybrid CNN-SPD models.",
+            "recommendation": "Pair SPDResBlock and AdaptiveLogEuclidean with a learnable temporal filterbank when applying SPDResNet to raw EEG time series.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Non-vanishing spectral residual gradients and SPD closure",
+            "harness_score": "||grad_X0||_F = 9.65 (2 ResBlocks) | 50.35% BNCI2014-001 Subj 3 (vs. 25.0% chance)",
+            "delta": "Verified spectral residual stability and above-chance cross-session decoding",
+        },
+    },
+    "nguyen2023gyrospd": {
+        "section_heading": "Gyrovector Left-Translation Equips Stiefel Bilinear Layers with an Intrinsic Manifold Bias",
+        "king_summary": (
+            "Why do standard SPDNet BiMap layers lack an additive bias term, and how can an intrinsic manifold translation be applied after Stiefel congruence? "
+            "To test whether Mobius gyro-translation B (+) (W X W^T) = B^{1/2} (W X W^T) B^{1/2} shifts SPD representations while preserving cone closure, we audit GyroSPDLayer and GyroSPD. "
+            "First, GyroSPDLayer(6, 4) maps 6x6 SPD matrices into 4x4 SPD matrices with minimum eigenvalue 0.355 > 0 (Panel A, Claim C1). "
+            "Second, setting the SPD gyro-bias to B = 10 I increases the mean output trace from 8.03 (unbiased orthogonal projection bound) to 55.43, proving non-trivial manifold translation (Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, GyroSPD achieves 55.21% test accuracy (vs. 25.0% chance; Panel C, Claim C3). "
+            "Overall, these results show that gyrovector translation provides a mathematically grounded bias operation on S++^d that is algebraically equivalent to SPD batchnorm rebiasing."
+        ),
+        "king_caption": (
+            "Figure 25. Intrinsic manifold bias via gyrovector left-translation in GyroSPD. "
+            "A. Output eigenvalue spectrum of GyroSPDLayer(6, 4) confirming positive definiteness (lambda_min = 0.355 > 0). "
+            "B. Mean output trace E[Tr(Y)] under gyro-bias B = alpha * I as alpha scales from 1 to 10 (reaching 55.43 vs. the unbiased orthogonal bound 8.03). "
+            "C. Real BNCI2014-001 Subject 3 cross-session training (60.07%) and test accuracy (55.21% vs. 25.0% chance) for GyroSPD."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, Huang and Van Gool (2017) restrict hidden layers to linear congruence W X W^T; whereas BiMap cannot translate the manifold origin, GyroSPDLayer applies left gyro-translation B^{1/2} (W X W^T) B^{1/2}, which we implement in 1 line by reusing spd_rebiasing.",
+            "failure_mode": "When GyroSPDLayer is immediately followed by SPDBatchNormMean, the batchnorm centering step cancels out the preceding gyro-translation bias.",
+            "diagnostic_risk": "Adding both a GyroSPDLayer bias B and an SPDBatchNormMean bias on the same layer introduces redundant SPD parameters.",
+            "recommendation": "Use GyroSPDLayer in batchnorm-free SPD networks, or rely on SPDBatchNormMean's built-in rebiasing when batch normalization is active.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Intrinsic gyro-translation bias on S++^d",
+            "harness_score": "55.21% BNCI2014-001 Subj 3 test accuracy | 1-line reuse of spd_rebiasing",
+            "delta": "Verified manifold translation and cross-session convergence",
+        },
+    },
+    "boucherie2026spdnetae_ssgcnet": {
+        "section_heading": "Riemannian Autoencoding and Stiefel k-NN Graph Convolution Regularize Cross-Session EEG Decoding",
+        "king_summary": (
+            "Can unsupervised Riemannian autoencoding on S++^d (SPDNet-AE) and dynamic k-NN graph convolution over Stiefel-projected patch covariances (SSGCNet) regularize cross-session EEG classification? "
+            "To test whether dimension-expanding SPD decoders and tangent-space k-NN graph aggregation preserve manifold invariants and decode real EEG, we audit SPDNetAE and SSGCNet on BNCI2014-001. "
+            "First, SPDNetAE compresses 22x22 EEG covariances into a 10x10 SPD bottleneck (minimum eigenvalue 0.123 > 0) and reconstructs 22x22 SPD matrices (minimum eigenvalue 0.123 > 0; Panel A, Claim C1). "
+            "Second, 12 steps of unsupervised optimization monotonically reduce the Log-Euclidean geodesic reconstruction loss ||log(S_in) - log(S_rec)||_F^2 on real Subject 3 covariances from 65.18 down to 40.52 (Panel B, Claim C2). "
+            "Third, on real BNCI2014-001 Subject 3 cross-session transfer, SPDNetAE achieves 67.01% test accuracy and SSGCNet achieves 68.40% (Panel C, Claim C3). "
+            "Overall, these results confirm that geodesic reconstruction bottlenecks and dynamic k-NN tangent graphs learn transferable representations on S++^d."
+        ),
+        "king_caption": (
+            "Figure 26. Geodesic autoencoding (SPDNet-AE) and Stiefel k-NN tangent graph convolution (SSGCNet). "
+            "A. Minimum eigenvalues of the compressed 10x10 latent SPD bottleneck Z (0.123) and reconstructed 22x22 SPD matrix S_rec (0.123). "
+            "B. Unsupervised Log-Euclidean geodesic reconstruction loss ||log(S_in) - log(S_rec)||_F^2 across 12 optimization steps on real BNCI2014-001 covariances (65.18 to 40.52). "
+            "C. Real BNCI2014-001 Subject 3 cross-session test accuracy (%) for SPDNet-AE (67.01%) and SSGCNet (68.40%)."
+        ),
+        "moreau_audit": {
+            "comparison": "Closest to this formulation, standard SPDNet applies only dimension-contracting BiMap layers for supervised classification; whereas contracting W X W^T cannot reconstruct a higher-dimensional ambient covariance matrix, SPDNet-AE uses BiMapIncreaseDim padding + Stiefel rotation + ReEig to decode back to S++^C.",
+            "failure_mode": "Expanding a rank-k latent matrix Z in S++^k to ambient dimension C > k produces C - k zero eigenvalues before ReEig clamping, so the reconstructed matrix lies on the boundary of the cone up to the epsilon floor.",
+            "diagnostic_risk": "Measuring reconstruction loss with AIRM distance rather than Log-Euclidean distance heavily penalizes the epsilon-floored orthogonal complement dimensions.",
+            "recommendation": "Train SPDNet-AE with Log-Euclidean reconstruction loss ||log(S_in) - log(S_rec)||_F^2 and reuse BiMap(in_features, out_features) + ReEig(eps) directly as the decoder block.",
+        },
+        "harness_comparison": {
+            "benchmark": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, Subject 3)",
+            "published_score": "Unsupervised geodesic reconstruction + cross-session motor imagery decoding",
+            "harness_score": "67.01% (SPDNet-AE) | 68.40% (SSGCNet) on BNCI2014-001 Subj 3 | Loss 65.18 -> 40.52",
+            "delta": "Verified geodesic reconstruction convergence and cross-session transfer",
+        },
+    },
+}
+
+for _pid, _extra in KING_MOREAU_HARNESS_METADATA.items():
+    if _pid in PAPER_FIGURES_METADATA:
+        PAPER_FIGURES_METADATA[_pid].update(_extra)
+

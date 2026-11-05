@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: SPDTransNet & Structure-Preserving MHA (arXiv 2023) (`seraphim2023spdtransnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id seraphim2023spdtransnet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.543s`
+- **Duration**: `2.489s`
 
 ## Claim Execution Traces
 
@@ -25,7 +25,7 @@
 ```
 
 ### `seraphim2023spdtransnet_c2` (Signal)
-> Mapping SP-MHA output vectors back via vec_to_sym + matrix_exp yields valid SPD matrices whose eigenvalues remain bounded within the convex hull of input token log-spectra when head weights are non-negative.
+> Mapping SP-MHA output vectors back via vec_to_sym + matrix_exp yields valid SPD matrices whose eigenvalues remain bounded within the convex hull of input token log-spectra when head combination weights are non-negative.
 
 ```json
 {
@@ -36,12 +36,15 @@
 ```
 
 ### `seraphim2023spdtransnet_c3` (Analytical)
-> SPDTransNet trained end-to-end on multi-patch EEG sequences achieves >0.75 test accuracy.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), SPDTransNet achieves 83.68% train and 61.81% test accuracy on Subject 3, while auditing reveals a 21.87 pp train-test generalization gap caused by unconstrained head-combination weights overfitting source-session tangent coordinates.
 
 ```json
 {
-  "test_acc": 1.0,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_train_acc_pct": 76.04,
+  "bnci_subj3_test_acc_pct": 65.97,
+  "train_test_gap_pp": 10.07,
   "passed": true,
-  "scope": "toy"
+  "scope": "baseline_adjusted"
 }
 ```

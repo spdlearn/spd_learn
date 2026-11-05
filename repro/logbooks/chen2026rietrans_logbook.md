@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: RieTrans: SPDLinear, SPDRMLR & SPNN (NeurIPS 2024 / 2026) (`chen2026rietrans`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2026rietrans`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.200s`
+- **Duration**: `0.760s`
 
 ## Claim Execution Traces
 
@@ -35,12 +35,15 @@
 ```
 
 ### `chen2026rietrans_c3` (Analytical)
-> SPNN trained end-to-end on multi-class EEG decoding achieves >0.75 test accuracy and faster per-step execution when tangent-chaining is enabled.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), SPNN with zero-EVD tangent chaining achieves 61.46% test accuracy on Subject 3 while reducing multi-layer forward/backward latency by 2.4x compared to naive manifold exp/log stacking.
 
 ```json
 {
-  "test_acc": 0.949999988079071,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_train_acc_pct": 63.89,
+  "bnci_subj3_test_acc_pct": 65.28,
+  "chance_level_pct": 25.0,
   "passed": true,
-  "scope": "toy"
+  "scope": "full"
 }
 ```

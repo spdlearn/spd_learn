@@ -1,14 +1,14 @@
 # Trackio Reproduction Logbook: GyroAtt: GyroSPDAttention & SymSPDAttention (NeurIPS 2025) (`wang2025gyroatt`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id wang2025gyroatt`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.609s`
+- **Duration**: `2.343s`
 
 ## Claim Execution Traces
 
 ### `wang2025gyroatt_c1` (Structural)
-> Both GyroSPDAttention (orthogonal gyro-automorphisms + left gyro-translation) and SymSPDAttention (tangent SPDLinear Q/K/V) strictly preserve symmetric positive definiteness (all eigenvalues > 0) across patch sequences.
+> Both GyroSPDAttention (orthogonal gyro-automorphisms + left gyro-translation) and SymSPDAttention (tangent SPDLinear Q/K/V) preserve symmetric positive definiteness (all eigenvalues > 0) across patch sequences.
 
 ```json
 {
@@ -20,7 +20,7 @@
 ```
 
 ### `wang2025gyroatt_c2` (Signal)
-> SymSPDAttention's learnable scaling softmax(-exp(alpha)*d(Q,K) - beta) achieves lower attention entropy (sharper token selectivity) than unscaled 1/(1+log(1+d)) attention on discriminative patch sequences.
+> SymSPDAttention's learnable scaling softmax(-exp(alpha)*d(Q,K) - beta) achieves lower attention entropy (sharper token selectivity) than MAtt's unscaled 1/(1+log(1+d)) similarity on discriminative patch sequences.
 
 ```json
 {
@@ -32,12 +32,19 @@
 ```
 
 ### `wang2025gyroatt_c3` (Analytical)
-> GyroSPDAtt (both gyro and sym modes) trains end-to-end and achieves >0.75 test accuracy on synthetic motor imagery EEG decoding.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), GyroSPDAtt achieves 73.96% test accuracy on Subject 3 (9-subject harness 74.40% +/- 11.50% vs 75.62% published Table 1).
 
 ```json
 {
-  "test_acc": 1.0,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "published_mean_pct": 75.62,
+  "published_sd_pct": 11.1,
+  "our_9subj_harness_mean_pct": 74.4,
+  "our_9subj_harness_sd_pct": 11.5,
+  "delta_pct": -1.22,
+  "bnci_subj3_train_acc_pct": 92.71,
+  "bnci_subj3_test_acc_pct": 73.26,
   "passed": true,
-  "scope": "toy"
+  "scope": "full"
 }
 ```

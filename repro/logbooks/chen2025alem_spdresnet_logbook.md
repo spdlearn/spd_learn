@@ -1,42 +1,45 @@
-# Trackio Reproduction Logbook: ALEM & SPDResNet (IEEE TIP 2024 / ICLR 2025 / NeurIPS 2026) (`chen2025alem_spdresnet`)
+# Trackio Reproduction Logbook: ALEM & SPDResNet: Adaptive Log-Euclidean & Spectral ResNet (IEEE TIP 2024 / ICLR 2025) (`chen2025alem_spdresnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2025alem_spdresnet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.537s`
+- **Duration**: `3.537s`
 
 ## Claim Execution Traces
 
 ### `chen2025alem_spdresnet_c1` (Structural)
-> AdaptiveLogEuclidean converges to the standard matrix logarithm as power p -> 0 (with w=1, b=0), and SPDResBlock strictly preserves SPD structure via Log-Euclidean geodesic residual addition.
+> AdaptiveLogEuclidean (ALEM) applies a strictly monotonic spectral deformation g(lambda) = alpha * (lambda^p - 1)/p + beta * log(lambda) (with alpha, beta, p > 0) and SPDResBlock preserves SPD structure via exp(log(X) + Sym(Conv1D(log(X)))).
 
 ```json
 {
   "alem_spd_min_eig": 0.2676447710635149,
-  "spdresblock_min_eig": 0.2223249077796936,
+  "spdresblock_min_eig": 0.24837486445903778,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `chen2025alem_spdresnet_c2` (Signal)
-> Deep SPD networks with SPDResBlock residual connections maintain non-vanishing gradient norms in early BiMap layers as network depth increases, compared to plain stacked BiMap+ReEig blocks.
+> Log-Euclidean geodesic residual connections X *_LE R = exp(log(X) + log(R)) prevent gradient vanishing across stacked SPDResBlocks and maintain non-zero input gradients as depth increases.
 
 ```json
 {
-  "input_grad_norm_2_blocks": 19.42245864868164,
+  "input_grad_norm_2_blocks": 9.653421401977539,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `chen2025alem_spdresnet_c3` (Analytical)
-> SPDResNet decodes both raw EEG and covariance inputs with >0.75 test accuracy.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), SPDResNet with ALEM achieves 68.75% test accuracy on Subject 3 (22 channels).
 
 ```json
 {
-  "test_acc": 1.0,
-  "passed": true,
-  "scope": "toy"
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_train_acc_pct": 57.99,
+  "bnci_subj3_test_acc_pct": 50.35,
+  "chance_level_pct": 25.0,
+  "passed": false,
+  "scope": "full"
 }
 ```

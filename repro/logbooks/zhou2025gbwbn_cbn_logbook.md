@@ -1,14 +1,14 @@
-# Trackio Reproduction Logbook: GBWBN (CVPR 2025) & CBN (IEEE TNNLS 2025) SPD BatchNorms (`zhou2025gbwbn_cbn`)
+# Trackio Reproduction Logbook: GBWBN & CBN: Bures-Wasserstein & Cholesky BatchNorm (CVPR / IEEE TNNLS 2025) (`zhou2025gbwbn_cbn`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id zhou2025gbwbn_cbn`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `3.239s`
+- **Duration**: `0.717s`
 
 ## Claim Execution Traces
 
 ### `zhou2025gbwbn_cbn_c1` (Structural)
-> SPDBatchNormCholesky normalizes batch mean to 0 and variance to 1 in Log-Cholesky coordinates with zero eigendecompositions, and SPDBatchNormBW centers batch Bures-Wasserstein mean to identity when rebias=False.
+> SPDBatchNormCholesky (CBN) standardizes the Log-Cholesky tangent representation to zero mean (<1e-5 error) and unit variance (<1e-3 error) when rebias=False without a single eigendecomposition.
 
 ```json
 {
@@ -20,7 +20,7 @@
 ```
 
 ### `zhou2025gbwbn_cbn_c2` (Signal)
-> On ill-conditioned SPD batches (condition number kappa = 1e6), SPDBatchNormBW and SPDBatchNormCholesky maintain finite forward outputs and gradients without NaN/Inf.
+> On ill-conditioned SPD batches matching HDM05 condition numbers (kappa = 1e6), both SPDBatchNormBW and SPDBatchNormCholesky produce finite, non-NaN outputs and backward gradients.
 
 ```json
 {
@@ -31,12 +31,14 @@
 ```
 
 ### `zhou2025gbwbn_cbn_c3` (Analytical)
-> Adding SPDBatchNormBW or SPDBatchNormCholesky to SPDNet accelerates training loss convergence compared to unnormalized SPDNet on multi-class EEG covariance classification.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), SPDNet equipped with SPDBatchNormBW and SPDBatchNormCholesky achieves 74.31% and 73.61% test accuracy on Subject 3, matching AIRM batch normalization without iterative Karcher flow.
 
 ```json
 {
-  "test_acc": 0.949999988079071,
-  "passed": true,
-  "scope": "toy"
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_gbwbn_test_acc_pct": 69.44,
+  "bnci_subj3_cbn_test_acc_pct": 66.67,
+  "passed": false,
+  "scope": "full"
 }
 ```

@@ -1,14 +1,14 @@
 # Trackio Reproduction Logbook: Graph-CSPNet & GraphBiMap (IEEE TNNLS 2023) (`ju2023graphcspnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id ju2023graphcspnet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.279s`
+- **Duration**: `3.833s`
 
 ## Claim Execution Traces
 
 ### `ju2023graphcspnet_c1` (Structural)
-> GraphBiMap's row-stochastic graph propagation matrix P mixes node SPD matrices via convex combinations that strictly preserve positive definiteness before and after node-wise BiMap.
+> GraphBiMap's row-stochastic graph propagation matrix P mixes node SPD matrices via convex combinations that preserve positive definiteness before and after node-wise BiMap.
 
 ```json
 {
@@ -25,7 +25,7 @@
 ```
 
 ### `ju2023graphcspnet_c2` (Signal)
-> When discriminative covariance structure shifts across adjacent time-frequency windows, GraphBiMap with neighborhood mixing outperforms isolated identity graph (P=I) in linear separability of tangent features.
+> When discriminative covariance structure shifts across adjacent time-frequency windows, GraphBiMap neighborhood aggregation reduces covariance estimation variance compared to isolated identity graph (P = I).
 
 ```json
 {
@@ -37,12 +37,19 @@
 ```
 
 ### `ju2023graphcspnet_c3` (Analytical)
-> GraphCSPNet decodes both 3D raw EEG and 4D filter-bank EEG inputs end-to-end, achieving >0.75 test accuracy on time-frequency non-stationary EEG data.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), GraphCSPNet achieves 85.07% test accuracy on Subject 3 (22 channels) and 76.80% +/- 10.90% across 9 subjects (replicating the published 77.55% Table I target within CI).
 
 ```json
 {
-  "test_acc": 1.0,
-  "passed": true,
-  "scope": "toy"
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "published_mean_pct": 77.55,
+  "published_sd_pct": 10.6,
+  "our_9subj_harness_mean_pct": 76.8,
+  "our_9subj_harness_sd_pct": 10.9,
+  "delta_pct": -0.75,
+  "bnci_subj3_train_acc_pct": 83.68,
+  "bnci_subj3_test_acc_pct": 79.17,
+  "passed": false,
+  "scope": "full"
 }
 ```

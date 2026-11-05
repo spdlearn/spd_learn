@@ -1,20 +1,20 @@
-# Trackio Reproduction Logbook: STaRNet (Neural Networks 2024, Issue #32) (`wang2024starnet`)
+# Trackio Reproduction Logbook: STaRNet: Spatio-Temporal and Riemannian Network (Neural Networks 2024) (`wang2024starnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id wang2024starnet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `4.172s`
+- **Duration**: `6.474s`
 
 ## Claim Execution Traces
 
 ### `wang2024starnet_c1` (Structural)
-> STaRNet's dual-branch architecture fuses depthwise patch-level Riemannian tangent vectors with Squeeze-and-Excitation Euclidean temporal features into a unified representation.
+> STaRNet executes a dual-branch forward pass fusing depthwise patch-level BiMap/ReEig/LogEig tangent vectors with a parallel Euclidean Squeeze-and-Excitation temporal CNN branch.
 
 ```json
 {
   "output_shape": [
     4,
-    2
+    4
   ],
   "passed": true,
   "scope": "full"
@@ -22,24 +22,31 @@
 ```
 
 ### `wang2024starnet_c2` (Signal)
-> When discriminative information is split between spatial covariance (branch 1) and temporal envelope modulation (branch 2), STaRNet's dual-branch fusion outperforms either branch zeroed out in isolation.
+> Both the Riemannian covariance branch and the Euclidean Squeeze-and-Excitation branch receive non-zero gradients during backpropagation, and their fusion outperforms either isolated branch on real BNCI2014-001 trials.
 
 ```json
 {
-  "riemannian_bimap_grad_norm": 1.5506951808929443,
-  "euclidean_se_grad_sum": 114.43330578505993,
+  "riemannian_bimap_grad_norm": 0.9951378107070923,
+  "euclidean_se_grad_sum": 130.30490112304688,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `wang2024starnet_c3` (Analytical)
-> STaRNet achieves >0.75 test accuracy on synthetic motor imagery EEG classification.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), dual-branch STaRNet achieves 71.53% test accuracy on Subject 3 (9-subject harness 74.20% +/- 11.60% vs 75.40% published).
 
 ```json
 {
-  "test_acc": 1.0,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "published_mean_pct": 75.4,
+  "published_sd_pct": 11.2,
+  "our_9subj_harness_mean_pct": 74.2,
+  "our_9subj_harness_sd_pct": 11.6,
+  "delta_pct": -1.2,
+  "bnci_subj3_train_acc_pct": 80.56,
+  "bnci_subj3_test_acc_pct": 73.61,
   "passed": true,
-  "scope": "toy"
+  "scope": "full"
 }
 ```

@@ -1,14 +1,14 @@
 # Trackio Reproduction Logbook: CorNet: Riemannian Networks over Full-Rank Correlation Matrices (ICML 2026) (`chen2026cornet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2026cornet`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `0.101s`
+- **Duration**: `0.743s`
 
 ## Claim Execution Traces
 
 ### `chen2026cornet_c1` (Structural)
-> CorNet preserves unit-diagonal positive-definiteness across intermediate correlation BiMap/ReEig layers and outputs strictly lower-triangular isometric features of dimension d(d-1)/2.
+> CorNet preserves unit-diagonal positive-definiteness across intermediate correlation BiMap and ReEig layers and outputs strictly lower-triangular isometric features of dimension d(d-1)/2.
 
 ```json
 {
@@ -35,12 +35,15 @@
 ```
 
 ### `chen2026cornet_c3` (Analytical)
-> CorNet converges on multi-class oscillatory EEG classification under electrode impedance / amplitude scaling shifts with test accuracy >0.75.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%) with test-time channel amplitude rescaling, CorNet maintains identical test predictions before and after diagonal gain corruption (55.21% cross-session 4-class accuracy, >2.2x chance).
 
 ```json
 {
-  "test_acc": 0.949999988079071,
-  "passed": true,
-  "scope": "toy"
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_clean_test_acc_pct": 56.94,
+  "bnci_subj3_gain_perturbed_test_acc_pct": 25.0,
+  "chance_level_pct": 25.0,
+  "passed": false,
+  "scope": "full"
 }
 ```

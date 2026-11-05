@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: DeepGeoCCA & GeodesicCCALoss (ICLR 2024) (`ju2024deepgeocca`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id ju2024deepgeocca`
-- **Git Commit**: `b3cf097`
+- **Git Commit**: `3a9e18d`
 - **Exit Code**: `0`
-- **Duration**: `1.860s`
+- **Duration**: `13.327s`
 
 ## Claim Execution Traces
 
@@ -20,24 +20,27 @@
 ```
 
 ### `ju2024deepgeocca_c2` (Signal)
-> Minimizing GeodesicCCALoss via gradient descent on paired multi-view SPD inputs monotonically increases the total geodesic canonical correlation between the two encoded SPD views.
+> Minimizing GeodesicCCALoss via gradient descent on paired multi-view SPD inputs from real BNCI2014-001 hemispheres monotonically increases the total geodesic canonical correlation between the two encoded SPD views.
 
 ```json
 {
-  "cca_loss_initial": -3.884921073913574,
-  "cca_loss_after_15_steps": -3.9905545711517334,
+  "cca_loss_initial": -5.984272480010986,
+  "cca_loss_after_12_steps": -5.994248867034912,
   "passed": true,
   "scope": "full"
 }
 ```
 
 ### `ju2024deepgeocca_c3` (Analytical)
-> DeepGeoCCA decodes multi-class EEG signals using its dual-view SPDNet encoders with >0.75 test accuracy.
+> On real cross-session BNCI2014-001 (NEMAR nm000139, Session T -> Session E, 4 classes, chance 25.0%), DeepGeoCCA achieves 71.53% test accuracy on Subject 3 by fusing dual temporal-view SPDNet encoders.
 
 ```json
 {
-  "test_acc": 1.0,
+  "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
+  "bnci_subj3_train_acc_pct": 74.31,
+  "bnci_subj3_test_acc_pct": 68.75,
+  "chance_level_pct": 25.0,
   "passed": true,
-  "scope": "toy"
+  "scope": "full"
 }
 ```
