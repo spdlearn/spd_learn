@@ -181,7 +181,7 @@ def step_dynamic_trivialization(
 
     for module, name, chain, is_spd in targets:
         if is_spd:
-            chain[0].use_trivialization = True
+            cast(SymmetricPositiveDefinite, chain[0]).use_trivialization = True
         setattr(module, name, getattr(module, name))
         original = cast(torch.Tensor, chain.original)
         original.grad = None
