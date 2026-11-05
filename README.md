@@ -164,7 +164,7 @@ Join our community and help advance deep learning on Riemannian manifolds.
   &nbsp;&nbsp;&nbsp;
   <a href="https://www.cea.fr/"><img src="docs/source/_static/support/cea_dark.png" alt="CEA" height="60"></a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://www.universite-paris-saclay.fr/"><img src="docs/source/_static/support/paris_saclay_dark.jpg" alt="Université Paris-Saclay" height="60"></a>
+  <a href="https://www.universite-paris-saclay.fr/"><img src="docs/source/_static/support/paris_saclay_white.png" alt="Université Paris-Saclay" height="60"></a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://www.atr.jp/"><img src="docs/source/_static/support/atr_logo_white.png" alt="ATR" height="60"></a>
   &nbsp;&nbsp;&nbsp;
