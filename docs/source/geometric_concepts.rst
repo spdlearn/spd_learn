@@ -638,11 +638,15 @@ the existing behavior. Schedule it after every K completed optimizer updates:
    import torch
    from torch import nn
    from spd_learn.modules import (
-       BiMap, SPDBatchNormMeanVar, step_dynamic_trivialization,
+       BiMap,
+       SPDBatchNormMeanVar,
+       step_dynamic_trivialization,
    )
+
 
    def make_model():
        return nn.Sequential(BiMap(6, 3), SPDBatchNormMeanVar(3))
+
 
    model = make_model()
    step_dynamic_trivialization(model)
@@ -657,10 +661,13 @@ the existing behavior. Schedule it after every K completed optimizer updates:
        if step % K == 0:
            step_dynamic_trivialization(model, optimizer)
 
-   checkpoint = deepcopy({
-       "model": model.state_dict(), "optimizer": optimizer.state_dict(),
-       "step": step,
-   })
+   checkpoint = deepcopy(
+       {
+           "model": model.state_dict(),
+           "optimizer": optimizer.state_dict(),
+           "step": step,
+       }
+   )
    restored = make_model()
    # Initialize existing normalization buffers for the saved input layout.
    with torch.no_grad():
