@@ -25,6 +25,12 @@ from spd_learn.modules import (
 )
 
 
+OPTIMIZERS = [
+    pytest.param(torch.optim.SGD, {"momentum": 0.9}, id="sgd-momentum"),
+    pytest.param(torch.optim.AdamW, {"weight_decay": 0}, id="adamw"),
+]
+
+
 def _spd(n, dtype=torch.float64):
     a = torch.randn(4, n, n, generator=torch.Generator().manual_seed(2), dtype=dtype)
     return a @ a.mT / n + torch.eye(n, dtype=dtype)
@@ -40,13 +46,13 @@ def _model():
     ).eval()
 
 
-def test_tensorcspnet_parametrization_opt_in():
-    for enabled in (False, True):
-        model = TensorCSPNet(n_chans=6, dims=(6, 8, 8, 3), parametrized=enabled)
-        weights = [layer for layer in model.modules() if isinstance(layer, BiMap)]
-        assert weights and all(
-            parametrize.is_parametrized(layer, "weight") == enabled for layer in weights
-        )
+@pytest.mark.parametrize("enabled", [False, True], ids=["unconstrained", "orthogonal"])
+def test_tensorcspnet_parametrization_opt_in(enabled):
+    model = TensorCSPNet(n_chans=6, dims=(6, 8, 8, 3), parametrized=enabled)
+    weights = [layer for layer in model.modules() if isinstance(layer, BiMap)]
+    assert weights and all(
+        parametrize.is_parametrized(layer, "weight") == enabled for layer in weights
+    )
 
 
 @pytest.mark.parametrize("name", models.__all__)
@@ -114,14 +120,21 @@ def test_dynamic_bimap_rebase(shape, mapping, dtype):
     assert torch.isfinite(original.grad).all() and original.grad.abs().sum() > 0
 
 
-@pytest.mark.parametrize("kind", ["mean", "meanvar", "AIM", "LEM", "LCM"])
-def test_dynamic_batchnorm_rebase(kind):
-    if kind == "mean":
-        layer = SPDBatchNormMean(3, dtype=torch.float64)
-    elif kind == "meanvar":
-        layer = SPDBatchNormMeanVar(3, dtype=torch.float64)
-    else:
-        layer = SPDBatchNormLie(3, metric=kind, dtype=torch.float64)
+@pytest.mark.parametrize(
+    "layer_class, kwargs, scale",
+    [
+        pytest.param(SPDBatchNormMean, {}, None, id="mean"),
+        pytest.param(SPDBatchNormMeanVar, {}, "weight", id="meanvar"),
+        *[
+            pytest.param(
+                SPDBatchNormLie, {"metric": metric}, "shift", id=f"lie-{metric}"
+            )
+            for metric in ("AIM", "LEM", "LCM")
+        ],
+    ],
+)
+def test_dynamic_batchnorm_rebase(layer_class, kwargs, scale):
+    layer = layer_class(3, dtype=torch.float64, **kwargs)
     layer.eval()
     with torch.no_grad():
         layer.bias = torch.tensor(
@@ -146,16 +159,17 @@ def test_dynamic_batchnorm_rebase(kind):
     assert original.grad is not None and torch.isfinite(original.grad).all()
     layer.reset_parameters()
     assert_close(layer.bias, torch.eye(3, dtype=torch.float64).unsqueeze(0))
-    if kind != "mean":
+    if scale is not None:
         assert_close(
-            layer.weight if kind == "meanvar" else layer.shift,
+            getattr(layer, scale),
             torch.tensor(1.0, dtype=torch.float64),
         )
 
 
-def test_rebase_selective_optimizer_state():
+@pytest.mark.parametrize("optimizer_class, kwargs", OPTIMIZERS)
+def test_rebase_selective_optimizer_state(optimizer_class, kwargs):
     model = _model()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0)
+    optimizer = optimizer_class(model.parameters(), lr=1e-3, **kwargs)
     model(_spd(6)).square().mean().backward()
     optimizer.step()
     ids = set(map(id, model.parameters()))
@@ -176,23 +190,30 @@ def test_rebase_selective_optimizer_state():
     assert all(torch.isfinite(p).all() for p in model.parameters())
 
 
-@pytest.mark.parametrize("mismatch", ["dtype", "shape", "device"])
-def test_rejected_spd_assignment_preserves_chart(mismatch):
+@pytest.mark.parametrize(
+    "n, dtype, device",
+    [
+        pytest.param(2, torch.float64, "cpu", id="dtype"),
+        pytest.param(3, torch.float32, "cpu", id="shape"),
+        pytest.param(
+            2,
+            torch.float32,
+            "cuda",
+            id="device",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ],
+)
+def test_rejected_spd_assignment_preserves_chart(n, dtype, device):
     layer = SPDBatchNormMean(2, dtype=torch.float32).eval()
     step_dynamic_trivialization(layer)
     base = layer.parametrizations.bias[0].base_factor.clone()
     original = layer.parametrizations.bias.original.detach().clone()
     x = torch.eye(2).unsqueeze(0)
     before = layer(x).detach()
-    value = 2 * torch.eye(2).unsqueeze(0)
-    if mismatch == "dtype":
-        value = value.double()
-    elif mismatch == "shape":
-        value = torch.eye(3).unsqueeze(0)
-    else:
-        if not torch.cuda.is_available():
-            pytest.skip("CUDA unavailable")
-        value = value.cuda()
+    value = 2 * torch.eye(n, dtype=dtype, device=device).unsqueeze(0)
     with pytest.raises(ValueError):
         layer.bias = value
     assert_close(layer.parametrizations.bias[0].base_factor, base)
@@ -256,12 +277,13 @@ def test_rebase_rejects_unsupported_chain(unsupported):
     assert not good.parametrizations.bias[0].use_trivialization
 
 
-def test_dynamic_checkpoint_round_trip():
+@pytest.mark.parametrize("optimizer_class, kwargs", OPTIMIZERS)
+def test_dynamic_checkpoint_round_trip(optimizer_class, kwargs):
     model = _model()
     static = deepcopy(model.state_dict())
     model.train()
     step_dynamic_trivialization(model)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0)
+    optimizer = optimizer_class(model.parameters(), lr=1e-3, **kwargs)
     x = _spd(6)
     model(x).square().mean().backward()
     optimizer.step()
@@ -276,7 +298,7 @@ def test_dynamic_checkpoint_round_trip():
     assert model.state_dict().keys() == restored.state_dict().keys()
     restored.load_state_dict(deepcopy(model.state_dict()), strict=True)
     restored[1].parametrizations.bias.original.requires_grad_(True)
-    other_optimizer = torch.optim.AdamW(restored.parameters(), lr=1e-3, weight_decay=0)
+    other_optimizer = optimizer_class(restored.parameters(), lr=1e-3, **kwargs)
     other_optimizer.load_state_dict(deepcopy(optimizer.state_dict()))
     assert_close(model(x), restored(x))
     for net, opt in [(model, optimizer), (restored, other_optimizer)]:
