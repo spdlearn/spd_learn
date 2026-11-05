@@ -5,7 +5,11 @@ from .bilinear import BiMap, BiMapIncreaseDim
 from .covariance import CovLayer
 from .dropout import SPDDropout
 from .liebn import SPDBatchNormLie
-from .manifold import PositiveDefiniteScalar, SymmetricPositiveDefinite
+from .manifold import (
+    PositiveDefiniteScalar,
+    SymmetricPositiveDefinite,
+    step_dynamic_trivialization,
+)
 from .modeig import ExpEig, LogEig, ReEig
 from .regularize import Shrinkage, TraceNorm
 from .residual import LogEuclideanResidual
@@ -19,6 +23,7 @@ __all__ = [
     # manifold parametrization
     "SymmetricPositiveDefinite",
     "PositiveDefiniteScalar",
+    "step_dynamic_trivialization",
     # modeig
     "LogEig",
     "ReEig",

@@ -3,6 +3,7 @@
 import torch
 
 from torch import nn
+from torch.nn.utils import parametrize
 
 from ..functional import ensure_sym, matrix_exp, matrix_log
 from ..functional.core import (
@@ -11,6 +12,7 @@ from ..functional.core import (
     matrix_softplus,
     softplus,
 )
+from .bilinear import BiMap
 
 
 class SymmetricPositiveDefinite(nn.Module):
@@ -112,6 +114,64 @@ class SymmetricPositiveDefinite(nn.Module):
                 self.base_factor = torch.linalg.cholesky(ensure_sym(X))
             return torch.zeros_like(X)
         return self._tangent_fun(X)
+
+
+@torch.no_grad()
+def step_dynamic_trivialization(
+    model: nn.Module, optimizer: torch.optim.Optimizer | None = None
+) -> None:
+    """Recenter BiMap weights and exponential SPD parametrizations in ``model``.
+
+    The first call enables moving charts for SPD biases. Call after every K
+    completed optimizer updates, outside ``parametrize.cached()`` and after
+    backward. Effective values and Parameter identities are preserved, including
+    frozen parameters. Nonparametrized BiMaps, softplus, scalars and unrelated
+    parameters are untouched; composed target parametrizations are rejected.
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+        Model or layer to recenter. Training mode and running statistics remain
+        unchanged. BiMap must retain its native trivialization base.
+    optimizer : torch.optim.Optimizer, optional
+        Clear optimizer state only for recentered Parameters, restarting momentum
+        and adaptive statistics in the new coordinates. Omit before training or
+        with a stateless optimizer. Recentered gradients are always cleared.
+
+    Notes
+    -----
+    Dynamic SPD checkpoints contain base factors. Call this function on a fresh
+    model before strict-loading a dynamic checkpoint. Load static checkpoints
+    before enabling. Save the optimizer-step count separately to resume K.
+    Rectangular BiMap recentering consumes PyTorch RNG for a QR completion.
+    """
+    targets = []
+    for module in model.modules():
+        if not parametrize.is_parametrized(module):
+            continue
+        for name, chain in module.parametrizations.items():
+            is_bimap = isinstance(module, BiMap) and name == "weight"
+            is_spd = any(
+                isinstance(p, SymmetricPositiveDefinite) and p.mapping == "exp"
+                for p in chain
+            )
+            if not (is_bimap or is_spd):
+                continue
+            if len(chain) != 1:
+                raise ValueError(
+                    "Dynamic trivialization requires a single parametrization"
+                )
+            if is_bimap and not hasattr(chain[0], "base"):
+                raise ValueError("BiMap requires use_trivialization=True")
+            targets.append((module, name, chain, is_spd))
+
+    for module, name, chain, is_spd in targets:
+        if is_spd:
+            chain[0].use_trivialization = True
+        setattr(module, name, getattr(module, name))
+        chain.original.grad = None
+        if optimizer is not None:
+            optimizer.state.pop(chain.original, None)
 
 
 class PositiveDefiniteScalar(nn.Module):

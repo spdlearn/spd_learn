@@ -623,6 +623,76 @@ from :cite:t:`lezcano2019trivializations`:
 
 
 
+Enabling Periodic Updates
+-------------------------
+
+:func:`~spd_learn.modules.step_dynamic_trivialization` recenters existing BiMap
+weights and exponential SPD biases in SPDBatchNormMean, SPDBatchNormMeanVar,
+and SPDBatchNormLie. Calling it enables moving SPD charts; omitting it preserves
+the existing behavior. Schedule it after every K completed optimizer updates:
+
+.. code-block:: python
+
+   from copy import deepcopy
+
+   import torch
+   from torch import nn
+   from spd_learn.modules import (
+       BiMap, SPDBatchNormMeanVar, step_dynamic_trivialization,
+   )
+
+   def make_model():
+       return nn.Sequential(BiMap(6, 3), SPDBatchNormMeanVar(3))
+
+   model = make_model()
+   step_dynamic_trivialization(model)
+   optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0)
+   K = 50
+   x = torch.randn(8, 6, 6)
+   x = x @ x.mT + torch.eye(6)
+   for step in range(1, 101):
+       optimizer.zero_grad(set_to_none=True)
+       model(x).square().mean().backward()
+       optimizer.step()
+       if step % K == 0:
+           step_dynamic_trivialization(model, optimizer)
+
+   checkpoint = deepcopy({
+       "model": model.state_dict(), "optimizer": optimizer.state_dict(),
+       "step": step,
+   })
+   restored = make_model()
+   step_dynamic_trivialization(restored)  # Create dynamic checkpoint buffers.
+   restored.load_state_dict(checkpoint["model"], strict=True)
+   restored_optimizer = torch.optim.AdamW(restored.parameters(), lr=1e-3, weight_decay=0)
+   restored_optimizer.load_state_dict(checkpoint["optimizer"])
+   next_step = checkpoint["step"] + 1  # Preserve the K schedule when resuming.
+
+Passing the optimizer discards momentum and adaptive statistics only for
+recentered parameters. This restarts their optimizer in the new coordinates;
+it does not transport optimizer state. Classifier parameters and positive scalar
+scales retain their state. Gradients of recentered parameters are cleared.
+Omit the optimizer only before training or with a stateless optimizer.
+Count optimizer updates rather than minibatches when accumulating gradients.
+Call outside ``parametrize.cached()`` and after backward and optimizer.step.
+
+SPD charts use a Cholesky factor :math:`B=LL^\top` and the congruence
+:math:`L\exp(S)L^\top`. This is an affine-invariant exponential chart in
+whitened tangent coordinates, avoiding eigenvalue clamping when forming its base.
+BiMap uses PyTorch's existing orthogonal reassignment; do not manually zero its
+Householder sign coordinates. Explicit Householder maps still require excluding
+their original parameter from weight decay. Rectangular BiMap updates consume
+RNG for QR completion; use a separate generator for reproducible data sampling.
+
+Frozen supported parameters also recenter without changing their effective
+values. Nonparametrized BiMaps, static softplus mappings and positive scalar
+parametrizations stay unchanged. Composed target parametrizations are unsupported.
+The operation does not change normalization metrics, running statistics or the
+model's training mode. Load legacy static checkpoints before opting in; create
+dynamic buffers as above before loading dynamic checkpoints. Exact stochastic
+training continuation also requires restoring the usual RNG/sampler state.
+
+
 Practical Implications
 ----------------------
 
