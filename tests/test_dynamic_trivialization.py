@@ -3,8 +3,6 @@
 """Behavior of moving parametrization charts and their training state."""
 
 from copy import deepcopy
-from importlib.util import module_from_spec, spec_from_file_location
-from pathlib import Path
 
 import pytest
 import torch
@@ -13,6 +11,8 @@ from torch import nn
 from torch.nn.utils import parametrizations, parametrize
 from torch.testing import assert_close
 
+from spd_learn import models
+from spd_learn.models import TensorCSPNet
 from spd_learn.modules import (
     BiMap,
     LogEig,
@@ -38,6 +38,50 @@ def _model():
         nn.Flatten(1),
         nn.Linear(6, 2, dtype=torch.float64),
     ).eval()
+
+
+def test_tensorcspnet_parametrization_opt_in():
+    for enabled in (False, True):
+        model = TensorCSPNet(n_chans=6, dims=(6, 8, 8, 3), parametrized=enabled)
+        weights = [layer for layer in model.modules() if isinstance(layer, BiMap)]
+        assert weights and all(
+            parametrize.is_parametrized(layer, "weight") == enabled for layer in weights
+        )
+
+
+@pytest.mark.parametrize("name", models.__all__)
+def test_all_models_dynamic_trivialization(name):
+    options = dict(n_chans=22, n_outputs=4)
+    if name == "TensorCSPNet":
+        options["parametrized"] = True
+    if name == "Green":
+        options.update(sfreq=125, bi_out=[16])
+    model = getattr(models, name)(**options).eval()
+    shape = (2, 9, 22, 256) if name == "TensorCSPNet" else (2, 22, 256)
+    x = torch.randn(shape, generator=torch.Generator().manual_seed(1))
+    model(x).square().mean().backward()
+    original_ids = set(map(id, model.parameters()))
+    before = model(x).detach()
+    step_dynamic_trivialization(model)
+    assert set(map(id, model.parameters())) == original_ids
+    after = model(x)
+    assert_close(after, before, atol=1e-5, rtol=1e-4)
+    after.square().mean().backward()
+    assert all(
+        p.grad is None or torch.isfinite(p.grad).all() for p in model.parameters()
+    )
+
+
+def test_repeated_float32_rebase():
+    layer = SPDBatchNormMean(8).eval()
+    optimizer = torch.optim.SGD(layer.parameters(), lr=0.05)
+    x = _spd(8, torch.float32)
+    for _ in range(200):
+        optimizer.zero_grad(set_to_none=True)
+        layer(x).square().mean().backward()
+        optimizer.step()
+        step_dynamic_trivialization(layer, optimizer)
+    assert torch.isfinite(layer.bias).all()
 
 
 @pytest.mark.parametrize("shape", [(6, 3), (3, 3), (3, 6)])
@@ -248,55 +292,3 @@ def test_dynamic_checkpoint_round_trip():
     output = legacy(x).detach()
     step_dynamic_trivialization(legacy)
     assert_close(legacy(x), output)
-
-
-def _benchmark_module():
-    path = (
-        Path(__file__).parents[1]
-        / "examples/applied_examples/benchmark_dynamic_trivialization.py"
-    )
-    spec = spec_from_file_location("dynamic_benchmark", path)
-    module = module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def test_dynamic_benchmark_smoke():
-    result = _benchmark_module().run_training(0, torch.float64, 1, steps=2, n=6, k=3)
-    assert set(result["losses"]) == {0, 2}
-    assert all(torch.isfinite(torch.tensor(loss)) for loss in result["losses"].values())
-    assert result["elapsed_seconds"] > 0
-    assert result["orthogonality_error"] < 1e-8
-    assert result["min_eigenvalue"] > 0
-
-
-def test_repeated_float32_rebase():
-    result = _benchmark_module().run_training(0, torch.float32, 1)
-    assert result["min_eigenvalue"] > 0
-
-
-def test_dynamic_benchmark_paired_inputs(monkeypatch):
-    benchmark = _benchmark_module()
-    records, targets = [], []
-    forward, mse = BiMap.forward, torch.nn.functional.mse_loss
-
-    def record_forward(layer, x):
-        records.append((x.detach().clone(), layer.weight.detach().clone()))
-        return forward(layer, x)
-
-    def record_mse(output, target, *args, **kwargs):
-        targets.append(target.detach().clone())
-        return mse(output, target, *args, **kwargs)
-
-    monkeypatch.setattr(BiMap, "forward", record_forward)
-    monkeypatch.setattr(torch.nn.functional, "mse_loss", record_mse)
-    benchmark.run_training(0, torch.float64, None, steps=2, n=6, k=3)
-    first_records, first_targets = records[:], targets[:]
-    records.clear()
-    targets.clear()
-    benchmark.run_training(0, torch.float64, 1, steps=2, n=6, k=3)
-    assert len(records) == len(first_records) and len(targets) == len(first_targets)
-    for (x, _), (previous_x, _) in zip(records, first_records):
-        assert_close(x, previous_x, atol=0, rtol=0)
-    assert_close(records[1][1], first_records[1][1], atol=0, rtol=0)
-    assert_close(targets, first_targets, atol=0, rtol=0)

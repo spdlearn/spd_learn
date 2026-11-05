@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enable periodic dynamic trivialization of BiMap weights and exponential SPD
   biases with `step_dynamic_trivialization(model, optimizer)`, preserving
   effective parameters and restarting only their optimizer state.
+  TensorCSPNet can opt in to orthogonal BiMaps with `parametrized=True`.
 
 ### Changed
 

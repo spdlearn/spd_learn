@@ -131,30 +131,17 @@ class SymmetricPositiveDefinite(nn.Module):
 def step_dynamic_trivialization(
     model: nn.Module, optimizer: torch.optim.Optimizer | None = None
 ) -> None:
-    """Recenter BiMap weights and exponential SPD parametrizations in ``model``.
+    """Recenter native BiMap and exponential SPD charts, enabling SPD on first call.
 
-    The first call enables moving charts for SPD biases. Call after every K
-    completed optimizer updates, outside ``parametrize.cached()`` and after
-    backward. Effective values and Parameter identities are preserved, including
-    frozen parameters. Nonparametrized BiMaps, softplus, scalars and unrelated
-    parameters are untouched; composed target parametrizations are rejected.
+    Call after K completed optimizer updates and backward, outside
+    ``parametrize.cached()``. Effective values and Parameter identities remain
+    unchanged, including frozen parameters. Unsupported target chains raise.
+    Nonparametrized BiMaps, softplus and positive scalars stay unchanged.
 
-    Parameters
-    ----------
-    model : torch.nn.Module
-        Model or layer to recenter. Training mode and running statistics remain
-        unchanged. BiMap must retain its native trivialization base.
-    optimizer : torch.optim.Optimizer, optional
-        Clear optimizer state only for recentered Parameters, restarting momentum
-        and adaptive statistics in the new coordinates. Omit before training or
-        with a stateless optimizer. Recentered gradients are always cleared.
-
-    Notes
-    -----
-    Dynamic SPD checkpoints contain base factors. Call this function on a fresh
-    model before strict-loading a dynamic checkpoint. Load static checkpoints
-    before enabling. Save the optimizer-step count separately to resume K.
-    Rectangular BiMap recentering consumes PyTorch RNG for a QR completion.
+    Passing ``optimizer`` restarts only recentered Parameters' state; their
+    gradients are always cleared. Omit only before training or for stateless
+    optimizers. Enable a fresh model before loading dynamic checkpoint bases;
+    save the update count/RNG separately to resume K and rectangular QR.
     """
     targets = []
     for module in model.modules():
