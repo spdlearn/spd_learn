@@ -1,0 +1,187 @@
+{
+  "campaign_id": "Voyager-spd-bench-MultiDataset-2026-11-05",
+  "nodes": ["spd-encore-bnci-pk4bz", "spd-encore-spd-48hkq"],
+  "torch_version": "2.6.0+hpu_1.21.4-3.gitabf798b",
+  "bnci_wall_clock_s": 310.44,
+  "spd_wall_clock_s": 169.49,
+  "bnci2014_001": {
+    "TensorCSPNet": {
+      "subject_means": {"1": 74.31, "3": 73.26, "7": 61.81, "8": 61.81, "9": 70.14},
+      "mean": 68.27,
+      "sd": 5.45,
+      "n_subjects": 5,
+      "curve": [28.47, 62.85, 64.51, 69.31, 70.21, 68.27]
+    },
+    "GraphCSPNet": {
+      "subject_means": {"1": 71.88, "3": 83.33, "7": 77.43, "8": 74.31, "9": 68.75},
+      "mean": 75.14,
+      "sd": 4.99,
+      "n_subjects": 5,
+      "curve": [34.72, 61.95, 72.92, 62.09, 71.46, 75.14]
+    },
+    "SPDNet": {
+      "subject_means": {"1": 61.11, "3": 61.46, "7": 47.22, "8": 63.19, "9": 65.97},
+      "mean": 59.79,
+      "sd": 6.52,
+      "n_subjects": 5,
+      "curve": [32.71, 54.44, 59.17, 59.86, 61.81, 59.79]
+    },
+    "TSMNet": {
+      "subject_means": {"1": 71.18, "3": 71.53, "7": 60.76, "8": 61.81, "9": 45.14},
+      "mean": 62.08,
+      "sd": 9.6,
+      "n_subjects": 5,
+      "curve": [33.4, 60.21, 61.18, 67.15, 64.1, 62.08]
+    },
+    "MAtt": {
+      "subject_means": {"1": 71.88, "3": 68.4, "7": 66.32, "8": 72.22, "9": 77.43},
+      "mean": 71.25,
+      "sd": 3.79,
+      "n_subjects": 5,
+      "curve": [28.89, 59.23, 61.94, 68.26, 66.6, 71.25]
+    },
+    "GBWAtt": {
+      "subject_means": {"1": 71.53, "3": 77.08, "7": 76.04, "8": 74.65, "9": 75.0},
+      "mean": 74.86,
+      "sd": 1.87,
+      "n_subjects": 5,
+      "curve": [25.9, 58.61, 64.79, 63.96, 72.92, 74.86]
+    },
+    "EEGSPDNet": {
+      "subject_means": {"1": 65.97, "3": 76.04, "7": 54.51, "8": 67.36, "9": 70.49},
+      "mean": 66.87,
+      "sd": 7.09,
+      "n_subjects": 5,
+      "curve": [31.67, 53.26, 64.45, 60.0, 65.63, 66.87]
+    },
+    "PhaseSPDNet": {
+      "subject_means": {"1": 61.11, "3": 61.46, "7": 47.22, "8": 63.19, "9": 65.97},
+      "mean": 59.79,
+      "sd": 6.52,
+      "n_subjects": 5,
+      "curve": [32.71, 54.44, 59.17, 59.86, 61.81, 59.79]
+    },
+    "Green": {
+      "subject_means": {"1": 56.6, "3": 67.01, "7": 57.99, "8": 62.85, "9": 65.28},
+      "mean": 61.95,
+      "sd": 4.04,
+      "n_subjects": 5,
+      "curve": [29.44, 55.55, 55.56, 63.26, 60.35, 61.95]
+    },
+    "RCEEGNet": {
+      "subject_means": {"1": 60.76, "3": 64.58, "7": 36.46, "8": 63.19, "9": 61.81},
+      "mean": 57.36,
+      "sd": 10.53,
+      "n_subjects": 5,
+      "curve": [36.88, 47.02, 53.96, 53.54, 56.32, 57.36]
+    },
+    "STaRNet": {
+      "subject_means": {"1": 73.26, "3": 87.5, "7": 57.29, "8": 72.22, "9": 65.62},
+      "mean": 71.18,
+      "sd": 9.96,
+      "n_subjects": 5,
+      "curve": [37.22, 65.49, 69.72, 68.33, 72.92, 71.18]
+    },
+    "CorAtt": {
+      "subject_means": {"1": 65.97, "3": 78.82, "7": 72.22, "8": 72.57, "9": 76.74},
+      "mean": 73.26,
+      "sd": 4.42,
+      "n_subjects": 5,
+      "curve": [30.42, 64.3, 65.63, 71.67, 72.99, 73.26]
+    },
+    "CorNet": {
+      "subject_means": {"1": 50.35, "3": 53.82, "7": 36.46, "8": 53.12, "9": 56.6},
+      "mean": 50.07,
+      "sd": 7.09,
+      "n_subjects": 5,
+      "curve": [22.5, 37.01, 44.86, 47.36, 50.49, 50.07]
+    },
+    "SPNN": {
+      "subject_means": {"1": 61.11, "3": 63.89, "7": 46.53, "8": 67.36, "9": 71.53},
+      "mean": 62.08,
+      "sd": 8.52,
+      "n_subjects": 5,
+      "curve": [25.28, 47.01, 52.57, 55.35, 56.81, 62.08]
+    },
+    "GyroSPDAtt": {
+      "subject_means": {"1": 76.39, "3": 71.18, "7": 76.39, "8": 73.61, "9": 71.53},
+      "mean": 73.82,
+      "sd": 2.26,
+      "n_subjects": 5,
+      "curve": [42.01, 61.81, 65.42, 73.61, 72.29, 73.82]
+    },
+    "SPDMetaFormer": {
+      "subject_means": {"1": 69.79, "3": 72.57, "7": 73.26, "8": 73.61, "9": 75.0},
+      "mean": 72.85,
+      "sd": 1.72,
+      "n_subjects": 5,
+      "curve": [32.36, 60.42, 65.0, 69.79, 74.17, 72.85]
+    },
+    "DeepGeoCCA": {
+      "subject_means": {"1": 62.85, "3": 62.5, "7": 49.31, "8": 62.85, "9": 60.42},
+      "mean": 59.59,
+      "sd": 5.22,
+      "n_subjects": 5,
+      "curve": [27.85, 49.17, 55.0, 57.64, 60.49, 59.59]
+    },
+    "SPDResNet": {
+      "subject_means": {"1": 58.33, "3": 54.17, "7": 48.26, "8": 52.78, "9": 53.82},
+      "mean": 53.47,
+      "sd": 3.22,
+      "n_subjects": 5,
+      "curve": [30.76, 43.4, 45.49, 46.67, 49.03, 53.47]
+    },
+    "GyroSPD": {
+      "subject_means": {"1": 49.31, "3": 48.96, "7": 37.85, "8": 57.29, "9": 55.56},
+      "mean": 49.79,
+      "sd": 6.83,
+      "n_subjects": 5,
+      "curve": [28.82, 38.4, 43.27, 46.6, 50.97, 49.79]
+    },
+    "SPDNetAE": {
+      "subject_means": {"1": 47.22, "3": 58.68, "7": 39.93, "8": 60.07, "9": 61.81},
+      "mean": 53.54,
+      "sd": 8.52,
+      "n_subjects": 5,
+      "curve": [23.4, 40.07, 46.25, 49.3, 52.64, 53.54]
+    },
+    "SSGCNet": {
+      "subject_means": {"1": 53.47, "3": 62.15, "7": 47.22, "8": 61.81, "9": 68.75},
+      "mean": 58.68,
+      "sd": 7.51,
+      "n_subjects": 5,
+      "curve": [31.46, 42.29, 49.93, 53.75, 55.35, 58.68]
+    },
+    "SPDTransNet": {
+      "subject_means": {"1": 45.49, "3": 25.0, "7": 25.0, "8": 25.0, "9": 25.0},
+      "mean": 29.1,
+      "sd": 8.2,
+      "n_subjects": 5,
+      "curve": [25.0, 25.0, 25.0, 25.0, 25.0, 29.1]
+    }
+  },
+  "radar": {
+    "SPDNet": {"dataset": "radar", "variant": "SPDNet", "seed": 1024, "accuracy": 81.33, "final_accuracy": 81.07, "curve": [74.53, 79.73, 79.6, 80.53, 81.33, 81.07], "wall_s": 32.56},
+    "RieTrans-SPDRMLR": {"dataset": "radar", "variant": "RieTrans-SPDRMLR", "seed": 1024, "accuracy": 83.2, "final_accuracy": 83.07, "curve": [78.53, 80.27, 82.27, 83.2, 82.8, 83.07], "wall_s": 36.88},
+    "CBN": {"dataset": "radar", "variant": "CBN", "seed": 1024, "accuracy": 78.8, "final_accuracy": 78.8, "curve": [73.73, 78.13, 78.53, 77.73, 78.0, 78.8], "wall_s": 43.97},
+    "SPDResNet-ALEM": {"dataset": "radar", "variant": "SPDResNet-ALEM", "seed": 1024, "accuracy": 82.93, "final_accuracy": 82.27, "curve": [78.8, 82.0, 82.93, 81.73, 82.4, 82.27], "wall_s": 49.64},
+    "SPDNetBN": {"dataset": "radar", "variant": "SPDNetBN", "seed": 1024, "accuracy": 83.33, "final_accuracy": 83.33, "curve": [74.27, 78.4, 81.6, 82.0, 82.93, 83.33], "wall_s": 60.44},
+    "ARMAGNAC": {"dataset": "radar", "variant": "ARMAGNAC", "seed": 1024, "accuracy": 82.53, "final_accuracy": 82.53, "curve": [76.53, 82.0, 81.87, 82.13, 82.53, 82.53], "wall_s": 66.81},
+    "LieBN-LEM": {"dataset": "radar", "variant": "LieBN-LEM", "seed": 1024, "accuracy": 83.87, "final_accuracy": 83.73, "curve": [67.07, 76.8, 82.4, 82.53, 83.87, 83.73], "wall_s": 68.27},
+    "LieBN-LCM": {"dataset": "radar", "variant": "LieBN-LCM", "seed": 1024, "accuracy": 82.67, "final_accuracy": 82.67, "curve": [71.6, 78.13, 82.53, 82.4, 82.67, 82.67], "wall_s": 75.37},
+    "LieBN-AIM": {"dataset": "radar", "variant": "LieBN-AIM", "seed": 1024, "accuracy": 83.73, "final_accuracy": 83.73, "curve": [68.4, 76.0, 81.47, 81.33, 83.47, 83.73], "wall_s": 79.23},
+    "GBWBN": {"dataset": "radar", "variant": "GBWBN", "seed": 1024, "accuracy": 83.07, "final_accuracy": 83.07, "curve": [76.67, 81.47, 82.27, 82.4, 82.67, 83.07], "wall_s": 168.44}
+  },
+  "hdm05": {
+    "SPDNet": {"dataset": "hdm05", "variant": "SPDNet", "seed": 1024, "accuracy": 57.14, "final_accuracy": 56.57, "curve": [27.23, 50.24, 50.62, 56.09, 57.14, 56.57], "wall_s": 32.61},
+    "SPDNetBN": {"dataset": "hdm05", "variant": "SPDNetBN", "seed": 1024, "accuracy": 70.28, "final_accuracy": 70.09, "curve": [29.63, 64.43, 68.46, 69.61, 70.28, 70.09], "wall_s": 50.4},
+    "LieBN-LEM": {"dataset": "hdm05", "variant": "LieBN-LEM", "seed": 1024, "accuracy": 68.65, "final_accuracy": 68.65, "curve": [20.9, 51.39, 63.09, 67.4, 68.46, 68.65], "wall_s": 60.19},
+    "CBN": {"dataset": "hdm05", "variant": "CBN", "seed": 1024, "accuracy": 65.0, "final_accuracy": 64.91, "curve": [16.59, 61.74, 65.0, 64.72, 65.0, 64.91], "wall_s": 30.41},
+    "LieBN-AIM": {"dataset": "hdm05", "variant": "LieBN-AIM", "seed": 1024, "accuracy": 69.51, "final_accuracy": 69.32, "curve": [17.45, 51.58, 65.29, 67.02, 69.51, 69.32], "wall_s": 75.42},
+    "RieTrans-SPDRMLR": {"dataset": "hdm05", "variant": "RieTrans-SPDRMLR", "seed": 1024, "accuracy": 58.2, "final_accuracy": 58.1, "curve": [24.83, 51.29, 55.8, 57.14, 58.2, 58.1], "wall_s": 24.91},
+    "ARMAGNAC": {"dataset": "hdm05", "variant": "ARMAGNAC", "seed": 1024, "accuracy": 71.33, "final_accuracy": 71.33, "curve": [32.02, 66.63, 70.09, 70.95, 71.14, 71.33], "wall_s": 42.49},
+    "SPDResNet-ALEM": {"dataset": "hdm05", "variant": "SPDResNet-ALEM", "seed": 1024, "accuracy": 48.32, "final_accuracy": 48.13, "curve": [9.78, 42.28, 43.91, 47.17, 48.32, 48.13], "wall_s": 28.22},
+    "LieBN-LCM": {"dataset": "hdm05", "variant": "LieBN-LCM", "seed": 1024, "accuracy": 68.36, "final_accuracy": 68.26, "curve": [16.87, 43.43, 57.91, 64.62, 68.36, 68.26], "wall_s": 45.7},
+    "GBWBN": {"dataset": "hdm05", "variant": "GBWBN", "seed": 1024, "accuracy": 71.33, "final_accuracy": 70.09, "curve": [24.45, 60.02, 65.77, 68.94, 71.33, 70.09], "wall_s": 68.94}
+  }
+}

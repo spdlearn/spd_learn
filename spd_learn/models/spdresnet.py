@@ -274,6 +274,14 @@ class SPDResBlock(nn.Module):
             ),
         )
         self.residual = LogEuclideanResidual(device=device, dtype=dtype)
+        self.reset_parameters()
+
+    @torch.no_grad()
+    def reset_parameters(self) -> None:
+        """Initialize residual spectral CNN near the identity map."""
+        nn.init.normal_(self.cnn[2].weight, mean=0.0, std=0.01)
+        if self.cnn[2].bias is not None:
+            nn.init.zeros_(self.cnn[2].bias)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass computing the Riemannian residual transformation.
@@ -298,10 +306,9 @@ class SPDResBlock(nn.Module):
         s_flat = self.cnn(log_flat)
         s = s_flat.view(*batch_shape, d)
 
-        exp_s = torch.exp(s)
-        fx = eigvecs @ torch.diag_embed(exp_s) @ eigvecs.mT
-        fx = ensure_sym(fx)
-        return self.residual(X, fx)
+        out_eigvals = torch.exp(log_eigvals + s)
+        out = eigvecs @ torch.diag_embed(out_eigvals) @ eigvecs.mT
+        return ensure_sym(out)
 
 
 class AdaptiveLogEuclidean(nn.Module):
