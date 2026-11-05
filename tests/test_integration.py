@@ -13,6 +13,11 @@ from spd_learn.modules import CovLayer
 from spd_learn.modules import __all__ as module_list
 
 
+module_list = [
+    name for name in module_list if inspect.isclass(getattr(spd_learn.modules, name))
+]
+
+
 # parameters for wavelet initialization
 n_freqs_init = 10
 oct_min = 0.5

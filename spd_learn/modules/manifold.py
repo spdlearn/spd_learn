@@ -1,5 +1,7 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+from typing import cast
+
 import torch
 
 from torch import nn
@@ -87,7 +89,7 @@ class SymmetricPositiveDefinite(nn.Module):
         output = self._spd_fun(ensure_sym(X))
         if self.use_trivialization and self.base_factor is not None:
             output = self.base_factor @ output @ self.base_factor.mT
-        return output
+        return ensure_sym(output) if self.use_trivialization else output
 
     def right_inverse(self, X):
         """Map from SPD matrices to coordinates, rebasing if enabled.
@@ -149,7 +151,7 @@ def step_dynamic_trivialization(
     for module in model.modules():
         if not parametrize.is_parametrized(module):
             continue
-        for name, chain in module.parametrizations.items():
+        for name, chain in cast(nn.ModuleDict, module.parametrizations).items():
             is_bimap = isinstance(module, BiMap) and name == "weight"
             is_spd = any(
                 isinstance(p, SymmetricPositiveDefinite) and p.mapping == "exp"

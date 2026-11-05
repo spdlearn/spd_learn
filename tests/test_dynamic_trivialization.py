@@ -3,6 +3,8 @@
 """Behavior of moving parametrization charts and their training state."""
 
 from copy import deepcopy
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 
 import pytest
 import torch
@@ -185,13 +187,18 @@ def test_rebase_rejects_unsupported_chain(unsupported):
 def test_dynamic_checkpoint_round_trip():
     model = _model()
     static = deepcopy(model.state_dict())
+    model.train()
     step_dynamic_trivialization(model)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0)
     x = _spd(6)
     model(x).square().mean().backward()
     optimizer.step()
     step_dynamic_trivialization(model, optimizer)
+    model.eval()
     restored = _model()
+    with torch.no_grad():
+        restored.train()(x)
+    restored.eval()
     restored[1].parametrizations.bias.original.requires_grad_(False)
     step_dynamic_trivialization(restored)
     assert model.state_dict().keys() == restored.state_dict().keys()
@@ -213,3 +220,55 @@ def test_dynamic_checkpoint_round_trip():
     output = legacy(x).detach()
     step_dynamic_trivialization(legacy)
     assert_close(legacy(x), output)
+
+
+def _benchmark_module():
+    path = (
+        Path(__file__).parents[1]
+        / "examples/applied_examples/benchmark_dynamic_trivialization.py"
+    )
+    spec = spec_from_file_location("dynamic_benchmark", path)
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_dynamic_benchmark_smoke():
+    result = _benchmark_module().run_training(0, torch.float64, 1, steps=2, n=6, k=3)
+    assert set(result["losses"]) == {0, 2}
+    assert all(torch.isfinite(torch.tensor(loss)) for loss in result["losses"].values())
+    assert result["elapsed_seconds"] > 0
+    assert result["orthogonality_error"] < 1e-8
+    assert result["min_eigenvalue"] > 0
+
+
+def test_repeated_float32_rebase():
+    result = _benchmark_module().run_training(0, torch.float32, 1)
+    assert result["min_eigenvalue"] > 0
+
+
+def test_dynamic_benchmark_paired_inputs(monkeypatch):
+    benchmark = _benchmark_module()
+    records, targets = [], []
+    forward, mse = BiMap.forward, torch.nn.functional.mse_loss
+
+    def record_forward(layer, x):
+        records.append((x.detach().clone(), layer.weight.detach().clone()))
+        return forward(layer, x)
+
+    def record_mse(output, target, *args, **kwargs):
+        targets.append(target.detach().clone())
+        return mse(output, target, *args, **kwargs)
+
+    monkeypatch.setattr(BiMap, "forward", record_forward)
+    monkeypatch.setattr(torch.nn.functional, "mse_loss", record_mse)
+    benchmark.run_training(0, torch.float64, None, steps=2, n=6, k=3)
+    first_records, first_targets = records[:], targets[:]
+    records.clear()
+    targets.clear()
+    benchmark.run_training(0, torch.float64, 1, steps=2, n=6, k=3)
+    assert len(records) == len(first_records) and len(targets) == len(first_targets)
+    for (x, _), (previous_x, _) in zip(records, first_records):
+        assert_close(x, previous_x, atol=0, rtol=0)
+    assert_close(records[1][1], first_records[1][1], atol=0, rtol=0)
+    assert_close(targets, first_targets, atol=0, rtol=0)

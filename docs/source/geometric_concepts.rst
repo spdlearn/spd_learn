@@ -662,6 +662,9 @@ the existing behavior. Schedule it after every K completed optimizer updates:
        "step": step,
    })
    restored = make_model()
+   # Initialize existing normalization buffers for the saved input layout.
+   with torch.no_grad():
+       restored(x)
    step_dynamic_trivialization(restored)  # Create dynamic checkpoint buffers.
    restored.load_state_dict(checkpoint["model"], strict=True)
    restored_optimizer = torch.optim.AdamW(restored.parameters(), lr=1e-3, weight_decay=0)
@@ -691,6 +694,8 @@ The operation does not change normalization metrics, running statistics or the
 model's training mode. Load legacy static checkpoints before opting in; create
 dynamic buffers as above before loading dynamic checkpoints. Exact stochastic
 training continuation also requires restoring the usual RNG/sampler state.
+Existing normalizers can change running-buffer shapes on their first training
+forward; initialize the restored model with the saved input layout before loading.
 
 
 Practical Implications
