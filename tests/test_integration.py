@@ -21,10 +21,20 @@ oct_max = 3.0
 mandatory_parameters_per_module = {
     "BiMap": dict(in_features=10, out_features=5),
     "BiMapDepthWise": dict(in_features=10, out_features=5, depthwise=2),
+    "GraphBiMap": dict(n_nodes=4, in_features=10, out_features=5),
     "SPDBatchNormMean": dict(num_features=10),
     "BatchReNorm": dict(num_features=10),
     "SPDBatchNormMeanVar": dict(num_features=10),
     "SPDBatchNormLie": dict(num_features=10),
+    "SPDBatchNormHarmonicArithmetic": dict(num_features=10),
+    "SPDBatchNormBW": dict(num_features=10),
+    "SPDBatchNormCholesky": dict(num_features=10),
+    "SPMultiheadAttention": dict(embed_dim=15, num_heads=3),
+    "SPDTransformerEncoderLayer": dict(embed_dim=15, num_heads=3),
+    "GaussianSPDDescriptor": dict(),
+    "RiemannianHighOrderPooling": dict(in_features=10, reduced_dim=5),
+    "SPDRMLR": dict(n_features=10, n_outputs=4),
+    "SPDLinear": dict(in_features=10, out_features=5),
     "PatchEmbeddingLayer": dict(n_chans=10, n_patches=2),
     "BiMapIncreaseDim": dict(in_features=10, out_features=20),
     "Shrinkage": dict(n_chans=10),
@@ -145,8 +155,23 @@ def test_module_dtype(module_name, dtype, device):
         pytest.skip(
             "PositiveDefiniteScalar is a scalar parametrization, not a matrix layer."
         )
-    if module_name == "SPDBatchNormLie" and dtype.is_complex:
-        pytest.skip("SPDBatchNormLie only supports real-valued SPD matrices.")
+    if (
+        module_name
+        in (
+            "SPDBatchNormLie",
+            "SPDBatchNormHarmonicArithmetic",
+            "SPDBatchNormBW",
+            "SPDBatchNormCholesky",
+            "SPMultiheadAttention",
+            "SPDTransformerEncoderLayer",
+            "GaussianSPDDescriptor",
+            "RiemannianHighOrderPooling",
+            "SPDRMLR",
+            "SPDLinear",
+        )
+        and dtype.is_complex
+    ):
+        pytest.skip(f"{module_name} only supports real-valued SPD matrices.")
 
     module_class = getattr(spd_learn.modules, module_name)
     mandatory_param = mandatory_parameters_per_module.get(module_name, {})
@@ -155,6 +180,19 @@ def test_module_dtype(module_name, dtype, device):
 
     if module_name == "CovLayer":
         x = torch.randn(2, 10, 1000, dtype=dtype)
+        with torch.no_grad():
+            out = module(x)
+    elif module_name == "GraphBiMap":
+        x = torch.randn(2, 4, 10, 100, dtype=dtype)
+        x = CovLayer(device=device, dtype=dtype)(x)
+        with torch.no_grad():
+            out = module(x)
+    elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
+        x = torch.randn(2, 6, 15, dtype=dtype, device=device)
+        with torch.no_grad():
+            out = module(x)
+    elif module_name in ("GaussianSPDDescriptor", "RiemannianHighOrderPooling"):
+        x = torch.randn(2, 16, 10, dtype=dtype, device=device)
         with torch.no_grad():
             out = module(x)
     elif module_name == "LogEuclideanResidual":
@@ -201,6 +239,13 @@ def test_module_output_device(module_name, device):
 
     if module_name in ("CovLayer", "WaveletConv"):
         x = torch.randn(2, 10, 1000, device=device, dtype=dtype)
+    elif module_name == "GraphBiMap":
+        raw = torch.randn(2, 4, 10, 100, device=device, dtype=dtype)
+        x = CovLayer(device=device, dtype=dtype)(raw)
+    elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
+        x = torch.randn(2, 6, 15, device=device, dtype=dtype)
+    elif module_name in ("GaussianSPDDescriptor", "RiemannianHighOrderPooling"):
+        x = torch.randn(2, 16, 10, device=device, dtype=dtype)
     elif module_name == "LogEuclideanResidual":
         raw = torch.randn(2, 10, 1000, device=device, dtype=dtype)
         cov = CovLayer(device=device, dtype=dtype)
@@ -259,6 +304,11 @@ def test_module_broadcast_compatible(module_name, extra_dim):
     if module_name in [
         "PatchEmbeddingLayer",
         "BiMapDepthWise",
+        "GraphBiMap",
+        "SPMultiheadAttention",
+        "SPDTransformerEncoderLayer",
+        "GaussianSPDDescriptor",
+        "RiemannianHighOrderPooling",
         "WaveletConv",
         "LogEuclideanResidual",
         "PositiveDefiniteScalar",

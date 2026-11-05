@@ -179,6 +179,43 @@ theory and is particularly useful for covariance interpolation.
    bures_wasserstein_transport
 
 
+Cholesky Product Metrics (PCM & BWCM)
+'''''''''''''''''''''''''''''''''''''
+Closed-form Cholesky product metrics pulling back Power-Euclidean and Bures-Wasserstein
+geometries via the Cholesky factor.
+
+.. autosummary::
+   :toctree: generated/cholesky_product
+
+   power_cholesky_log
+   power_cholesky_exp
+   power_cholesky_distance
+   power_cholesky_geodesic
+   power_cholesky_mean
+   bures_wasserstein_cholesky_log
+   bures_wasserstein_cholesky_exp
+   bures_wasserstein_cholesky_distance
+   bures_wasserstein_cholesky_geodesic
+   bures_wasserstein_cholesky_mean
+
+
+Correlation Manifold Operations
+'''''''''''''''''''''''''''''''
+Operations on the full-rank correlation manifold :math:`\mathcal{C}_{++}^d`.
+
+.. autosummary::
+   :toctree: generated/correlation_functional
+
+   cov_to_corr
+   off_diag
+   corr_lsm_log
+   corr_lsm_exp
+   corr_olm_log
+   corr_olm_exp
+   tril_embed
+   untril_embed
+
+
 Parallel Transport
 ------------------
 Functions for parallel transport of tangent vectors along geodesics on the SPD
@@ -516,6 +553,7 @@ acting as analogous operations to linear layers in Euclidean space.
 
    BiMap
    BiMapIncreaseDim
+   GraphBiMap
 
 
 Batch Normalization
@@ -529,7 +567,26 @@ or related representations.
    SPDBatchNormMean
    SPDBatchNormMeanVar
    SPDBatchNormLie
+   SPDBatchNormHarmonicArithmetic
+   SPDBatchNormBW
+   SPDBatchNormCholesky
    BatchReNorm
+
+
+Manifold Attention & Pooling
+----------------------------
+Self-attention, transformer encoder, high-order pooling, and intrinsic
+Riemannian linear / MLR layers.
+
+.. autosummary::
+   :toctree: generated/attention_pooling
+
+   SPMultiheadAttention
+   SPDTransformerEncoderLayer
+   GaussianSPDDescriptor
+   RiemannianHighOrderPooling
+   SPDRMLR
+   SPDLinear
 
 
 Regularization
@@ -613,6 +670,21 @@ building blocks from :py:mod:`spd_learn.modules`.
     SPDNet
     TensorCSPNet
     TSMNet
+    CorAtt
+    CorNet
+    SPNN
+    GyroSPDAtt
+    GraphCSPNet
+    GBWAtt
+    SPDTransNet
+    SPDMetaFormer
+    DeepGeoCCA
+    RCEEGNet
+    STaRNet
+    SPDResNet
+    GyroSPD
+    SPDNetAE
+    SSGCNet
 
 
 Model Building Blocks
@@ -624,6 +696,18 @@ Sub-modules used inside the models above, exposed for reuse and customization.
 
    AttentionManifold
    PhaseDelay
+   CorrAttention
+   GBWAttention
+   GyroSPDAttention
+   SymSPDAttention
+   SPDMetaFormerBlock
+   GeodesicCCALoss
+   SqueezeExcitation
+   AdaptiveLogEuclidean
+   SPDResBlock
+   GyroSPDLayer
+   SPDDecoderBlock
+   TangentGraphSPDAggregation
 
 
 Model Selection Guide

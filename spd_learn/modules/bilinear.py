@@ -165,6 +165,8 @@ class BiMap(nn.Module):
         init_method: Literal[
             "kaiming_uniform", "orthogonal", "stiefel"
         ] = "kaiming_uniform",
+        orthogonal: bool = True,
+        seed: Optional[int] = None,
         device=None,
         dtype=None,
     ):
@@ -176,6 +178,9 @@ class BiMap(nn.Module):
                 "'kaiming_uniform', 'orthogonal', 'stiefel'."
             )
 
+        if not orthogonal:
+            parametrized = False
+
         if not parametrized and orthogonal_map is not None:
             raise ValueError("orthogonal_map is only used when parametrized is True")
 
@@ -186,6 +191,8 @@ class BiMap(nn.Module):
         self.increase_dim = None
         self.orthogonal_map = orthogonal_map
         self.init_method = init_method
+        self.orthogonal = orthogonal
+        self.seed = seed
 
         if out_features > in_features:
             self.increase_dim = BiMapIncreaseDim(
@@ -204,6 +211,9 @@ class BiMap(nn.Module):
                 requires_grad=True,
             ),
         )
+
+        if seed is not None:
+            torch.manual_seed(seed)
 
         self.reset_parameters()
 
@@ -344,3 +354,174 @@ class BiMapIncreaseDim(nn.Module):
             output = output.squeeze(1)
 
         return output
+
+
+class GraphBiMap(nn.Module):
+    r"""Graph Bilinear Mapping Layer for SPD Matrices.
+
+    This layer implements graph aggregation followed by node-wise bilinear
+    transformation on Symmetric Positive Definite (SPD) manifolds as introduced
+    in GraphCSPNet :cite:p:`ju2023graph`.
+
+    Given a collection of SPD matrices :math:`\{X_i\}_{i=1}^{N}` associated with
+    nodes on a graph (e.g., time-frequency segments), the layer first performs
+    graph spatial aggregation using a row-stochastic propagation matrix :math:`P`:
+
+    .. math::
+
+        \tilde{X}_i = \sum_{j=1}^N P_{ij} X_j
+
+    Because :math:`P_{ij} \ge 0` and :math:`\sum_{j=1}^N P_{ij} = 1`, each
+    :math:`\tilde{X}_i` is a convex combination of SPD matrices and strictly
+    preserves positive definiteness.
+
+    Subsequently, a node-wise (depthwise) bilinear mapping is applied to each node:
+
+    .. math::
+
+        Y_i = W_i^\top \tilde{X}_i W_i
+
+    where :math:`W_i \in \text{St}(d_{\text{in}}, d_{\text{out}})` is an
+    orthogonally parametrized spatial filter for node :math:`i`.
+
+    Parameters
+    ----------
+    n_nodes : int
+        Number of nodes in the graph.
+    in_features : int
+        Dimensionality of the input SPD matrices.
+    out_features : int
+        Dimensionality of the output SPD matrices.
+    graph_matrix : torch.Tensor, optional
+        Initial graph matrix of shape `(n_nodes, n_nodes)`. If `None`, defaults
+        to identity matrix.
+    learnable_graph : bool, default=False
+        If `True`, the graph propagation matrix is learned via parameterized logits
+        with softmax normalization. If `False`, it remains fixed as a registered buffer.
+    parametrized : bool, default=True
+        Whether to orthogonally parametrize the bilinear transformation weights.
+    orthogonal_map : {"cayley", "matrix_exp", "householder"}, optional
+        The method used for orthogonal parametrization.
+    orthogonal : bool, default=True
+        If `False`, disables orthogonal parametrization.
+    init_method : {"kaiming_uniform", "orthogonal", "stiefel"}, default="kaiming_uniform"
+        Initialization method for the bilinear transformation weights.
+    seed : int, optional
+        Random seed for parameter initialization.
+    device : torch.device, optional
+        Target device for layer parameters.
+    dtype : torch.dtype, optional
+        Data type for layer parameters.
+
+    See Also
+    --------
+    :class:`BiMap` : Bilinear mapping layer without graph aggregation.
+    :class:`BiMapIncreaseDim` : Bilinear mapping for dimension expansion.
+    :class:`~spd_learn.models.GraphCSPNet` : Complete architecture using GraphBiMap.
+
+    Examples
+    --------
+    >>> import torch
+    >>> from spd_learn.modules import GraphBiMap
+    >>> layer = GraphBiMap(n_nodes=4, in_features=6, out_features=3)
+    >>> X = torch.randn(2, 4, 6, 6)
+    >>> X = X @ X.mT + 0.1 * torch.eye(6)
+    >>> Y = layer(X)
+    >>> Y.shape
+    torch.Size([2, 4, 3, 3])
+    """
+
+    def __init__(
+        self,
+        n_nodes: int,
+        in_features: int,
+        out_features: int,
+        graph_matrix: Optional[torch.Tensor] = None,
+        learnable_graph: bool = False,
+        parametrized: bool = True,
+        orthogonal_map: Optional[Literal["cayley", "matrix_exp", "householder"]] = None,
+        orthogonal: bool = True,
+        init_method: str = "kaiming_uniform",
+        seed: Optional[int] = None,
+        device: Optional[torch.device] = None,
+        dtype: Optional[torch.dtype] = None,
+    ):
+        super().__init__()
+        self.n_nodes = n_nodes
+        self.in_features = in_features
+        self.out_features = out_features
+        self.learnable_graph = learnable_graph
+        self.parametrized = parametrized
+        self.orthogonal_map = orthogonal_map
+        self.orthogonal = orthogonal
+        self.init_method = init_method
+        self.seed = seed
+
+        if learnable_graph:
+            if graph_matrix is not None:
+                init_logits = graph_matrix.clone().detach().to(device=device, dtype=dtype)
+            else:
+                init_logits = torch.eye(n_nodes, device=device, dtype=dtype)
+            self.graph_logits = nn.Parameter(init_logits)
+        else:
+            if graph_matrix is not None:
+                P = graph_matrix.clone().detach().to(device=device, dtype=dtype)
+            else:
+                P = torch.eye(n_nodes, device=device, dtype=dtype)
+            self.register_buffer("graph_matrix", P)
+
+        self.bimap = BiMap(
+            in_features=in_features,
+            out_features=out_features,
+            depthwise=n_nodes,
+            parametrized=parametrized,
+            orthogonal_map=orthogonal_map,
+            orthogonal=orthogonal,
+            init_method=init_method,
+            seed=seed,
+            device=device,
+            dtype=dtype,
+        )
+
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the GraphBiMap layer.
+
+        Parameters
+        ----------
+        X : torch.Tensor
+            Input SPD matrices with shape `(..., n_nodes, in_features, in_features)`.
+
+        Returns
+        -------
+        torch.Tensor
+            Transformed SPD matrices with shape `(..., n_nodes, out_features, out_features)`.
+        """
+        if X.ndim < 3:
+            raise ValueError(
+                f"Expected input with at least 3 dimensions (..., n_nodes, in_features, in_features), "
+                f"got shape {X.shape}"
+            )
+        if X.shape[-3] != self.n_nodes:
+            raise ValueError(
+                f"Expected n_nodes={self.n_nodes} at dim -3, got {X.shape[-3]} in shape {X.shape}"
+            )
+        if X.shape[-2] != self.in_features or X.shape[-1] != self.in_features:
+            raise ValueError(
+                f"Expected matrix size ({self.in_features}, {self.in_features}), "
+                f"got ({X.shape[-2]}, {X.shape[-1]}) in shape {X.shape}"
+            )
+
+        if self.learnable_graph:
+            if self.graph_logits.is_complex():
+                P = torch.softmax(self.graph_logits.real, dim=-1).to(X.dtype)
+            else:
+                P = torch.softmax(self.graph_logits.to(X.dtype), dim=-1)
+        else:
+            if self.graph_matrix.is_complex():
+                P = self.graph_matrix.real.to(X.dtype)
+            else:
+                P = self.graph_matrix.to(X.dtype)
+
+        X_agg = torch.einsum("ij,...jkl->...ikl", P, X)
+
+        return self.bimap(X_agg)

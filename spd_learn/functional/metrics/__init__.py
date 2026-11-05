@@ -38,6 +38,20 @@ from .bures_wasserstein import (
     bures_wasserstein_mean,
     bures_wasserstein_transport,
 )
+from .cholesky_product import (
+    bures_wasserstein_cholesky_distance,
+    bures_wasserstein_cholesky_exp,
+    bures_wasserstein_cholesky_geodesic,
+    bures_wasserstein_cholesky_log,
+    bures_wasserstein_cholesky_mean,
+    power_cholesky_coords,
+    power_cholesky_distance,
+    power_cholesky_exp,
+    power_cholesky_geodesic,
+    power_cholesky_inv_coords,
+    power_cholesky_log,
+    power_cholesky_mean,
+)
 from .log_cholesky import (
     cholesky_exp,
     cholesky_log,
@@ -82,4 +96,17 @@ __all__ = [
     "log_cholesky_distance",
     "log_cholesky_geodesic",
     "log_cholesky_mean",
+    # Power Cholesky & Bures-Wasserstein Cholesky metrics
+    "power_cholesky_coords",
+    "power_cholesky_inv_coords",
+    "power_cholesky_log",
+    "power_cholesky_exp",
+    "power_cholesky_distance",
+    "power_cholesky_geodesic",
+    "power_cholesky_mean",
+    "bures_wasserstein_cholesky_log",
+    "bures_wasserstein_cholesky_exp",
+    "bures_wasserstein_cholesky_distance",
+    "bures_wasserstein_cholesky_geodesic",
+    "bures_wasserstein_cholesky_mean",
 ]

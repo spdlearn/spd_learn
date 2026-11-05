@@ -138,6 +138,16 @@ from .core import (
     sym_to_upper,
     vec_to_sym,
 )
+from .correlation import (
+    corr_lsm_exp,
+    corr_lsm_log,
+    corr_olm_exp,
+    corr_olm_log,
+    cov_to_corr,
+    off_diag,
+    tril_embed,
+    untril_embed,
+)
 from .covariance import covariance, cross_covariance, real_covariance, sample_covariance
 from .dropout import dropout_spd
 from .frechet import frechet_derivative_exp, frechet_derivative_log
@@ -145,6 +155,11 @@ from .metrics import (
     # AIRM metric
     airm_distance,
     airm_geodesic,
+    bures_wasserstein_cholesky_distance,
+    bures_wasserstein_cholesky_exp,
+    bures_wasserstein_cholesky_geodesic,
+    bures_wasserstein_cholesky_log,
+    bures_wasserstein_cholesky_mean,
     # Bures-Wasserstein metric
     bures_wasserstein_distance,
     bures_wasserstein_geodesic,
@@ -166,6 +181,13 @@ from .metrics import (
     log_euclidean_scalar_multiply,
     log_map_airm,
     log_map_lem,
+    power_cholesky_coords,
+    power_cholesky_distance,
+    power_cholesky_exp,
+    power_cholesky_geodesic,
+    power_cholesky_inv_coords,
+    power_cholesky_log,
+    power_cholesky_mean,
     spd_egrad2rgrad,
 )
 from .numerical import (
@@ -237,6 +259,28 @@ __all__ = [
     "bures_wasserstein_geodesic",
     "bures_wasserstein_mean",
     "bures_wasserstein_transport",
+    # Power Cholesky & Bures-Wasserstein Cholesky metrics
+    "power_cholesky_coords",
+    "power_cholesky_inv_coords",
+    "power_cholesky_log",
+    "power_cholesky_exp",
+    "power_cholesky_distance",
+    "power_cholesky_geodesic",
+    "power_cholesky_mean",
+    "bures_wasserstein_cholesky_log",
+    "bures_wasserstein_cholesky_exp",
+    "bures_wasserstein_cholesky_distance",
+    "bures_wasserstein_cholesky_geodesic",
+    "bures_wasserstein_cholesky_mean",
+    # Correlation manifold operations
+    "cov_to_corr",
+    "off_diag",
+    "corr_lsm_log",
+    "corr_lsm_exp",
+    "corr_olm_log",
+    "corr_olm_exp",
+    "tril_embed",
+    "untril_embed",
     # Parallel transport
     "parallel_transport_airm",
     "parallel_transport_lem",
