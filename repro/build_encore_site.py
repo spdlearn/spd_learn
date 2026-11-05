@@ -1821,8 +1821,14 @@ tabs.forEach(function(btn,idx){{
 
 
 def build_all() -> None:
-    if OUT_DIR.exists():
-        shutil.rmtree(OUT_DIR)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for item in OUT_DIR.iterdir():
+        if item.name == ".git":
+            continue
+        if item.is_dir():
+            shutil.rmtree(item)
+        else:
+            item.unlink()
     (OUT_DIR / "assets").mkdir(parents=True, exist_ok=True)
     (OUT_DIR / "papers").mkdir(parents=True, exist_ok=True)
     (OUT_DIR / "figures").mkdir(parents=True, exist_ok=True)
