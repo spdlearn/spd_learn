@@ -28,12 +28,13 @@ class SymmetricPositiveDefinite(nn.Module):
         Options are: "exp" and "softplus"
     device : torch.device, optional
         Device for the module. Default is None.
-        Note: This parametrization class has no parameters or buffers,
-        so device is accepted for API consistency but not used.
+        Accepted for API consistency; the base follows assigned tensors.
     dtype : torch.dtype, optional
         Data type for the module. Default is None.
-        Note: This parametrization class has no parameters or buffers,
-        so dtype is accepted for API consistency but not used.
+        Accepted for API consistency; the base follows assigned tensors.
+    use_trivialization : bool, default=False
+        Enable a moving exponential chart. Assignment stores a Cholesky base
+        factor and resets tangent coordinates. Only supported for ``"exp"``.
 
     Examples
     --------
@@ -48,13 +49,17 @@ class SymmetricPositiveDefinite(nn.Module):
     >>> S = spd_softplus(X)
     """
 
-    def __init__(self, mapping="exp", device=None, dtype=None) -> None:
+    def __init__(
+        self, mapping="exp", device=None, dtype=None, *, use_trivialization=False
+    ) -> None:
         super().__init__()
         if mapping not in ["softplus", "exp"]:
             raise ValueError(f"mapping must be 'softplus' or 'exp', got '{mapping}'")
+        if use_trivialization and mapping != "exp":
+            raise ValueError("Dynamic trivialization requires mapping='exp'")
         self.mapping = mapping
-        # device and dtype are accepted for API consistency but not used
-        # since this parametrization class has no parameters or buffers
+        self.use_trivialization = use_trivialization
+        self.register_buffer("base_factor", None)
         self.device = device
         self.dtype = dtype
         if self.mapping == "softplus":
@@ -77,10 +82,13 @@ class SymmetricPositiveDefinite(nn.Module):
         torch.Tensor
             The projected SPD matrix of shape (..., n, n).
         """
-        return self._spd_fun(ensure_sym(X))
+        output = self._spd_fun(ensure_sym(X))
+        if self.use_trivialization and self.base_factor is not None:
+            output = self.base_factor @ output @ self.base_factor.mT
+        return output
 
     def right_inverse(self, X):
-        """Map from the SPD manifold onto the tangent space at identity.
+        """Map from SPD matrices to coordinates, rebasing if enabled.
 
         This is useful for initializing parameters from SPD matrices
         when using this module as a parametrization.
@@ -95,6 +103,14 @@ class SymmetricPositiveDefinite(nn.Module):
         torch.Tensor
             The corresponding tangent symmetric matrix.
         """
+        if self.use_trivialization:
+            if X.ndim < 2 or X.shape[-2] != X.shape[-1]:
+                raise ValueError("Expected square SPD matrices")
+            if not torch.isfinite(X).all() or not torch.allclose(X, X.mT):
+                raise ValueError("Expected finite symmetric SPD matrices")
+            with torch.no_grad():
+                self.base_factor = torch.linalg.cholesky(ensure_sym(X))
+            return torch.zeros_like(X)
         return self._tangent_fun(X)
 
 

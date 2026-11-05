@@ -28,6 +28,72 @@ def _random_spd(*batch, n=3, seed=0):
 
 
 # Manifold parametrizations
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+@pytest.mark.parametrize("shape", [(3, 3), (2, 3, 3), (2, 2, 3, 3)])
+def test_dynamic_spd_rebase(dtype, shape):
+    generator = torch.Generator().manual_seed(3)
+    A = torch.randn(shape, generator=generator, dtype=dtype)
+    P = A @ A.mT + torch.eye(3, dtype=dtype)
+    S = torch.randn(shape, generator=generator, dtype=dtype)
+    S = (S + S.mT) / 10
+    param = SymmetricPositiveDefinite(use_trivialization=True)
+    tol = 1e-5 if dtype == torch.float32 else 1e-10
+    assert_close(param.right_inverse(P), torch.zeros_like(P))
+    assert_close(param.base_factor @ param.base_factor.mT, P, atol=tol, rtol=tol)
+    expected = param.base_factor @ torch.linalg.matrix_exp(S) @ param.base_factor.mT
+    assert_close(param(S), expected, atol=tol, rtol=tol)
+    current = param(S).detach()
+    assert_close(param(param.right_inverse(current)), current, atol=tol, rtol=tol)
+    S.requires_grad_()
+    param(S).square().sum().backward()
+    assert torch.isfinite(S.grad).all()
+    assert param.base_factor.grad_fn is None
+    param.to(dtype=torch.float64)
+    assert param.base_factor.dtype == torch.float64
+
+
+def test_dynamic_spd_preserves_small_eigenvalues():
+    P = torch.diag(torch.tensor([1e-9, 1.0]))
+    param = SymmetricPositiveDefinite(use_trivialization=True)
+    assert_close(param(param.right_inverse(P)), P, rtol=1e-5, atol=1e-12)
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        torch.ones(2, 3),
+        torch.full((2, 2), float("nan")),
+        torch.tensor([[1.0, 1.0], [0.0, 1.0]]),
+        torch.zeros(2, 2),
+        torch.diag(torch.tensor([-1.0, 1.0])),
+    ],
+)
+def test_dynamic_spd_rejects_invalid_assignment(bad):
+    param = SymmetricPositiveDefinite(use_trivialization=True)
+    param.right_inverse(torch.eye(2))
+    before = param.base_factor.clone()
+    with pytest.raises((ValueError, torch.linalg.LinAlgError)):
+        param.right_inverse(bad)
+    assert_close(param.base_factor, before)
+
+
+def test_dynamic_spd_rejects_softplus():
+    with pytest.raises(ValueError, match="exp"):
+        SymmetricPositiveDefinite(mapping="softplus", use_trivialization=True)
+
+
+def test_static_spd_checkpoint_stays_stateless():
+    assert not SymmetricPositiveDefinite().state_dict()
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_dynamic_spd_buffer_moves_to_cuda():
+    param = SymmetricPositiveDefinite(use_trivialization=True)
+    param.right_inverse(torch.eye(2))
+    param.cuda()
+    assert param(torch.zeros(2, 2, device="cuda")).is_cuda
+
+
 @pytest.mark.parametrize("cls", [SymmetricPositiveDefinite, PositiveDefiniteScalar])
 def test_parametrization_rejects_unknown_mapping(cls):
     with pytest.raises(ValueError, match="mapping must be"):
