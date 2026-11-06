@@ -38,6 +38,20 @@ from .bures_wasserstein import (
     bures_wasserstein_mean,
     bures_wasserstein_transport,
 )
+from .cholesky_product import (
+    bwcm_distance,
+    bwcm_geodesic,
+    bwcm_mean,
+    exp_map_bwcm,
+    exp_map_pcm,
+    log_map_bwcm,
+    log_map_pcm,
+    pcm_coords,
+    pcm_distance,
+    pcm_geodesic,
+    pcm_inv_coords,
+    pcm_mean,
+)
 from .log_cholesky import (
     cholesky_exp,
     cholesky_log,
@@ -82,4 +96,16 @@ __all__ = [
     "log_cholesky_distance",
     "log_cholesky_geodesic",
     "log_cholesky_mean",
+    "pcm_coords",
+    "pcm_inv_coords",
+    "log_map_pcm",
+    "exp_map_pcm",
+    "pcm_distance",
+    "pcm_geodesic",
+    "pcm_mean",
+    "log_map_bwcm",
+    "exp_map_bwcm",
+    "bwcm_distance",
+    "bwcm_geodesic",
+    "bwcm_mean",
 ]
