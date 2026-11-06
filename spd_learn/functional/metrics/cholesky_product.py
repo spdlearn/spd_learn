@@ -12,6 +12,10 @@ from typing import Optional, Union
 
 import torch
 
+from pyriemann.geometry.distance import distance_euclid
+from pyriemann.geometry.geodesic import geodesic_euclid
+from pyriemann.geometry.mean import mean_euclid
+
 from ..utils import ensure_sym
 
 
@@ -105,16 +109,14 @@ def power_cholesky_distance(
     if theta == 0:
         raise ValueError("theta must be non-zero for Power-Cholesky metric.")
 
-    A = ensure_sym(A)
-    B = ensure_sym(B)
-    L_A = torch.linalg.cholesky(A)
-    L_B = torch.linalg.cholesky(B)
-
-    tril_diff = L_A.tril(-1) - L_B.tril(-1)
-    d_A = torch.diagonal(L_A, dim1=-2, dim2=-1)
-    d_B = torch.diagonal(L_B, dim1=-2, dim2=-1)
-    diff_diag = (d_A.pow(theta) - d_B.pow(theta)) / theta
-
+    Z_A = power_cholesky_coords(A, theta=theta)
+    Z_B = power_cholesky_coords(B, theta=theta)
+    if diagonal_weight == 1.0:
+        return distance_euclid(Z_A, Z_B)
+    tril_diff = Z_A.tril(-1) - Z_B.tril(-1)
+    diff_diag = torch.diagonal(Z_A, dim1=-2, dim2=-1) - torch.diagonal(
+        Z_B, dim1=-2, dim2=-1
+    )
     sq_tril = tril_diff.pow(2).sum(dim=(-2, -1))
     sq_diag = diff_diag.pow(2).sum(dim=-1)
     return torch.sqrt((sq_tril + diagonal_weight * sq_diag).clamp(min=0.0))
@@ -142,34 +144,12 @@ def power_cholesky_geodesic(
     torch.Tensor
         Interpolated SPD matrix of shape `(..., n, n)`.
     """
-    if theta == 0:
-        raise ValueError("theta must be non-zero for Power-Cholesky metric.")
-
-    A = ensure_sym(A)
-    B = ensure_sym(B)
-    L_A = torch.linalg.cholesky(A)
-    L_B = torch.linalg.cholesky(B)
-
-    tril_A = L_A.tril(-1)
-    tril_B = L_B.tril(-1)
-    d_A = torch.diagonal(L_A, dim1=-2, dim2=-1)
-    d_B = torch.diagonal(L_B, dim1=-2, dim2=-1)
-
-    if isinstance(t, torch.Tensor) and t.ndim > 0 and t.ndim == A.ndim - 2:
-        t_mat: float | torch.Tensor = t.unsqueeze(-1).unsqueeze(-1)
-        t_diag: float | torch.Tensor = t.unsqueeze(-1)
-    else:
-        t_mat = t
-        t_diag = t
-
-    L_tril = (1.0 - t_mat) * tril_A + t_mat * tril_B
-    d_interp = ((1.0 - t_diag) * d_A.pow(theta) + t_diag * d_B.pow(theta)).clamp(
-        min=1e-12
-    )
-    d_t = d_interp.pow(1.0 / theta)
-
-    L_t = L_tril + torch.diag_embed(d_t)
-    return L_t @ L_t.transpose(-1, -2)
+    Z_A = power_cholesky_coords(A, theta=theta)
+    Z_B = power_cholesky_coords(B, theta=theta)
+    if torch.is_tensor(t) and t.ndim == 0 and Z_A.ndim > 2:
+        t = t.expand(Z_A.shape[:-2])
+    Z_t = geodesic_euclid(Z_A, Z_B, alpha=t)
+    return power_cholesky_inv_coords(Z_t, theta=theta)
 
 
 def power_cholesky_mean(
@@ -199,63 +179,38 @@ def power_cholesky_mean(
     torch.Tensor
         Weighted Fréchet mean SPD matrix.
     """
-    if theta == 0:
-        raise ValueError("theta must be non-zero for Power-Cholesky metric.")
-
-    X = ensure_sym(X)
     if X.ndim < 3:
         raise ValueError(
             f"X must have at least 3 dimensions (batch of matrices), got {X.ndim}"
         )
-
     if dim < 0:
         dim = X.ndim + dim
     if dim >= X.ndim - 2 or dim < 0:
         raise ValueError(f"dim must be a batch dimension (< {X.ndim - 2}), got {dim}")
 
-    N = X.shape[dim]
-    L = torch.linalg.cholesky(X)
-    L_tril = L.tril(-1)
-    d = torch.diagonal(L, dim1=-2, dim2=-1)
-
+    Z = power_cholesky_coords(X, theta=theta)
     if weights is None:
-        L_bar_tril = L_tril.mean(dim=dim, keepdim=keepdim)
-        d_theta_bar = d.pow(theta).mean(dim=dim, keepdim=keepdim).clamp(min=1e-12)
-        d_bar = d_theta_bar.pow(1.0 / theta)
+        Z_moved = Z.movedim(dim, -3)
+        Z_bar = mean_euclid(Z_moved)
+        if keepdim:
+            Z_bar = Z_bar.unsqueeze(dim)
+        return power_cholesky_inv_coords(Z_bar, theta=theta)
+
+    N = X.shape[dim]
+    weights = weights.to(device=X.device, dtype=X.dtype)
+    if weights.ndim == 1 and weights.shape[0] == N:
+        w_shape = [1] * X.ndim
+        w_shape[dim] = N
+        w = weights.view(w_shape)
+    elif weights.ndim == X.ndim - 2:
+        w = weights.unsqueeze(-1).unsqueeze(-1)
+    elif weights.ndim == X.ndim - 1:
+        w = weights.unsqueeze(-1)
     else:
-        weights = weights.to(device=X.device, dtype=X.dtype)
-        if weights.ndim == 1 and weights.shape[0] == N:
-            w_shape_L = [1] * X.ndim
-            w_shape_L[dim] = N
-            w_L = weights.view(w_shape_L)
-
-            w_shape_d = [1] * (X.ndim - 1)
-            w_shape_d[dim] = N
-            w_d = weights.view(w_shape_d)
-        elif weights.ndim == X.ndim - 2:
-            w_L = weights.unsqueeze(-1).unsqueeze(-1)
-            w_d = weights.unsqueeze(-1)
-        elif weights.ndim == X.ndim - 1:
-            w_L = weights.unsqueeze(-1)
-            w_d = weights
-        elif weights.ndim == X.ndim:
-            w_L = weights
-            w_d = weights.squeeze(-1)
-        else:
-            w_L = weights
-            w_d = weights
-
-        w_L = w_L / w_L.sum(dim=dim, keepdim=True)
-        w_d = w_d / w_d.sum(dim=dim, keepdim=True)
-
-        L_bar_tril = (w_L * L_tril).sum(dim=dim, keepdim=keepdim)
-        d_theta_bar = (
-            (w_d * d.pow(theta)).sum(dim=dim, keepdim=keepdim).clamp(min=1e-12)
-        )
-        d_bar = d_theta_bar.pow(1.0 / theta)
-
-    L_bar = L_bar_tril + torch.diag_embed(d_bar)
-    return L_bar @ L_bar.transpose(-1, -2)
+        w = weights
+    w = w / w.sum(dim=dim, keepdim=True)
+    Z_bar = (w * Z).sum(dim=dim, keepdim=keepdim)
+    return power_cholesky_inv_coords(Z_bar, theta=theta)
 
 
 def power_cholesky_log(

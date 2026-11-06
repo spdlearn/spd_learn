@@ -8,6 +8,7 @@ import math
 
 import torch
 
+from pyriemann.geometry.covariance import normalize as _pyriemann_normalize
 from torch import nn
 from torch.nn.utils import parametrize
 
@@ -289,8 +290,7 @@ class GBWPatchCovariance(nn.Module):
         for patch in torch.tensor_split(x, self.n_patches, dim=-1):
             cov = sample_covariance(patch)
             if self.trace_normalize:
-                trace = cov.diagonal(dim1=-2, dim2=-1).sum(-1)[..., None, None]
-                cov = cov / trace.clamp_min(torch.finfo(x.dtype).tiny)
+                cov = _pyriemann_normalize(cov, "trace")
             covs.append(
                 cov
                 + self.epsilon * torch.eye(x.shape[1], device=x.device, dtype=x.dtype)

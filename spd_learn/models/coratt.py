@@ -19,6 +19,8 @@ from spd_learn.functional import (
     corr_olm_exp,
     corr_olm_log,
     cov_to_corr,
+    distance_euclid,
+    geodesic_euclid,
     off_diag,
     sample_covariance,
     tril_embed,
@@ -111,18 +113,6 @@ class CorrAttention(nn.Module):
         )
         self.bias = nn.Parameter(torch.zeros(dim, dim, device=device, dtype=dtype))
 
-    @property
-    def weight_q(self):
-        return self.q_proj.parametrizations.weight.original
-
-    @property
-    def weight_k(self):
-        return self.k_proj.parametrizations.weight.original
-
-    @property
-    def weight_v(self):
-        return self.v_proj.parametrizations.weight.original
-
     def reset_parameters(self) -> None:
         """Reset layer parameters."""
         self.q_proj.reset_parameters()
@@ -156,8 +146,7 @@ class CorrAttention(nn.Module):
         V = off_diag(self.v_proj(L))
 
         # Pairwise Frobenius distance between patches
-        diff = Q.unsqueeze(-3) - K.unsqueeze(-4)
-        D = torch.linalg.norm(diff, ord="fro", dim=(-2, -1))
+        D = distance_euclid(Q.unsqueeze(-3), K.unsqueeze(-4))
 
         # Attention weights
         energy = 1.0 / (1.0 + torch.log1p(D.clamp(min=0.0)))
@@ -171,7 +160,7 @@ class CorrAttention(nn.Module):
         attn_tangent = attn_tangent + bias_term
 
         # Geodesic residual in tangent space
-        out_tangent = 0.5 * L + 0.5 * attn_tangent
+        out_tangent = geodesic_euclid(L, attn_tangent, alpha=0.5)
 
         # Exponential map back to correlation manifold
         if self.metric in ("LSM", "mix"):
@@ -298,18 +287,6 @@ class CorAtt(MAtt):
 
         if device is not None or dtype is not None:
             self.to(device=device, dtype=dtype)
-
-    @property
-    def attention(self):
-        return self.manifold_attention
-
-    @property
-    def classifier(self):
-        return self.linear
-
-    @classifier.setter
-    def classifier(self, val):
-        self.linear = val
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of CorAtt.

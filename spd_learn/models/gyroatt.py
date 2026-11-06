@@ -17,11 +17,15 @@ import torch.nn.functional as F
 from torch.nn.utils.parametrize import is_parametrized, register_parametrization
 
 from ..functional import (
+    distance_euclid,
     ensure_sym,
+    log_cholesky_distance,
+    log_euclidean_distance,
+    log_euclidean_mean,
     matrix_exp,
-    matrix_log,
     matrix_sqrt,
     sample_covariance,
+    spd_rebiasing,
 )
 from ..functional.metrics import cholesky_exp, cholesky_log
 from ..modules import (
@@ -158,18 +162,6 @@ class GyroSPDAttention(nn.Module):
         self.reset_parameters()
         self._parametrize()
 
-    @property
-    def w_q(self):
-        return self.q_proj.parametrizations.weight.original
-
-    @property
-    def w_k(self):
-        return self.k_proj.parametrizations.weight.original
-
-    @property
-    def w_v(self):
-        return self.v_proj.parametrizations.weight.original
-
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Reset layer parameters to initial state."""
@@ -186,12 +178,6 @@ class GyroSPDAttention(nn.Module):
 
     def _parametrize(self) -> None:
         register_parametrization(self, "bias", SymmetricPositiveDefinite())
-
-    def _cayley(self, W: torch.Tensor) -> torch.Tensor:
-        """Compute orthogonal matrix via Cayley transform of skew-symmetric matrix."""
-        S = W - W.mT
-        eye = torch.eye(self.dim, device=W.device, dtype=W.dtype)
-        return torch.linalg.solve(eye + S, eye - S)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of GyroSPDAttention.
@@ -211,21 +197,12 @@ class GyroSPDAttention(nn.Module):
         V = self.v_proj(X)
 
         if self.metric == "LEM":
-            log_Q = matrix_log.apply(Q)
-            log_K = matrix_log.apply(K)
-            diff = log_Q.unsqueeze(-3) - log_K.unsqueeze(-4)
-            D = torch.linalg.matrix_norm(diff, ord="fro")
+            D = log_euclidean_distance(Q.unsqueeze(-3), K.unsqueeze(-4))
             scores = 1.0 / (1.0 + torch.log1p(D))
             A = F.softmax(scores, dim=-1)
-
-            log_V = matrix_log.apply(V)
-            mean_log_V = torch.einsum("...ij, ...jkl -> ...ikl", A, log_V)
-            bar_V = matrix_exp.apply(ensure_sym(mean_log_V))
+            bar_V = ensure_sym(log_euclidean_mean(A, V))
         elif self.metric == "LCM":
-            chol_Q = cholesky_log.apply(Q)
-            chol_K = cholesky_log.apply(K)
-            diff = chol_Q.unsqueeze(-3) - chol_K.unsqueeze(-4)
-            D = torch.linalg.matrix_norm(diff, ord="fro")
+            D = log_cholesky_distance(Q.unsqueeze(-3), K.unsqueeze(-4))
             scores = 1.0 / (1.0 + torch.log1p(D))
             A = F.softmax(scores, dim=-1)
 
@@ -236,7 +213,7 @@ class GyroSPDAttention(nn.Module):
             raise ValueError(f"Unsupported metric: {self.metric}")
 
         B_sqrt = matrix_sqrt.apply(self.bias)
-        return B_sqrt @ bar_V @ B_sqrt
+        return spd_rebiasing(bar_V, B_sqrt)
 
     def extra_repr(self) -> str:
         return f"dim={self.dim}, metric='{self.metric}', power={self.power}"
@@ -353,8 +330,7 @@ class SymSPDAttention(nn.Module):
         K = self.k_proj(X)
         V = self.v_proj(X)
 
-        diff = Q.unsqueeze(-3) - K.unsqueeze(-4)
-        D = torch.linalg.matrix_norm(diff, ord="fro")
+        D = distance_euclid(Q.unsqueeze(-3), K.unsqueeze(-4))
         logits = -torch.exp(self.alpha) * D - self.beta
         A = F.softmax(logits, dim=-1)
 
@@ -517,22 +493,6 @@ class GyroSPDAtt(MAtt):
             self.manifold_attention = self.attention  # type: ignore[assignment]
 
         self.dropout = nn.Dropout(drop_prob)
-
-    @property
-    def classifier(self):
-        return self.linear
-
-    @classifier.setter
-    def classifier(self, val):
-        self.linear = val
-
-    @property
-    def reeig(self):
-        return self.re_eig
-
-    @property
-    def logeig(self):
-        return self.tangent
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of GyroSPDAtt.

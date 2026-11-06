@@ -258,9 +258,18 @@ class TestGyroSPDAttention:
         out = att(X)
         loss = out.sum()
         loss.backward()
-        assert att.w_q.grad is not None and torch.isfinite(att.w_q.grad).all()
-        assert att.w_k.grad is not None and torch.isfinite(att.w_k.grad).all()
-        assert att.w_v.grad is not None and torch.isfinite(att.w_v.grad).all()
+        assert (
+            att.q_proj.parametrizations.weight.original.grad is not None
+            and torch.isfinite(att.q_proj.parametrizations.weight.original.grad).all()
+        )
+        assert (
+            att.k_proj.parametrizations.weight.original.grad is not None
+            and torch.isfinite(att.k_proj.parametrizations.weight.original.grad).all()
+        )
+        assert (
+            att.v_proj.parametrizations.weight.original.grad is not None
+            and torch.isfinite(att.v_proj.parametrizations.weight.original.grad).all()
+        )
         assert (
             att.parametrizations.bias.original.grad is not None
             and torch.isfinite(att.parametrizations.bias.original.grad).all()

@@ -13,7 +13,13 @@ import torch
 
 from torch import Tensor, nn
 
-from spd_learn.functional.core import matrix_inv_sqrt, matrix_log
+from spd_learn.functional import (
+    covariance,
+    mean_euclid,
+    pairwise_distance,
+    real_covariance,
+    shrinkage_covariance,
+)
 from spd_learn.functional.graph import normalize_spd_adjacency, spd_graph_aggregate
 from spd_learn.functional.utils import ensure_sym
 from spd_learn.modules.bilinear import BiMap
@@ -99,18 +105,16 @@ class TimeFrequencyCovariances(nn.Module):
         if not torch.isfinite(input).all():
             raise ValueError("signals must be finite")
         eye = torch.eye(input.shape[-2], device=input.device, dtype=input.dtype)
+        alpha = torch.tensor(self.shrinkage, device=input.device, dtype=input.dtype)
         nodes = []
         for band, start, stop in self.segments:
             if band >= input.shape[1] or stop > input.shape[-1]:
                 raise ValueError("segment lies outside the signal")
             window = input[:, band, :, start:stop]
-            if self.center:
-                window = window - window.mean(-1, keepdim=True)
-            covariance = window @ window.mT / (stop - start)
-            scale = covariance.diagonal(dim1=-2, dim2=-1).mean(-1)
+            cov = covariance(window) if self.center else real_covariance(window)
             nodes.append(
-                (1 - self.shrinkage) * covariance
-                + (self.shrinkage * scale[..., None, None] + self.ridge) * eye
+                shrinkage_covariance(cov, alpha, input.shape[-2], eye)
+                + self.ridge * eye
             )
         output = ensure_sym(torch.stack(nodes, dim=1))
         if not torch.isfinite(output).all():
@@ -238,12 +242,10 @@ class TimeFrequencyGraph(nn.Module):
             raise ValueError("covariances must be finite and symmetric")
         if (torch.linalg.eigvalsh(input) <= 0).any():
             raise ValueError("LGT fitting requires SPD, not PSD, covariances")
-        lattice = input.mean(0)
+        lattice = mean_euclid(input.movedim(0, -3))
         if not torch.isfinite(lattice).all():
             raise ValueError("training lattice overflow; rescale or use float64")
-        inverse = matrix_inv_sqrt.apply(lattice)
-        whitened = inverse[:, None] @ lattice[None, :] @ inverse[:, None]
-        distance_squared = matrix_log.apply(whitened).square().sum((-2, -1))
+        distance_squared = pairwise_distance(lattice, metric="riemann", squared=True)
         # Roundoff can make the two independently computed AIRM distances differ.
         distance_squared = (distance_squared + distance_squared.mT) / 2
         adjacency = (-distance_squared / self.bandwidth).exp() * self.topology.to(input)
@@ -435,8 +437,10 @@ class GraphBiMap(nn.Module):
             valid = bool(torch.isfinite(output).all())
             if valid:
                 try:
-                    valid = bool((torch.linalg.eigvalsh(output) > 0).all()) and bool(
-                        (torch.linalg.cholesky_ex(output).info == 0).all()
+                    valid = (
+                        bool((torch.linalg.eigvalsh(output) > 0).all())
+                        and bool((torch.linalg.eigh(output).eigenvalues > 0).all())
+                        and bool((torch.linalg.cholesky_ex(output).info == 0).all())
                     )
                 except RuntimeError:
                     valid = False

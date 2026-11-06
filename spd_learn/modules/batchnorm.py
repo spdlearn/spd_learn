@@ -17,6 +17,9 @@ from ..functional import (
     matrix_log,
     matrix_power,
     matrix_sqrt,
+    mean_euclid,
+    mean_harmonic,
+    mean_poweuclid,
 )
 from ..functional.batchnorm import (
     frechet_mean,
@@ -746,17 +749,10 @@ class SPDBatchNormHarmonicArithmetic(SPDBatchNormMean):
             self.alpha_logit.fill_(logit_init)
 
     def _compute_batch_mean(self, input: torch.Tensor) -> torch.Tensor:
-        dims = tuple(range(input.ndim - 2))
+        X_flat = input.reshape(-1, self.num_features, self.num_features)
         eye = torch.eye(self.num_features, device=input.device, dtype=input.dtype)
-        A = ensure_sym(
-            input.mean(dim=dims).reshape(1, self.num_features, self.num_features)
-        )
-        H_inv = torch.linalg.inv(input + self.eps * eye).mean(dim=dims)
-        H = ensure_sym(
-            torch.linalg.inv(
-                H_inv.reshape(1, self.num_features, self.num_features) + self.eps * eye
-            )
-        )
+        A = ensure_sym(mean_euclid(X_flat).unsqueeze(0))
+        H = ensure_sym(mean_harmonic(X_flat + self.eps * eye).unsqueeze(0))
         return ensure_sym(airm_geodesic(H, A, torch.sigmoid(self.alpha_logit)))
 
 
@@ -807,8 +803,7 @@ class SPDBatchNormBW(SPDBatchNormMean):
     def _compute_batch_mean(self, input: torch.Tensor) -> torch.Tensor:
         X_flat = input.reshape(-1, self.num_features, self.num_features)
         if self.n_iter == 1:
-            mean_sqrt = matrix_sqrt.apply(X_flat).mean(dim=0, keepdim=True)
-            return ensure_sym(mean_sqrt @ mean_sqrt)
+            return ensure_sym(mean_poweuclid(X_flat, 0.5).unsqueeze(0))
         with warnings.catch_warnings():
             warnings.filterwarnings(
                 "ignore", message="Bures-Wasserstein mean did not converge"

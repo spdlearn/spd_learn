@@ -5,7 +5,7 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from ..functional import matrix_exp, matrix_log
+from ..functional import distance_euclid, geodesic_euclid, matrix_exp, matrix_log
 from ..modules import (
     BiMap,
     CovLayer,
@@ -101,9 +101,8 @@ class TangentGraphSPDAggregation(nn.Module):
         V = S.shape[-3]
         L = matrix_log.apply(S)
 
-        # Compute pairwise difference and Frobenius norm
-        diff = L.unsqueeze(-3) - L.unsqueeze(-4)  # (..., V, V, d, d)
-        D = torch.sqrt(torch.sum(diff**2, dim=(-2, -1)) + 1e-8)  # (..., V, V)
+        # Compute pairwise Frobenius norm in tangent space
+        D = distance_euclid(L.unsqueeze(-3), L.unsqueeze(-4))  # (..., V, V)
 
         # Select top-k nearest neighbors per node (smallest distance -> largest -D)
         k = min(self.k_neighbors, V)
@@ -119,7 +118,7 @@ class TangentGraphSPDAggregation(nn.Module):
         L_neighbors_flat = torch.matmul(A, L_flat)
         L_neighbors = L_neighbors_flat.view_as(L)
 
-        L_tilde = 0.5 * L + 0.5 * L_neighbors
+        L_tilde = geodesic_euclid(L, L_neighbors, alpha=0.5)
         return matrix_exp.apply(L_tilde)
 
 

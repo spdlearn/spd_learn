@@ -13,7 +13,13 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
-from spd_learn.functional import matrix_exp, matrix_log, sample_covariance
+from spd_learn.functional import (
+    geodesic_euclid,
+    matrix_exp,
+    matrix_log,
+    mean_euclid,
+    sample_covariance,
+)
 from spd_learn.models.matt import MAtt
 from spd_learn.modules import (
     BiMap,
@@ -229,34 +235,6 @@ class SPDMetaFormer(MAtt):
         if device is not None or dtype is not None:
             self.to(device=device, dtype=dtype)
 
-    @property
-    def temporal_conv(self):
-        return self.temporal_feature_extractor
-
-    @property
-    def temporal_bn(self):
-        return self.temporal_batch_norm
-
-    @property
-    def spatial_conv(self):
-        return self.spatial_filter
-
-    @property
-    def spatial_bn(self):
-        return self.spatial_batch_norm
-
-    @property
-    def patch_embedding(self):
-        return self.patch_cov_layer[0]
-
-    @property
-    def cov_layer(self):
-        return self.patch_cov_layer[1]
-
-    @property
-    def trace_norm(self):
-        return self.patch_cov_layer[2]
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of the SPD-MetaFormer model.
 
@@ -419,16 +397,13 @@ class SPDMetaFormerBlock(nn.Module):
         """
         # Sub-block 1 — Uniform Fréchet Token Mixer with Geodesic Residual
         L = matrix_log.apply(X)
-        L_bar = L.mean(dim=-3, keepdim=True)
-        alpha = torch.sigmoid(self.mix_logit)
-        mixed = (1.0 - alpha) * L + alpha * L_bar
-        U = matrix_exp.apply(mixed)
+        L_bar = mean_euclid(L).unsqueeze(-3).expand_as(L)
+        alpha = torch.sigmoid(self.mix_logit).expand(L.shape[:-2])
+        U = matrix_exp.apply(geodesic_euclid(L, L_bar, alpha=alpha))
 
         # Sub-block 2 — Shared Spectral Feedforward Map (SPD-FFN) with Geodesic Residual
         ffn_out = self.bimap2(self.reeig(self.bimap1(U)))
-        beta = torch.sigmoid(self.ffn_logit)
-        log_U = matrix_log.apply(U)
-        log_ffn = matrix_log.apply(ffn_out)
-        mixed_ffn = (1.0 - beta) * log_U + beta * log_ffn
-        Y = matrix_exp.apply(mixed_ffn)
-        return Y
+        beta = torch.sigmoid(self.ffn_logit).expand(U.shape[:-2])
+        return matrix_exp.apply(
+            geodesic_euclid(matrix_log.apply(U), matrix_log.apply(ffn_out), alpha=beta)
+        )

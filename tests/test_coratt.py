@@ -212,9 +212,9 @@ def test_corr_attention_forward_backward(metric):
     # Backward pass
     out.sum().backward()
     assert X.grad is not None
-    assert layer.weight_q.grad is not None
-    assert layer.weight_k.grad is not None
-    assert layer.weight_v.grad is not None
+    assert layer.q_proj.parametrizations.weight.original.grad is not None
+    assert layer.k_proj.parametrizations.weight.original.grad is not None
+    assert layer.v_proj.parametrizations.weight.original.grad is not None
     assert layer.bias.grad is not None
 
 
@@ -227,7 +227,7 @@ def test_corr_attention_invalid_metric():
 def test_corr_attention_device_dtype():
     """CorrAttention must support custom device and dtype."""
     layer = CorrAttention(dim=4, dtype=torch.float64, device="cpu")
-    assert layer.weight_q.dtype == torch.float64
+    assert layer.q_proj.weight.dtype == torch.float64
     assert layer.bias.dtype == torch.float64
 
     X = _make_spd((2, 3, 4, 4), dtype=torch.float64)
@@ -260,7 +260,7 @@ def test_coratt_forward_backward(metric):
 
     out.sum().backward()
     assert x.grad is not None
-    assert model.classifier.weight.grad is not None
+    assert model.linear.weight.grad is not None
 
 
 def test_coratt_eval_mode():

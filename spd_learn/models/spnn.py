@@ -16,12 +16,11 @@ from torch import nn
 
 from ..modules import (
     SPDRMLR,
+    BiMap,
     CovLayer,
     ReEig,
-    Shrinkage,
     SPDDropout,
     SPDLinear,
-    TraceNorm,
 )
 
 
@@ -95,23 +94,24 @@ class SPNN(nn.Module):
 
         # Frontend
         self.cov = CovLayer()
-        self.trace_norm = TraceNorm()
-        self.shrinkage = Shrinkage(n_chans, init_shrinkage=-2.0, learnable=True)
 
-        # Stack of SPDLinear layers with ReEig non-linearity
+        # Stack of BiMap stem + SPDLinear transformation layers with ReEig non-linearity
         layers: list[nn.Module] = []
         dims = [n_chans, *self.hidden_dims]
         for i in range(len(dims) - 1):
             d_in, d_out = dims[i], dims[i + 1]
-            layers.append(
-                SPDLinear(
-                    in_features=d_in,
-                    out_features=d_out,
-                    metric=metric,
-                    theta=theta,
-                    return_tangent=False,
+            if i == 0:
+                layers.append(BiMap(in_features=d_in, out_features=d_out))
+            else:
+                layers.append(
+                    SPDLinear(
+                        in_features=d_in,
+                        out_features=d_out,
+                        metric=metric,
+                        theta=theta,
+                        return_tangent=False,
+                    )
                 )
-            )
             layers.append(ReEig())
             if drop_prob > 0.0:
                 layers.append(SPDDropout(p=drop_prob))
@@ -142,7 +142,5 @@ class SPNN(nn.Module):
         """
         if x.shape[-1] != x.shape[-2]:
             x = self.cov(x)
-        x = self.trace_norm(x)
-        x = self.shrinkage(x)
         x = self.spd_layers(x)
         return self.classifier(x)

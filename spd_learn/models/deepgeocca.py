@@ -5,7 +5,13 @@ from typing import Sequence, Union
 import torch
 import torch.nn as nn
 
-from spd_learn.functional import ensure_sym, matrix_inv_sqrt, matrix_log, sym_to_upper
+from spd_learn.functional import (
+    ensure_sym,
+    matrix_inv_sqrt,
+    matrix_log,
+    sample_covariance,
+    sym_to_upper,
+)
 from spd_learn.modules import (
     BiMap,
     CovLayer,
@@ -302,9 +308,13 @@ class GeodesicCCALoss(nn.Module):
         N = max(batch_size - 1, 1)
         eye_m = torch.eye(m, device=Y1.device, dtype=Y1.dtype)
 
-        Sigma11 = ensure_sym((1.0 / N) * (H1.transpose(-2, -1) @ H1) + self.eps * eye_m)
-        Sigma22 = ensure_sym((1.0 / N) * (H2.transpose(-2, -1) @ H2) + self.eps * eye_m)
-        Sigma12 = (1.0 / N) * (H1.transpose(-2, -1) @ H2)
+        if batch_size > 1:
+            Sigma11 = ensure_sym(sample_covariance(H1.mT) + self.eps * eye_m)
+            Sigma22 = ensure_sym(sample_covariance(H2.mT) + self.eps * eye_m)
+        else:
+            Sigma11 = ensure_sym(H1.mT @ H1 + self.eps * eye_m)
+            Sigma22 = ensure_sym(H2.mT @ H2 + self.eps * eye_m)
+        Sigma12 = (1.0 / N) * (H1.mT @ H2)
 
         Sigma11_inv_sqrt = matrix_inv_sqrt.apply(Sigma11)
         Sigma22_inv_sqrt = matrix_inv_sqrt.apply(Sigma22)

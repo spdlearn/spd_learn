@@ -17,7 +17,7 @@ import torch
 
 from torch import nn
 
-from ..functional import matrix_log, matrix_power
+from ..functional import matrix_log, matrix_power, sample_covariance
 from ..functional.metrics import cholesky_log
 from .utils import Vech
 
@@ -146,15 +146,15 @@ class GaussianSPDDescriptor(nn.Module):
         mu_row = X.mean(dim=-2, keepdim=True)
         mu = mu_row.transpose(-2, -1)
 
-        # Centered tokens: (..., T, D)
-        X_centered = X - mu_row
-
         # Empirical covariance with epsilon regularization
-        denom = max(T - 1, 1)
         eye = torch.eye(D, device=X.device, dtype=X.dtype)
-        Sigma = (
-            X_centered.conj().transpose(-2, -1) @ X_centered
-        ) / denom + self.eps * eye
+        if T > 1 and not X.is_complex():
+            Sigma = sample_covariance(X.mT) + self.eps * eye
+        else:
+            X_centered = X - mu_row
+            Sigma = (X_centered.conj().transpose(-2, -1) @ X_centered) / max(
+                T - 1, 1
+            ) + self.eps * eye
 
         # Quotient / Lovric embedding blocks
         top_left = Sigma + self.beta * (mu @ mu.conj().transpose(-2, -1))

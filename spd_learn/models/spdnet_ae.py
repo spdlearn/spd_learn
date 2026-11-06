@@ -7,7 +7,7 @@ from typing import Sequence
 import torch
 import torch.nn as nn
 
-from ..functional import covariance, matrix_log
+from ..functional import covariance, log_euclidean_distance
 from ..modules import BiMap, CovLayer, LogEig, ReEig, Shrinkage, TraceNorm
 
 
@@ -63,11 +63,6 @@ class SPDDecoderBlock(nn.Module):
             dtype=dtype,
         )
         self.reeig = ReEig(threshold=eps)
-
-    @property
-    def weight(self) -> torch.Tensor:
-        """Weight tensor of the underlying BiMap."""
-        return self.bimap.weight.squeeze(0)
 
     def forward(self, Z: torch.Tensor) -> torch.Tensor:
         """Forward pass of the SPD decoder block."""
@@ -321,8 +316,7 @@ class SPDNetAE(nn.Module):
         torch.Tensor
             Reconstruction loss.
         """
-        diff = matrix_log.apply(S_in) - matrix_log.apply(S_recon)
-        dist_sq = torch.sum(diff**2, dim=(-2, -1))
+        dist_sq = log_euclidean_distance(S_in, S_recon).square()
         if reduction == "mean":
             return dist_sq.mean()
         if reduction == "sum":

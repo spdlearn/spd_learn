@@ -146,8 +146,8 @@ class TestSPDMetaFormer:
 
         assert model.readout_logits.grad is not None
         assert (model.readout_logits.grad != 0).any()
-        assert model.temporal_conv.weight.grad is not None
-        assert model.spatial_conv.weight.grad is not None
+        assert model.temporal_feature_extractor.weight.grad is not None
+        assert model.spatial_filter.weight.grad is not None
         assert model.linear.weight.grad is not None
         assert x.grad is not None
 

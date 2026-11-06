@@ -310,9 +310,8 @@ class SPDResBlock(nn.Module):
         s_flat = self.cnn(log_flat)
         s = s_flat.view(*batch_shape, d)
 
-        out_eigvals = torch.exp(log_eigvals + s)
-        out = eigvecs @ torch.diag_embed(out_eigvals) @ eigvecs.mT
-        return ensure_sym(out)
+        f_x = ensure_sym(eigvecs @ torch.diag_embed(torch.exp(s)) @ eigvecs.mT)
+        return ensure_sym(self.residual(X, f_x))
 
 
 class AdaptiveLogEuclidean(nn.Module):
