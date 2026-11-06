@@ -2,12 +2,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 from .eegspdnet import EEGSPDNet
 from .green import Green
+from .gyrospd import GyroSPD, GyroSPDLayer  # noqa: F401
 from .matt import AttentionManifold, MAtt  # noqa: F401  (AttentionManifold re-exported)
 from .phase_spdnet import (  # noqa: F401  (PhaseDelay re-exported)
     PhaseDelay,
     PhaseSPDNet,
 )
+from .rceegnet import RCEEGNet
 from .spdnet import SPDNet
+from .spdresnet import AdaptiveLogEuclidean, SPDResBlock, SPDResNet  # noqa: F401
+from .starnet import STaRNet
 from .tensorcsp import TensorCSPNet
 from .tsmnet import TSMNet
 
@@ -26,6 +30,10 @@ __all__ = [
     "EEGSPDNet",
     "PhaseSPDNet",
     "Green",
+    "RCEEGNet",
+    "STaRNet",
+    "SPDResNet",
+    "GyroSPD",
 ]
 
 __filter_bank_models__ = ["TensorCSPNet"]
