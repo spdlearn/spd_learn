@@ -1,13 +1,18 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
 from .eegspdnet import EEGSPDNet
+from .gbwatt import GBWAtt
 from .green import Green
+from .gyroatt import GyroAtt, GyroSPDAttention, SymSPDAttention  # noqa: F401
 from .matt import AttentionManifold, MAtt  # noqa: F401  (AttentionManifold re-exported)
 from .phase_spdnet import (  # noqa: F401  (PhaseDelay re-exported)
     PhaseDelay,
     PhaseSPDNet,
 )
+from .spdmetaformer import SPDMetaFormer, SPDMetaFormerBlock  # noqa: F401
 from .spdnet import SPDNet
+from .spdtransnet import SPDTransNet  # noqa: F401
+from .spnn import SPNN
 from .tensorcsp import TensorCSPNet
 from .tsmnet import TSMNet
 
@@ -26,6 +31,12 @@ __all__ = [
     "EEGSPDNet",
     "PhaseSPDNet",
     "Green",
+    "GBWAtt",
+    "SPNN",
+    "GyroAtt",
+    "SPDMetaFormer",
 ]
 
 __filter_bank_models__ = ["TensorCSPNet"]
+
+__sequence_models__ = ["SPDTransNet"]
