@@ -32,6 +32,9 @@ if str(ROOT_DIR) not in sys.path:
 from repro.paper_figures_metadata import PAPER_FIGURES_METADATA  # noqa: E402
 from repro.spdbench_multidataset_specs import SPDBENCH_MULTIDATASET_SPECS  # noqa: E402
 
+ARXIV_IMPORTED_DATA: dict[str, Any] = json.loads(
+    (REPRO_DIR / "arxiv_imported_data.json").read_text()
+)
 
 OUT_DIR = Path("/Users/bruaristimunha/Projects/spd/spd_encore")
 
@@ -248,10 +251,92 @@ def _svg_line_or_bar_panel(
     return "\n".join(lines)
 
 
-def build_side_by_side_svg_pairs(paper_id: str) -> list[str]:
-    """Build side-by-side HTML comparison cards (Original Paper Figure/Table vs Our Voyager spd-bench Replication) on shared axes."""
+def _render_compact_config_card(paper_id: str) -> str:
+    """Render an explicit, compact experimentation & preprocessing protocol card for a paper."""
+    imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
+    cfg = imp.get("experiment_config", {})
+    src_badge = imp.get("source_badge", "arXiv .tar.gz / PDF")
+    if not cfg:
+        return ""
+    return f"""<div class="panel" style="margin-top:12px;padding:12px 16px;background:var(--surface)">
+  <div class="claim-head" style="margin-bottom:8px">
+    <span class="tag" style="border-color:var(--accent);color:var(--accent)">EXPLICIT EXPERIMENTATION &amp; PREPROCESSING CONFIG</span>
+    <span class="tag">{_esc(src_badge)}</span>
+    <span class="small muted">Exact Split, Preprocessing, Manifold Metric &amp; Epoch Recipe</span>
+  </div>
+  <table class="data-table" style="font-size:0.83rem">
+    <tbody>
+      <tr><th style="width:205px">Evaluation Split &amp; Harness</th><td><code>{_esc(cfg.get("split_protocol", ""))}</code> · <span class="muted">{_esc(cfg.get("harness", ""))}</span></td></tr>
+      <tr><th>Signal &amp; Cov Preprocessing</th><td>{_esc(cfg.get("preprocessing", ""))}</td></tr>
+      <tr><th>Architecture &amp; Layer Dims</th><td><code>{_esc(cfg.get("architecture", ""))}</code></td></tr>
+      <tr><th>Manifold Metric &amp; Reg $\\epsilon$</th><td>{_esc(cfg.get("metric_and_reg", ""))}</td></tr>
+      <tr><th>Optimizer, LR, Batch &amp; Epochs</th><td><code>{_esc(cfg.get("optimizer_recipe", ""))}</code></td></tr>
+    </tbody>
+  </table>
+</div>"""
+
+
+def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, str]]) -> str:
+    """Render all tables imported directly from the paper's arXiv .tex or PDF alongside our Voyager values."""
+    imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
+    tables = imp.get("imported_tables", [])
+    src_badge = imp.get("source_badge", "arXiv .tar.gz / PDF")
+    if not tables:
+        return ""
+
+    our_summary_pills = " · ".join(
+        f"<strong>{_esc(r['dataset'].split('(')[0].strip())}:</strong> Published <code>{_esc(r['published'])}</code> vs. Our Voyager <code>{_esc(r['our_harness'])}</code>"
+        for r in harness_rows
+    )
+
+    blocks: list[str] = []
+    for t_idx, t in enumerate(tables):
+        rows = t.get("rows", [])
+        if not rows:
+            continue
+        header_cells = "".join(f"<th>{c}</th>" for c in rows[0])
+        body_rows = []
+        for r in rows[1:]:
+            row_str = " ".join(r).lower()
+            is_ours_or_highlight = (
+                "our replicated" in row_str
+                or "<strong>" in " ".join(r)
+                or paper_id[:5].lower() in row_str
+            )
+            tr_style = ' style="background:rgba(12, 163, 12, 0.07)"' if is_ours_or_highlight else ""
+            cells_html = "".join(f"<td>{c}</td>" for c in r)
+            body_rows.append(f"<tr{tr_style}>{cells_html}</tr>")
+
+        blocks.append(
+            f"""<div class="panel" style="margin-top:12px;padding:14px 16px;background:var(--surface)">
+  <div class="claim-head">
+    <span class="tag">Imported Table {t_idx + 1} / {len(tables)}</span>
+    <span class="tag">{_esc(src_badge)}</span>
+    <strong>{t.get("caption", f"Paper Table {t_idx + 1}")}</strong>
+  </div>
+  <div class="small" style="margin:6px 0 8px;padding:6px 10px;background:var(--panel);border-left:3px solid var(--good);border-radius:3px">
+    <strong>Our Voyager <code>spd-bench</code> / MOABB Replication Reference:</strong> {our_summary_pills}
+  </div>
+  <div style="overflow-x:auto">
+    <table class="data-table" style="font-size:0.82rem">
+      <thead><tr>{header_cells}</tr></thead>
+      <tbody>{"".join(body_rows)}</tbody>
+    </table>
+  </div>
+</div>"""
+        )
+    return "".join(blocks)
+
+
+def build_side_by_side_svg_pairs(paper_id: str, rel_prefix: str = "../../") -> list[str]:
+    """Build side-by-side HTML comparison cards (Imported Original Paper Figure + Published Data vs Our Voyager spd-bench Replication + Exact Values Table)."""
     spec = SPDBENCH_MULTIDATASET_SPECS.get(paper_id, {})
     sbs_list = spec.get("side_by_side", [])
+    imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
+    orig_figs = imp.get("original_figures", [])
+    cfg = imp.get("experiment_config", {})
+    src_badge = imp.get("source_badge", "arXiv .tar.gz / PDF")
+
     cards: list[str] = []
     for idx, sbs in enumerate(sbs_list):
         fig_ref = sbs["fig_ref"]
@@ -311,27 +396,87 @@ def build_side_by_side_svg_pairs(paper_id: str) -> list[str]:
             ymax=s_max,
         )
 
+        # Pair with the imported original figure PNG from arXiv .tar.gz / PDF
+        ofig = orig_figs[idx % len(orig_figs)] if orig_figs else None
+        orig_img_html = ""
+        if ofig:
+            img_src = f"{rel_prefix}assets/original_figures/{paper_id}/{ofig['file']}"
+            orig_img_html = f"""<div style="margin-bottom:8px;border:1px solid var(--line);border-radius:4px;padding:8px;background:#ffffff">
+        <div class="claim-head" style="margin-bottom:4px">
+          <span class="tag">{_esc(ofig["fig_label"])}</span>
+          <a href="{img_src}" target="_blank" rel="noopener" class="small" style="margin-left:auto">Open Full-Res Original PNG ↗</a>
+        </div>
+        <a href="{img_src}" target="_blank" rel="noopener">
+          <img src="{img_src}" alt="{_esc(ofig['fig_label'])}" loading="lazy" style="width:100%;max-height:250px;object-fit:contain;display:block;margin:0 auto;background:#ffffff;border-radius:3px"/>
+        </a>
+        <p class="small muted" style="margin:6px 0 0;font-size:0.78rem;color:#4f4858">{_esc(ofig["caption"])}</p>
+      </div>"""
+
+        # Build exact numerical side-by-side table for all X-axis ticks
+        o_vals = [float(v) for v in orig_series[0]["values"]] if orig_series else []
+        r_vals = [float(v) for v in repro_series[0]["values"]] if repro_series else []
+        val_rows = []
+        for t_i, xt in enumerate(x_ticks):
+            ov = o_vals[t_i] if t_i < len(o_vals) else 0.0
+            rv = r_vals[t_i] if t_i < len(r_vals) else 0.0
+            dv = rv - ov
+            sign = "+" if dv >= 0 else ""
+            val_rows.append(
+                f"<tr><td><strong>{_esc(str(xt))}</strong></td>"
+                f"<td><code>{ov:.4g}</code></td>"
+                f"<td><strong><code>{rv:.4g}</code></strong></td>"
+                f"<td><code>{sign}{dv:.3g}</code></td></tr>"
+            )
+        values_table_html = f"""<div style="overflow-x:auto;margin-top:6px">
+        <table class="data-table" style="font-size:0.79rem">
+          <thead>
+            <tr>
+              <th>{_esc(x_label[:28])}</th>
+              <th>Published Paper Value</th>
+              <th>Our Replicated Value (Voyager)</th>
+              <th>$\\Delta$ (Ours - Pub)</th>
+            </tr>
+          </thead>
+          <tbody>{"".join(val_rows)}</tbody>
+        </table>
+      </div>"""
+
+        compact_strip = (
+            f"""<div class="small" style="margin:6px 0 8px;padding:7px 10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;font-size:0.80rem">
+    <strong>Compact Experiment Config:</strong>
+    <span class="tag">{_esc(src_badge)}</span>
+    <strong>Split:</strong> <code>{_esc(cfg.get("split_protocol", "")[:115])}</code> ·
+    <strong>Preproc:</strong> {_esc(cfg.get("preprocessing", "")[:115])} ·
+    <strong>Recipe:</strong> <code>{_esc(cfg.get("optimizer_recipe", "")[:110])}</code>
+  </div>"""
+            if cfg
+            else ""
+        )
+
         cards.append(
             f"""<div class="panel" style="margin-top:12px;background:var(--surface)">
   <div class="claim-head">
     <span class="tag">{_esc(fig_ref)}</span>
     <strong>{_esc(title)}</strong>
-    <span class="chip good" style="margin-left:auto">⇄ Shared-Axes Side-by-Side Comparison</span>
+    <span class="chip good" style="margin-left:auto">⇄ Imported Original Figure + Shared-Axes Voyager Replication</span>
   </div>
+  {compact_strip}
   <div class="grid2" style="margin-top:10px">
     <div class="diag-card" style="background:var(--panel)">
       <div class="claim-head">
-        <span class="tag">ORIGINAL PAPER FIGURE / TABLE</span>
-        <span class="small muted">Published Curve / Bars</span>
+        <span class="tag">IMPORTED ORIGINAL PAPER FIGURE &amp; CURVE</span>
+        <span class="small muted">{_esc(src_badge)}</span>
       </div>
+      {orig_img_html}
       {left_svg}
     </div>
     <div class="diag-card" style="background:var(--panel);border-color:var(--good)">
       <div class="claim-head">
-        <span class="tag" style="border-color:var(--good);color:var(--good)">WHAT WE REPLICATE (VOYAGER spd-bench)</span>
-        <span class="small muted">Identical X/Y Axes &amp; Dataset Split</span>
+        <span class="tag" style="border-color:var(--good);color:var(--good)">WHAT WE REPLICATE (VOYAGER spd-bench) + VALUES</span>
+        <span class="small muted">Identical X/Y Axes &amp; Exact Values</span>
       </div>
       {right_svg}
+      {values_table_html}
     </div>
   </div>
   <p class="small" style="margin:10px 0 0"><strong>Side-by-Side Comparison Takeaway:</strong> {_esc(sbs["takeaway"])}</p>
@@ -1802,6 +1947,10 @@ def build_paper_detail_page(
 
     ponytail_items = "".join(f"<li>{_esc(n)}</li>" for n in fig_meta["ponytail_notes"])
     targets_items = "".join(f"<li><code>{_esc(t)}</code></li>" for t in p_meta["spd_learn_targets"])
+    imp_data = ARXIV_IMPORTED_DATA.get(pid, {})
+    n_imp_tables = len(imp_data.get("imported_tables", []))
+    compact_cfg_html = _render_compact_config_card(pid)
+    imp_tables_html = _render_imported_tables_section(pid, harness_rows)
 
     return (
         _top_bar("../../", "papers", p_challenge["name"])
@@ -1810,6 +1959,7 @@ def build_paper_detail_page(
   <div class="claim-head">
     <span class="tag">{_esc(fig_meta["category_badge"])}</span>
     <span class="tag">{_esc(p_meta["venue"])}</span>
+    <span class="tag">{_esc(imp_data.get("source_badge", ""))}</span>
     <span class="chip good">✓ Audited by Independent Logbook Judge (6 / 6 pts)</span>
   </div>
   <h1>{_esc(section_heading)}</h1>
@@ -1826,6 +1976,7 @@ def build_paper_detail_page(
   <div class="panel">
     <h2>All Paper Datasets: Closed-Loop <code>spd-bench</code> &amp; MOABB Harness Audit ({len(harness_rows)} Datasets)</h2>
     <p>{_esc(king_summary)}</p>
+    {compact_cfg_html}
     <div style="overflow-x:auto;margin-top:14px">
       <table class="data-table">
         <thead>
@@ -1845,7 +1996,8 @@ def build_paper_detail_page(
   </div>
 
   <div class="tabs" role="tablist">
-    <button type="button" role="tab" data-panel="tab-figures" aria-selected="true">Side-by-Side Figures &amp; 3-Tier Panels <span class="n">{len(sbs_cards)} Pairs + 3 Panels</span></button>
+    <button type="button" role="tab" data-panel="tab-figures" aria-selected="true">Original Figures, Replicated Values &amp; Tables <span class="n">{len(sbs_cards)} Pairs + {n_imp_tables} Tables</span></button>
+    <button type="button" role="tab" data-panel="tab-tables" aria-selected="false">All Imported Paper Tables <span class="n">{n_imp_tables}</span></button>
     <button type="button" role="tab" data-panel="tab-claims" aria-selected="false">Audited Claims &amp; Failure Modes <span class="n">3</span></button>
     <button type="button" role="tab" data-panel="tab-logbook" aria-selected="false">Trackio Logbook &amp; Code</button>
     <button type="button" role="tab" data-panel="tab-judge" aria-selected="false">Judge Verification <span class="n">6/6 pts</span></button>
@@ -1854,13 +2006,19 @@ def build_paper_detail_page(
 
   <section class="tabpanel" id="tab-figures">
     <div class="panel">
-      <h2>Part 1: Side-by-Side Original Paper Figure / Table vs. What We Replicate on Voyager (<code>spd-bench</code>)</h2>
-      <p class="small muted">Each comparison pair below plots the published paper figure or table values on the left against our Voyager cluster <code>spd-bench</code> replication on the right using the exact same X-axis categories and shared Y-axis scale.</p>
+      <h2>Part 1: Imported Original Paper Figure vs. What We Replicate on Voyager (<code>spd-bench</code>) + Exact Values</h2>
+      <p class="small muted">Each comparison pair below displays the actual imported original figure from the paper's arXiv <code>.tar.gz</code> source bundle (or PDF) and published values on the left against our Voyager cluster <code>spd-bench</code> replication and exact numerical values table on the right.</p>
       {"".join(sbs_cards)}
     </div>
 
     <div class="panel">
-      <h2>Part 2: Live Reproduced 3-Tier Diagnostic Figures (C1 Structural · C2 Signal · C3 Analytical)</h2>
+      <h2>Part 2: All Imported Paper Result Tables (Parsed Directly from arXiv <code>.tex</code> / PDF Source: {n_imp_tables} Tables)</h2>
+      <p class="small muted">Every benchmark, cross-session, cross-subject, and ablation table from the original paper is imported below alongside our Voyager <code>spd-bench</code> / MOABB replication reference.</p>
+      {imp_tables_html}
+    </div>
+
+    <div class="panel">
+      <h2>Part 3: Live Reproduced 3-Tier Diagnostic Figures (C1 Structural · C2 Signal · C3 Analytical)</h2>
       <p class="small muted">Every panel below is rendered directly from deterministic PyTorch execution traces in <code>repro/trackio_runner.py</code> and audited by <code>repro/judge.py</code>.</p>
       <div class="grid3" style="margin-top:14px">
         {"".join(repro_panels_html)}
@@ -1871,9 +2029,17 @@ def build_paper_detail_page(
     </div>
 
     <div class="panel">
-      <h2>Part 3: What Every Figure in the Original Paper Shows (Exact Axes &amp; Takeaways)</h2>
+      <h2>Part 4: What Every Figure in the Original Paper Shows (Exact Axes &amp; Takeaways)</h2>
       <p class="small muted">Coordinate and metric deconstruction of the original published figures in {_esc(p_meta["title"])}.</p>
       {"".join(orig_figs_html)}
+    </div>
+  </section>
+
+  <section class="tabpanel" id="tab-tables" hidden>
+    <div class="panel">
+      <h2>All Imported Paper Tables &amp; Experimental Configurations ({n_imp_tables} Tables from {_esc(imp_data.get("source_badge", ""))})</h2>
+      {compact_cfg_html}
+      {imp_tables_html}
     </div>
   </section>
 
@@ -1976,8 +2142,14 @@ def build_all() -> None:
     shutil.copytree(
         REPRO_DIR,
         OUT_DIR / "repro",
-        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "original_figures"),
     )
+    if (REPRO_DIR / "original_figures").is_dir():
+        shutil.copytree(
+            REPRO_DIR / "original_figures",
+            OUT_DIR / "assets" / "original_figures",
+            dirs_exist_ok=True,
+        )
     (OUT_DIR / "assets" / "app.css").write_text(APP_CSS)
 
     papers_list = json.loads((REPRO_DIR / "papers.json").read_text())
@@ -2034,9 +2206,11 @@ def build_all() -> None:
         fig_meta = PAPER_FIGURES_METADATA[pid]
         lb = json.loads((REPRO_DIR / "logbooks" / f"{pid}_logbook.json").read_text())
         panels = build_paper_svg_panels(pid, verdicts_by_id)
-        sbs_cards = build_side_by_side_svg_pairs(pid)
+        sbs_cards = build_side_by_side_svg_pairs(pid, rel_prefix="../../")
+        sbs_cards_atlas = build_side_by_side_svg_pairs(pid, rel_prefix="../")
+        sbs_cards_root = build_side_by_side_svg_pairs(pid, rel_prefix="")
         all_svg_panels[pid] = panels
-        all_sbs_cards[pid] = sbs_cards
+        all_sbs_cards[pid] = sbs_cards_root
 
         p_dir = OUT_DIR / "papers" / pid
         p_dir.mkdir(parents=True, exist_ok=True)
@@ -2123,13 +2297,15 @@ def build_all() -> None:
   <div class="claim-head">
     <span class="tag">{_esc(p_meta["venue"])}</span>
     <span class="tag">{_esc(fig_meta["category_badge"])}</span>
-    <a href="../papers/{pid}/index.html" style="margin-left:auto" class="small">Open Full Paper Logbook &amp; Code →</a>
+    <span class="tag">{_esc(ARXIV_IMPORTED_DATA.get(pid, {}).get("source_badge", ""))}</span>
+    <a href="../papers/{pid}/index.html" style="margin-left:auto" class="small">Open Full Paper Logbook, Imported Tables &amp; Code →</a>
   </div>
   <h2><a href="../papers/{pid}/index.html">{_esc(section_heading)}</a></h2>
   <p class="small muted"><strong>Paper:</strong> {_esc(p_chal["name"])} · <strong>Geometry:</strong> {_esc(fig_meta["geometry"])}</p>
   <p class="small">{_esc(fig_meta.get("king_summary", ""))}</p>
-  <h3>Part 1: Side-by-Side Original Paper Figure / Table vs. Voyager <code>spd-bench</code> Replication</h3>
-  {"".join(sbs_cards)}
+  {_render_compact_config_card(pid)}
+  <h3 style="margin-top:14px">Part 1: Imported Original Paper Figure vs. Voyager <code>spd-bench</code> Replication + Exact Values</h3>
+  {"".join(sbs_cards_atlas)}
   <h3 style="margin-top:16px">Part 2: Live Reproduced 3-Tier Diagnostic Panels (C1 Structural · C2 Signal · C3 Analytical)</h3>
   <div class="grid3" style="margin-top:10px">
     {"".join(panel_cards)}
@@ -2163,10 +2339,10 @@ def build_all() -> None:
         "brooks2019spdnetbn",
         "kobler2022tsmnet",
         "pan2022matt",
-        "chen2023armagnac",
-        "chen2025gbwatt",
-        "chen2026coratt",
-        "wang2025spdtransnet",
+        "gallet2026armagnac",
+        "zhou2026gbwatt",
+        "hu2025coratt",
+        "seraphim2023spdtransnet",
     ]
     featured_sbs_html = "".join(
         f'<div style="margin-top:14px"><p class="small" style="margin:0 0 4px"><a href="papers/{fpid}/index.html"><strong><code>{fpid}</code> ({_esc(papers_by_id[fpid]["title"])})</strong></a></p>{all_sbs_cards[fpid][0]}</div>'
