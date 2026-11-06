@@ -9,7 +9,15 @@ A pure PyTorch library for Symmetric Positive Definite (SPD) matrix learning.
 from . import init
 
 # Models
-from .models import EEGSPDNet, Green, MAtt, PhaseSPDNet, SPDNet, TensorCSPNet, TSMNet
+from .models import (
+    EEGSPDNet,
+    Green,
+    MAtt,
+    PhaseSPDNet,
+    SPDNet,
+    TensorCSPNet,
+    TSMNet,
+)
 
 # Modules (layers)
 from .modules import (
@@ -22,6 +30,9 @@ from .modules import (
     PatchEmbeddingLayer,
     ReEig,
     Shrinkage,
+    SPDBatchNormBW,
+    SPDBatchNormCholesky,
+    SPDBatchNormHarmonic,
     SPDBatchNormLie,
     SPDBatchNormMean,
     SPDBatchNormMeanVar,
@@ -65,4 +76,7 @@ __all__ = [
     "Vec",
     "Vech",
     "WaveletConv",
+    "SPDBatchNormBW",
+    "SPDBatchNormCholesky",
+    "SPDBatchNormHarmonic",
 ]
