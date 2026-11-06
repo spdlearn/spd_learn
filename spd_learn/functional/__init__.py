@@ -138,6 +138,16 @@ from .core import (
     sym_to_upper,
     vec_to_sym,
 )
+from .correlation import (
+    cov_to_corr,
+    exp_map_lsm,
+    exp_map_olm,
+    log_map_lsm,
+    log_map_olm,
+    off_diag,
+    tril_embed,
+    untril_embed,
+)
 from .covariance import covariance, cross_covariance, real_covariance, sample_covariance
 from .dropout import dropout_spd
 from .frechet import frechet_derivative_exp, frechet_derivative_log
@@ -376,4 +386,12 @@ __all__ = [
     "ajd_pham",
     "rjd",
     "uwedge",
+    "cov_to_corr",
+    "off_diag",
+    "log_map_lsm",
+    "exp_map_lsm",
+    "log_map_olm",
+    "exp_map_olm",
+    "tril_embed",
+    "untril_embed",
 ]
