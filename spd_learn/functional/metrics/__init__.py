@@ -38,6 +38,13 @@ from .bures_wasserstein import (
     bures_wasserstein_mean,
     bures_wasserstein_transport,
 )
+from .generalized_bures_wasserstein import (
+    bw_attention_mean,
+    gbw_chart,
+    gbw_distance,
+    gbw_inverse_chart,
+    gbw_mean,
+)
 from .log_cholesky import (
     cholesky_exp,
     cholesky_log,
@@ -82,4 +89,9 @@ __all__ = [
     "log_cholesky_distance",
     "log_cholesky_geodesic",
     "log_cholesky_mean",
+    "gbw_chart",
+    "gbw_inverse_chart",
+    "gbw_distance",
+    "gbw_mean",
+    "bw_attention_mean",
 ]
