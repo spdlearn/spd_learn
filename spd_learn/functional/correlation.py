@@ -7,8 +7,8 @@ full-rank correlation matrices :math:`\\mathcal{C}_{++}^n`, including:
 
 - Conversion between covariance and correlation matrices (:func:`cov_to_corr`)
 - Extraction of hollow symmetric matrices (:func:`off_diag`)
-- Off-Log Metric (OLM) logarithmic and exponential maps (:func:`corr_olm_log`, :func:`corr_olm_exp`)
-- Log-Scaled Metric (LSM) logarithmic and exponential maps (:func:`corr_lsm_log`, :func:`corr_lsm_exp`)
+- Off-Log Metric (OLM) logarithmic and exponential maps (:func:`log_map_olm`, :func:`exp_map_olm`)
+- Log-Scaled Metric (LSM) logarithmic and exponential maps (:func:`log_map_lsm`, :func:`exp_map_lsm`)
 - Isometric Frobenius embedding for hollow symmetric matrices (:func:`tril_embed`, :func:`untril_embed`)
 
 References
@@ -114,7 +114,7 @@ def cov_to_corr(S: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
     return off_diag(C_sym) + eye
 
 
-def corr_olm_log(C: torch.Tensor) -> torch.Tensor:
+def log_map_olm(C: torch.Tensor) -> torch.Tensor:
     r"""Off-Log Metric (OLM) logarithmic map.
 
     Maps a correlation matrix :math:`C \in \mathcal{C}_{++}^n` to the hollow
@@ -143,7 +143,7 @@ def corr_olm_log(C: torch.Tensor) -> torch.Tensor:
     return off_diag(matrix_log.apply(C_sym))
 
 
-def corr_olm_exp(
+def exp_map_olm(
     X: torch.Tensor,
     max_iter: int = 15,
     tol: float = 1e-6,
@@ -194,7 +194,7 @@ def corr_olm_exp(
     return cov_to_corr(matrix_exp.apply(X_hollow + torch.diag_embed(d)))
 
 
-def corr_lsm_log(
+def log_map_lsm(
     C: torch.Tensor,
     max_iter: int = 10,
     tol: float = 1e-6,
@@ -238,7 +238,7 @@ def corr_lsm_log(
     return off_diag(matrix_log.apply(D_C_D))
 
 
-def corr_lsm_exp(X: torch.Tensor) -> torch.Tensor:
+def exp_map_lsm(X: torch.Tensor) -> torch.Tensor:
     r"""Log-Scaled Metric (LSM) exponential map.
 
     Maps a hollow symmetric matrix :math:`X \in \text{Hol}(\mathcal{S}^n)`

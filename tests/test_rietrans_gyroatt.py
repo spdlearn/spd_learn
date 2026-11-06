@@ -1,6 +1,6 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
-"""Unit tests for RieTrans (SPDRMLR, SPDLinear, SPNN) and GyroAtt (GyroSPDAtt)."""
+"""Unit tests for RieTrans (SPDRMLR, SPDLinear, SPNN) and GyroAtt (GyroAtt)."""
 
 import pytest
 import torch
@@ -8,7 +8,7 @@ import torch.nn as nn
 
 from spd_learn.models import (
     SPNN,
-    GyroSPDAtt,
+    GyroAtt,
     GyroSPDAttention,
     SymSPDAttention,
 )
@@ -181,7 +181,7 @@ class TestSPNN:
     def test_raw_eeg_forward(self):
         batch, n_chans, n_times, n_outputs = 3, 22, 500, 2
         x = torch.randn(batch, n_chans, n_times)
-        model = SPNN(n_chans=n_chans, n_outputs=n_outputs, hidden_dims=(16, 12))
+        model = SPNN(n_chans=n_chans, n_outputs=n_outputs, bimap_dims=(16, 12))
         out = model(x)
         assert out.shape == (batch, n_outputs)
         assert torch.isfinite(out).all()
@@ -189,20 +189,20 @@ class TestSPNN:
     def test_cov_input_forward(self):
         batch, n_chans, n_outputs = 2, 22, 4
         x = _generate_spd_batch(batch, n_chans, n_chans)
-        model = SPNN(n_chans=n_chans, n_outputs=n_outputs, hidden_dims=(14,))
+        model = SPNN(n_chans=n_chans, n_outputs=n_outputs, bimap_dims=(14,))
         out = model(x)
         assert out.shape == (batch, n_outputs)
 
     def test_different_metrics(self):
         x = torch.randn(2, 8, 200)
         for metric in ["LEM", "AIM", "PEM"]:
-            model = SPNN(n_chans=8, n_outputs=2, hidden_dims=(6,), metric=metric)
+            model = SPNN(n_chans=8, n_outputs=2, bimap_dims=(6,), metric=metric)
             out = model(x)
             assert out.shape == (2, 2)
 
     def test_gradient_flow(self):
         x = torch.randn(2, 10, 300)
-        model = SPNN(n_chans=10, n_outputs=2, hidden_dims=(8, 6), drop_prob=0.1)
+        model = SPNN(n_chans=10, n_outputs=2, bimap_dims=(8, 6), drop_prob=0.1)
         model.train()
         out = model(x)
         loss = nn.functional.cross_entropy(out, torch.tensor([0, 1]))
@@ -216,7 +216,7 @@ class TestSPNN:
 
     def test_eval_mode(self):
         x = torch.randn(2, 10, 300)
-        model = SPNN(n_chans=10, n_outputs=2, hidden_dims=(8,), drop_prob=0.5)
+        model = SPNN(n_chans=10, n_outputs=2, bimap_dims=(8,), drop_prob=0.5)
         model.eval()
         with torch.no_grad():
             out1 = model(x)
@@ -234,8 +234,7 @@ class TestGyroSPDAttention:
 
     def test_cayley_orthogonality(self):
         att = GyroSPDAttention(dim=4)
-        W = torch.randn(4, 4)
-        orth = att._cayley(W)
+        orth = att.q_proj.weight[0]
         eye = torch.eye(4)
         assert torch.allclose(orth @ orth.mT, eye, atol=1e-5)
         det = torch.linalg.det(orth)
@@ -306,17 +305,17 @@ class TestSymSPDAttention:
 
 
 # =============================================================================
-# GyroSPDAtt Model Tests
+# GyroAtt Model Tests
 # =============================================================================
 
 
-class TestGyroSPDAtt:
-    """Tests for the complete GyroSPDAtt model."""
+class TestGyroAtt:
+    """Tests for the complete GyroAtt model."""
 
     def test_gyro_attention_forward(self):
         batch, n_chans, n_times, n_outputs = 2, 22, 1000, 2
         x = torch.randn(batch, n_chans, n_times)
-        model = GyroSPDAtt(
+        model = GyroAtt(
             n_chans=n_chans,
             n_outputs=n_outputs,
             n_patches=6,
@@ -333,7 +332,7 @@ class TestGyroSPDAtt:
     def test_sym_attention_forward(self):
         batch, n_chans, n_times, n_outputs = 2, 22, 1000, 2
         x = torch.randn(batch, n_chans, n_times)
-        model = GyroSPDAtt(
+        model = GyroAtt(
             n_chans=n_chans,
             n_outputs=n_outputs,
             n_patches=4,
@@ -350,7 +349,7 @@ class TestGyroSPDAtt:
     def test_cov_patches_forward(self):
         batch, n_patches, spatial_filters, n_outputs = 2, 4, 16, 2
         X_cov = _generate_spd_batch(batch, n_patches, spatial_filters, spatial_filters)
-        model = GyroSPDAtt(
+        model = GyroAtt(
             n_chans=22,
             n_outputs=n_outputs,
             n_patches=n_patches,
@@ -363,11 +362,11 @@ class TestGyroSPDAtt:
 
     def test_invalid_attention_type(self):
         with pytest.raises(ValueError, match="attention_type must be 'gyro' or 'sym'"):
-            GyroSPDAtt(attention_type="invalid")
+            GyroAtt(attention_type="invalid")
 
     def test_backward_gradient_flow(self):
         x = torch.randn(2, 8, 400)
-        model = GyroSPDAtt(
+        model = GyroAtt(
             n_chans=8,
             n_outputs=2,
             n_patches=4,

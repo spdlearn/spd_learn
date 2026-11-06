@@ -344,7 +344,7 @@ class SymSPDAttention(nn.Module):
         )
 
 
-class GyroSPDAtt(MAtt):
+class GyroAtt(MAtt):
     r"""Gyrovector Riemannian Attention Network for EEG Decoding.
 
     Implements the full deep architecture for EEG decoding introduced in
@@ -405,8 +405,8 @@ class GyroSPDAtt(MAtt):
     Examples
     --------
     >>> import torch
-    >>> from spd_learn.models import GyroSPDAtt
-    >>> model = GyroSPDAtt(n_chans=22, n_outputs=2, attention_type="gyro")
+    >>> from spd_learn.models import GyroAtt
+    >>> model = GyroAtt(n_chans=22, n_outputs=2, attention_type="gyro")
     >>> x = torch.randn(4, 22, 1000)
     >>> out = model(x)
     >>> out.shape
@@ -495,7 +495,7 @@ class GyroSPDAtt(MAtt):
         self.dropout = nn.Dropout(drop_prob)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of GyroSPDAtt.
+        """Forward pass of GyroAtt.
 
         Parameters
         ----------

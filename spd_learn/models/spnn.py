@@ -49,8 +49,8 @@ class SPNN(nn.Module):
         Number of EEG channels (input dimensionality).
     n_outputs : int, default=2
         Number of output classification classes.
-    hidden_dims : tuple of int, default=(16, 12)
-        Intermediate SPD manifold dimensions for the stacked SPDLinear layers.
+    bimap_dims : tuple of int, default=(16, 12)
+        Intermediate SPD manifold dimensions for the stacked BiMap and SPDLinear layers.
     metric : {"LEM", "LCM", "AIM", "PEM"}, default="LEM"
         Riemannian metric for the SPDLinear and SPDRMLR layers.
     theta : float, default=0.5
@@ -79,7 +79,7 @@ class SPNN(nn.Module):
         self,
         n_chans: int = 22,
         n_outputs: int = 2,
-        hidden_dims: Tuple[int, ...] = (16, 12),
+        bimap_dims: Tuple[int, ...] = (16, 12),
         metric: str = "LEM",
         theta: float = 0.5,
         drop_prob: float = 0.0,
@@ -87,7 +87,7 @@ class SPNN(nn.Module):
         super().__init__()
         self.n_chans = n_chans
         self.n_outputs = n_outputs
-        self.hidden_dims = tuple(hidden_dims)
+        self.bimap_dims = tuple(bimap_dims)
         self.metric = metric
         self.theta = theta
         self.drop_prob = drop_prob
@@ -97,7 +97,7 @@ class SPNN(nn.Module):
 
         # Stack of BiMap stem + SPDLinear transformation layers with ReEig non-linearity
         layers: list[nn.Module] = []
-        dims = [n_chans, *self.hidden_dims]
+        dims = [n_chans, *self.bimap_dims]
         for i in range(len(dims) - 1):
             d_in, d_out = dims[i], dims[i + 1]
             if i == 0:
@@ -118,7 +118,7 @@ class SPNN(nn.Module):
 
         self.spd_layers = nn.Sequential(*layers)
 
-        last_dim = self.hidden_dims[-1] if len(self.hidden_dims) > 0 else n_chans
+        last_dim = self.bimap_dims[-1] if len(self.bimap_dims) > 0 else n_chans
         self.classifier = SPDRMLR(
             n_features=last_dim,
             n_outputs=n_outputs,

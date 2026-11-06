@@ -19,7 +19,7 @@ from pyriemann.geometry.mean import mean_euclid
 from ..utils import ensure_sym
 
 
-def power_cholesky_coords(X: torch.Tensor, theta: float = 0.5) -> torch.Tensor:
+def pcm_coords(X: torch.Tensor, theta: float = 0.5) -> torch.Tensor:
     r"""Compute global deformed coordinates under Power-Cholesky geometry.
 
     .. math::
@@ -49,7 +49,7 @@ def power_cholesky_coords(X: torch.Tensor, theta: float = 0.5) -> torch.Tensor:
     return tril_L + torch.diag_embed(deformed_diag)
 
 
-def power_cholesky_inv_coords(
+def pcm_inv_coords(
     Z: torch.Tensor, theta: float = 0.5, eps: float = 1e-6
 ) -> torch.Tensor:
     r"""Reconstruct SPD matrix from deformed Power-Cholesky coordinates.
@@ -79,7 +79,7 @@ def power_cholesky_inv_coords(
     return L @ L.transpose(-1, -2)
 
 
-def power_cholesky_distance(
+def pcm_distance(
     A: torch.Tensor,
     B: torch.Tensor,
     theta: float = 0.5,
@@ -109,8 +109,8 @@ def power_cholesky_distance(
     if theta == 0:
         raise ValueError("theta must be non-zero for Power-Cholesky metric.")
 
-    Z_A = power_cholesky_coords(A, theta=theta)
-    Z_B = power_cholesky_coords(B, theta=theta)
+    Z_A = pcm_coords(A, theta=theta)
+    Z_B = pcm_coords(B, theta=theta)
     if diagonal_weight == 1.0:
         return distance_euclid(Z_A, Z_B)
     tril_diff = Z_A.tril(-1) - Z_B.tril(-1)
@@ -122,7 +122,7 @@ def power_cholesky_distance(
     return torch.sqrt((sq_tril + diagonal_weight * sq_diag).clamp(min=0.0))
 
 
-def power_cholesky_geodesic(
+def pcm_geodesic(
     A: torch.Tensor,
     B: torch.Tensor,
     t: Union[float, torch.Tensor],
@@ -144,15 +144,15 @@ def power_cholesky_geodesic(
     torch.Tensor
         Interpolated SPD matrix of shape `(..., n, n)`.
     """
-    Z_A = power_cholesky_coords(A, theta=theta)
-    Z_B = power_cholesky_coords(B, theta=theta)
+    Z_A = pcm_coords(A, theta=theta)
+    Z_B = pcm_coords(B, theta=theta)
     if torch.is_tensor(t) and t.ndim == 0 and Z_A.ndim > 2:
         t = t.expand(Z_A.shape[:-2])
     Z_t = geodesic_euclid(Z_A, Z_B, alpha=t)
-    return power_cholesky_inv_coords(Z_t, theta=theta)
+    return pcm_inv_coords(Z_t, theta=theta)
 
 
-def power_cholesky_mean(
+def pcm_mean(
     X: torch.Tensor,
     weights: Optional[torch.Tensor] = None,
     theta: float = 0.5,
@@ -188,13 +188,13 @@ def power_cholesky_mean(
     if dim >= X.ndim - 2 or dim < 0:
         raise ValueError(f"dim must be a batch dimension (< {X.ndim - 2}), got {dim}")
 
-    Z = power_cholesky_coords(X, theta=theta)
+    Z = pcm_coords(X, theta=theta)
     if weights is None:
         Z_moved = Z.movedim(dim, -3)
         Z_bar = mean_euclid(Z_moved)
         if keepdim:
             Z_bar = Z_bar.unsqueeze(dim)
-        return power_cholesky_inv_coords(Z_bar, theta=theta)
+        return pcm_inv_coords(Z_bar, theta=theta)
 
     N = X.shape[dim]
     weights = weights.to(device=X.device, dtype=X.dtype)
@@ -210,10 +210,10 @@ def power_cholesky_mean(
         w = weights
     w = w / w.sum(dim=dim, keepdim=True)
     Z_bar = (w * Z).sum(dim=dim, keepdim=keepdim)
-    return power_cholesky_inv_coords(Z_bar, theta=theta)
+    return pcm_inv_coords(Z_bar, theta=theta)
 
 
-def power_cholesky_log(
+def log_map_pcm(
     X: torch.Tensor,
     P: Optional[torch.Tensor] = None,
     theta: float = 0.5,
@@ -256,7 +256,7 @@ def power_cholesky_log(
     return v_tril + torch.diag_embed(v_diag)
 
 
-def power_cholesky_exp(
+def exp_map_pcm(
     V: torch.Tensor,
     P: Optional[torch.Tensor] = None,
     theta: float = 0.5,
@@ -303,59 +303,57 @@ def power_cholesky_exp(
     return L @ L.transpose(-1, -2)
 
 
-def bures_wasserstein_cholesky_distance(
-    A: torch.Tensor, B: torch.Tensor
-) -> torch.Tensor:
+def bwcm_distance(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     r"""Compute Riemannian distance under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return power_cholesky_distance(A, B, theta=0.5, diagonal_weight=0.25)
+    return pcm_distance(A, B, theta=0.5, diagonal_weight=0.25)
 
 
-def bures_wasserstein_cholesky_geodesic(
+def bwcm_geodesic(
     A: torch.Tensor,
     B: torch.Tensor,
     t: Union[float, torch.Tensor],
 ) -> torch.Tensor:
     r"""Compute geodesic interpolation under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return power_cholesky_geodesic(A, B, t, theta=0.5)
+    return pcm_geodesic(A, B, t, theta=0.5)
 
 
-def bures_wasserstein_cholesky_mean(
+def bwcm_mean(
     X: torch.Tensor,
     weights: Optional[torch.Tensor] = None,
     dim: int = 0,
     keepdim: bool = False,
 ) -> torch.Tensor:
     r"""Compute closed-form Fréchet mean under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return power_cholesky_mean(X, weights=weights, theta=0.5, dim=dim, keepdim=keepdim)
+    return pcm_mean(X, weights=weights, theta=0.5, dim=dim, keepdim=keepdim)
 
 
-def bures_wasserstein_cholesky_log(
+def log_map_bwcm(
     X: torch.Tensor,
     P: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     r"""Compute Riemannian logarithmic map under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return power_cholesky_log(X, P=P, theta=0.5)
+    return log_map_pcm(X, P=P, theta=0.5)
 
 
-def bures_wasserstein_cholesky_exp(
+def exp_map_bwcm(
     V: torch.Tensor,
     P: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     r"""Compute Riemannian exponential map under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return power_cholesky_exp(V, P=P, theta=0.5)
+    return exp_map_pcm(V, P=P, theta=0.5)
 
 
 __all__ = [
-    "power_cholesky_coords",
-    "power_cholesky_inv_coords",
-    "power_cholesky_distance",
-    "power_cholesky_geodesic",
-    "power_cholesky_mean",
-    "power_cholesky_log",
-    "power_cholesky_exp",
-    "bures_wasserstein_cholesky_distance",
-    "bures_wasserstein_cholesky_geodesic",
-    "bures_wasserstein_cholesky_mean",
-    "bures_wasserstein_cholesky_log",
-    "bures_wasserstein_cholesky_exp",
+    "pcm_coords",
+    "pcm_inv_coords",
+    "pcm_distance",
+    "pcm_geodesic",
+    "pcm_mean",
+    "log_map_pcm",
+    "exp_map_pcm",
+    "bwcm_distance",
+    "bwcm_geodesic",
+    "bwcm_mean",
+    "log_map_bwcm",
+    "exp_map_bwcm",
 ]

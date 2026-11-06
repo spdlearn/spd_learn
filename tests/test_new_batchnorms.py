@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 """Tests for new Riemannian batch normalization layers:
-- SPDBatchNormHarmonicArithmetic (ARMAGNAC, Gallet et al. 2026)
+- SPDBatchNormHarmonic (ARMAGNAC, Gallet et al. 2026)
 - SPDBatchNormBW (GBWBN, Zhou et al. CVPR 2025)
 - SPDBatchNormCholesky (CBN, Zhou et al. TNNLS 2025)
 """
@@ -13,7 +13,7 @@ import torch
 from spd_learn.modules import (
     SPDBatchNormBW,
     SPDBatchNormCholesky,
-    SPDBatchNormHarmonicArithmetic,
+    SPDBatchNormHarmonic,
 )
 
 
@@ -27,22 +27,22 @@ def _make_spd_batch(shape, dtype=torch.float64, seed=42):
 
 
 # ===========================================================================
-# Tests for SPDBatchNormHarmonicArithmetic (ARMAGNAC)
+# Tests for SPDBatchNormHarmonic (ARMAGNAC)
 # ===========================================================================
 
 
-class TestSPDBatchNormHarmonicArithmetic:
+class TestSPDBatchNormHarmonic:
     def test_invalid_alpha(self):
         with pytest.raises(ValueError, match="alpha must be in"):
-            SPDBatchNormHarmonicArithmetic(num_features=3, alpha=0.0)
+            SPDBatchNormHarmonic(num_features=3, alpha=0.0)
         with pytest.raises(ValueError, match="alpha must be in"):
-            SPDBatchNormHarmonicArithmetic(num_features=3, alpha=1.0)
+            SPDBatchNormHarmonic(num_features=3, alpha=1.0)
         with pytest.raises(ValueError, match="alpha must be in"):
-            SPDBatchNormHarmonicArithmetic(num_features=3, alpha=-0.5)
+            SPDBatchNormHarmonic(num_features=3, alpha=-0.5)
 
     def test_instantiation_and_reset(self):
         n = 4
-        bn = SPDBatchNormHarmonicArithmetic(
+        bn = SPDBatchNormHarmonic(
             num_features=n,
             alpha=0.7,
             learnable_alpha=True,
@@ -65,9 +65,7 @@ class TestSPDBatchNormHarmonicArithmetic:
     def test_forward_shape_and_spd(self, shape):
         n = shape[-1]
         X = _make_spd_batch(shape)
-        bn = SPDBatchNormHarmonicArithmetic(
-            num_features=n, alpha=0.5, dtype=torch.float64
-        )
+        bn = SPDBatchNormHarmonic(num_features=n, alpha=0.5, dtype=torch.float64)
         out = bn(X)
 
         assert out.shape == X.shape
@@ -80,9 +78,7 @@ class TestSPDBatchNormHarmonicArithmetic:
     def test_training_vs_eval_mode(self):
         n = 3
         X = _make_spd_batch((8, n, n))
-        bn = SPDBatchNormHarmonicArithmetic(
-            num_features=n, momentum=0.2, dtype=torch.float64
-        )
+        bn = SPDBatchNormHarmonic(num_features=n, momentum=0.2, dtype=torch.float64)
 
         # In training mode, running_mean should update
         initial_mean = bn.running_mean.clone()
@@ -100,7 +96,7 @@ class TestSPDBatchNormHarmonicArithmetic:
         n = 3
         X = _make_spd_batch((4, n, n))
         X.requires_grad_(True)
-        bn = SPDBatchNormHarmonicArithmetic(
+        bn = SPDBatchNormHarmonic(
             num_features=n,
             alpha=0.5,
             learnable_alpha=True,
@@ -119,7 +115,7 @@ class TestSPDBatchNormHarmonicArithmetic:
 
     def test_fixed_alpha(self):
         n = 3
-        bn = SPDBatchNormHarmonicArithmetic(
+        bn = SPDBatchNormHarmonic(
             num_features=n,
             alpha=0.4,
             learnable_alpha=False,

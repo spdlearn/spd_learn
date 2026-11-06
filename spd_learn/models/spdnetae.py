@@ -36,7 +36,7 @@ class SPDDecoderBlock(nn.Module):
     Examples
     --------
     >>> import torch
-    >>> from spd_learn.models.spdnet_ae import SPDDecoderBlock
+    >>> from spd_learn.models.spdnetae import SPDDecoderBlock
     >>> dec = SPDDecoderBlock(in_features=8, out_features=16)
     >>> Z = torch.eye(8).unsqueeze(0)
     >>> Y = dec(Z)
@@ -85,7 +85,7 @@ class SPDNetAE(nn.Module):
        scale normalization `TraceNorm()` and shrinkage regularization
        `Shrinkage(n_chans, init_shrinkage=-2.0)`.
     2. **SPD Encoder**: Stacks :class:`~spd_learn.modules.BiMap` and
-       :class:`~spd_learn.modules.ReEig` blocks across `(n_chans, *encoder_dims)`
+       :class:`~spd_learn.modules.ReEig` blocks across `(n_chans, *bimap_dims)`
        to produce a compact latent SPD representation
        :math:`Z \in \mathcal{S}_{++}^{d_{\text{latent}}}`.
     3. **SPD Decoder**: Reconstructs the original
@@ -119,9 +119,9 @@ class SPDNetAE(nn.Module):
         Number of EEG channels (dimension of the input covariance matrix).
     n_outputs : int, default=2
         Number of output classes for classification.
-    encoder_dims : tuple[int, ...], default=(16, 8)
+    bimap_dims : tuple[int, ...], default=(16, 8)
         Sequence of subspace dimensions for the SPD encoder layers.
-        The latent SPD dimension is `encoder_dims[-1]`.
+        The latent SPD dimension is `bimap_dims[-1]`.
     eps : float, default=1e-4
         Eigenvalue rectification threshold and diagonal regularization parameter.
     drop_prob : float, default=0.0
@@ -145,7 +145,7 @@ class SPDNetAE(nn.Module):
     --------
     >>> import torch
     >>> from spd_learn.models import SPDNetAE
-    >>> model = SPDNetAE(n_chans=22, n_outputs=2, encoder_dims=(16, 8))
+    >>> model = SPDNetAE(n_chans=22, n_outputs=2, bimap_dims=(16, 8))
     >>> x = torch.randn(4, 22, 1000)  # (batch, channels, times)
     >>> logits = model(x)
     >>> logits.shape
@@ -166,7 +166,7 @@ class SPDNetAE(nn.Module):
         self,
         n_chans: int = 22,
         n_outputs: int = 2,
-        encoder_dims: Sequence[int] = (16, 8),
+        bimap_dims: Sequence[int] = (16, 8),
         eps: float = 1e-4,
         drop_prob: float = 0.0,
         input_type: str = "raw",
@@ -183,7 +183,7 @@ class SPDNetAE(nn.Module):
             )
         self.n_chans = n_chans
         self.n_outputs = n_outputs
-        self.encoder_dims = tuple(encoder_dims)
+        self.bimap_dims = tuple(bimap_dims)
         self.eps = threshold if threshold != 1e-4 else eps
         self.drop_prob = drop_prob
         self.input_type = input_type
@@ -208,7 +208,7 @@ class SPDNetAE(nn.Module):
             self.cov_frontend = nn.Identity()
 
         # SPD Encoder
-        dims = (n_chans, *self.encoder_dims)
+        dims = (n_chans, *self.bimap_dims)
         encoder_layers: list[nn.Module] = []
         for d_in, d_out in zip(dims[:-1], dims[1:]):
             encoder_layers.append(BiMap(d_in, d_out, device=device, dtype=dtype))
@@ -216,7 +216,7 @@ class SPDNetAE(nn.Module):
         self.encoder = nn.Sequential(*encoder_layers)
 
         # SPD Decoder
-        dec_dims = (*reversed(self.encoder_dims), n_chans)
+        dec_dims = (*reversed(self.bimap_dims), n_chans)
         decoder_layers: list[nn.Module] = []
         for d_in, d_out in zip(dec_dims[:-1], dec_dims[1:]):
             decoder_layers.append(
@@ -225,7 +225,7 @@ class SPDNetAE(nn.Module):
         self.decoder = nn.Sequential(*decoder_layers)
 
         # Classifier Head
-        d_latent = self.encoder_dims[-1]
+        d_latent = self.bimap_dims[-1]
         self.logeig = LogEig(upper=upper)
         self.dropout = nn.Dropout(p=drop_prob)
         self.feat_dim = d_latent * (d_latent + 1) // 2 if upper else d_latent**2
@@ -247,7 +247,7 @@ class SPDNetAE(nn.Module):
         -------
         torch.Tensor
             Latent SPD matrix with shape `(..., d_latent, d_latent)`
-            where `d_latent = encoder_dims[-1]`.
+            where `d_latent = bimap_dims[-1]`.
         """
         if self.input_type == "raw":
             if x.ndim == 3 and (

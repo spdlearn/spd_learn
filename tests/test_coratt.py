@@ -6,11 +6,11 @@ import pytest
 import torch
 
 from spd_learn.functional import (
-    corr_lsm_exp,
-    corr_lsm_log,
-    corr_olm_exp,
-    corr_olm_log,
     cov_to_corr,
+    exp_map_lsm,
+    exp_map_olm,
+    log_map_lsm,
+    log_map_olm,
     off_diag,
     tril_embed,
     untril_embed,
@@ -83,19 +83,19 @@ def test_off_diag():
     torch.testing.assert_close(H[:, mask], X[:, mask])
 
 
-def test_corr_olm_log_and_exp_properties():
+def test_log_map_olm_and_exp_properties():
     """OLM log and exp maps must satisfy geometric properties and roundtrip."""
     S = _make_spd((3, 4, 4))
     C = cov_to_corr(S)
 
     # OLM log produces hollow symmetric matrices
-    H = corr_olm_log(C)
+    H = log_map_olm(C)
     diag = torch.diagonal(H, dim1=-2, dim2=-1)
     torch.testing.assert_close(diag, torch.zeros_like(diag), atol=1e-5, rtol=1e-5)
     torch.testing.assert_close(H, H.mT)
 
     # OLM exp produces correlation matrices
-    C_rec = corr_olm_exp(H)
+    C_rec = exp_map_olm(H)
     diag_c = torch.diagonal(C_rec, dim1=-2, dim2=-1)
     torch.testing.assert_close(diag_c, torch.ones_like(diag_c))
     eigvals = torch.linalg.eigvalsh(C_rec)
@@ -103,40 +103,40 @@ def test_corr_olm_log_and_exp_properties():
 
     # Roundtrip: log(exp(X)) == X for hollow symmetric X
     X = _make_hollow_sym((2, 4, 4))
-    C_from_x = corr_olm_exp(X)
-    X_rec = corr_olm_log(C_from_x)
+    C_from_x = exp_map_olm(X)
+    X_rec = log_map_olm(C_from_x)
     torch.testing.assert_close(X_rec, X, atol=1e-3, rtol=1e-3)
 
 
-def test_corr_olm_backward():
-    """Gradients must propagate through corr_olm_log and corr_olm_exp."""
+def test_olm_backward():
+    """Gradients must propagate through log_map_olm and exp_map_olm."""
     X = _make_hollow_sym((2, 3, 3)).requires_grad_()
-    C = corr_olm_exp(X)
+    C = exp_map_olm(X)
     loss = C.sum()
     loss.backward()
     assert X.grad is not None
     assert not torch.isnan(X.grad).any()
 
     C_in = cov_to_corr(_make_spd((2, 3, 3))).requires_grad_()
-    H = corr_olm_log(C_in)
+    H = log_map_olm(C_in)
     H.sum().backward()
     assert C_in.grad is not None
     assert not torch.isnan(C_in.grad).any()
 
 
-def test_corr_lsm_log_and_exp_properties():
+def test_log_map_lsm_and_exp_properties():
     """LSM log and exp maps must satisfy geometric properties and roundtrip."""
     S = _make_spd((3, 4, 4))
     C = cov_to_corr(S)
 
     # LSM log produces hollow symmetric matrices
-    H = corr_lsm_log(C)
+    H = log_map_lsm(C)
     diag = torch.diagonal(H, dim1=-2, dim2=-1)
     torch.testing.assert_close(diag, torch.zeros_like(diag), atol=1e-5, rtol=1e-5)
     torch.testing.assert_close(H, H.mT)
 
     # LSM exp produces correlation matrices
-    C_rec = corr_lsm_exp(H)
+    C_rec = exp_map_lsm(H)
     diag_c = torch.diagonal(C_rec, dim1=-2, dim2=-1)
     torch.testing.assert_close(diag_c, torch.ones_like(diag_c))
     eigvals = torch.linalg.eigvalsh(C_rec)
@@ -144,22 +144,22 @@ def test_corr_lsm_log_and_exp_properties():
 
     # Roundtrip: log(exp(X)) == X for hollow symmetric X
     X = _make_hollow_sym((2, 4, 4))
-    C_from_x = corr_lsm_exp(X)
-    X_rec = corr_lsm_log(C_from_x)
+    C_from_x = exp_map_lsm(X)
+    X_rec = log_map_lsm(C_from_x)
     torch.testing.assert_close(X_rec, X, atol=1e-2, rtol=1e-2)
 
 
-def test_corr_lsm_backward():
-    """Gradients must propagate through corr_lsm_log and corr_lsm_exp."""
+def test_lsm_backward():
+    """Gradients must propagate through log_map_lsm and exp_map_lsm."""
     X = _make_hollow_sym((2, 3, 3)).requires_grad_()
-    C = corr_lsm_exp(X)
+    C = exp_map_lsm(X)
     loss = C.sum()
     loss.backward()
     assert X.grad is not None
     assert not torch.isnan(X.grad).any()
 
     C_in = cov_to_corr(_make_spd((2, 3, 3))).requires_grad_()
-    H = corr_lsm_log(C_in)
+    H = log_map_lsm(C_in)
     H.sum().backward()
     assert C_in.grad is not None
     assert not torch.isnan(C_in.grad).any()

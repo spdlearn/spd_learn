@@ -19,7 +19,7 @@ from spd_learn.modules import (
     LearnedSinusoidalPosition,
     SPDLogTokenizer,
     SPDTransformerEncoderLayer,
-    StructurePreservingMultiheadAttention,
+    SPMultiheadAttention,
 )
 
 
@@ -177,7 +177,7 @@ def test_invalid_coordinates_and_configuration():
             SPDTransNet(**kwargs)
     for kwargs in ({"embed_dim": 8}, {"num_heads": 4}, {"dropout": -0.1}):
         with pytest.raises(ValueError):
-            StructurePreservingMultiheadAttention(**kwargs)
+            SPMultiheadAttention(**kwargs)
 
 
 @pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
@@ -215,7 +215,7 @@ def test_input_validation_uses_relative_per_matrix_scale(dtype, scale):
 @pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
 def test_attention_equation_signed_mixing_unaltered_values(dtype):
     torch.manual_seed(21)
-    module = StructurePreservingMultiheadAttention(6, 3, dtype=dtype)
+    module = SPMultiheadAttention(6, 3, dtype=dtype)
     with torch.no_grad():
         module.head_mix.weight.copy_(torch.tensor([[-2.0, 0.1, 0.2]], dtype=dtype))
     q, k, v = [torch.randn(2, 4, 6, dtype=dtype) for _ in range(3)]
@@ -240,7 +240,7 @@ def test_attention_equation_signed_mixing_unaltered_values(dtype):
 
 def test_attention_gradcheck_parameters_and_values():
     torch.manual_seed(22)
-    module = StructurePreservingMultiheadAttention(3, 3, dtype=torch.float64)
+    module = SPMultiheadAttention(3, 3, dtype=torch.float64)
     x = torch.randn(1, 2, 3, dtype=torch.float64, requires_grad=True)
     assert gradcheck(lambda t: module(t)[0], (x,))
     # Include the actual registered parameters in a numerical gradient check.
@@ -390,7 +390,7 @@ def test_dropout_train_eval_and_layer_state(dtype):
     model.eval()
     torch.testing.assert_close(model(x), model(x), rtol=0, atol=0)
     # Dropout p=1 zeros all attention maps only in training.
-    attention = StructurePreservingMultiheadAttention(6, 2, dropout=1, dtype=dtype)
+    attention = SPMultiheadAttention(6, 2, dropout=1, dtype=dtype)
     tokens = torch.randn(2, 4, 6, dtype=dtype)
     assert torch.count_nonzero(attention(tokens)[0]) == 0
     attention.eval()
@@ -403,7 +403,7 @@ def test_dropout_train_eval_and_layer_state(dtype):
 def test_explicit_mask_shape_and_registry_contracts():
     import spd_learn.modules as modules
 
-    module = StructurePreservingMultiheadAttention()
+    module = SPMultiheadAttention()
     tokens = torch.zeros(2, 4, 6)
     for kwargs in (
         {"attn_mask": torch.zeros(4, 4)},
@@ -427,7 +427,7 @@ def test_explicit_mask_shape_and_registry_contracts():
     assert "SPDTransNet" not in __all__
     sequence_modules = {
         "SPDLogTokenizer",
-        "StructurePreservingMultiheadAttention",
+        "SPMultiheadAttention",
         "SPDTransformerEncoderLayer",
         "LearnedSinusoidalPosition",
         "SPDTemporalEncoder",

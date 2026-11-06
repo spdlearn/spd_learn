@@ -660,7 +660,7 @@ class BatchReNorm(nn.Module):
         return output
 
 
-class SPDBatchNormHarmonicArithmetic(SPDBatchNormMean):
+class SPDBatchNormHarmonic(SPDBatchNormMean):
     r"""Harmonic-Arithmetic Riemannian Batch Normalization for SPD Matrices.
 
     Implements the ARMAGNAC parametric batch normalization layer for

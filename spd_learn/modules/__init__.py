@@ -4,7 +4,7 @@ from .batchnorm import (
     BatchReNorm,
     SPDBatchNormBW,
     SPDBatchNormCholesky,
-    SPDBatchNormHarmonicArithmetic,
+    SPDBatchNormHarmonic,
     SPDBatchNormMean,
     SPDBatchNormMeanVar,
 )
@@ -24,7 +24,7 @@ from .manifold import (
     step_dynamic_trivialization,
 )
 from .modeig import ExpEig, LogEig, ReEig
-from .pooling import GaussianSPDDescriptor, RiemannianHighOrderPooling
+from .pooling import RHOP, GaussianSPD
 from .regularize import Shrinkage, TraceNorm
 from .residual import LogEuclideanResidual
 from .rietrans import SPDRMLR, SPDLinear
@@ -36,7 +36,6 @@ from .spdtransnet import (  # noqa: F401
     SPDTemporalEncoder,
     SPDTransformerEncoderLayer,
     SPMultiheadAttention,
-    StructurePreservingMultiheadAttention,
 )
 from .utils import PatchEmbeddingLayer, Vec, Vech
 from .wavelet import WaveletConv
@@ -61,12 +60,12 @@ __all__ = [
     "BatchReNorm",
     "SPDBatchNormMeanVar",
     "SPDBatchNormLie",
-    "SPDBatchNormHarmonicArithmetic",
+    "SPDBatchNormHarmonic",
     "SPDBatchNormBW",
     "SPDBatchNormCholesky",
     # pooling
-    "GaussianSPDDescriptor",
-    "RiemannianHighOrderPooling",
+    "GaussianSPD",
+    "RHOP",
     # rietrans
     "SPDRMLR",
     "SPDLinear",
@@ -88,7 +87,7 @@ __all__ = [
 # Sequence modules operate on explicit token axes, not generic covariance inputs.
 __sequence_modules__ = [
     "SPDLogTokenizer",
-    "StructurePreservingMultiheadAttention",
+    "SPMultiheadAttention",
     "SPDTransformerEncoderLayer",
     "LearnedSinusoidalPosition",
     "SPDTemporalEncoder",

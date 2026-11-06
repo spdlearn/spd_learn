@@ -1,10 +1,10 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""Tests for GaussianSPDDescriptor and RiemannianHighOrderPooling (RHOP).
+"""Tests for GaussianSPD and RHOP.
 
 Verifies the mathematical properties and empirical behavior of RHOP (ICLR 2026):
-  - Strict SPD-ness (positive eigenvalues, Hermitian symmetry) of GaussianSPDDescriptor
+  - Strict SPD-ness (positive eigenvalues, Hermitian symmetry) of GaussianSPD
   - Riemannian mappings: LEM, PEM, and LCM
   - Forward pass with and without class token (including token shape squeezing)
   - Full end-to-end gradient flow through all learnable parameters and input tokens
@@ -16,22 +16,20 @@ import torch
 
 from torch import nn
 
-from spd_learn.modules import GaussianSPDDescriptor, RiemannianHighOrderPooling
+from spd_learn.modules import RHOP, GaussianSPD
 
 
 # ---------------------------------------------------------------------------
-# GaussianSPDDescriptor Tests
+# GaussianSPD Tests
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("shape", [(8, 6), (2, 10, 8), (2, 3, 5, 4)])
 @pytest.mark.parametrize("embedding_type", ["quotient", "lovric"])
 def test_gaussian_spd_descriptor_shape_and_spdness(shape, embedding_type):
-    """Verify that GaussianSPDDescriptor produces symmetric positive definite matrices."""
+    """Verify that GaussianSPD produces symmetric positive definite matrices."""
     torch.manual_seed(42)
-    layer = GaussianSPDDescriptor(
-        embedding_type=embedding_type, alpha=1.2, beta=0.8, eps=1e-5
-    )
+    layer = GaussianSPD(embedding_type=embedding_type, alpha=1.2, beta=0.8, eps=1e-5)
     x = torch.randn(*shape, dtype=torch.float64)
 
     G = layer(x)
@@ -54,7 +52,7 @@ def test_gaussian_spd_descriptor_shape_and_spdness(shape, embedding_type):
 
 def test_gaussian_spd_descriptor_single_token():
     """Verify descriptor behavior when sequence length T = 1."""
-    layer = GaussianSPDDescriptor(eps=1e-4)
+    layer = GaussianSPD(eps=1e-4)
     x = torch.randn(2, 1, 5, dtype=torch.float64)
     G = layer(x)
 
@@ -66,7 +64,7 @@ def test_gaussian_spd_descriptor_single_token():
 @pytest.mark.parametrize("dtype", [torch.complex64, torch.complex128])
 def test_gaussian_spd_descriptor_complex(dtype):
     """Verify that complex inputs produce Hermitian positive definite descriptors."""
-    layer = GaussianSPDDescriptor(eps=1e-4)
+    layer = GaussianSPD(eps=1e-4)
     x = torch.randn(3, 8, 4, dtype=dtype)
     G = layer(x)
 
@@ -85,17 +83,17 @@ def test_gaussian_spd_descriptor_complex(dtype):
 def test_gaussian_spd_descriptor_invalid_args():
     """Verify that invalid arguments raise informative ValueError."""
     with pytest.raises(ValueError, match="Unsupported embedding_type"):
-        GaussianSPDDescriptor(embedding_type="unsupported")
+        GaussianSPD(embedding_type="unsupported")
 
     with pytest.raises(ValueError, match="beta must be positive"):
-        GaussianSPDDescriptor(beta=-1.0)
+        GaussianSPD(beta=-1.0)
 
     with pytest.raises(ValueError, match="alpha must be non-zero"):
-        GaussianSPDDescriptor(alpha=0.0)
+        GaussianSPD(alpha=0.0)
 
 
 # ---------------------------------------------------------------------------
-# RiemannianHighOrderPooling Tests
+# RHOP Tests
 # ---------------------------------------------------------------------------
 
 
@@ -108,7 +106,7 @@ def test_rhop_metrics_forward(metric):
     batch_size = 4
     n_tokens = 10
 
-    rhop = RiemannianHighOrderPooling(
+    rhop = RHOP(
         in_features=in_features,
         reduced_dim=reduced_dim,
         metric=metric,
@@ -129,7 +127,7 @@ def test_rhop_with_and_without_cls_token():
     batch_size = 3
     n_tokens = 8
 
-    rhop = RiemannianHighOrderPooling(in_features=in_features, reduced_dim=4)
+    rhop = RHOP(in_features=in_features, reduced_dim=4)
     x = torch.randn(batch_size, n_tokens, in_features)
 
     # 1. Forward without cls_token (uses token average)
@@ -158,7 +156,7 @@ def test_rhop_gradient_flow(metric):
     batch_size = 2
     n_tokens = 6
 
-    rhop = RiemannianHighOrderPooling(
+    rhop = RHOP(
         in_features=in_features,
         reduced_dim=reduced_dim,
         metric=metric,
@@ -201,10 +199,10 @@ def test_rhop_gradient_flow(metric):
 def test_rhop_invalid_metric():
     """Verify that invalid metric or power raises ValueError."""
     with pytest.raises(ValueError, match="Unsupported metric"):
-        RiemannianHighOrderPooling(in_features=16, metric="INVALID")
+        RHOP(in_features=16, metric="INVALID")
 
     with pytest.raises(ValueError, match="power must be non-zero"):
-        RiemannianHighOrderPooling(in_features=16, metric="PEM", power=0.0)
+        RHOP(in_features=16, metric="PEM", power=0.0)
 
 
 def test_rhop_mock_training():
@@ -214,9 +212,7 @@ def test_rhop_mock_training():
     n_classes = 3
 
     model = nn.Sequential(
-        RiemannianHighOrderPooling(
-            in_features=in_features, reduced_dim=4, metric="LEM"
-        ),
+        RHOP(in_features=in_features, reduced_dim=4, metric="LEM"),
         nn.Linear(in_features, n_classes),
     )
 

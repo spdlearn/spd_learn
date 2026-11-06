@@ -163,10 +163,10 @@ def test_cholesky_and_bw_metrics_invariants(
     # PCM, BWCM, Log-Cholesky & Bures-Wasserstein distance symmetry and zero self-distance
     for dist_fn, geo_fn in [
         (F_spd.log_cholesky_distance, F_spd.log_cholesky_geodesic),
-        (F_spd.power_cholesky_distance, F_spd.power_cholesky_geodesic),
+        (F_spd.pcm_distance, F_spd.pcm_geodesic),
         (
-            F_spd.bures_wasserstein_cholesky_distance,
-            F_spd.bures_wasserstein_cholesky_geodesic,
+            F_spd.bwcm_distance,
+            F_spd.bwcm_geodesic,
         ),
         (F_spd.bures_wasserstein_distance, F_spd.bures_wasserstein_geodesic),
     ]:
@@ -208,13 +208,13 @@ def test_correlation_manifold_diffeomorphism_parametrized(
     assert (torch.linalg.eigvalsh(C) > 0).all()
 
     # OffLog -> hollow symmetric matrix
-    H = F_spd.corr_olm_log(C)
+    H = F_spd.log_map_olm(C)
     diag_H = torch.diagonal(H, dim1=-2, dim2=-1)
     assert_close(diag_H, torch.zeros_like(diag_H), atol=tol, rtol=tol)
     assert_close(H, H.mT, atol=tol, rtol=tol)
 
     # OnExp roundtrip back to C
-    C_rec = F_spd.corr_olm_exp(H)
+    C_rec = F_spd.exp_map_olm(H)
     assert_close(C_rec, C, atol=tol * 5, rtol=tol * 5)
 
 
@@ -229,7 +229,7 @@ def test_correlation_manifold_diffeomorphism_parametrized(
         "SPDBatchNormMean",
         "SPDBatchNormMeanVar",
         "SPDBatchNormLie",
-        "SPDBatchNormHarmonicArithmetic",
+        "SPDBatchNormHarmonic",
         "SPDBatchNormBW",
         "SPDBatchNormCholesky",
     ],

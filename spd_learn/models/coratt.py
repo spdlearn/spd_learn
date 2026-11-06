@@ -14,13 +14,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from spd_learn.functional import (
-    corr_lsm_exp,
-    corr_lsm_log,
-    corr_olm_exp,
-    corr_olm_log,
     cov_to_corr,
     distance_euclid,
+    exp_map_lsm,
+    exp_map_olm,
     geodesic_euclid,
+    log_map_lsm,
+    log_map_olm,
     off_diag,
     sample_covariance,
     tril_embed,
@@ -41,7 +41,7 @@ class CorrAttention(nn.Module):
     the attention mechanism:
     1. Converts inputs to correlation matrices via :func:`cov_to_corr`.
     2. Maps to the hollow symmetric tangent space :math:`\text{Hol}(\mathcal{S}^d)` via
-       :func:`corr_olm_log` (for ``metric in ("OLM", "mix")``) or :func:`corr_lsm_log`
+       :func:`log_map_olm` (for ``metric in ("OLM", "mix")``) or :func:`log_map_lsm`
        (for ``metric == "LSM"``).
     3. Transforms queries, keys, and values via Cayley-parameterized orthogonal mappings
        via :class:`~spd_learn.modules.BiMap`, projected onto the hollow tangent space:
@@ -54,9 +54,9 @@ class CorrAttention(nn.Module):
        :math:`\sum_j A_{ij} V_j + \text{off\_diag}(B + B^\top)`,
        followed by geodesic residual interpolation
        :math:`0.5 L + 0.5 \text{attn\_tangent}`.
-    6. Maps back to :math:`\mathcal{C}_{++}^d` via :func:`corr_lsm_exp`
+    6. Maps back to :math:`\mathcal{C}_{++}^d` via :func:`exp_map_lsm`
        (for `"mix"`/`"LSM"`)
-       or :func:`corr_olm_exp` (for `"OLM"`).
+       or :func:`exp_map_olm` (for `"OLM"`).
 
     Parameters
     ----------
@@ -136,9 +136,9 @@ class CorrAttention(nn.Module):
         C = cov_to_corr(x)
 
         if self.metric in ("OLM", "mix"):
-            L = corr_olm_log(C)
+            L = log_map_olm(C)
         else:
-            L = corr_lsm_log(C)
+            L = log_map_lsm(C)
 
         # Hollow tangent projections via BiMap
         Q = off_diag(self.q_proj(L))
@@ -164,9 +164,9 @@ class CorrAttention(nn.Module):
 
         # Exponential map back to correlation manifold
         if self.metric in ("LSM", "mix"):
-            out = corr_lsm_exp(out_tangent)
+            out = exp_map_lsm(out_tangent)
         else:
-            out = corr_olm_exp(out_tangent)
+            out = exp_map_olm(out_tangent)
 
         return out
 
@@ -182,8 +182,8 @@ class CorAtt(MAtt):
     2. Segmenting features into temporal patches and computing patch covariance.
     3. Normalizing to full-rank correlation matrices and applying
        :class:`CorrAttention`.
-    4. Tangent projection (:func:`~spd_learn.functional.corr_lsm_log` or
-       :func:`~spd_learn.functional.corr_olm_log`).
+    4. Tangent projection (:func:`~spd_learn.functional.log_map_lsm` or
+       :func:`~spd_learn.functional.log_map_olm`).
     5. :func:`~spd_learn.functional.tril_embed` isometrically vectorizing
        hollow tangent matrices.
     6. Dropout and Linear classification head.
@@ -316,9 +316,9 @@ class CorAtt(MAtt):
         x = self.manifold_attention(x)
 
         if self.metric in ("mix", "LSM"):
-            x = corr_lsm_log(x)
+            x = log_map_lsm(x)
         elif self.metric == "OLM":
-            x = corr_olm_log(x)
+            x = log_map_olm(x)
         else:
             raise ValueError(f"Unknown metric '{self.metric}'.")
 

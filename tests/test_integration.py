@@ -31,13 +31,13 @@ mandatory_parameters_per_module = {
     "BatchReNorm": dict(num_features=10),
     "SPDBatchNormMeanVar": dict(num_features=10),
     "SPDBatchNormLie": dict(num_features=10),
-    "SPDBatchNormHarmonicArithmetic": dict(num_features=10),
+    "SPDBatchNormHarmonic": dict(num_features=10),
     "SPDBatchNormBW": dict(num_features=10),
     "SPDBatchNormCholesky": dict(num_features=10),
     "SPMultiheadAttention": dict(embed_dim=15, num_heads=3),
     "SPDTransformerEncoderLayer": dict(embed_dim=15, num_heads=3),
-    "GaussianSPDDescriptor": dict(),
-    "RiemannianHighOrderPooling": dict(in_features=10, reduced_dim=5),
+    "GaussianSPD": dict(),
+    "RHOP": dict(in_features=10, reduced_dim=5),
     "SPDRMLR": dict(n_features=10, n_outputs=4),
     "SPDLinear": dict(in_features=10, out_features=5),
     "PatchEmbeddingLayer": dict(n_chans=10, n_patches=2),
@@ -167,13 +167,13 @@ def test_module_dtype(module_name, dtype, device):
         module_name
         in (
             "SPDBatchNormLie",
-            "SPDBatchNormHarmonicArithmetic",
+            "SPDBatchNormHarmonic",
             "SPDBatchNormBW",
             "SPDBatchNormCholesky",
             "SPMultiheadAttention",
             "SPDTransformerEncoderLayer",
-            "GaussianSPDDescriptor",
-            "RiemannianHighOrderPooling",
+            "GaussianSPD",
+            "RHOP",
             "SPDRMLR",
             "SPDLinear",
         )
@@ -199,7 +199,7 @@ def test_module_dtype(module_name, dtype, device):
         x = torch.randn(2, 6, 15, dtype=dtype, device=device)
         with torch.no_grad():
             out = module(x)
-    elif module_name in ("GaussianSPDDescriptor", "RiemannianHighOrderPooling"):
+    elif module_name in ("GaussianSPD", "RHOP"):
         x = torch.randn(2, 16, 10, dtype=dtype, device=device)
         with torch.no_grad():
             out = module(x)
@@ -252,7 +252,7 @@ def test_module_output_device(module_name, device):
         x = CovLayer(device=device, dtype=dtype)(raw)
     elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
         x = torch.randn(2, 6, 15, device=device, dtype=dtype)
-    elif module_name in ("GaussianSPDDescriptor", "RiemannianHighOrderPooling"):
+    elif module_name in ("GaussianSPD", "RHOP"):
         x = torch.randn(2, 16, 10, device=device, dtype=dtype)
     elif module_name == "LogEuclideanResidual":
         raw = torch.randn(2, 10, 1000, device=device, dtype=dtype)
@@ -318,8 +318,8 @@ def test_module_broadcast_compatible(module_name, extra_dim):
         "GraphBiMap",
         "SPMultiheadAttention",
         "SPDTransformerEncoderLayer",
-        "GaussianSPDDescriptor",
-        "RiemannianHighOrderPooling",
+        "GaussianSPD",
+        "RHOP",
         "WaveletConv",
         "LogEuclideanResidual",
         "PositiveDefiniteScalar",

@@ -40,6 +40,9 @@ class STaRNet(nn.Module):
         List of kernel sizes for the temporal convolutional layers.
     bimap_reduced_dimension : int, optional, default=48
         Reduced dimension for the BiMap layer in the SPD feature extraction module.
+    bimap_dims : Sequence[int] or int, optional
+        Optional alias for ``bimap_reduced_dimension`` for API consistency
+        across SPDNet-family models.
 
     Notes
     -----
@@ -58,8 +61,14 @@ class STaRNet(nn.Module):
         depth_temporal_map: int = 4,
         temporal_kernel_sizes: Sequence[int] = (25, 65, 125),
         bimap_reduced_dimension: int = 48,
+        bimap_dims: Sequence[int] | int | None = None,
     ):
         super().__init__()
+        if bimap_dims is not None:
+            bimap_reduced_dimension = (
+                bimap_dims[0] if isinstance(bimap_dims, Sequence) else int(bimap_dims)
+            )
+        self.bimap_dims = (bimap_reduced_dimension,)
         assert all(kernel_size <= n_chans for kernel_size in spatial_kernel_sizes)
 
         spatial_dimensions = [n_chans - h_i + 1 for h_i in spatial_kernel_sizes]

@@ -13,9 +13,9 @@ import torch
 import torch.nn as nn
 
 from spd_learn.functional import (
-    corr_lsm_log,
-    corr_olm_log,
     cov_to_corr,
+    log_map_lsm,
+    log_map_olm,
     sample_covariance,
     tril_embed,
 )
@@ -38,8 +38,8 @@ class CorNet(nn.Module):
        (:func:`~spd_learn.functional.cov_to_corr`), rectified eigenvalue activation
        (:class:`~spd_learn.modules.ReEig`), and correlation normalization.
     4. Riemannian tangent projection to hollow symmetric space
-       (:func:`~spd_learn.functional.corr_olm_log` or
-       :func:`~spd_learn.functional.corr_lsm_log`).
+       (:func:`~spd_learn.functional.log_map_olm` or
+       :func:`~spd_learn.functional.log_map_lsm`).
     5. Isometric lower-triangular embedding (:func:`~spd_learn.functional.tril_embed`).
     6. Dropout and linear classification head.
 
@@ -141,9 +141,9 @@ class CorNet(nn.Module):
             x = cov_to_corr(x)
 
         if self.metric == "OLM":
-            x = corr_olm_log(x)
+            x = log_map_olm(x)
         elif self.metric == "LSM":
-            x = corr_lsm_log(x)
+            x = log_map_lsm(x)
         else:
             raise ValueError(f"Unknown metric '{self.metric}'.")
 

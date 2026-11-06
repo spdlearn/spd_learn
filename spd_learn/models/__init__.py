@@ -7,7 +7,7 @@ from .eegspdnet import EEGSPDNet
 from .gbwatt import GBWAtt
 from .graphcsp import GraphCSPNet
 from .green import Green
-from .gyroatt import GyroSPDAtt, GyroSPDAttention, SymSPDAttention  # noqa: F401
+from .gyroatt import GyroAtt, GyroSPDAttention, SymSPDAttention  # noqa: F401
 from .gyrospd import GyroSPD, GyroSPDLayer  # noqa: F401
 from .matt import AttentionManifold, MAtt  # noqa: F401  (AttentionManifold re-exported)
 from .phase_spdnet import (  # noqa: F401  (PhaseDelay re-exported)
@@ -15,9 +15,9 @@ from .phase_spdnet import (  # noqa: F401  (PhaseDelay re-exported)
     PhaseSPDNet,
 )
 from .rceegnet import RCEEGNet
-from .spd_metaformer import SPDMetaFormer, SPDMetaFormerBlock  # noqa: F401
+from .spdmetaformer import SPDMetaFormer, SPDMetaFormerBlock  # noqa: F401
 from .spdnet import SPDNet
-from .spdnet_ae import SPDDecoderBlock, SPDNetAE  # noqa: F401
+from .spdnetae import SPDDecoderBlock, SPDNetAE  # noqa: F401
 from .spdresnet import AdaptiveLogEuclidean, SPDResBlock, SPDResNet  # noqa: F401
 from .spdtransnet import SPDTransNet  # noqa: F401 (sequence-native registry below)
 from .spnn import SPNN
@@ -48,7 +48,7 @@ __all__ = [
     "CorAtt",
     "CorNet",
     "SPNN",
-    "GyroSPDAtt",
+    "GyroAtt",
     "SPDMetaFormer",
     "DeepGeoCCA",
     "SPDResNet",

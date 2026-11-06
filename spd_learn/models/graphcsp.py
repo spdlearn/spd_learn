@@ -36,9 +36,12 @@ class GraphCSPNet(nn.Module):
         Number of ordered filter-bank bands.
     n_patches : int, default=4
         Number of windows per low-frequency band.
+    bimap_dims : sequence of int or None
+        Successive output subspace dimensions for GraphBiMap layers;
+        None scales the default (36, 22).
     dims : sequence of int or None
-        Consecutive matrix dimensions; None scales the default (22, 36,
-        22).
+        Consecutive matrix dimensions starting with `n_chans`; None scales
+        the default (22, 36, 22).
     epoch_duration : float, default=1.0
         Duration of the complete input epoch in seconds.
     graph : TimeFrequencyGraph or None
@@ -98,6 +101,7 @@ class GraphCSPNet(nn.Module):
         n_freqs: int = 9,
         n_patches: int = 4,
         *,
+        bimap_dims: Sequence[int] | None = None,
         dims: Sequence[int] | None = None,
         epoch_duration: float = 1.0,
         graph: TimeFrequencyGraph | None = None,
@@ -171,15 +175,19 @@ class GraphCSPNet(nn.Module):
             raise ValueError("segments and graph must have the same node count")
         if self.segments is None and n_nodes != sum(self.window_counts):
             raise ValueError("graph node count differs from default segmentation")
-        self.dims = (
-            tuple(dims)
-            if dims is not None
-            else (n_chans, max(n_chans, round(36 * n_chans / 22)), n_chans)
-        )
+        if bimap_dims is not None and dims is not None:
+            raise ValueError("specify at most one of bimap_dims or dims")
+        if bimap_dims is not None:
+            self.dims = (n_chans, *tuple(bimap_dims))
+        elif dims is not None:
+            self.dims = tuple(dims)
+        else:
+            self.dims = (n_chans, max(n_chans, round(36 * n_chans / 22)), n_chans)
         if len(self.dims) < 2 or self.dims[0] != n_chans or min(self.dims) <= 0:
             raise ValueError(
                 "dims must begin with n_chans and contain positive layer sizes"
             )
+        self.bimap_dims = self.dims[1:]
         self.layers = nn.ModuleList(
             [
                 GraphBiMap(n_nodes, a, b, device=device, dtype=dtype)

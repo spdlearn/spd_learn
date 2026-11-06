@@ -187,16 +187,18 @@ geometries via the Cholesky factor.
 .. autosummary::
    :toctree: generated/cholesky_product
 
-   power_cholesky_log
-   power_cholesky_exp
-   power_cholesky_distance
-   power_cholesky_geodesic
-   power_cholesky_mean
-   bures_wasserstein_cholesky_log
-   bures_wasserstein_cholesky_exp
-   bures_wasserstein_cholesky_distance
-   bures_wasserstein_cholesky_geodesic
-   bures_wasserstein_cholesky_mean
+   pcm_coords
+   pcm_inv_coords
+   log_map_pcm
+   exp_map_pcm
+   pcm_distance
+   pcm_geodesic
+   pcm_mean
+   log_map_bwcm
+   exp_map_bwcm
+   bwcm_distance
+   bwcm_geodesic
+   bwcm_mean
 
 
 Correlation Manifold Operations
@@ -208,10 +210,10 @@ Operations on the full-rank correlation manifold :math:`\mathcal{C}_{++}^d`.
 
    cov_to_corr
    off_diag
-   corr_lsm_log
-   corr_lsm_exp
-   corr_olm_log
-   corr_olm_exp
+   log_map_lsm
+   exp_map_lsm
+   log_map_olm
+   exp_map_olm
    tril_embed
    untril_embed
 
@@ -567,7 +569,7 @@ or related representations.
    SPDBatchNormMean
    SPDBatchNormMeanVar
    SPDBatchNormLie
-   SPDBatchNormHarmonicArithmetic
+   SPDBatchNormHarmonic
    SPDBatchNormBW
    SPDBatchNormCholesky
    BatchReNorm
@@ -583,8 +585,8 @@ Riemannian linear / MLR layers.
 
    SPMultiheadAttention
    SPDTransformerEncoderLayer
-   GaussianSPDDescriptor
-   RiemannianHighOrderPooling
+   GaussianSPD
+   RHOP
    SPDRMLR
    SPDLinear
 
@@ -673,7 +675,7 @@ building blocks from :py:mod:`spd_learn.modules`.
     CorAtt
     CorNet
     SPNN
-    GyroSPDAtt
+    GyroAtt
     GraphCSPNet
     GBWAtt
     SPDTransNet

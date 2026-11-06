@@ -76,24 +76,24 @@ def test_spd_decoder_block_backward():
 # =============================================================================
 
 
-@pytest.mark.parametrize("encoder_dims", [(16, 8), (12,), (16, 12, 6)])
-def test_spdnet_ae_initialization(encoder_dims):
+@pytest.mark.parametrize("bimap_dims", [(16, 8), (12,), (16, 12, 6)])
+def test_spdnet_ae_initialization(bimap_dims):
     """Test SPDNetAE initialization with various encoder architectures."""
     model = SPDNetAE(
         n_chans=20,
         n_outputs=3,
-        encoder_dims=encoder_dims,
+        bimap_dims=bimap_dims,
         eps=1e-4,
         drop_prob=0.1,
     )
-    assert model.encoder_dims == tuple(encoder_dims)
+    assert model.bimap_dims == tuple(bimap_dims)
     assert model.n_chans == 20
     assert model.n_outputs == 3
 
 
 def test_spdnet_ae_encode_decode_autoencode():
     """Test encode, decode, and autoencode routines on raw EEG signals and covariance inputs."""
-    model = SPDNetAE(n_chans=22, n_outputs=2, encoder_dims=(16, 8))
+    model = SPDNetAE(n_chans=22, n_outputs=2, bimap_dims=(16, 8))
 
     # 1. From raw EEG signals
     x_raw = torch.randn(3, 22, 500)
@@ -126,7 +126,7 @@ def test_spdnet_ae_encode_decode_autoencode():
 
 def test_spdnet_ae_reconstruction_loss():
     """Test reconstruction loss value, reductions, and identity properties."""
-    model = SPDNetAE(n_chans=10, n_outputs=2, encoder_dims=(8, 4))
+    model = SPDNetAE(n_chans=10, n_outputs=2, bimap_dims=(8, 4))
     x_raw = torch.randn(4, 10, 300)
     S_in = model.cov_frontend(x_raw)
     S_recon = model.autoencode(S_in)
@@ -156,7 +156,7 @@ def test_spdnet_ae_reconstruction_loss():
 
 def test_spdnet_ae_forward_and_backward():
     """Test end-to-end forward classification and reconstruction loss backpropagation."""
-    model = SPDNetAE(n_chans=12, n_outputs=3, encoder_dims=(8, 4))
+    model = SPDNetAE(n_chans=12, n_outputs=3, bimap_dims=(8, 4))
     x = torch.randn(2, 12, 400, requires_grad=True)
 
     # Classifier forward & backward
@@ -178,7 +178,7 @@ def test_spdnet_ae_forward_and_backward():
 @pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
 def test_spdnet_ae_dtypes(dtype):
     """Test SPDNetAE with single and double precision floats."""
-    model = SPDNetAE(n_chans=8, n_outputs=2, encoder_dims=(6, 4)).to(dtype)
+    model = SPDNetAE(n_chans=8, n_outputs=2, bimap_dims=(6, 4)).to(dtype)
     x = torch.randn(2, 8, 200, dtype=dtype)
     out = model(x)
     assert out.dtype == dtype
@@ -187,7 +187,7 @@ def test_spdnet_ae_dtypes(dtype):
 
 def test_spdnet_ae_input_type_cov():
     """Test SPDNetAE with precomputed covariance input."""
-    model = SPDNetAE(n_chans=8, n_outputs=2, encoder_dims=(6, 4), input_type="cov")
+    model = SPDNetAE(n_chans=8, n_outputs=2, bimap_dims=(6, 4), input_type="cov")
     A = torch.randn(2, 8, 8)
     cov = A @ A.mT + 0.1 * torch.eye(8)
     out = model(cov)

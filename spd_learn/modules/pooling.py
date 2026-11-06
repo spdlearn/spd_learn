@@ -22,7 +22,7 @@ from ..functional.metrics import cholesky_log
 from .utils import Vech
 
 
-class GaussianSPDDescriptor(nn.Module):
+class GaussianSPD(nn.Module):
     r"""Gaussian SPD Descriptor.
 
     Embeds empirical first-order (mean) and second-order (covariance) statistics
@@ -79,7 +79,7 @@ class GaussianSPDDescriptor(nn.Module):
 
     See Also
     --------
-    :class:`RiemannianHighOrderPooling` : End-to-end pooling layer using this descriptor.
+    :class:`RHOP` : End-to-end pooling layer using this descriptor.
     :class:`~spd_learn.modules.CovLayer` : Standard sample covariance layer.
 
     References
@@ -90,8 +90,8 @@ class GaussianSPDDescriptor(nn.Module):
     Examples
     --------
     >>> import torch
-    >>> from spd_learn.modules import GaussianSPDDescriptor
-    >>> layer = GaussianSPDDescriptor()
+    >>> from spd_learn.modules import GaussianSPD
+    >>> layer = GaussianSPD()
     >>> tokens = torch.randn(2, 10, 8)  # batch=2, tokens=10, features=8
     >>> G = layer(tokens)
     >>> G.shape
@@ -176,7 +176,7 @@ class GaussianSPDDescriptor(nn.Module):
         return G
 
 
-class RiemannianHighOrderPooling(nn.Module):
+class RHOP(nn.Module):
     r"""Riemannian High-Order Pooling (RHOP) for Brain Foundation Models.
 
     Implements the Riemannian High-Order Pooling classification head proposed by
@@ -267,7 +267,7 @@ class RiemannianHighOrderPooling(nn.Module):
 
     See Also
     --------
-    :class:`GaussianSPDDescriptor` : Forms the quotient Gaussian SPD matrix.
+    :class:`GaussianSPD` : Forms the quotient Gaussian SPD matrix.
     :class:`~spd_learn.modules.Vech` : Vectorization of symmetric matrix.
 
     References
@@ -278,8 +278,8 @@ class RiemannianHighOrderPooling(nn.Module):
     Examples
     --------
     >>> import torch
-    >>> from spd_learn.modules import RiemannianHighOrderPooling
-    >>> rhop = RiemannianHighOrderPooling(in_features=32, reduced_dim=8, metric="LEM")
+    >>> from spd_learn.modules import RHOP
+    >>> rhop = RHOP(in_features=32, reduced_dim=8, metric="LEM")
     >>> tokens = torch.randn(4, 16, 32)  # batch=4, tokens=16, dim=32
     >>> out = rhop(tokens)
     >>> out.shape
@@ -318,7 +318,7 @@ class RiemannianHighOrderPooling(nn.Module):
         self.dtype = dtype
 
         self.down_proj = nn.Linear(in_features, reduced_dim, device=device, dtype=dtype)
-        self.descriptor = GaussianSPDDescriptor(
+        self.descriptor = GaussianSPD(
             embedding_type="quotient",
             alpha=alpha,
             beta=beta,

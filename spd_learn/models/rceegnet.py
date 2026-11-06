@@ -1,5 +1,7 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+from collections.abc import Sequence
+
 import torch
 import torch.nn as nn
 
@@ -24,6 +26,9 @@ class RCEEGNet(nn.Module):
     reduced_dim : int, default=8
         Target subspace dimension for the BiMap layer (dimension d
         in the paper, where reduced_dim <= n_spatial_filters).
+    bimap_dims : Sequence[int] or int, optional
+        Optional alias for ``reduced_dim`` for API consistency across
+        SPDNet-family models.
     reg_cov : float, default=1e-5
         Diagonal regularization parameter (epsilon in Eq. 8 of the paper)
         ensuring positive definiteness of the sample covariance matrix.
@@ -40,8 +45,14 @@ class RCEEGNet(nn.Module):
         reduced_dim: int = 8,
         reg_cov: float = 1e-5,
         reeig_threshold: float = 1e-12,
+        bimap_dims: Sequence[int] | int | None = None,
     ):
         super().__init__()
+        if bimap_dims is not None:
+            reduced_dim = (
+                bimap_dims[0] if isinstance(bimap_dims, Sequence) else int(bimap_dims)
+            )
+        self.bimap_dims = (reduced_dim,)
 
         self.conv_spatial = nn.Sequential(
             nn.Conv2d(

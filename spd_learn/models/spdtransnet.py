@@ -86,7 +86,7 @@ class SPDTransNet(nn.Module):
     See Also
     --------
     spd_learn.modules.SPDLogTokenizer
-    spd_learn.modules.StructurePreservingMultiheadAttention
+    spd_learn.modules.SPMultiheadAttention
 
     Examples
     --------

@@ -127,7 +127,7 @@ class SPDLogTokenizer(nn.Module):
         )
 
 
-class StructurePreservingMultiheadAttention(nn.Module):
+class SPMultiheadAttention(nn.Module):
     r"""Apply SP-MHA to symmetric log coordinates.
 
     See :cite:p:`seraphim2024structure`.
@@ -285,7 +285,7 @@ class SPDTransformerEncoderLayer(nn.Module):
         super().__init__()
         _triangular_size(feedforward_dim)
         factory = {"device": device, "dtype": dtype}
-        self.attention = StructurePreservingMultiheadAttention(
+        self.attention = SPMultiheadAttention(
             embed_dim,
             num_heads,
             dropout,
@@ -622,6 +622,3 @@ class SPDInterEpochEncoder(nn.Module):
             )
         b, epochs, features, d = x.shape
         return self.encoder(x.reshape(b, epochs * features, d)).reshape_as(x)
-
-
-SPMultiheadAttention = StructurePreservingMultiheadAttention
