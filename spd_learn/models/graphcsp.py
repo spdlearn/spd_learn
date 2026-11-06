@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # Re-implementation of Graph-CSPNet (Ju and Guan, IEEE TNNLS, 2023).
-# Reference implementation: https://github.com/GeometricBCI/Tensor-CSPNet-and-Graph-CSPNet
+# Reference: https://github.com/GeometricBCI/Tensor-CSPNet-and-Graph-CSPNet
 
 from collections.abc import Sequence
 from math import isfinite

@@ -27,7 +27,7 @@ from .modeig import ExpEig, LogEig, ReEig
 from .pooling import GaussianSPDDescriptor, RiemannianHighOrderPooling
 from .regularize import Shrinkage, TraceNorm
 from .residual import LogEuclideanResidual
-from .rietrans import SPDLinear, SPDRMLR
+from .rietrans import SPDRMLR, SPDLinear
 from .spdtransnet import (  # noqa: F401
     LearnedSinusoidalPosition,
     SPDInterEpochEncoder,

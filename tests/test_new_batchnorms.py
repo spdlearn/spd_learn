@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 """Tests for new Riemannian batch normalization layers:
-  - SPDBatchNormHarmonicArithmetic (ARMAGNAC, Gallet et al. 2026)
-  - SPDBatchNormBW (GBWBN, Zhou et al. CVPR 2025)
-  - SPDBatchNormCholesky (CBN, Zhou et al. TNNLS 2025)
+- SPDBatchNormHarmonicArithmetic (ARMAGNAC, Gallet et al. 2026)
+- SPDBatchNormBW (GBWBN, Zhou et al. CVPR 2025)
+- SPDBatchNormCholesky (CBN, Zhou et al. TNNLS 2025)
 """
 
 import pytest
@@ -65,7 +65,9 @@ class TestSPDBatchNormHarmonicArithmetic:
     def test_forward_shape_and_spd(self, shape):
         n = shape[-1]
         X = _make_spd_batch(shape)
-        bn = SPDBatchNormHarmonicArithmetic(num_features=n, alpha=0.5, dtype=torch.float64)
+        bn = SPDBatchNormHarmonicArithmetic(
+            num_features=n, alpha=0.5, dtype=torch.float64
+        )
         out = bn(X)
 
         assert out.shape == X.shape
@@ -78,7 +80,9 @@ class TestSPDBatchNormHarmonicArithmetic:
     def test_training_vs_eval_mode(self):
         n = 3
         X = _make_spd_batch((8, n, n))
-        bn = SPDBatchNormHarmonicArithmetic(num_features=n, momentum=0.2, dtype=torch.float64)
+        bn = SPDBatchNormHarmonicArithmetic(
+            num_features=n, momentum=0.2, dtype=torch.float64
+        )
 
         # In training mode, running_mean should update
         initial_mean = bn.running_mean.clone()

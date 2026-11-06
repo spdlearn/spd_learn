@@ -81,7 +81,6 @@ class TestGeodesicCCALoss:
     def test_outdim_size_larger_than_tangent_dim(self):
         """When outdim_size > m, it should clamp k to m without crashing."""
         d = 2
-        m = d * (d + 1) // 2  # 3
         loss_fn = GeodesicCCALoss(outdim_size=10, eps=1e-4)
         Y1 = _generate_spd_batch(batch_size=5, d=d)
         Y2 = _generate_spd_batch(batch_size=5, d=d)

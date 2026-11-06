@@ -28,17 +28,21 @@ class SPDResNet(nn.Module):
     Metric (ALEM) deformation.
 
     The architecture consists of:
-    1. **Preprocessing**: Covariance estimation via :class:`~spd_learn.modules.CovLayer`,
+    1. **Preprocessing**: Covariance estimation via
+       :class:`~spd_learn.modules.CovLayer`,
        trace normalization via :class:`~spd_learn.modules.TraceNorm`, and learnable
        shrinkage regularization via :class:`~spd_learn.modules.Shrinkage`.
-    2. **Riemannian Residual Stages**: Dimension reduction via :class:`~spd_learn.modules.BiMap`
+    2. **Riemannian Residual Stages**: Dimension reduction via
+       :class:`~spd_learn.modules.BiMap`
        and non-linear eigenvalue rectification via :class:`~spd_learn.modules.ReEig`,
        followed by :class:`SPDResBlock` residual blocks on the SPD manifold.
     3. **Riemannian-to-Euclidean Projection**: Eigenvalue deformation via
        :class:`AdaptiveLogEuclidean` followed by upper triangular vectorization
-       via :class:`~spd_learn.modules.Vech` (or standard :class:`~spd_learn.modules.LogEig`
+       via :class:`~spd_learn.modules.Vech` (or standard
+       :class:`~spd_learn.modules.LogEig`
        when ``use_alem=False``).
-    4. **Classification Head**: Dropout regularization and a fully connected linear layer.
+    4. **Classification Head**: Dropout regularization and a fully connected
+       linear layer.
 
     Parameters
     ----------
@@ -52,7 +56,8 @@ class SPDResNet(nn.Module):
         Number of :class:`SPDResBlock` modules in each stage.
     use_alem : bool, default=True
         Whether to use the Adaptive Log-Euclidean Metric (:class:`AdaptiveLogEuclidean`)
-        deformation before vectorization. If ``False``, standard :class:`~spd_learn.modules.LogEig`
+        deformation before vectorization. If ``False``, standard
+        :class:`~spd_learn.modules.LogEig`
         is used.
     drop_prob : float, default=0.0
         Dropout probability applied before the linear classification layer.
@@ -122,6 +127,7 @@ class SPDResNet(nn.Module):
         self.threshold = threshold
         self.upper = upper
 
+        self.cov: nn.Module
         if input_type == "raw":
             self.cov = CovLayer(method=cov_method, device=device, dtype=dtype)
         else:
@@ -156,14 +162,10 @@ class SPDResNet(nn.Module):
             n_features = final_dim * (final_dim + 1) // 2
         else:
             self.logeig = LogEig(upper=upper)
-            n_features = (
-                final_dim * (final_dim + 1) // 2 if upper else final_dim**2
-            )
+            n_features = final_dim * (final_dim + 1) // 2 if upper else final_dim**2
 
         self.dropout = nn.Dropout(drop_prob)
-        self.classifier = nn.Linear(
-            n_features, n_outputs, device=device, dtype=dtype
-        )
+        self.classifier = nn.Linear(n_features, n_outputs, device=device, dtype=dtype)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of the SPDResNet model.
@@ -279,9 +281,11 @@ class SPDResBlock(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Initialize residual spectral CNN near the identity map."""
-        nn.init.normal_(self.cnn[2].weight, mean=0.0, std=0.01)
-        if self.cnn[2].bias is not None:
-            nn.init.zeros_(self.cnn[2].bias)
+        last_conv = self.cnn[2]
+        if isinstance(last_conv, nn.Conv1d):
+            nn.init.normal_(last_conv.weight, mean=0.0, std=0.01)
+            if last_conv.bias is not None:
+                nn.init.zeros_(last_conv.bias)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass computing the Riemannian residual transformation.

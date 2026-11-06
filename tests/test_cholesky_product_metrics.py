@@ -170,8 +170,8 @@ def test_log_at_reference_is_zero():
     V = power_cholesky_log(P, P=P, theta=0.5)
     torch.testing.assert_close(V, torch.zeros_like(V))
 
-    I = torch.eye(3, dtype=torch.float64)
-    V_ident = power_cholesky_log(I, P=None, theta=0.5)
+    eye = torch.eye(3, dtype=torch.float64)
+    V_ident = power_cholesky_log(eye, P=None, theta=0.5)
     torch.testing.assert_close(V_ident, torch.zeros_like(V_ident))
 
 

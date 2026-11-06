@@ -31,9 +31,11 @@ class CorrAttention(nn.Module):
     r"""Correlation Manifold Attention Module (CorrAttention).
 
     This module implements a self-attention mechanism on the Riemannian manifold
-    of full-rank correlation matrices :math:`\mathcal{C}_{++}^d` :cite:p:`hu2025riemannian`.
+    of full-rank correlation matrices :math:`\mathcal{C}_{++}^d`
+    :cite:p:`hu2025riemannian`.
 
-    Given a sequence of correlation matrices :math:`X \in \mathbb{R}^{B \times P \times d \times d}`,
+    Given a sequence of correlation matrices
+    :math:`X \in \mathbb{R}^{B \times P \times d \times d}`,
     the attention mechanism:
     1. Converts inputs to correlation matrices via :func:`cov_to_corr`.
     2. Maps to the hollow symmetric tangent space :math:`\text{Hol}(\mathcal{S}^d)` via
@@ -44,11 +46,14 @@ class CorrAttention(nn.Module):
        :math:`Q = \text{off\_diag}(W_Q^\top L W_Q)`,
        :math:`K = \text{off\_diag}(W_K^\top L W_K)`,
        :math:`V = \text{off\_diag}(W_V^\top L W_V)`.
-    4. Computes pairwise Frobenius distances :math:`D_{ij} = \|Q_i - K_j\|_F` and attention weights
-       :math:`A_{ij} = \text{softmax}_j(1 / (1 + \log(1 + D_{ij})))`.
-    5. Computes the weighted sum :math:`\sum_j A_{ij} V_j + \text{off\_diag}(B + B^\top)`,
-       followed by geodesic residual interpolation :math:`0.5 L + 0.5 \text{attn\_tangent}`.
-    6. Maps back to :math:`\mathcal{C}_{++}^d` via :func:`corr_lsm_exp` (for `"mix"`/`"LSM"`)
+    4. Computes pairwise Frobenius distances :math:`D_{ij} = \|Q_i - K_j\|_F` and
+       attention weights :math:`A_{ij} = \text{softmax}_j(1 / (1 + \log(1 + D_{ij})))`.
+    5. Computes the weighted sum
+       :math:`\sum_j A_{ij} V_j + \text{off\_diag}(B + B^\top)`,
+       followed by geodesic residual interpolation
+       :math:`0.5 L + 0.5 \text{attn\_tangent}`.
+    6. Maps back to :math:`\mathcal{C}_{++}^d` via :func:`corr_lsm_exp`
+       (for `"mix"`/`"LSM"`)
        or :func:`corr_olm_exp` (for `"OLM"`).
 
     Parameters
@@ -104,9 +109,7 @@ class CorrAttention(nn.Module):
             device=device,
             dtype=dtype,
         )
-        self.bias = nn.Parameter(
-            torch.zeros(dim, dim, device=device, dtype=dtype)
-        )
+        self.bias = nn.Parameter(torch.zeros(dim, dim, device=device, dtype=dtype))
 
     @property
     def weight_q(self):
@@ -188,10 +191,12 @@ class CorAtt(MAtt):
     The model consists of:
     1. Spatial and temporal 2D convolution feature frontend (inherited from MAtt).
     2. Segmenting features into temporal patches and computing patch covariance.
-    3. Normalizing to full-rank correlation matrices and applying :class:`CorrAttention`.
+    3. Normalizing to full-rank correlation matrices and applying
+       :class:`CorrAttention`.
     4. Tangent projection (:func:`~spd_learn.functional.corr_lsm_log` or
        :func:`~spd_learn.functional.corr_olm_log`).
-    5. :func:`~spd_learn.functional.tril_embed` isometrically vectorizing hollow tangent matrices.
+    5. :func:`~spd_learn.functional.tril_embed` isometrically vectorizing
+       hollow tangent matrices.
     6. Dropout and Linear classification head.
 
     Parameters
@@ -207,7 +212,8 @@ class CorAtt(MAtt):
     temporal_kernel_size : int, default=25
         Kernel size for the temporal convolution.
     temporal_padding : int, optional
-        Padding along time for the temporal convolution. Defaults to ``temporal_kernel_size // 2``.
+        Padding along time for the temporal convolution.
+        Defaults to ``temporal_kernel_size // 2``.
     attention_in_features : int, default=20
         Input feature dimension for the correlation attention module.
     attention_out_features : int, default=20
@@ -273,7 +279,7 @@ class CorAtt(MAtt):
             temporal_filters if temporal_filters is not None else n_chans
         )
 
-        self.manifold_attention = CorrAttention(
+        self.manifold_attention = CorrAttention(  # type: ignore[assignment]
             dim=attention_out_features,
             metric=metric,
             device=device,

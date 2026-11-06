@@ -265,7 +265,9 @@ def test_coratt_forward_backward(metric):
 
 def test_coratt_eval_mode():
     """CorAtt must work in evaluation mode (dropout disabled)."""
-    model = CorAtt(n_chans=10, n_outputs=3, n_patches=3, spatial_filters=8, drop_prob=0.5)
+    model = CorAtt(
+        n_chans=10, n_outputs=3, n_patches=3, spatial_filters=8, drop_prob=0.5
+    )
     model.eval()
     x = torch.randn(2, 10, 300)
     with torch.no_grad():

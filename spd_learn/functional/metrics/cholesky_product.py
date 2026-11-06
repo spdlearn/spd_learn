@@ -155,15 +155,17 @@ def power_cholesky_geodesic(
     d_A = torch.diagonal(L_A, dim1=-2, dim2=-1)
     d_B = torch.diagonal(L_B, dim1=-2, dim2=-1)
 
-    if torch.is_tensor(t) and t.ndim > 0 and t.ndim == A.ndim - 2:
-        t_mat = t.unsqueeze(-1).unsqueeze(-1)
-        t_diag = t.unsqueeze(-1)
+    if isinstance(t, torch.Tensor) and t.ndim > 0 and t.ndim == A.ndim - 2:
+        t_mat: float | torch.Tensor = t.unsqueeze(-1).unsqueeze(-1)
+        t_diag: float | torch.Tensor = t.unsqueeze(-1)
     else:
         t_mat = t
         t_diag = t
 
     L_tril = (1.0 - t_mat) * tril_A + t_mat * tril_B
-    d_interp = ((1.0 - t_diag) * d_A.pow(theta) + t_diag * d_B.pow(theta)).clamp(min=1e-12)
+    d_interp = ((1.0 - t_diag) * d_A.pow(theta) + t_diag * d_B.pow(theta)).clamp(
+        min=1e-12
+    )
     d_t = d_interp.pow(1.0 / theta)
 
     L_t = L_tril + torch.diag_embed(d_t)
@@ -202,7 +204,9 @@ def power_cholesky_mean(
 
     X = ensure_sym(X)
     if X.ndim < 3:
-        raise ValueError(f"X must have at least 3 dimensions (batch of matrices), got {X.ndim}")
+        raise ValueError(
+            f"X must have at least 3 dimensions (batch of matrices), got {X.ndim}"
+        )
 
     if dim < 0:
         dim = X.ndim + dim
@@ -245,7 +249,9 @@ def power_cholesky_mean(
         w_d = w_d / w_d.sum(dim=dim, keepdim=True)
 
         L_bar_tril = (w_L * L_tril).sum(dim=dim, keepdim=keepdim)
-        d_theta_bar = (w_d * d.pow(theta)).sum(dim=dim, keepdim=keepdim).clamp(min=1e-12)
+        d_theta_bar = (
+            (w_d * d.pow(theta)).sum(dim=dim, keepdim=keepdim).clamp(min=1e-12)
+        )
         d_bar = d_theta_bar.pow(1.0 / theta)
 
     L_bar = L_bar_tril + torch.diag_embed(d_bar)
@@ -342,7 +348,9 @@ def power_cholesky_exp(
     return L @ L.transpose(-1, -2)
 
 
-def bures_wasserstein_cholesky_distance(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
+def bures_wasserstein_cholesky_distance(
+    A: torch.Tensor, B: torch.Tensor
+) -> torch.Tensor:
     r"""Compute Riemannian distance under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
     return power_cholesky_distance(A, B, theta=0.5, diagonal_weight=0.25)
 

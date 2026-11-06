@@ -38,7 +38,8 @@ class CorNet(nn.Module):
        (:func:`~spd_learn.functional.cov_to_corr`), rectified eigenvalue activation
        (:class:`~spd_learn.modules.ReEig`), and correlation normalization.
     4. Riemannian tangent projection to hollow symmetric space
-       (:func:`~spd_learn.functional.corr_olm_log` or :func:`~spd_learn.functional.corr_lsm_log`).
+       (:func:`~spd_learn.functional.corr_olm_log` or
+       :func:`~spd_learn.functional.corr_lsm_log`).
     5. Isometric lower-triangular embedding (:func:`~spd_learn.functional.tril_embed`).
     6. Dropout and linear classification head.
 
@@ -81,9 +82,7 @@ class CorNet(nn.Module):
     ):
         super().__init__()
         if metric not in ("OLM", "LSM"):
-            raise ValueError(
-                f"Unknown metric '{metric}'. Expected 'OLM' or 'LSM'."
-            )
+            raise ValueError(f"Unknown metric '{metric}'. Expected 'OLM' or 'LSM'.")
         self.n_chans = n_chans
         self.n_outputs = n_outputs
         self.bimap_dims = bimap_dims
@@ -135,6 +134,7 @@ class CorNet(nn.Module):
         x = cov_to_corr(x)
 
         for block in self.blocks:
+            assert isinstance(block, nn.ModuleDict)
             x = block["bimap"](x)
             x = cov_to_corr(x)
             x = block["reeig"](x)

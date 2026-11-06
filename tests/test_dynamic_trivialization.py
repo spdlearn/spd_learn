@@ -63,11 +63,7 @@ def test_all_models_dynamic_trivialization(name):
     if name == "Green":
         options.update(sfreq=125, bi_out=[16])
     model = getattr(models, name)(**options).eval()
-    shape = (
-        (2, 9, 22, 256)
-        if name in models.__filter_bank_models__
-        else (2, 22, 256)
-    )
+    shape = (2, 9, 22, 256) if name in models.__filter_bank_models__ else (2, 22, 256)
     x = torch.randn(shape, generator=torch.Generator().manual_seed(1))
     if name == "GraphCSPNet":
         model.fit_graph(x)

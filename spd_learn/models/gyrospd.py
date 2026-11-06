@@ -33,7 +33,8 @@ class GyroSPD(nn.Module):
     (SPD) manifold using gyrovector space calculus and left gyro-translations.
 
     The model consists of:
-    1. **Preprocessing**: Covariance estimation via :class:`~spd_learn.modules.CovLayer`,
+    1. **Preprocessing**: Covariance estimation via
+       :class:`~spd_learn.modules.CovLayer`,
        trace normalization via :class:`~spd_learn.modules.TraceNorm`, and learnable
        shrinkage regularization via :class:`~spd_learn.modules.Shrinkage`.
     2. **Gyro-Transformation Stages**: Stacked :class:`GyroSPDLayer` layers across
@@ -44,7 +45,8 @@ class GyroSPD(nn.Module):
        :class:`~spd_learn.modules.SPDBatchNormMean`.
     4. **Riemannian-to-Euclidean Projection**: Tangent space projection and upper
        triangular vectorization via :class:`~spd_learn.modules.LogEig`.
-    5. **Classification Head**: Dropout regularization and a fully connected linear layer.
+    5. **Classification Head**: Dropout regularization and a fully connected
+       linear layer.
 
     Parameters
     ----------
@@ -117,6 +119,7 @@ class GyroSPD(nn.Module):
         self.threshold = threshold
         self.upper = upper
 
+        self.cov: nn.Module
         if input_type == "raw":
             self.cov = CovLayer(method=cov_method, device=device, dtype=dtype)
         else:
@@ -145,12 +148,8 @@ class GyroSPD(nn.Module):
         self.logeig = LogEig(upper=upper)
         self.dropout = nn.Dropout(drop_prob)
 
-        n_features = (
-            final_dim * (final_dim + 1) // 2 if upper else final_dim**2
-        )
-        self.classifier = nn.Linear(
-            n_features, n_outputs, device=device, dtype=dtype
-        )
+        n_features = final_dim * (final_dim + 1) // 2 if upper else final_dim**2
+        self.classifier = nn.Linear(n_features, n_outputs, device=device, dtype=dtype)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of the GyroSPD model.
@@ -242,9 +241,7 @@ class GyroSPDLayer(nn.Module):
         self.bimap = BiMap(in_features, out_features, device=device, dtype=dtype)
         self.reeig = ReEig(threshold=threshold, device=device, dtype=dtype)
 
-        self.bias = nn.Parameter(
-            torch.eye(out_features, device=device, dtype=dtype)
-        )
+        self.bias = nn.Parameter(torch.eye(out_features, device=device, dtype=dtype))
         register_parametrization(
             self, "bias", SymmetricPositiveDefinite(device=device, dtype=dtype)
         )
@@ -255,8 +252,12 @@ class GyroSPDLayer(nn.Module):
         """Reset layer parameters to their initial states."""
         self.bimap.reset_parameters()
         if is_parametrized(self, "bias"):
-            self.bias = torch.eye(
-                self.out_features, device=self.bias.device, dtype=self.bias.dtype
+            setattr(
+                self,
+                "bias",
+                torch.eye(
+                    self.out_features, device=self.bias.device, dtype=self.bias.dtype
+                ),
             )
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:

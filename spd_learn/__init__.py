@@ -36,6 +36,7 @@ from .models import (
 
 # Modules (layers)
 from .modules import (
+    SPDRMLR,
     BatchReNorm,
     BiMap,
     BiMapIncreaseDim,
@@ -63,7 +64,6 @@ from .modules import (
     SPDIntraEpochEncoder,
     SPDLinear,
     SPDLogTokenizer,
-    SPDRMLR,
     SPDTemporalEncoder,
     SPDTransformerEncoderLayer,
     SPMultiheadAttention,

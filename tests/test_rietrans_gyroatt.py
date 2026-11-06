@@ -7,12 +7,12 @@ import torch
 import torch.nn as nn
 
 from spd_learn.models import (
+    SPNN,
     GyroSPDAtt,
     GyroSPDAttention,
-    SPNN,
     SymSPDAttention,
 )
-from spd_learn.modules import SPDLinear, SPDRMLR
+from spd_learn.modules import SPDRMLR, SPDLinear
 
 
 def _generate_spd_batch(*shape: int, dtype=torch.float32) -> torch.Tensor:
@@ -43,7 +43,9 @@ class TestSPDRMLR:
     def test_pem_theta_zero(self):
         batch, n_features, n_outputs = 3, 3, 2
         X = _generate_spd_batch(batch, n_features, n_features)
-        layer = SPDRMLR(n_features=n_features, n_outputs=n_outputs, metric="PEM", theta=0.0)
+        layer = SPDRMLR(
+            n_features=n_features, n_outputs=n_outputs, metric="PEM", theta=0.0
+        )
         out = layer(X)
         assert out.shape == (batch, n_outputs)
         assert torch.isfinite(out).all()
@@ -112,7 +114,9 @@ class TestSPDLinear:
     def test_forward_dimension_reduction(self, metric: str):
         batch, in_features, out_features = 4, 4, 3
         X = _generate_spd_batch(batch, in_features, in_features)
-        layer = SPDLinear(in_features=in_features, out_features=out_features, metric=metric)
+        layer = SPDLinear(
+            in_features=in_features, out_features=out_features, metric=metric
+        )
         out = layer(X)
         assert out.shape == (batch, out_features, out_features)
         # Check output is strictly SPD
@@ -123,7 +127,9 @@ class TestSPDLinear:
     def test_forward_dimension_expansion(self):
         batch, in_features, out_features = 4, 2, 4
         X = _generate_spd_batch(batch, in_features, in_features)
-        layer = SPDLinear(in_features=in_features, out_features=out_features, metric="LEM")
+        layer = SPDLinear(
+            in_features=in_features, out_features=out_features, metric="LEM"
+        )
         out = layer(X)
         assert out.shape == (batch, out_features, out_features)
         evals = torch.linalg.eigvalsh(out)
@@ -204,7 +210,9 @@ class TestSPNN:
         for name, param in model.named_parameters():
             if param.requires_grad:
                 assert param.grad is not None, f"Parameter {name} has no gradient"
-                assert torch.isfinite(param.grad).all(), f"Parameter {name} gradient has NaNs"
+                assert torch.isfinite(param.grad).all(), (
+                    f"Parameter {name} gradient has NaNs"
+                )
 
     def test_eval_mode(self):
         x = torch.randn(2, 10, 300)
@@ -227,10 +235,10 @@ class TestGyroSPDAttention:
     def test_cayley_orthogonality(self):
         att = GyroSPDAttention(dim=4)
         W = torch.randn(4, 4)
-        O = att._cayley(W)
-        I = torch.eye(4)
-        assert torch.allclose(O @ O.mT, I, atol=1e-5)
-        det = torch.linalg.det(O)
+        orth = att._cayley(W)
+        eye = torch.eye(4)
+        assert torch.allclose(orth @ orth.mT, eye, atol=1e-5)
+        det = torch.linalg.det(orth)
         assert torch.isclose(det, torch.tensor(1.0), atol=1e-4)
 
     @pytest.mark.parametrize("metric", ["LEM", "LCM"])
@@ -269,7 +277,9 @@ class TestSymSPDAttention:
     def test_forward_output_properties(self):
         batch, n_patches, in_features, out_features = 2, 4, 4, 3
         X = _generate_spd_batch(batch, n_patches, in_features, in_features)
-        att = SymSPDAttention(in_features=in_features, out_features=out_features, metric="LEM")
+        att = SymSPDAttention(
+            in_features=in_features, out_features=out_features, metric="LEM"
+        )
         out = att(X)
         assert out.shape == (batch, n_patches, out_features, out_features)
         assert torch.allclose(out, out.mT, atol=1e-5)
@@ -366,4 +376,6 @@ class TestGyroSPDAtt:
         for name, param in model.named_parameters():
             if param.requires_grad:
                 assert param.grad is not None, f"Parameter {name} has no gradient"
-                assert torch.isfinite(param.grad).all(), f"Parameter {name} gradient has NaNs"
+                assert torch.isfinite(param.grad).all(), (
+                    f"Parameter {name} gradient has NaNs"
+                )

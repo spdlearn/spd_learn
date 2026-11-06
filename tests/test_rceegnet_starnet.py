@@ -71,9 +71,9 @@ def test_rceegnet_train_and_eval_modes():
 @pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
 def test_rceegnet_dtypes(dtype):
     """Test RCEEGNet with float32 and float64 dtypes."""
-    model = RCEEGNet(
-        n_chans=8, n_outputs=2, n_spatial_filters=8, reduced_dim=6
-    ).to(dtype=dtype)
+    model = RCEEGNet(n_chans=8, n_outputs=2, n_spatial_filters=8, reduced_dim=6).to(
+        dtype=dtype
+    )
     x = torch.randn(2, 8, 300, dtype=dtype)
     out = model(x)
     assert out.shape == (2, 2)

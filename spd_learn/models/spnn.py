@@ -11,15 +11,16 @@ NeurIPS 2026 (RieTrans).
 from typing import Tuple
 
 import torch
+
 from torch import nn
 
 from ..modules import (
+    SPDRMLR,
     CovLayer,
     ReEig,
+    Shrinkage,
     SPDDropout,
     SPDLinear,
-    SPDRMLR,
-    Shrinkage,
     TraceNorm,
 )
 
@@ -29,8 +30,10 @@ class SPNN(nn.Module):
 
     Implements the deep Riemannian architecture introduced in RieTrans
     :cite:p:`chen2026rietrans`. SPNN transforms covariance representations
-    through a cascade of intrinsic Riemannian linear layers (:class:`~spd_learn.modules.SPDLinear`)
-    interleaved with Riemannian non-linear activation (:class:`~spd_learn.modules.ReEig`),
+    through a cascade of intrinsic Riemannian linear layers
+    (:class:`~spd_learn.modules.SPDLinear`)
+    interleaved with Riemannian non-linear activation
+    (:class:`~spd_learn.modules.ReEig`),
     and performs final classification via Riemannian Multinomial Logistic
     Regression (:class:`~spd_learn.modules.SPDRMLR`):
 
@@ -96,7 +99,7 @@ class SPNN(nn.Module):
         self.shrinkage = Shrinkage(n_chans, init_shrinkage=-2.0, learnable=True)
 
         # Stack of SPDLinear layers with ReEig non-linearity
-        layers = []
+        layers: list[nn.Module] = []
         dims = [n_chans, *self.hidden_dims]
         for i in range(len(dims) - 1):
             d_in, d_out = dims[i], dims[i + 1]
@@ -129,7 +132,8 @@ class SPNN(nn.Module):
         Parameters
         ----------
         x : torch.Tensor
-            Input tensor of shape `(..., n_chans, n_times)` or `(..., n_chans, n_chans)`.
+            Input tensor of shape `(..., n_chans, n_times)` or
+            `(..., n_chans, n_chans)`.
 
         Returns
         -------

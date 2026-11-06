@@ -15,6 +15,7 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
+
 from torch.nn.utils.parametrize import is_parametrized, register_parametrization
 
 from ..functional import ensure_sym
@@ -142,7 +143,7 @@ class SPDRMLR(nn.Module):
             dtype=self.linear.weight.dtype,
         )
         if is_parametrized(self, "reference"):
-            self.reference = identity
+            setattr(self, "reference", identity)
         else:
             self.reference.copy_(identity)
         self.linear.reset_parameters()
@@ -159,8 +160,7 @@ class SPDRMLR(nn.Module):
             if self.theta == 0.0:
                 return matrix_log.apply(X) - matrix_log.apply(P)
             return (
-                matrix_power.apply(X, self.theta)
-                - matrix_power.apply(P, self.theta)
+                matrix_power.apply(X, self.theta) - matrix_power.apply(P, self.theta)
             ) / self.theta
         elif self.metric == "AIM":
             P_inv_sqrt = matrix_inv_sqrt.apply(P)
@@ -191,7 +191,11 @@ class SPDRMLR(nn.Module):
             Classification logits or transformed features of shape `(..., n_outputs)`.
         """
         if self.input_tangent:
-            if X.ndim >= 2 and X.shape[-1] == self.n_features and X.shape[-2] == self.n_features:
+            if (
+                X.ndim >= 2
+                and X.shape[-1] == self.n_features
+                and X.shape[-2] == self.n_features
+            ):
                 v = self._vectorize(X)
             else:
                 v = X

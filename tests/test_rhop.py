@@ -29,7 +29,9 @@ from spd_learn.modules import GaussianSPDDescriptor, RiemannianHighOrderPooling
 def test_gaussian_spd_descriptor_shape_and_spdness(shape, embedding_type):
     """Verify that GaussianSPDDescriptor produces symmetric positive definite matrices."""
     torch.manual_seed(42)
-    layer = GaussianSPDDescriptor(embedding_type=embedding_type, alpha=1.2, beta=0.8, eps=1e-5)
+    layer = GaussianSPDDescriptor(
+        embedding_type=embedding_type, alpha=1.2, beta=0.8, eps=1e-5
+    )
     x = torch.randn(*shape, dtype=torch.float64)
 
     G = layer(x)
@@ -45,7 +47,9 @@ def test_gaussian_spd_descriptor_shape_and_spdness(shape, embedding_type):
 
     # Check positive definiteness (all eigenvalues > 0)
     eigvals = torch.linalg.eigvalsh(G)
-    assert (eigvals > 0).all(), f"Found non-positive eigenvalues: {eigvals.min().item()}"
+    assert (eigvals > 0).all(), (
+        f"Found non-positive eigenvalues: {eigvals.min().item()}"
+    )
 
 
 def test_gaussian_spd_descriptor_single_token():
@@ -162,8 +166,12 @@ def test_rhop_gradient_flow(metric):
         dtype=torch.float64,
     )
 
-    x = torch.randn(batch_size, n_tokens, in_features, dtype=torch.float64, requires_grad=True)
-    cls_token = torch.randn(batch_size, in_features, dtype=torch.float64, requires_grad=True)
+    x = torch.randn(
+        batch_size, n_tokens, in_features, dtype=torch.float64, requires_grad=True
+    )
+    cls_token = torch.randn(
+        batch_size, in_features, dtype=torch.float64, requires_grad=True
+    )
 
     out = rhop(x, cls_token=cls_token)
     loss = (out**2).sum()
@@ -206,7 +214,9 @@ def test_rhop_mock_training():
     n_classes = 3
 
     model = nn.Sequential(
-        RiemannianHighOrderPooling(in_features=in_features, reduced_dim=4, metric="LEM"),
+        RiemannianHighOrderPooling(
+            in_features=in_features, reduced_dim=4, metric="LEM"
+        ),
         nn.Linear(in_features, n_classes),
     )
 

@@ -24,6 +24,7 @@ References
 from __future__ import annotations
 
 import math
+
 import torch
 
 from .core import matrix_exp, matrix_log
@@ -224,9 +225,7 @@ def corr_lsm_log(
     """
     C_sym = 0.5 * (C + C.transpose(-1, -2))
     with torch.no_grad():
-        d = torch.ones(
-            C_sym.shape[:-1], dtype=C_sym.dtype, device=C_sym.device
-        )
+        d = torch.ones(C_sym.shape[:-1], dtype=C_sym.dtype, device=C_sym.device)
         for _ in range(max_iter):
             D_C_D = d.unsqueeze(-1) * C_sym * d.unsqueeze(-2)
             L = matrix_log.apply(D_C_D)

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 r"""Gyrovector and Riemannian Attention Networks for SPD Manifolds.
 
-This module implements the Gyrovector SPD Attention framework and architectures based on:
+This module implements the Gyrovector SPD Attention framework and architectures:
 Rui Wang, Chen Hu, Xiaoning Song, Xiaojun Wu, Nicu Sebe, and Ziheng Chen,
 "Towards a General Attention Framework on Gyrovector Spaces for Matrix Manifolds,"
 NeurIPS 2025 (GyroAtt).
@@ -13,6 +13,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch.nn.utils.parametrize import is_parametrized, register_parametrization
 
 from ..functional import (
@@ -23,18 +24,12 @@ from ..functional import (
     sample_covariance,
 )
 from ..functional.metrics import cholesky_exp, cholesky_log
-from .matt import MAtt
 from ..modules import (
     BiMap,
-    CovLayer,
-    LogEig,
-    PatchEmbeddingLayer,
-    ReEig,
     SPDLinear,
-    Shrinkage,
     SymmetricPositiveDefinite,
-    TraceNorm,
 )
+from .matt import MAtt
 
 
 class GyroSPDAttention(nn.Module):
@@ -55,7 +50,8 @@ class GyroSPDAttention(nn.Module):
 
     .. math::
 
-        Q_i = O_Q X_i O_Q^\top, \quad K_i = O_K X_i O_K^\top, \quad V_i = O_V X_i O_V^\top
+        Q_i = O_Q X_i O_Q^\top, \quad K_i = O_K X_i O_K^\top,
+        \quad V_i = O_V X_i O_V^\top
 
     The pairwise manifold distance :math:`D_{ij}` between patch tokens is computed
     under either the Log-Euclidean Metric (LEM) or the Log-Cholesky Metric (LCM):
@@ -71,7 +67,8 @@ class GyroSPDAttention(nn.Module):
         A_{ij} = \operatorname{softmax}_j \left( \frac{1}{1 + \log(1 + D_{ij})} \right)
 
     The aggregated output is the weighted Fréchet mean in tangent/Cholesky space,
-    followed by a learnable Riemannian left gyro-translation bias :math:`B \in \mathcal{S}_{++}^d`:
+    followed by a learnable Riemannian left gyro-translation bias
+    :math:`B \in \mathcal{S}_{++}^d`:
 
     .. math::
 
@@ -157,9 +154,7 @@ class GyroSPDAttention(nn.Module):
             dtype=dtype,
         )
 
-        self.bias = nn.Parameter(
-            torch.empty(dim, dim, device=device, dtype=dtype)
-        )
+        self.bias = nn.Parameter(torch.empty(dim, dim, device=device, dtype=dtype))
         self.reset_parameters()
         self._parametrize()
 
@@ -185,7 +180,7 @@ class GyroSPDAttention(nn.Module):
         dtype = self.bias.dtype if hasattr(self, "bias") else None
         identity = torch.eye(self.dim, device=device, dtype=dtype)
         if is_parametrized(self, "bias"):
-            self.bias = identity
+            setattr(self, "bias", identity)
         elif hasattr(self, "bias"):
             self.bias.copy_(identity)
 
@@ -195,8 +190,8 @@ class GyroSPDAttention(nn.Module):
     def _cayley(self, W: torch.Tensor) -> torch.Tensor:
         """Compute orthogonal matrix via Cayley transform of skew-symmetric matrix."""
         S = W - W.mT
-        I = torch.eye(self.dim, device=W.device, dtype=W.dtype)
-        return torch.linalg.solve(I + S, I - S)
+        eye = torch.eye(self.dim, device=W.device, dtype=W.dtype)
+        return torch.linalg.solve(eye + S, eye - S)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of GyroSPDAttention.
@@ -258,7 +253,9 @@ class SymSPDAttention(nn.Module):
 
     .. math::
 
-        A_{ij} = \operatorname{softmax}_j \left( -e^\alpha \lVert Q_i - K_j \rVert_F - \beta \right)
+        A_{ij} = \operatorname{softmax}_j \left(
+            -e^\alpha \lVert Q_i - K_j \rVert_F - \beta
+        \right)
 
     aggregates features in tangent space:
 
@@ -378,7 +375,8 @@ class GyroSPDAtt(MAtt):
     GyroAtt :cite:p:`wang2025towards`.
 
     The architecture comprises:
-    1. **Spatiotemporal Frontend**: Spatial and temporal 2D convolutions (inherited from MAtt).
+    1. **Spatiotemporal Frontend**: Spatial and temporal 2D convolutions
+       (inherited from MAtt).
     2. **Patch Covariance Embedding**: Signal segmentation into patches via
        :class:`~spd_learn.modules.PatchEmbeddingLayer`, sample covariance estimation
        via :class:`~spd_learn.modules.CovLayer`, and trace normalization via
@@ -402,7 +400,8 @@ class GyroSPDAtt(MAtt):
     temporal_kernel_size : int, default=25
         Kernel size for the temporal convolution along the time dimension.
     temporal_padding : int, optional
-        Padding along time for the temporal convolution. Defaults to ``temporal_kernel_size // 2``.
+        Padding along time for the temporal convolution.
+        Defaults to ``temporal_kernel_size // 2``.
     attention_in_features : int, default=20
         Input feature dimension for the attention module.
     attention_out_features : int, default=18
@@ -492,14 +491,22 @@ class GyroSPDAtt(MAtt):
         )
 
         # Attention block
+        self.proj: nn.Module
+        self.attention: nn.Module
         if attention_type == "gyro":
             if temporal_out_channels != attention_out_features:
                 self.proj = BiMap(temporal_out_channels, attention_out_features)
-                self.attention = GyroSPDAttention(dim=attention_out_features, metric=metric)
+                self.attention = GyroSPDAttention(
+                    dim=attention_out_features, metric=metric
+                )
             else:
                 self.proj = nn.Identity()
-                self.attention = GyroSPDAttention(dim=temporal_out_channels, metric=metric)
-            self.manifold_attention = nn.Sequential(self.proj, self.attention)
+                self.attention = GyroSPDAttention(
+                    dim=temporal_out_channels, metric=metric
+                )
+            self.manifold_attention = nn.Sequential(  # type: ignore[assignment]
+                self.proj, self.attention
+            )
         else:  # sym
             self.proj = nn.Identity()
             self.attention = SymSPDAttention(
@@ -507,7 +514,7 @@ class GyroSPDAtt(MAtt):
                 out_features=attention_out_features,
                 metric=metric,
             )
-            self.manifold_attention = self.attention
+            self.manifold_attention = self.attention  # type: ignore[assignment]
 
         self.dropout = nn.Dropout(drop_prob)
 
@@ -534,7 +541,8 @@ class GyroSPDAtt(MAtt):
         ----------
         x : torch.Tensor
             Input tensor of shape `(batch, n_chans, n_times)` or precomputed
-            covariance patches of shape `(batch, n_patches, spatial_filters, spatial_filters)`.
+            covariance patches of shape
+            `(batch, n_patches, spatial_filters, spatial_filters)`.
 
         Returns
         -------

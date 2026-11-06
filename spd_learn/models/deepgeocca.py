@@ -232,7 +232,8 @@ class GeodesicCCALoss(nn.Module):
 
     where :math:`N = \max(B - 1, 1)`. The whitened cross-correlation matrix
     :math:`T = \Sigma_{11}^{-1/2} \Sigma_{12} \Sigma_{22}^{-1/2}` is formed, and
-    its top-:math:`k` singular values :math:`\rho_i` (:math:`k = \min(\text{outdim\_size}, m)`)
+    its top-:math:`k` singular values :math:`\rho_i`
+    (:math:`k = \min(\text{outdim\_size}, m)`)
     are extracted via the eigendecomposition of :math:`T^\top T + \epsilon I_m`.
     The loss returned is the negative sum of these canonical correlations:
 
@@ -279,8 +280,8 @@ class GeodesicCCALoss(nn.Module):
             )
         if Y1.ndim < 3 or Y1.shape[-1] != Y1.shape[-2]:
             raise ValueError(
-                "Y1 and Y2 must be batches of square matrices with at least 3 dimensions, "
-                f"got shape {Y1.shape}"
+                "Y1 and Y2 must be batches of square matrices "
+                f"with at least 3 dimensions, got shape {Y1.shape}"
             )
 
         batch_size = Y1.shape[0]
@@ -293,7 +294,7 @@ class GeodesicCCALoss(nn.Module):
         L1_c = L1 - L1.mean(dim=0, keepdim=True)
         L2_c = L2 - L2.mean(dim=0, keepdim=True)
 
-        # Vectorize symmetric matrices into tangent coordinates: shape (batch_size, m) where m = d(d+1)//2
+        # Vectorize symmetric matrices into tangent coordinates (batch_size, m)
         H1 = sym_to_upper(L1_c)
         H2 = sym_to_upper(L2_c)
         m = H1.shape[-1]

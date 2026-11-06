@@ -748,9 +748,15 @@ class SPDBatchNormHarmonicArithmetic(SPDBatchNormMean):
     def _compute_batch_mean(self, input: torch.Tensor) -> torch.Tensor:
         dims = tuple(range(input.ndim - 2))
         eye = torch.eye(self.num_features, device=input.device, dtype=input.dtype)
-        A = ensure_sym(input.mean(dim=dims).reshape(1, self.num_features, self.num_features))
+        A = ensure_sym(
+            input.mean(dim=dims).reshape(1, self.num_features, self.num_features)
+        )
         H_inv = torch.linalg.inv(input + self.eps * eye).mean(dim=dims)
-        H = ensure_sym(torch.linalg.inv(H_inv.reshape(1, self.num_features, self.num_features) + self.eps * eye))
+        H = ensure_sym(
+            torch.linalg.inv(
+                H_inv.reshape(1, self.num_features, self.num_features) + self.eps * eye
+            )
+        )
         return ensure_sym(airm_geodesic(H, A, torch.sigmoid(self.alpha_logit)))
 
 
@@ -845,6 +851,9 @@ class SPDBatchNormCholesky(nn.Module):
     dtype : Optional[torch.dtype], default=None
         Data type of parameters and buffers.
     """
+
+    running_mean: torch.Tensor
+    running_var: torch.Tensor
 
     def __init__(
         self,

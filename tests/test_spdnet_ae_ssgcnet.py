@@ -45,8 +45,8 @@ def test_spd_decoder_block_stiefel():
     dec = SPDDecoderBlock(in_features=8, out_features=16)
     W = dec.weight
     WtW = W.mT @ W
-    I = torch.eye(W.shape[-1], dtype=W.dtype, device=W.device)
-    assert torch.allclose(WtW, I, atol=1e-5)
+    eye = torch.eye(W.shape[-1], dtype=W.dtype, device=W.device)
+    assert torch.allclose(WtW, eye, atol=1e-5)
 
 
 def test_spd_decoder_block_broadcasting():

@@ -5,6 +5,7 @@ r"""SPD-MetaFormer for small-data brain decoding.
 This module implements the SPD-MetaFormer architecture and its building blocks
 as proposed in :cite:p:`wang2026spdmetaformer`.
 """
+
 from __future__ import annotations
 
 from typing import Optional
@@ -40,9 +41,10 @@ class SPDMetaFormer(MAtt):
     The model consists of three stages:
 
     1. **Frontend & Patch Covariance Extraction:**
-       Raw EEG signals are processed by spatial and temporal 2D convolutions (inherited from MAtt),
-       segmented into :math:`P` temporal patches via :class:`~spd_learn.modules.PatchEmbeddingLayer`,
-       and mapped to SPD covariance matrices regularized by :class:`~spd_learn.modules.TraceNorm`
+       Raw EEG signals are processed by spatial and temporal 2D convolutions
+       (inherited from MAtt), segmented into :math:`P` temporal patches via
+       :class:`~spd_learn.modules.PatchEmbeddingLayer`, and mapped to SPD
+       covariance matrices regularized by :class:`~spd_learn.modules.TraceNorm`
        and learnable :class:`~spd_learn.modules.Shrinkage`.
     2. **SPD-MetaFormer Backbone:**
        A stack of :math:`\text{depth}` :class:`SPDMetaFormerBlock` layers that perform
@@ -201,7 +203,7 @@ class SPDMetaFormer(MAtt):
             ]
         )
         self.manifold_attention = (
-            nn.Sequential(*self.blocks) if depth > 0 else nn.Identity()
+            nn.Sequential(*self.blocks) if depth > 0 else nn.Identity()  # type: ignore[assignment]
         )
 
         # Learned Geometric Readout

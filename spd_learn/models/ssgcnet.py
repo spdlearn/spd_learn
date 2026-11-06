@@ -47,7 +47,8 @@ class TangentGraphSPDAggregation(nn.Module):
 
        .. math::
 
-           A_{uv} = \frac{\exp(-D_{uv})}{\sum_{w \in \mathcal{N}_k(u)} \exp(-D_{uw})}, \quad v \in \mathcal{N}_k(u)
+           A_{uv} = \frac{\exp(-D_{uv})}{\sum_{w \in \mathcal{N}_k(u)} \exp(-D_{uw})},
+           \quad v \in \mathcal{N}_k(u)
 
     5. **Tangent Aggregation and Manifold Retraction**: Combines the node's
        tangent vector with the attention-weighted neighbor tangent vectors,
@@ -135,11 +136,12 @@ class SSGCNet(nn.Module):
     -------------------
     1. **Temporal & Spatial Convolutions**:
        - 2D Temporal Conv: `Conv2d(1, temporal_filters, (1, 15), padding=(0, 7))`
-       - Depthwise Spatial Conv: `Conv2d(temporal_filters, temporal_filters, (n_chans, 1), groups=temporal_filters)`
+       - Depthwise Spatial Conv:
+         `Conv2d(temporal_filters, temporal_filters, (n_chans, 1), groups=...)`
     2. **Patch Covariance Embedding**:
        - :class:`~spd_learn.modules.PatchEmbeddingLayer`: splits temporal features
          into `n_nodes` patches.
-       - :class:`~spd_learn.modules.CovLayer`: computes sample covariance for each patch.
+       - :class:`~spd_learn.modules.CovLayer`: computes sample covariance per patch.
        - :class:`~spd_learn.modules.TraceNorm`: normalizes covariance scale.
        - :class:`~spd_learn.modules.Shrinkage`: regularizes conditioning.
     3. **Stiefel Projection**:

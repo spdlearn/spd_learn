@@ -91,8 +91,10 @@ class SPDNetAE(nn.Module):
        `Shrinkage(n_chans, init_shrinkage=-2.0)`.
     2. **SPD Encoder**: Stacks :class:`~spd_learn.modules.BiMap` and
        :class:`~spd_learn.modules.ReEig` blocks across `(n_chans, *encoder_dims)`
-       to produce a compact latent SPD representation :math:`Z \in \mathcal{S}_{++}^{d_{\text{latent}}}`.
-    3. **SPD Decoder**: Reconstructs the original :math:`(n_{\text{chans}} \times n_{\text{chans}})`
+       to produce a compact latent SPD representation
+       :math:`Z \in \mathcal{S}_{++}^{d_{\text{latent}}}`.
+    3. **SPD Decoder**: Reconstructs the original
+       :math:`(n_{\text{chans}} \times n_{\text{chans}})`
        SPD matrix from :math:`Z` using transposed bilinear congruence blocks:
 
        .. math::
@@ -101,13 +103,15 @@ class SPDNetAE(nn.Module):
 
        with :math:`W \in \text{St}(d_{\text{out}}, d_{\text{in}})` followed by
        :class:`~spd_learn.modules.ReEig`, guaranteeing that the reconstructed
-       matrix strictly remains on the SPD manifold :math:`\mathcal{S}_{++}^{n_{\text{chans}}}`.
+       matrix strictly remains on the SPD manifold
+       :math:`\mathcal{S}_{++}^{n_{\text{chans}}}`.
     4. **Reconstruction Loss**: Evaluates the Log-Euclidean geodesic distance
        between the input covariance and reconstructed covariance:
 
        .. math::
 
-           \mathcal{L}_{\text{recon}}(S_{\text{in}}, S_{\text{recon}}) = \|\log(S_{\text{in}}) - \log(S_{\text{recon}})\|_F^2
+           \mathcal{L}_{\text{recon}}(S_{\text{in}}, S_{\text{recon}}) =
+           \|\log(S_{\text{in}}) - \log(S_{\text{recon}})\|_F^2
 
     5. **Classification**: When used in a classification pipeline (e.g. with
        `braindecode.EEGClassifier`), the latent representation :math:`Z` is projected
@@ -192,6 +196,7 @@ class SPDNetAE(nn.Module):
         self.upper = upper
 
         # Covariance Frontend
+        self.cov_frontend: nn.Module
         if input_type == "raw":
             self.cov_frontend = nn.Sequential(
                 CovLayer(method=cov_method, device=device, dtype=dtype),
@@ -211,9 +216,7 @@ class SPDNetAE(nn.Module):
         dims = (n_chans, *self.encoder_dims)
         encoder_layers: list[nn.Module] = []
         for d_in, d_out in zip(dims[:-1], dims[1:]):
-            encoder_layers.append(
-                BiMap(d_in, d_out, device=device, dtype=dtype)
-            )
+            encoder_layers.append(BiMap(d_in, d_out, device=device, dtype=dtype))
             encoder_layers.append(ReEig(threshold=self.eps))
         self.encoder = nn.Sequential(*encoder_layers)
 
@@ -222,9 +225,7 @@ class SPDNetAE(nn.Module):
         decoder_layers: list[nn.Module] = []
         for d_in, d_out in zip(dec_dims[:-1], dec_dims[1:]):
             decoder_layers.append(
-                SPDDecoderBlock(
-                    d_in, d_out, eps=self.eps, device=device, dtype=dtype
-                )
+                SPDDecoderBlock(d_in, d_out, eps=self.eps, device=device, dtype=dtype)
             )
         self.decoder = nn.Sequential(*decoder_layers)
 
@@ -232,9 +233,7 @@ class SPDNetAE(nn.Module):
         d_latent = self.encoder_dims[-1]
         self.logeig = LogEig(upper=upper)
         self.dropout = nn.Dropout(p=drop_prob)
-        self.feat_dim = (
-            d_latent * (d_latent + 1) // 2 if upper else d_latent**2
-        )
+        self.feat_dim = d_latent * (d_latent + 1) // 2 if upper else d_latent**2
         self.classifier = nn.Linear(
             self.feat_dim, n_outputs, device=device, dtype=dtype
         )
@@ -257,8 +256,7 @@ class SPDNetAE(nn.Module):
         """
         if self.input_type == "raw":
             if x.ndim == 3 and (
-                x.shape[-1] != self.n_chans
-                or not torch.allclose(x, x.mT, atol=1e-4)
+                x.shape[-1] != self.n_chans or not torch.allclose(x, x.mT, atol=1e-4)
             ):
                 x = self.cov_frontend(x)
         else:
@@ -306,7 +304,8 @@ class SPDNetAE(nn.Module):
 
         .. math::
 
-            \mathcal{L}_{\text{recon}}(S_{\text{in}}, S_{\text{recon}}) = \|\log(S_{\text{in}}) - \log(S_{\text{recon}})\|_F^2
+            \mathcal{L}_{\text{recon}}(S_{\text{in}}, S_{\text{recon}}) =
+            \|\log(S_{\text{in}}) - \log(S_{\text{recon}})\|_F^2
 
         Parameters
         ----------

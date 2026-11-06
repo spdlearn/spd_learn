@@ -317,9 +317,7 @@ class RiemannianHighOrderPooling(nn.Module):
         self.device = device
         self.dtype = dtype
 
-        self.down_proj = nn.Linear(
-            in_features, reduced_dim, device=device, dtype=dtype
-        )
+        self.down_proj = nn.Linear(in_features, reduced_dim, device=device, dtype=dtype)
         self.descriptor = GaussianSPDDescriptor(
             embedding_type="quotient",
             alpha=alpha,
@@ -329,12 +327,8 @@ class RiemannianHighOrderPooling(nn.Module):
             dtype=dtype,
         )
         self.spd_dim = (reduced_dim + 1) * (reduced_dim + 2) // 2
-        self.vech = Vech(
-            preserve_norm=True, upper=True, device=device, dtype=dtype
-        )
-        self.up_proj = nn.Linear(
-            self.spd_dim, in_features, device=device, dtype=dtype
-        )
+        self.vech = Vech(preserve_norm=True, upper=True, device=device, dtype=dtype)
+        self.up_proj = nn.Linear(self.spd_dim, in_features, device=device, dtype=dtype)
 
     def forward(
         self,
@@ -370,8 +364,8 @@ class RiemannianHighOrderPooling(nn.Module):
         if self.metric == "LEM":
             S = matrix_log.apply(G_in)
         elif self.metric == "PEM":
-            I = torch.eye(G_in.shape[-1], device=G_in.device, dtype=G_in.dtype)
-            S = (matrix_power.apply(G_in, self.power) - I) / self.power
+            eye = torch.eye(G_in.shape[-1], device=G_in.device, dtype=G_in.dtype)
+            S = (matrix_power.apply(G_in, self.power) - eye) / self.power
         elif self.metric == "LCM":
             S = cholesky_log.apply(G_in)
             # S is lower-triangular with log-diagonal; symmetrize for Vech
