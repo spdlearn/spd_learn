@@ -2109,7 +2109,7 @@ footer {
 }
 """
 
-THEME_JS = """<script>(function(){
+THEME_JS = r"""<script>(function(){
 var b=document.getElementById('theme'),order=['auto','light','dark'],icon={auto:'◐',light:'☀',dark:'☾'},
 name={auto:'Auto',light:'Light',dark:'Dark'};
 function get(){try{var t=localStorage.getItem('theme');return t==='light'||t==='dark'?t:'auto';}catch(e){return 'auto';}}
@@ -2117,7 +2117,30 @@ function show(t){if(!b)return;b.firstChild.textContent=icon[t];b.lastChild.textC
 if(b){b.addEventListener('click',function(){var t=order[(order.indexOf(get())+1)%3];
 try{t==='auto'?localStorage.removeItem('theme'):localStorage.setItem('theme',t);}catch(e){}
 if(t==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=t;show(t);});
-show(get());}})();</script>"""
+show(get());}
+function runKatex(){
+  if(typeof renderMathInElement==='function'&&document.body){
+    renderMathInElement(document.body,{
+      delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false},
+        {left:'\\(',right:'\\)',display:false},
+        {left:'\\[',right:'\\]',display:true}
+      ],
+      ignoredTags:['script','noscript','style','textarea','pre','svg'],
+      ignoredClasses:['katex'],
+      throwOnError:false,
+      strict:false
+    });
+  }
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',runKatex);
+}else{
+  runKatex();
+}
+window.addEventListener('load',runKatex);
+})();</script>"""
 
 
 def _nav_html(root_prefix: str, active: str) -> str:
@@ -2128,7 +2151,7 @@ def _nav_html(root_prefix: str, active: str) -> str:
 <link rel="stylesheet" href="{root_prefix}assets/app.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{{delimiters:[{{left:'$$',right:'$$',display:true}},{{left:'$',right:'$',display:false}},{{left:'\\(',right:'\\)',display:false}},{{left:'\\[',right:'\\]',display:true}}],ignoredTags:['script','noscript','style','textarea','pre','svg'],throwOnError:false,macros:{{'\\Spp':'\\mathcal{{S}}_{{++}}','\\Cpp':'\\mathcal{{C}}_{{++}}','\\St':'\\operatorname{{St}}','\\R':'\\mathbb{{R}}','\\tr':'\\operatorname{{tr}}','\\diag':'\\operatorname{{diag}}','\\vech':'\\operatorname{{vech}}'}}}});"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 """
 
 
@@ -2138,7 +2161,7 @@ def _top_bar(root_prefix: str, active: str, page_title: str) -> str:
 
     return (
         _nav_html(root_prefix, active)
-        + f"<title>{_esc(page_title)} · SPD-Learn Encore Registry</title></head><body>\n"
+        + f"<title>{_esc_svg(page_title)} · SPD-Learn Encore Registry</title></head><body>\n"
         + f"""<nav class="top" aria-label="Sections"><div class="wrap">
   <a class="brand" href="{root_prefix}index.html">
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M21.6 8.3A9.5 9.5 0 1 0 25.5 16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M18.9 10.7 24.1 5.5 24.7 11.3z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path class="tick" d="M11.3 16.3l3.3 3.3 5.9-6.8" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -3363,6 +3386,58 @@ Live sub-page for **[spdlearn.github.io/encore/](https://spdlearn.github.io/enco
 - **Claims Audited**: `78` (`{n_verified} Verified` + `{n_adjusted} Baseline-Adjusted` + `{n_falsified} Falsified` = **`{total_pts} / {max_pts}` points**, `0 Inconclusive`)
 """
     )
+    # Pre-render all $...$ math expressions into static <span class="katex"> HTML via Node.js KaTeX if available
+    katex_js_path = REPRO_DIR / "katex.min.js"
+    if katex_js_path.is_file():
+        import subprocess
+
+        node_script = f"""
+const fs = require("fs");
+const path = require("path");
+const katex = require({json.dumps(str(katex_js_path))});
+const cache = new Map();
+function renderExpr(raw) {{
+  if (cache.has(raw)) return cache.get(raw);
+  const expr = raw
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"');
+  const html = katex.renderToString(expr, {{throwOnError: false, strict: false}});
+  cache.set(raw, html);
+  return html;
+}}
+function walk(dir) {{
+  let out = [];
+  for (const f of fs.readdirSync(dir)) {{
+    const p = path.join(dir, f);
+    if (fs.statSync(p).isDirectory()) {{
+      if (f !== ".git") out = out.concat(walk(p));
+    }} else if (f.endsWith(".html")) out.push(p);
+  }}
+  return out;
+}}
+const root = {json.dumps(str(OUT_DIR))};
+let count = 0;
+for (const hf of walk(root)) {{
+  let txt = fs.readFileSync(hf, "utf8");
+  const protectedBlocks = [];
+  txt = txt.replace(/<(script|style|pre|svg|title)\\b[\\s\\S]*?<\\/\\1>/gi, (m) => {{
+    protectedBlocks.push(m);
+    return `__PROTECTED_BLOCK_${{protectedBlocks.length - 1}}__`;
+  }});
+  txt = txt.replace(/\\$([^$\\n]+)\\$/g, (m, g1) => {{
+    count++;
+    return renderExpr(g1);
+  }});
+  txt = txt.replace(/__PROTECTED_BLOCK_(\\d+)__/g, (m, i) => protectedBlocks[Number(i)]);
+  fs.writeFileSync(hf, txt, "utf8");
+}}
+console.log(`Pre-rendered ${{count}} math expressions (${{cache.size}} unique) across all HTML pages.`);
+"""
+        subprocess.run(["node", "-e", node_script], check=True)
+
     print(f"Built SPD-Learn Encore site at {OUT_DIR} with 26 paper pages and 78 SVG panels.")
 
 

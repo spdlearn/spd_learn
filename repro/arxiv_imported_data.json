@@ -2383,67 +2383,67 @@
             "Explanation"
           ],
           [
-            "$\\{\\calM, \\odot, g \\}$ or abbreviated as $\\calM$",
+            "$\\{\\mathcal{M}, \\odot, g \\}$ or abbreviated as $\\mathcal{M}$",
             "A Lie group with a group operation $\\odot$ and left-invariant Riemannian metric $g$"
           ],
           [
             "$P_\\odot ^{-1}$",
-            "Group inverse of $P \\in \\calM$"
+            "Group inverse of $P \\in \\mathcal{M}$"
           ],
           [
-            "$T_P\\calM$",
-            "The tangent space at $P \\in \\calM$"
+            "$T_P\\mathcal{M}$",
+            "The tangent space at $P \\in \\mathcal{M}$"
           ],
           [
             "$g_p(\\cdot ,\\cdot)$ or $\\langle \\cdot, \\cdot \\rangle_P$",
-            "The Riemannian metric at $P \\in \\calM$"
+            "The Riemannian metric at $P \\in \\mathcal{M}$"
           ],
           [
             "$\\| \\cdot \\|_P$",
-            "The norm induced by $\\langle \\cdot, \\cdot \\rangle_P$ on $T_P\\calM$"
+            "The norm induced by $\\langle \\cdot, \\cdot \\rangle_P$ on $T_P\\mathcal{M}$"
           ],
           [
-            "$\\dist(\\cdot,\\cdot)$",
+            "$\\operatorname{dist}(\\cdot,\\cdot)$",
             "Geodesic distance"
           ],
           [
-            "$\\fm$",
+            "$\\operatorname{FM}$",
             "Fr\u00e9chet mean"
           ],
           [
-            "$\\wfm$",
+            "$\\operatorname{WFM}$",
             "Weighted Fr\u00e9chet mean"
           ],
           [
-            "$\\rielog_P$",
+            "$\\operatorname{Log}_P$",
             "The Riemannian logarithm at $P$"
           ],
           [
-            "$\\pt{P}{Q}$",
+            "$\\Gamma_{P \\to Q}$",
             "The Riemannian parallel transportation along the geodesic connecting $P$ and $Q$"
           ],
           [
             "$L_P$",
-            "The Lie group left translation by $P \\in \\calM$"
+            "The Lie group left translation by $P \\in \\mathcal{M}$"
           ],
           [
             "$f_{*,P}$",
-            "The differential map of the smooth map $f$ at $P \\in \\calM$"
+            "The differential map of the smooth map $f$ at $P \\in \\mathcal{M}$"
           ],
           [
             "$f^*g$",
             "The pullback metric by $f$ from $g$"
           ],
           [
-            "$\\spd{n}$",
+            "$\\mathcal{S}_{++}^{n}$",
             "The SPD manifold"
           ],
           [
-            "$\\sym{n}$",
+            "$\\mathcal{S}^{n}$",
             "The Euclidean space of symmetric matrices"
           ],
           [
-            "$\\tril{n}$",
+            "$\\mathcal{L}_{++}^{n}$",
             "The Euclidean space of lower triangular matrices"
           ],
           [
@@ -2451,43 +2451,43 @@
             "The standard Frobenius inner product"
           ],
           [
-            "$\\| \\cdot \\|_\\rmF$",
+            "$\\| \\cdot \\|_\\mathrm{F}$",
             "The norm induced by the standard Frobenius inner product"
           ],
           [
-            "$\\bfst$",
-            "$\\bfst = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
+            "$\\Delta_{\\alpha,\\beta}$",
+            "$\\Delta_{\\alpha,\\beta} = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
           ],
           [
-            "$\\langle \\cdot, \\cdot \\rangle^{\\alphabeta}$",
-            "The $\\orth{n}$-invariant Euclidean inner product"
+            "$\\langle \\cdot, \\cdot \\rangle^{(\\alpha,\\beta)}$",
+            "The $\\operatorname{SO}(n)$-invariant Euclidean inner product"
           ],
           [
-            "$\\| \\cdot \\|^{\\alphabeta}$",
-            "The norm induced by $\\orth{n}$-invariant Euclidean inner product"
+            "$\\| \\cdot \\|^{(\\alpha,\\beta)}$",
+            "The norm induced by $\\operatorname{SO}(n)$-invariant Euclidean inner product"
           ],
           [
-            "$\\gbiparamai$",
-            "The Riemannian metric tensor of $\\biparamAIM$"
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{AI}}$",
+            "The Riemannian metric tensor of $g^{(\\alpha,\\beta)}_{\\mathrm{AIM}}$"
           ],
           [
-            "$\\gtriparamAI$",
-            "The Riemannian metric tensor of $\\triparamAIM$"
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$",
+            "The Riemannian metric tensor of $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$"
           ],
           [
-            "$\\odotai$",
+            "$\\odot_{\\mathrm{AI}}$",
             "The group operation w.r.t. AIM"
           ],
           [
-            "$\\odotle$",
+            "$\\odot_{\\mathrm{LE}}$",
             "The group operation w.r.t. LEM"
           ],
           [
-            "$\\odotlc$",
+            "$\\odot_{\\mathrm{LC}}$",
             "The group operation w.r.t. LCM"
           ],
           [
-            "$\\calN(M,\\sigma^2)$",
+            "$\\mathcal{N}(M,\\sigma^2)$",
             "Riemannian Gaussian distribution"
           ],
           [
@@ -2495,24 +2495,24 @@
             "Scalar exponentiation"
           ],
           [
-            "$\\mlog$",
+            "$\\log$",
             "Matrix logarithm"
           ],
           [
-            "$\\mexp$",
+            "$\\exp$",
             "Matrix exponentiation"
           ],
           [
-            "$\\chol$",
+            "$\\operatorname{Chol}$",
             "Cholesky decomposition"
           ],
           [
-            "$\\dlog$",
+            "$\\operatorname{dlog}$",
             "The diagonal element-wise logarithm"
           ],
           [
-            "$\\clog$",
-            "$\\dlog \\circ \\chol$"
+            "$\\operatorname{clog}$",
+            "$\\operatorname{dlog} \\circ \\operatorname{Chol}$"
           ],
           [
             "$\\lfloor \\cdot \\rfloor$",
@@ -2526,10 +2526,10 @@
         "rows": [
           [
             "Beta",
-            "$\\nicefrac{-1}{30^2}$",
+            "$\\tfrac{-1}{30^2}$",
             "-0.03",
-            "$\\nicefrac{1}{30^2}$",
-            "$\\nicefrac{1}{30}$",
+            "$\\tfrac{1}{30^2}$",
+            "$\\tfrac{1}{30}$",
             "1",
             "0"
           ],
@@ -2550,18 +2550,18 @@
         "rows": [
           [
             "Operators",
-            "$\\dist^2(R,S)$",
-            "$\\rielog_I R$",
-            "$\\rieexp_I(A)$",
+            "$\\operatorname{dist}^2(R,S)$",
+            "$\\operatorname{Log}_I R$",
+            "$\\operatorname{Exp}_I(A)$",
             "$\\gamma_{(R,S)}(t)$",
             "FM"
           ],
           [
             "Expression",
-            "$\\left\\|\\mlog \\left(R^{\\top} S\\right)\\right\\|_\\rmF^2$",
-            "$\\mlog(R)$",
-            "$\\mexp(A)$",
-            "$R \\mexp (t \\mlog(R^\\top S))$",
+            "$\\left\\|\\log \\left(R^{\\top} S\\right)\\right\\|_\\mathrm{F}^2$",
+            "$\\log(R)$",
+            "$\\exp(A)$",
+            "$R \\exp (t \\log(R^\\top S))$",
             "[Alg. 1]manton2004globally"
           ]
         ],
@@ -2676,23 +2676,23 @@
         "rows": [
           [
             "Metric",
-            "$\\triparamAIM$",
-            "$\\biparamLEM$",
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$",
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$",
             "$\\theta$-LCM",
             ""
           ],
           [
             "Pullback Map",
-            "$\\pow_{\\theta}$",
-            "$\\mlog$",
-            "$\\pow_{\\theta} \\circ \\clog$",
+            "$\\operatorname{Pow}_{\\theta}$",
+            "$\\log$",
+            "$\\operatorname{Pow}_{\\theta} \\circ \\operatorname{clog}$",
             ""
           ],
           [
             "Codomain",
-            "$\\{\\spd{n},\\odotai,\\frac{1}{\\theta^2}\\gbiparamai\\}$",
-            "$\\{\\sym{n}, \\langle \\cdot , \\cdot \\rangle^{\\alphabeta} \\}$",
-            "$\\{\\tril{n}$, $\\frac{1}{\\theta^2} \\langle \\cdot , \\cdot \\rangle\\}$",
+            "$\\{\\mathcal{S}_{++}^{n},\\odot_{\\mathrm{AI}},\\frac{1}{\\theta^2}g^{(\\alpha,\\beta)}_{\\mathrm{AI}}\\}$",
+            "$\\{\\mathcal{S}^{n}, \\langle \\cdot , \\cdot \\rangle^{(\\alpha,\\beta)} \\}$",
+            "$\\{\\mathcal{L}_{++}^{n}$, $\\frac{1}{\\theta^2} \\langle \\cdot , \\cdot \\rangle\\}$",
             ""
           ],
           [
@@ -2711,7 +2711,7 @@
           ],
           [
             "",
-            "$\\rieexp_{E} \\left [ s \\rielog_{E}(P) \\right]$",
+            "$\\operatorname{Exp}_{E} \\left [ s \\operatorname{Log}_{E}(P) \\right]$",
             "$P^{s}$",
             "$sP$",
             "$sP$"
@@ -2732,7 +2732,7 @@
           ],
           [
             "",
-            "$\\wfm(\\{\\gamma,1-\\gamma\\},\\{P_1,P_2\\})$",
+            "$\\operatorname{WFM}(\\{\\gamma,1-\\gamma\\},\\{P_1,P_2\\})$",
             "$P_2^{\\frac{1}{2}}\\left(P_2^{-\\frac{1}{2}} P_1 P_2^{-\\frac{1}{2}}\\right)^\\gamma P_2^{\\frac{1}{2}}$",
             "Arithmetic",
             ""
@@ -2752,39 +2752,39 @@
         "rows": [
           [
             "Metric",
-            "$\\biparamLEM$",
-            "$\\biparamAIM$",
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$",
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{AIM}}$",
             "LCM"
           ],
           [
             "$g_P(V,W)$",
-            "$\\langle \\mlog_{*,P} (V), \\mlog_{*,P} (W) \\rangle^{\\alphabeta}$",
-            "$\\langle P^{-1}V, W P^{-1} \\rangle^{\\alphabeta}$",
+            "$\\langle \\log_{*,P} (V), \\log_{*,P} (W) \\rangle^{(\\alpha,\\beta)}$",
+            "$\\langle P^{-1}V, W P^{-1} \\rangle^{(\\alpha,\\beta)}$",
             "$\\sum_{i>j} V_{i j} W_{i j}+\\sum_{j=1}^n V_{j j} W_{j j} L_{j j}^{-2}$"
           ],
           [
-            "$\\dist(P,Q)$",
-            "$\\left \\|\\mlog(P)-\\mlog(Q) \\right\\|^{\\alphabeta}$",
-            "$\\left \\|\\mlog \\left(Q^{-\\frac{1}{2}}PQ^{-\\frac{1}{2}} \\right) \\right\\|^{\\alphabeta}$",
-            "$\\left \\| \\clog \\circ \\chol(P) - \\clog \\circ \\chol(Q) \\right \\|_\\rmF$"
+            "$\\operatorname{dist}(P,Q)$",
+            "$\\left \\|\\log(P)-\\log(Q) \\right\\|^{(\\alpha,\\beta)}$",
+            "$\\left \\|\\log \\left(Q^{-\\frac{1}{2}}PQ^{-\\frac{1}{2}} \\right) \\right\\|^{(\\alpha,\\beta)}$",
+            "$\\left \\| \\operatorname{clog} \\circ \\operatorname{Chol}(P) - \\operatorname{clog} \\circ \\operatorname{Chol}(Q) \\right \\|_\\mathrm{F}$"
           ],
           [
             "$Q \\odot P$",
-            "$\\mexp(\\mlog(P)+\\mlog(Q))$",
+            "$\\exp(\\log(P)+\\log(Q))$",
             "$KPK^\\top$",
-            "$\\chol^{-1}(\\lfloor L + K \\rfloor + \\bbK \\bbL)$"
+            "$\\operatorname{Chol}^{-1}(\\lfloor L + K \\rfloor + D_K D_L)$"
           ],
           [
-            "$\\fm (\\{P_i\\})$",
-            "$\\mexp \\left( \\frac{1}{n} \\sum_i \\mlog{P_i} \\right)$",
+            "$\\operatorname{FM} (\\{P_i\\})$",
+            "$\\exp \\left( \\frac{1}{n} \\sum_i \\log{P_i} \\right)$",
             "Karcher Flow",
-            "$\\clog^{-1} \\left( \\frac{1}{n} \\sum_i \\clog(P_i) \\right)$"
+            "$\\operatorname{clog}^{-1} \\left( \\frac{1}{n} \\sum_i \\operatorname{clog}(P_i) \\right)$"
           ],
           [
-            "$\\rielog_P Q$",
-            "$(\\mlog_{*,P})^{-1} \\left[ \\mlog(Q) - \\mlog(P) \\right]$",
-            "$P^{\\frac{1}{2}} \\mlog \\left(P^{ \\frac{-1}{2}} Q P^{\\frac{-1}{2}}\\right) P^{\\frac{1}{2}}$",
-            "$(\\chol^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+\\bbL \\dlog (\\bbL^{-1} \\bbK) \\right]$"
+            "$\\operatorname{Log}_P Q$",
+            "$(\\log_{*,P})^{-1} \\left[ \\log(Q) - \\log(P) \\right]$",
+            "$P^{\\frac{1}{2}} \\log \\left(P^{ \\frac{-1}{2}} Q P^{\\frac{-1}{2}}\\right) P^{\\frac{1}{2}}$",
+            "$(\\operatorname{Chol}^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+D_L \\operatorname{dlog} (D_L^{-1} D_K) \\right]$"
           ],
           [
             "Invariance",
@@ -2880,9 +2880,9 @@
             "Lie Algebra"
           ],
           [
-            "Tangent vectors in $T_R \\so{n}$",
-            "$H \\in \\bbR{n \\times n} : H = RV$ with $V \\in \\soLieAlgebra{n}$",
-            "$V \\in \\soLieAlgebra{n}$"
+            "Tangent vectors in $T_R \\operatorname{SO}(n)$",
+            "$H \\in \\mathbb{R}^{n \\times n} : H = RV$ with $V \\in \\mathfrak{so}(n)$",
+            "$V \\in \\mathfrak{so}(n)$"
           ],
           [
             "$g_R(H_1,H_2)$",
@@ -2890,24 +2890,24 @@
             "$\\langle V_1, V_2 \\rangle$"
           ],
           [
-            "$\\rielog_R S$",
-            "$R \\mlog(R^\\top S)$",
-            "$\\mlog(R^\\top S)$"
+            "$\\operatorname{Log}_R S$",
+            "$R \\log(R^\\top S)$",
+            "$\\log(R^\\top S)$"
           ],
           [
-            "$\\rieexp_R H$",
-            "$R \\mexp(R^\\top H)$",
-            "$R \\mexp(V)$"
+            "$\\operatorname{Exp}_R H$",
+            "$R \\exp(R^\\top H)$",
+            "$R \\exp(V)$"
           ],
           [
-            "$\\pt{R}{S}(H)$",
+            "$\\Gamma_{R \\to S}(H)$",
             "$SR^\\top H$",
             "$V$"
           ],
           [
             "The geodesic $\\gamma(t)$ from $R$ to $S$",
-            "$R \\mexp (t \\mlog(R^\\top S))$",
-            "$R \\mexp (t \\mlog(R^\\top S))$"
+            "$R \\exp (t \\log(R^\\top S))$",
+            "$R \\exp (t \\log(R^\\top S))$"
           ],
           [
             "Geodesic distance between $R$ and $S$",
@@ -2916,8 +2916,8 @@
           ],
           [
             "Projection map $\\Pi_{R}(U)$",
-            "$R\\skewtinize(R^\\top U)$",
-            "$\\skewtinize(R^\\top U)$"
+            "$R\\operatorname{skew}(R^\\top U)$",
+            "$\\operatorname{skew}(R^\\top U)$"
           ],
           [
             "Retraction at $R$ of $H=RV$",
@@ -4475,8 +4475,8 @@
             "Explanation"
           ],
           [
-            "$( \\calM, g )$",
-            "Riemannian manifold $\\calM$ with Riemannian metric $g$"
+            "$( \\mathcal{M}, g )$",
+            "Riemannian manifold $\\mathcal{M}$ with Riemannian metric $g$"
           ],
           [
             "$f_{*,P}(\\cdot)$",
@@ -4487,67 +4487,67 @@
             "Pullback metric by $f$ from $g$"
           ],
           [
-            "$\\rielog_P(\\cdot)$",
+            "$\\operatorname{Log}_P(\\cdot)$",
             "Riemannian logarithm at $P$"
           ],
           [
-            "$\\rieexp_P(\\cdot)$",
+            "$\\operatorname{Exp}_P(\\cdot)$",
             "Riemannian exponentiation at $P$"
           ],
           [
-            "$\\pt{P}{Q}(\\cdot)$",
+            "$\\Gamma_{P \\to Q}(\\cdot)$",
             "Parallel transportation along the geodesic connecting $P$ and $Q$"
           ],
           [
-            "$\\geodesic{P}{V}(t)$",
-            "Geodesic starting at $P$ with initial velocity $V \\in T_P\\calM$"
+            "$\\gamma_{P, V}(t)$",
+            "Geodesic starting at $P$ with initial velocity $V \\in T_P\\mathcal{M}$"
           ],
           [
-            "$\\dist(\\cdot,\\cdot)$",
+            "$\\operatorname{dist}(\\cdot,\\cdot)$",
             "Geodesic distance"
           ],
           [
-            "$\\wfm(\\cdot,\\cdot)$",
+            "$\\operatorname{WFM}(\\cdot,\\cdot)$",
             "Weighted Fr\u00e9chet mean"
           ],
           [
-            "$\\spd{n}$",
+            "$\\mathcal{S}_{++}^{n}$",
             "SPD manifold of $n \\times n$ SPD matrices"
           ],
           [
-            "$\\sym{n}$",
+            "$\\mathcal{S}^{n}$",
             "Euclidean space of $n \\times n$ symmetric matrices"
           ],
           [
-            "$\\tril{n}$",
+            "$\\mathcal{L}_{++}^{n}$",
             "Euclidean space of $n \\times n$ lower triangular matrices"
           ],
           [
-            "$\\stril{n}$",
+            "$\\mathcal{L}_{0}^{n}$",
             "Euclidean space of $n \\times n$ strictly lower triangular matrices"
           ],
           [
-            "$\\chospace{n}$",
+            "$\\mathcal{L}_{++}^{n}$",
             "Cholesky manifold of $n \\times n$ Cholesky matrices"
           ],
           [
-            "$\\bbDplus{n}$",
+            "$\\mathcal{D}_{++}^{n}$",
             "Set of $n \\times n$ diagonal matrices with positive diagonal"
           ],
           [
-            "$\\bbRscalar$",
+            "$\\mathbb{R}$",
             "Real number field"
           ],
           [
-            "$\\bbRplusscalar$",
+            "$\\mathbb{R}_{>0}$",
             "Space of positive scalars"
           ],
           [
-            "$\\bbR{n}$",
+            "$\\mathbb{R}^{n}$",
             "$n$-dimensional real vector space"
           ],
           [
-            "$\\bbRplus{n}$",
+            "$\\mathbb{R}_{>0}^{n}$",
             "Space of $n$-dimensional positive vectors"
           ],
           [
@@ -4559,31 +4559,31 @@
             "Scalar gyromultiplication"
           ],
           [
-            "$T_P\\spd{n}$",
-            "Tangent space at $P \\in \\spd{n}$"
+            "$T_P\\mathcal{S}_{++}^{n}$",
+            "Tangent space at $P \\in \\mathcal{S}_{++}^{n}$"
           ],
           [
-            "$T_L\\chospace{n}$",
-            "Tangent space at $L \\in \\chospace{n}$"
+            "$T_L\\mathcal{L}_{++}^{n}$",
+            "Tangent space at $L \\in \\mathcal{L}_{++}^{n}$"
           ],
           [
-            "$T_\\bbP\\bbDplus{n}$",
-            "Tangent space at $\\bbP \\in \\bbDplus{n}$"
+            "$T_{\\mathbb{P}}\\mathcal{D}_{++}^{n}$",
+            "Tangent space at $D_P \\in \\mathcal{D}_{++}^{n}$"
           ],
           [
-            "$\\pow_{\\theta}(\\cdot)$ or $(\\cdot)^{\\theta}$",
+            "$\\operatorname{Pow}_{\\theta}(\\cdot)$ or $(\\cdot)^{\\theta}$",
             "Matrix power"
           ],
           [
-            "$\\mlog(\\cdot)$",
+            "$\\log(\\cdot)$",
             "Matrix logarithm"
           ],
           [
-            "$\\chol(\\cdot)$",
+            "$\\operatorname{Chol}(\\cdot)$",
             "Cholesky decomposition"
           ],
           [
-            "$\\lyp_{P,M}(\\cdot)$",
+            "$\\mathcal{L}_{P,M}(\\cdot)$",
             "Generalized Lyapunov operator"
           ],
           [
@@ -4595,7 +4595,7 @@
             "Strictly lower triangular part of a square matrix"
           ],
           [
-            "$\\dpow_{\\theta}(\\cdot)$",
+            "$\\operatorname{dPow}_{\\theta}(\\cdot)$",
             "Diagonal power function"
           ],
           [
@@ -4607,14 +4607,14 @@
             "Diagonal exponentiation"
           ],
           [
-            "$\\gE$ or $\\langle \\cdot, \\cdot \\rangle$",
+            "$g^{\\mathrm{E}}$ or $\\langle \\cdot, \\cdot \\rangle$",
             "Standard Frobenius inner product"
           ]
         ],
         "source": "arXiv:2407.02607 (.tar.gz e-print)"
       },
       {
-        "caption": "Hyperparameter $\\theta$ in $\\defCDEM$ and $\\defCDBWM$. It is selected from app:tab:theta-spdnet,app:tab:theta-gyrospd.",
+        "caption": "Hyperparameter $\\theta$ in $g_{\\mathrm{EM}}$ and $g_{\\mathrm{BWM}}$. It is selected from app:tab:theta-spdnet,app:tab:theta-gyrospd.",
         "rows": [
           [
             "Backbone",
@@ -4625,28 +4625,28 @@
           ],
           [
             "2[1]*SPDNet",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "-1.5",
             "-0.5",
             "0.75"
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "-0.75",
             "-1.5",
             "1"
           ],
           [
             "2[1]*GyroSPD",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "-0.75",
             "-0.75",
             "-0.75"
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "-1.5",
             "-1.5",
             "-0.5"
@@ -4817,7 +4817,7 @@
         "source": "arXiv:2407.02607 (.tar.gz e-print)"
       },
       {
-        "caption": "Results of SPD MLR on the SPDNet backbone under $\\defCDEM$ and $\\defCDBWM$ with different deformation factors $\\theta$.",
+        "caption": "Results of SPD MLR on the SPDNet backbone under $g_{\\mathrm{EM}}$ and $g_{\\mathrm{BWM}}$ with different deformation factors $\\theta$.",
         "rows": [
           [
             "Dataset",
@@ -4836,7 +4836,7 @@
           ],
           [
             "2[1]*Radar",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "95.71 $\\pm$ 0.57",
             "<strong>95.79 $\\pm$ 0.38</strong>",
             "94.64 $\\pm$ 0.34",
@@ -4851,7 +4851,7 @@
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "91.89 $\\pm$ 0.31",
             "92.91 $\\pm$ 1.05",
             "92.16 $\\pm$ 1.10",
@@ -4866,7 +4866,7 @@
           ],
           [
             "2[2]*HDM05",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "46.63 $\\pm$ 1.63",
             "49.86 $\\pm$ 1.41",
             "58.81 $\\pm$ 1.41",
@@ -4881,7 +4881,7 @@
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "65.20 $\\pm$ 2.63",
             "<strong>67.40 $\\pm$ 0.90</strong>",
             "65.42 $\\pm$ 1.88",
@@ -4896,7 +4896,7 @@
           ],
           [
             "2[1]*FPHA",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "88.20 $\\pm$ 0.29",
             "88.20 $\\pm$ 0.32",
             "88.30 $\\pm$ 0.24",
@@ -4911,7 +4911,7 @@
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "85.87 $\\pm$ 0.66",
             "85.87 $\\pm$ 0.66",
             "85.87 $\\pm$ 0.66",
@@ -4928,7 +4928,7 @@
         "source": "arXiv:2407.02607 (.tar.gz e-print)"
       },
       {
-        "caption": "Results of SPD MLR on the GyroSPD backbone under $\\defCDEM$ and $\\defCDBWM$ with different deformation factors $\\theta$.",
+        "caption": "Results of SPD MLR on the GyroSPD backbone under $g_{\\mathrm{EM}}$ and $g_{\\mathrm{BWM}}$ with different deformation factors $\\theta$.",
         "rows": [
           [
             "Dataset",
@@ -4947,7 +4947,7 @@
           ],
           [
             "2[1]*Radar",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "96.88 $\\pm$ 0.36",
             "96.75 $\\pm$ 0.26",
             "96.27 $\\pm$ 0.36",
@@ -4962,7 +4962,7 @@
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "96.16 $\\pm$ 0.90",
             "<strong>96.21 $\\pm$ 0.25</strong>",
             "95.25 $\\pm$ 1.19",
@@ -4977,7 +4977,7 @@
           ],
           [
             "2[2]*HDM05",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "50.18 $\\pm$ 0.99",
             "32.49 $\\pm$ 25.81",
             "66.43 $\\pm$ 1.22",
@@ -4992,7 +4992,7 @@
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "72.64 $\\pm$ 1.15",
             "<strong>72.74 $\\pm$ 0.43</strong>",
             "69.58 $\\pm$ 1.34",
@@ -5007,7 +5007,7 @@
           ],
           [
             "2[1]*FPHA",
-            "$\\defCDEM$",
+            "$g_{\\mathrm{EM}}$",
             "90.60 $\\pm$ 0.58",
             "91.17 $\\pm$ 0.32",
             "91.10 $\\pm$ 0.29",
@@ -5022,7 +5022,7 @@
           ],
           [
             "",
-            "$\\defCDBWM$",
+            "$g_{\\mathrm{BWM}}$",
             "90.87 $\\pm$ 0.16",
             "90.80 $\\pm$ 0.07",
             "90.83 $\\pm$ 0.11",
@@ -5189,7 +5189,7 @@
         "source": "arXiv:2407.02607 (.tar.gz e-print)"
       },
       {
-        "caption": "Ablation on the diagonal matrix $\\bbM$ in BWCM. We compare BWCM with a variant that learns the diagonal of $\\bbM$ ($\\bbM$-BWCM) on SPDNet and GyroSPD.",
+        "caption": "Ablation on the diagonal matrix $D_M$ in BWCM. We compare BWCM with a variant that learns the diagonal of $D_M$ ($D_M$-BWCM) on SPDNet and GyroSPD.",
         "rows": [
           [
             "Backbone",
@@ -5210,7 +5210,7 @@
             "FPHA"
           ],
           [
-            "$\\bbM$-BWCM",
+            "$D_M$-BWCM",
             "<strong>95.15 $\\pm$ 0.61</strong>",
             "66.71 $\\pm$ 0.96",
             "86.27 $\\pm$ 0.63",
@@ -5254,12 +5254,12 @@
             "0.72"
           ],
           [
-            "HilightColor$\\defCDEM$",
+            "HilightColor$g_{\\mathrm{EM}}$",
             "95.79 $\\pm$ 0.38",
             "0.72"
           ],
           [
-            "HilightColor$\\defCDBWM$",
+            "HilightColor$g_{\\mathrm{BWM}}$",
             "93.93 $\\pm$ 0.79",
             "0.71"
           ]
@@ -5267,7 +5267,7 @@
         "source": "arXiv:2407.02607 (.tar.gz e-print)"
       },
       {
-        "caption": "Failure probabilities (%) of geodesics under different metrics with small eigenvalues in $L \\in \\chospace{n}$. An output matrix containing any Inf or NaN is considered a failure. Here, DLM denotes the diagonal log metric, while DPM and DBWM denote $\\defDPM$ and $\\defDBWM$, respectively.",
+        "caption": "Failure probabilities (%) of geodesics under different metrics with small eigenvalues in $L \\in \\mathcal{L}_{++}^{n}$. An output matrix containing any Inf or NaN is considered a failure. Here, DLM denotes the diagonal log metric, while DPM and DBWM denote $g_{\\mathrm{PM}}$ and $g_{\\mathrm{BWM}}$, respectively.",
         "rows": [
           [
             "3[6]*$\\epsilon$",
@@ -5567,56 +5567,56 @@
           [
             "Operators",
             "Diagonal Log Metric",
-            "$\\defDPM$",
-            "$\\defDGBWM$"
+            "$g_{\\mathrm{PM}}$",
+            "$g_{\\mathrm{GBW}}$"
           ],
           [
             "$g_{L}(X,Y)$",
-            "$\\trilX + \\trilY + \\langle \\bbL^{-1} \\bbX, \\bbL^{-1}\\bbY \\rangle$",
-            "$\\langle \\trilX , \\trilY \\rangle + \\langle \\bbL^{\\theta-1} \\bbX, \\bbL^{\\theta-1}\\bbY \\rangle$",
-            "$\\langle \\trilX, \\trilY \\rangle +\\frac{1}{4} \\langle \\bbL^{\\theta-2} \\bbX,\\bbM^{-1} \\bbY \\rangle$"
+            "$\\lfloor X \\rfloor + \\lfloor Y \\rfloor + \\langle D_L^{-1} D_X, D_L^{-1}D_Y \\rangle$",
+            "$\\langle \\lfloor X \\rfloor , \\lfloor Y \\rfloor \\rangle + \\langle D_L^{\\theta-1} D_X, D_L^{\\theta-1}D_Y \\rangle$",
+            "$\\langle \\lfloor X \\rfloor, \\lfloor Y \\rfloor \\rangle +\\frac{1}{4} \\langle D_L^{\\theta-2} D_X,D_M^{-1} D_Y \\rangle$"
           ],
           [
-            "$\\geodesic{L}{X}(t)$",
-            "$\\trilL + t\\trilX + \\bbL \\exp (t \\bbL^{-1} \\bbX )$",
-            "$\\trilL + t\\trilX + \\bbL \\left( I + t\\theta\\bbL^{-1} \\bbX \\right)^{\\frac{1}{\\theta}}$",
-            "$\\trilL + t\\trilX + \\bbL \\left( I + t\\frac{\\theta}{2} \\bbL^{-1} \\bbX \\right)^{\\frac{2}{\\theta}}$"
+            "$\\gamma_{L, X}(t)$",
+            "$\\lfloor L \\rfloor + t\\lfloor X \\rfloor + D_L \\exp (t D_L^{-1} D_X )$",
+            "$\\lfloor L \\rfloor + t\\lfloor X \\rfloor + D_L \\left( I + t\\theta {\\mathbb{L}}^{-1} D_X \\right)^{\\frac{1}{\\theta}}$",
+            "$\\lfloor L \\rfloor + t\\lfloor X \\rfloor + D_L \\left( I + t\\frac{\\theta}{2} D_L^{-1} D_X \\right)^{\\frac{2}{\\theta}}$"
           ],
           [
-            "$\\rielog_{L}(K)$",
-            "$\\trilK - \\trilL + \\bbL \\log (\\bbL^{-1} \\bbK )$",
-            "$\\trilK-\\trilL + \\frac{1}{\\theta} \\bbL \\left[ \\left( \\bbL^{-1}\\bbK \\right)^{\\theta}- I \\right]$",
-            "$\\trilK-\\trilL + \\frac{2}{\\theta}\\bbL \\left[ \\left(\\bbL^{-1} \\bbK \\right)^{\\frac{\\theta}{2}}-I \\right]$"
+            "$\\operatorname{Log}_{L}(K)$",
+            "$\\lfloor K \\rfloor - \\lfloor L \\rfloor + D_L \\log (D_L^{-1} D_K )$",
+            "$\\lfloor K \\rfloor-\\lfloor L \\rfloor + \\frac{1}{\\theta} D_L \\left[ \\left( D_L^{-1}D_K \\right)^{\\theta}- I \\right]$",
+            "$\\lfloor K \\rfloor-\\lfloor L \\rfloor + \\frac{2}{\\theta}D_L \\left[ \\left(D_L^{-1} D_K \\right)^{\\frac{\\theta}{2}}-I \\right]$"
           ],
           [
-            "$\\pt{L}{K}(X)$",
-            "$\\trilX + (\\bbL^{-1} \\bbK) \\bbX$",
-            "$\\trilX + \\left( \\bbL^{-1} \\bbK \\right)^{1-\\theta}\\bbX$",
-            "$\\trilX + \\left( \\bbL^{-1} \\bbK \\right)^{1-\\frac{\\theta}{2}}\\bbX$"
+            "$\\Gamma_{L \\to K}(X)$",
+            "$\\lfloor X \\rfloor + (D_L^{-1} D_K) D_X$",
+            "$\\lfloor X \\rfloor + \\left( D_L^{-1} D_K \\right)^{1-\\theta}D_X$",
+            "$\\lfloor X \\rfloor + \\left( D_L^{-1} D_K \\right)^{1-\\frac{\\theta}{2}}D_X$"
           ],
           [
-            "$\\dist^2(L,K)$",
-            "$\\fnorm{\\trilK - \\trilL }^2 + \\fnorm{\\log(\\bbK) - \\log(\\bbL)}^2$",
-            "$\\fnorm{\\trilK - \\trilL }^2 + \\frac{1}{\\theta^2} \\fnorm{\\bbK^\\theta-\\bbL^\\theta}^2$",
-            "$\\fnorm{\\trilK - \\trilL}^2 + \\frac{1}{\\theta^2} \\fnorm{ \\bbM^{-\\frac{1}{2}} \\left( \\bbK^\\frac{\\theta}{2}-\\bbL^\\frac{\\theta}{2} \\right)}^2$"
+            "$\\operatorname{dist}^2(L,K)$",
+            "$\\|\\lfloor K \\rfloor - \\lfloor L \\rfloor \\|_{\\mathrm{F}}^2 + \\|\\log(D_K) - \\log(D_L)\\|_{\\mathrm{F}}^2$",
+            "$\\|\\lfloor K \\rfloor - \\lfloor L \\rfloor \\|_{\\mathrm{F}}^2 + \\frac{1}{\\theta^2} \\|D_K^\\theta-D_L^\\theta\\|_{\\mathrm{F}}^2$",
+            "$\\|\\lfloor K \\rfloor - \\lfloor L \\rfloor\\|_{\\mathrm{F}}^2 + \\frac{1}{\\theta^2} \\| D_M^{-\\frac{1}{2}} \\left( D_K^\\frac{\\theta}{2}-D_L^\\frac{\\theta}{2} \\right)\\|_{\\mathrm{F}}^2$"
           ],
           [
-            "$\\wfm(\\{w_i\\},\\{L_i\\})$",
-            "$\\sum_{i}w_i \\trilLi + \\exp \\left ( \\sum_i w_i \\log(\\bbL_{i}) \\right)$",
-            "$\\sum_{i}w_i \\trilLi + \\left ( \\sum_i w_i \\bbL_{i}^\\theta \\right)^\\frac{1}{\\theta}$",
-            "$\\sum_{i}w_i \\trilLi + \\left ( \\sum_i w_i \\bbL_{i}^\\frac{\\theta}{2} \\right)^\\frac{2}{\\theta}$"
+            "$\\operatorname{WFM}(\\{w_i\\},\\{L_i\\})$",
+            "$\\sum_{i}w_i \\lfloor L_i \\rfloor + \\exp \\left ( \\sum_i w_i \\log({\\mathbb{L}}_{i}) \\right)$",
+            "$\\sum_{i}w_i \\lfloor L_i \\rfloor + \\left ( \\sum_i w_i {\\mathbb{L}}_{i}^\\theta \\right)^\\frac{1}{\\theta}$",
+            "$\\sum_{i}w_i \\lfloor L_i \\rfloor + \\left ( \\sum_i w_i {\\mathbb{L}}_{i}^\\frac{\\theta}{2} \\right)^\\frac{2}{\\theta}$"
           ],
           [
             "$L \\oplus K$",
-            "$\\trilL + \\trilK + \\bbL\\bbK$",
-            "$\\trilL + \\trilK + \\left(\\bbL^\\theta + \\bbK^\\theta -I \\right)^\\frac{1}{\\theta}$",
-            "$\\trilL + \\trilK + \\left(\\bbL^\\frac{\\theta}{2} + \\bbK^\\frac{\\theta}{2} -I \\right)^\\frac{2}{\\theta}$"
+            "$\\lfloor L \\rfloor + \\lfloor K \\rfloor + {\\mathbb{L}}{\\mathbb{K}}$",
+            "$\\lfloor L \\rfloor + \\lfloor K \\rfloor + \\left(D_L^\\theta + D_K^\\theta -I \\right)^\\frac{1}{\\theta}$",
+            "$\\lfloor L \\rfloor + \\lfloor K \\rfloor + \\left(D_L^\\frac{\\theta}{2} + D_K^\\frac{\\theta}{2} -I \\right)^\\frac{2}{\\theta}$"
           ],
           [
             "$t \\odot L$",
-            "$t\\trilL + \\bbL^t$",
-            "$t\\trilL + \\left(t\\bbL^\\theta + (1-t)I \\right)^\\frac{1}{\\theta}$",
-            "$t\\trilL + \\left(t\\bbL^\\frac{\\theta}{2} + (1-t)I \\right)^\\frac{2}{\\theta}$"
+            "$t\\lfloor L \\rfloor + D_L^t$",
+            "$t\\lfloor L \\rfloor + \\left(tD_L^\\theta + (1-t)I \\right)^\\frac{1}{\\theta}$",
+            "$t\\lfloor L \\rfloor + \\left(tD_L^\\frac{\\theta}{2} + (1-t)I \\right)^\\frac{2}{\\theta}$"
           ]
         ],
         "source": "arXiv:2407.02607 (.tar.gz e-print)"
@@ -6095,60 +6095,60 @@
           ],
           [
             "",
-            "$\\LTone{n} = \\LTzero{n} + I_n$",
-            "$\\Theta : C \\in \\cor{n} \\longmapsto \\bbD(\\chol(C))^{-1} \\chol(C) \\in \\LTone{n}$",
+            "$\\mathcal{L}_{1}^{n} = \\mathcal{L}_{0}^{n} + I_n$",
+            "$\\Theta : C \\in \\mathcal{C}_{++}^{n} \\longmapsto \\operatorname{Diag}(\\operatorname{Chol}(C))^{-1} \\operatorname{Chol}(C) \\in \\mathcal{L}_{1}^{n}$",
             ""
           ],
           [
-            "$\\Theta^{-1} = \\coropt \\circ \\chol^{-1} : \\LTone{n} \\longrightarrow \\cor{n}$",
+            "$\\Theta^{-1} = \\operatorname{Cor} \\circ \\operatorname{Chol}^{-1} : \\mathcal{L}_{1}^{n} \\longrightarrow \\mathcal{C}_{++}^{n}$",
             "Null curvature",
             "",
             ""
           ],
           [
             "",
-            "$\\LTzero{n}$",
-            "$\\log \\circ \\Theta: \\cor{n} \\longrightarrow \\LTzero{n}$",
+            "$\\mathcal{L}_{0}^{n}$",
+            "$\\log \\circ \\Theta: \\mathcal{C}_{++}^{n} \\longrightarrow \\mathcal{L}_{0}^{n}$",
             ""
           ],
           [
-            "$(\\log \\circ \\Theta)^{-1} = \\coropt \\circ \\chol^{-1} \\circ \\exp: \\LTzero{n} \\longrightarrow \\cor{n}$",
+            "$(\\log \\circ \\Theta)^{-1} = \\operatorname{Cor} \\circ \\operatorname{Chol}^{-1} \\circ \\exp: \\mathcal{L}_{0}^{n} \\longrightarrow \\mathcal{C}_{++}^{n}$",
             "Null curvature",
             "",
             ""
           ],
           [
             "",
-            "$\\hol{n}$",
-            "$\\offlog: C \\in \\cor{n} \\longmapsto \\off \\circ \\log(C) \\in \\hol{n}$",
+            "$\\mathcal{H}_{0}^{n}$",
+            "$\\operatorname{Log}^{\\mathrm{OL}}: C \\in \\mathcal{C}_{++}^{n} \\longmapsto \\operatorname{Off} \\circ \\log(C) \\in \\mathcal{H}_{0}^{n}$",
             ""
           ],
           [
-            "$(\\offlog) ^{-1} = \\offexp: H \\in \\hol{n} \\longmapsto \\exp ( \\dplus(H) + H ) \\in \\cor{n}$",
+            "$(\\operatorname{Log}^{\\mathrm{OL}}) ^{-1} = \\operatorname{Exp}^{\\mathrm{OL}}: H \\in \\mathcal{H}_{0}^{n} \\longmapsto \\exp ( \\mathcal{D}_{+}(H) + H ) \\in \\mathcal{C}_{++}^{n}$",
             "Permutation-invariance",
             "",
             ""
           ],
           [
             "",
-            "$\\rzero{n}$",
-            "$\\logscaled: C \\in \\cor{n} \\longmapsto \\log ( \\dstar (C) C \\dstar (C)) \\in \\rzero{n}$",
+            "$\\mathcal{R}_{0}^{n}$",
+            "$\\operatorname{Log}^{\\mathrm{LS}}: C \\in \\mathcal{C}_{++}^{n} \\longmapsto \\log ( \\mathcal{D}_{*} (C) C \\mathcal{D}_{*} (C)) \\in \\mathcal{R}_{0}^{n}$",
             ""
           ],
           [
-            "$(\\logscaled)^{-1} = \\expscaled: R \\in \\rzero{n} \\longmapsto \\coropt(\\exp(R)) \\in \\cor{n}$",
+            "$(\\operatorname{Log}^{\\mathrm{LS}})^{-1} = \\operatorname{Exp}^{\\mathrm{LS}}: R \\in \\mathcal{R}_{0}^{n} \\longmapsto \\operatorname{Cor}(\\exp(R)) \\in \\mathcal{C}_{++}^{n}$",
             "Permutation-invariance",
             "",
             ""
           ],
           [
             "",
-            "$\\bbPHS{n-1}$",
-            "$\\chol: \\cor{n} \\longrightarrow \\calL{n} \\cong \\bbPHS{n-1}$",
+            "$\\mathcal{P}\\mathcal{H}\\mathcal{S}^{n-1}$",
+            "$\\operatorname{Chol}: \\mathcal{C}_{++}^{n} \\longrightarrow \\mathcal{L}{n} \\cong \\mathcal{P}\\mathcal{H}\\mathcal{S}^{n-1}$",
             ""
           ],
           [
-            "$\\chol^{-1}: \\calL{n} \\cong \\bbPHS{n-1} \\longrightarrow \\cor{n}$",
+            "$\\operatorname{Chol}^{-1}: \\mathcal{L}{n} \\cong \\mathcal{P}\\mathcal{H}\\mathcal{S}^{n-1} \\longrightarrow \\mathcal{C}_{++}^{n}$",
             "Nonpositive",
             "",
             ""
@@ -6157,7 +6157,7 @@
         "source": "arXiv:2605.19073 (.tar.gz e-print)"
       },
       {
-        "caption": "Riemannian operators under the non-permutation-invariant log-Euclidean Metrics. Here, $C, C' \\in \\cor{n}$ are correlation matrices and $V,W \\in T_C \\cor{n} \\cong \\hol{n}$ are tangent vectors. Although the inner product $\\inner{\\cdot}{\\cdot}$ could be any Euclidean inner product, this paper focuses on the canonical one.",
+        "caption": "Riemannian operators under the non-permutation-invariant log-Euclidean Metrics. Here, $C, C' \\in \\mathcal{C}_{++}^{n}$ are correlation matrices and $V,W \\in T_C \\mathcal{C}_{++}^{n} \\cong \\mathcal{H}_{0}^{n}$ are tangent vectors. Although the inner product $\\langle \\cdot, \\cdot \\rangle$ could be any Euclidean inner product, this paper focuses on the canonical one.",
         "rows": [
           [
             "Operation",
@@ -6166,16 +6166,16 @@
           ],
           [
             "$g_{C}(V,W)$",
-            "$\\inner{\\Theta_{*, C}(V)}{\\Theta_{*, C}(W)}$",
-            "$\\inner{(\\log \\circ \\Theta)_{*, C}(V)}{(\\log \\circ \\Theta)_{*, C}(W)}$"
+            "$\\langle \\Theta_{*, C}(V), \\Theta_{*, C}(W) \\rangle$",
+            "$\\langle (\\log \\circ \\Theta)_{*, C}(V), (\\log \\circ \\Theta)_{*, C}(W) \\rangle$"
           ],
           [
-            "$\\rieexp_C(V)$",
+            "$\\operatorname{Exp}_C(V)$",
             "$\\Theta^{-1}\\left(\\Theta\\left(C\\right) + \\Theta_{*, C} \\left( V\\right)\\right)$",
             "$(\\log \\circ \\Theta)^{-1}\\left(\\log \\circ \\Theta\\left(C\\right) + (\\log \\circ \\Theta)_{*, C} \\left( V \\right) \\right)$"
           ],
           [
-            "$\\rielog_C(C')$",
+            "$\\operatorname{Log}_C(C')$",
             "$\\Theta^{-1}_{{*, \\Theta(C)}}\\left(\\Theta\\left(C'\\right) - \\Theta\\left(C\\right)\\right)$",
             "$(\\log \\circ \\Theta)^{-1}_{{*, \\log \\circ \\Theta(C)}}\\left(\\log \\circ \\Theta\\left(C'\\right) - \\log \\circ \\Theta\\left(C\\right)\\right)$"
           ],
@@ -6185,9 +6185,9 @@
             "$(\\log \\circ \\Theta)^{-1}\\left(\\left(1 - t\\right)\\log \\circ \\Theta\\left(C\\right) + t\\log \\circ \\Theta\\left(C'\\right)\\right)$"
           ],
           [
-            "$\\dist(C, C')$",
-            "$\\norm{ \\Theta\\left(C\\right) - \\Theta\\left(C'\\right) }$",
-            "$\\norm{ \\log \\circ \\Theta\\left(C\\right) - \\log \\circ \\Theta\\left(C'\\right) }$"
+            "$\\operatorname{dist}(C, C')$",
+            "$\\| \\Theta\\left(C\\right) - \\Theta\\left(C'\\right) \\|$",
+            "$\\| \\log \\circ \\Theta\\left(C\\right) - \\log \\circ \\Theta\\left(C'\\right) \\|$"
           ],
           [
             "Fr\u00e9chet mean",
@@ -6200,7 +6200,7 @@
             "$0$"
           ],
           [
-            "$\\pt{C}{C'} (V)$",
+            "$\\Gamma_{C \\to C'} (V)$",
             "$\\left(\\Theta_{*, C'} \\right)^{-1}\\left(\\Theta_{*, C} \\left(V\\right)\\right)$",
             "$\\left((\\log \\circ \\Theta)_{*, C'}\\right)^{-1}\\left((\\log \\circ \\Theta)_{*, C} \\left(V\\right)\\right)$"
           ]
@@ -6217,33 +6217,33 @@
           ],
           [
             "$g_{C}(V,W)$",
-            "$\\holinner{\\offlog_{*, C}(V)}{\\offlog_{*, C}(W)}$",
-            "$\\rzeroinner{\\logscaled_{*, C}(V)}{\\logscaled_{*, C}(W)}$"
+            "$\\langle \\operatorname{Log}^{\\mathrm{OL}}_{*, C}(V), \\operatorname{Log}^{\\mathrm{OL}}_{*, C}(W) \\rangle_{\\mathrm{hol}}$",
+            "$\\langle \\operatorname{Log}^{\\mathrm{LS}}_{*, C}(V), \\operatorname{Log}^{\\mathrm{LS}}_{*, C}(W) \\rangle_{\\mathrm{r0}}$"
           ],
           [
-            "$\\rieexp_C(V)$",
-            "$\\offexp\\left(\\offlog\\left(C\\right) + \\offlog_{*, C} \\left( V\\right)\\right)$",
-            "$\\expscaled\\left(\\logscaled\\left(C\\right) + \\logscaled_{*, C} \\left( V \\right) \\right)$"
+            "$\\operatorname{Exp}_C(V)$",
+            "$\\operatorname{Exp}^{\\mathrm{OL}}\\left(\\operatorname{Log}^{\\mathrm{OL}}\\left(C\\right) + \\operatorname{Log}^{\\mathrm{OL}}_{*, C} \\left( V\\right)\\right)$",
+            "$\\operatorname{Exp}^{\\mathrm{LS}}\\left(\\operatorname{Log}^{\\mathrm{LS}}\\left(C\\right) + \\operatorname{Log}^{\\mathrm{LS}}_{*, C} \\left( V \\right) \\right)$"
           ],
           [
-            "$\\rielog_C(C')$",
-            "$\\offexp_{{*, \\offlog(C)}}\\left(\\offlog\\left(C'\\right) - \\offlog\\left(C\\right)\\right)$",
-            "$\\expscaled_{{*, \\logscaled(C)}}\\left(\\logscaled\\left(C'\\right) - \\logscaled\\left(C\\right)\\right)$"
+            "$\\operatorname{Log}_C(C')$",
+            "$\\operatorname{Exp}^{\\mathrm{OL}}_{{*, \\operatorname{Log}^{\\mathrm{OL}}(C)}}\\left(\\operatorname{Log}^{\\mathrm{OL}}\\left(C'\\right) - \\operatorname{Log}^{\\mathrm{OL}}\\left(C\\right)\\right)$",
+            "$\\operatorname{Exp}^{\\mathrm{LS}}_{{*, \\operatorname{Log}^{\\mathrm{LS}}(C)}}\\left(\\operatorname{Log}^{\\mathrm{LS}}\\left(C'\\right) - \\operatorname{Log}^{\\mathrm{LS}}\\left(C\\right)\\right)$"
           ],
           [
             "$\\gamma(t;C,C')$",
-            "$\\offexp\\left(\\left(1 - t\\right)\\offlog\\left(C\\right) + t\\offlog\\left(C'\\right)\\right)$",
-            "$\\expscaled\\left(\\left(1 - t\\right)\\logscaled\\left(C\\right) + t\\logscaled\\left(C'\\right)\\right)$"
+            "$\\operatorname{Exp}^{\\mathrm{OL}}\\left(\\left(1 - t\\right)\\operatorname{Log}^{\\mathrm{OL}}\\left(C\\right) + t\\operatorname{Log}^{\\mathrm{OL}}\\left(C'\\right)\\right)$",
+            "$\\operatorname{Exp}^{\\mathrm{LS}}\\left(\\left(1 - t\\right)\\operatorname{Log}^{\\mathrm{LS}}\\left(C\\right) + t\\operatorname{Log}^{\\mathrm{LS}}\\left(C'\\right)\\right)$"
           ],
           [
-            "$\\dist(C, C')$",
-            "$\\holnorm{ \\offlog\\left(C\\right) - \\offlog\\left(C'\\right) }$",
-            "$\\rzeronorm{ \\logscaled\\left(C\\right) - \\logscaled\\left(C'\\right) }$"
+            "$\\operatorname{dist}(C, C')$",
+            "$\\| \\operatorname{Log}^{\\mathrm{OL}}\\left(C\\right) - \\operatorname{Log}^{\\mathrm{OL}}\\left(C'\\right) \\|_{\\mathrm{hol}}$",
+            "$\\| \\operatorname{Log}^{\\mathrm{LS}}\\left(C\\right) - \\operatorname{Log}^{\\mathrm{LS}}\\left(C'\\right) \\|_{\\mathrm{r0}}$"
           ],
           [
             "Fr\u00e9chet mean",
-            "$\\offexp\\left(\\frac{1}{k} \\sum_{i=1}^{k} \\offlog\\left(C_i\\right)\\right)$",
-            "$\\expscaled\\left(\\frac{1}{k} \\sum_{i=1}^{k} \\logscaled\\left(C_i\\right)\\right)$"
+            "$\\operatorname{Exp}^{\\mathrm{OL}}\\left(\\frac{1}{k} \\sum_{i=1}^{k} \\operatorname{Log}^{\\mathrm{OL}}\\left(C_i\\right)\\right)$",
+            "$\\operatorname{Exp}^{\\mathrm{LS}}\\left(\\frac{1}{k} \\sum_{i=1}^{k} \\operatorname{Log}^{\\mathrm{LS}}\\left(C_i\\right)\\right)$"
           ],
           [
             "Curvature",
@@ -6251,9 +6251,9 @@
             "$0$"
           ],
           [
-            "$\\pt{C}{C'} (V)$",
-            "$\\left(\\offlog_{*, C'} \\right)^{-1}\\left(\\offlog_{*, C} \\left(V\\right)\\right)$",
-            "$\\left(\\logscaled_{*, C'}\\right)^{-1}\\left(\\logscaled_{*, C} \\left(V\\right)\\right)$"
+            "$\\Gamma_{C \\to C'} (V)$",
+            "$\\left(\\operatorname{Log}^{\\mathrm{OL}}_{*, C'} \\right)^{-1}\\left(\\operatorname{Log}^{\\mathrm{OL}}_{*, C} \\left(V\\right)\\right)$",
+            "$\\left(\\operatorname{Log}^{\\mathrm{LS}}_{*, C'}\\right)^{-1}\\left(\\operatorname{Log}^{\\mathrm{LS}}_{*, C} \\left(V\\right)\\right)$"
           ],
           [
             "Properties",
@@ -6269,7 +6269,7 @@
         "source": "arXiv:2605.19073 (.tar.gz e-print)"
       },
       {
-        "caption": "Summary of $v_k(C)$ in $c$-class correlation MLR layers, where $k$ denotes the $k$-th class and $C \\in \\cor{n}$ is the input correlation matrix.",
+        "caption": "Summary of $v_k(C)$ in $c$-class correlation MLR layers, where $k$ denotes the $k$-th class and $C \\in \\mathcal{C}_{++}^{n}$ is the input correlation matrix.",
         "rows": [
           [
             "Metric",
@@ -6279,39 +6279,39 @@
           ],
           [
             "ECM",
-            "$\\displaystyle \\inner{\\tril{\\Theta(C)}}{\\tril{Z_k}} - \\gamma_{k} \\norm{\\tril{Z_k}}$",
-            "$\\{Z_k \\in \\hol{n}, \\gamma_{k} \\in \\bbRscalar\\}_{k=1}^{c}$",
+            "$\\displaystyle \\langle \\mathcal{L}_{++}^{\\Theta(C)}, \\mathcal{L}_{++}^{Z_k} \\rangle - \\gamma_{k} \\|\\mathcal{L}_{++}^{Z_k}\\|$",
+            "$\\{Z_k \\in \\mathcal{H}_{0}^{n}, \\gamma_{k} \\in \\mathbb{R}\\}_{k=1}^{c}$",
             "thm:cormlr"
           ],
           [
             "LECM",
-            "$\\displaystyle \\inner{\\log \\circ \\Theta(C)}{\\tril{Z_k}} - \\gamma_{k} \\norm{\\tril{Z_k}}$",
-            "$\\{Z_k \\in \\hol{n}, \\gamma_{k} \\in \\bbRscalar\\}_{k=1}^{c}$",
+            "$\\displaystyle \\langle \\log \\circ \\Theta(C), \\mathcal{L}_{++}^{Z_k} \\rangle - \\gamma_{k} \\|\\mathcal{L}_{++}^{Z_k}\\|$",
+            "$\\{Z_k \\in \\mathcal{H}_{0}^{n}, \\gamma_{k} \\in \\mathbb{R}\\}_{k=1}^{c}$",
             "thm:cormlr"
           ],
           [
             "OLM",
-            "$\\displaystyle \\inner{\\offlog(C)}{Z_k} - \\gamma_{k} \\norm{Z_k}$",
-            "$\\{Z_k \\in \\hol{n}, \\gamma_{k} \\in \\bbRscalar\\}_{k=1}^{c}$",
+            "$\\displaystyle \\langle \\operatorname{Log}^{\\mathrm{OL}}(C), Z_k \\rangle - \\gamma_{k} \\|Z_k\\|$",
+            "$\\{Z_k \\in \\mathcal{H}_{0}^{n}, \\gamma_{k} \\in \\mathbb{R}\\}_{k=1}^{c}$",
             "thm:cormlr"
           ],
           [
             "LSM",
-            "$\\displaystyle \\inner{\\logscaled(C)}{\\logscaled_{*,I}(Z_k)} - \\gamma_{k} \\norm{\\logscaled_{*,I}(Z_k)}$",
-            "$\\{Z_k \\in \\hol{n}, \\gamma_{k} \\in \\bbRscalar\\}_{k=1}^{c}$",
+            "$\\displaystyle \\langle \\operatorname{Log}^{\\mathrm{LS}}(C), \\operatorname{Log}^{\\mathrm{LS}}_{*,I}(Z_k) \\rangle - \\gamma_{k} \\|\\operatorname{Log}^{\\mathrm{LS}}_{*,I}(Z_k)\\|$",
+            "$\\{Z_k \\in \\mathcal{H}_{0}^{n}, \\gamma_{k} \\in \\mathbb{R}\\}_{k=1}^{c}$",
             "thm:cormlr"
           ],
           [
             "PHCM",
-            "$\\Psi \\circ \\chol \\rightarrow$ $\\beta$-concat $\\rightarrow$ Poincar\u00e9 $v_{k}(x)$",
-            "$\\left \\{z_k \\in \\bbR{\\frac{n(n-1)}{2}}, \\gamma_k \\in \\bbRscalar\\right \\}_{k=1}^{c}$",
+            "$\\Psi \\circ \\operatorname{Chol} \\rightarrow$ $\\beta$-concat $\\rightarrow$ Poincar\u00e9 $v_{k}(x)$",
+            "$\\left \\{z_k \\in \\mathbb{R}{\\frac{n(n-1)}{2}}, \\gamma_k \\in \\mathbb{R}\\right \\}_{k=1}^{c}$",
             "eq:cor_to_ppb,eq:poincare_mlr_v_k,app:eq:poincare-beta-concat"
           ]
         ],
         "source": "arXiv:2605.19073 (.tar.gz e-print)"
       },
       {
-        "caption": "Summary of correlation FC layers, $\\calF: \\cor{n} \\ni C \\mapsto Y \\in \\cor{m}$. Each $v^{g}_{ij}$ with $g \\in \\{\\EC,\\LEC,\\OL,\\LS\\}$ is defined by app:tab:summary_corr_mlr.",
+        "caption": "Summary of correlation FC layers, $\\mathcal{F}: \\mathcal{C}_{++}^{n} \\ni C \\mapsto Y \\in \\mathcal{C}_{++}^{m}$. Each $v^{g}_{ij}$ with $g \\in \\{\\mathrm{EC},\\mathrm{LEC},\\mathrm{OL},\\mathrm{LS}\\}$ is defined by app:tab:summary_corr_mlr.",
         "rows": [
           [
             "Metric",
@@ -6321,48 +6321,48 @@
           ],
           [
             "ECM",
-            "$\\displaystyle Y = \\covtocor \\circ \\chol^{-1}\\left(V^{\\EC} + I_m\\right)$",
+            "$\\displaystyle Y = \\operatorname{Cor} \\circ \\operatorname{Chol}^{-1}\\left(V^{\\mathrm{EC}} + I_m\\right)$",
             "",
             ""
           ],
           [
-            "$ V^ _ij = cases v^ _ij(C),",
+            "V^ _ij =  v^ _ij(C),",
             "i>j,",
             "",
             ""
           ],
           [
             "0,",
-            "otherwise cases$",
-            "$\\{Z_{ij} \\in \\hol{n}, \\gamma_{ij} \\in \\bbRscalar\\}_{1 \\leq j < i \\leq m}$",
+            "otherwise",
+            "$\\{Z_{ij} \\in \\mathcal{H}_{0}^{n}, \\gamma_{ij} \\in \\mathbb{R}\\}_{1 \\leq j < i \\leq m}$",
             "thm:flat_cor_fc"
           ],
           [
             "LECM",
-            "$\\displaystyle Y = \\covtocor \\circ \\chol^{-1} \\circ \\exp\\left(V^{\\LEC}\\right)$",
+            "$\\displaystyle Y = \\operatorname{Cor} \\circ \\operatorname{Chol}^{-1} \\circ \\exp\\left(V^{\\mathrm{LEC}}\\right)$",
             "",
             ""
           ],
           [
-            "$ V^ _ij = cases v^ _ij(C),",
+            "V^ _ij =  v^ _ij(C),",
             "i>j,",
             "",
             ""
           ],
           [
             "0,",
-            "otherwise cases$",
-            "$\\{Z_{ij} \\in \\hol{n}, \\gamma_{ij} \\in \\bbRscalar\\}_{1 \\leq j < i \\leq m}$",
+            "otherwise",
+            "$\\{Z_{ij} \\in \\mathcal{H}_{0}^{n}, \\gamma_{ij} \\in \\mathbb{R}\\}_{1 \\leq j < i \\leq m}$",
             "thm:flat_cor_fc"
           ],
           [
             "OLM",
-            "$\\displaystyle Y = \\offexp\\left(V^{\\OL}\\right)$",
+            "$\\displaystyle Y = \\operatorname{Exp}^{\\mathrm{OL}}\\left(V^{\\mathrm{OL}}\\right)$",
             "",
             ""
           ],
           [
-            "$ V^ _ij = cases v^ _ij(C) 2,",
+            "V^ _ij =  v^ _ij(C) 2,",
             "i>j,",
             "",
             ""
@@ -6375,18 +6375,18 @@
           ],
           [
             "0,",
-            "otherwise cases$",
-            "$\\{Z_{ij} \\in \\hol{n}, \\gamma_{ij} \\in \\bbRscalar\\}_{1 \\leq j < i \\leq m}$",
+            "otherwise",
+            "$\\{Z_{ij} \\in \\mathcal{H}_{0}^{n}, \\gamma_{ij} \\in \\mathbb{R}\\}_{1 \\leq j < i \\leq m}$",
             "thm:flat_cor_fc"
           ],
           [
             "LSM",
-            "$\\displaystyle Y = \\covtocor \\circ \\exp\\left(V^{\\LS}\\right)$",
+            "$\\displaystyle Y = \\operatorname{Cor} \\circ \\exp\\left(V^{\\mathrm{LS}}\\right)$",
             "",
             ""
           ],
           [
-            "$ V^ _ij = cases v^ _ij(C) 6,",
+            "V^ _ij =  v^ _ij(C) 6,",
             "m>i>j 1,",
             "",
             ""
@@ -6411,19 +6411,19 @@
           ],
           [
             "_k=1^m-1 _l=1^m-1 V^ _lk,",
-            "i=j=m cases$",
-            "$\\{Z_{ij} \\in \\hol{n}, \\gamma_{ij} \\in \\bbRscalar\\}_{1 \\leq j \\leq i \\leq m-1}$",
+            "i=j=m",
+            "$\\{Z_{ij} \\in \\mathcal{H}_{0}^{n}, \\gamma_{ij} \\in \\mathbb{R}\\}_{1 \\leq j \\leq i \\leq m-1}$",
             "thm:flat_cor_fc"
           ],
           [
             "PHCM",
-            "$\\Psi \\circ \\chol \\rightarrow$ $\\beta$-concat $\\rightarrow$ Poincar\u00e9 FC",
+            "$\\Psi \\circ \\operatorname{Chol} \\rightarrow$ $\\beta$-concat $\\rightarrow$ Poincar\u00e9 FC",
             "",
             ""
           ],
           [
-            "$\\beta$-split $\\rightarrow (\\Psi \\circ \\chol)^{-1}$",
-            "$\\left \\{z_k \\in \\bbR{\\frac{n(n-1)}{2}}, \\gamma_k \\in \\bbRscalar\\right \\}_{k=1}^{\\nicefrac{m(m-1)}{2}}$",
+            "$\\beta$-split $\\rightarrow (\\Psi \\circ \\operatorname{Chol})^{-1}$",
+            "$\\left \\{z_k \\in \\mathbb{R}{\\frac{n(n-1)}{2}}, \\gamma_k \\in \\mathbb{R}\\right \\}_{k=1}^{\\tfrac{m(m-1)}{2}}$",
             "eq:cor_to_ppb,app:eq:pball-fc,app:eq:poincare-beta-concat",
             ""
           ]
@@ -6636,7 +6636,7 @@
             "FPHA"
           ],
           [
-            "$\\spd{n}$",
+            "$\\mathcal{S}_{++}^{n}$",
             "SPDNet",
             "93.25 $\\pm$ 1.10",
             "64.57 $\\pm$ 0.61",
@@ -6734,7 +6734,7 @@
             "84.29 $\\pm$ 0.14"
           ],
           [
-            "$\\cor{n}$",
+            "$\\mathcal{C}_{++}^{n}$",
             "HilightColorCorNet-ECM",
             "HilightColor97.71 $\\pm$ 0.61",
             "HilightColor81.35 $\\pm$ 1.27",
@@ -7184,18 +7184,18 @@
         "rows": [
           [
             "Space",
-            "Euclidean $\\bbR{n}$",
-            "Correlation $\\cor{n}$"
+            "Euclidean $\\mathbb{R}^{n}$",
+            "Correlation $\\mathcal{C}_{++}^{n}$"
           ],
           [
             "$c$-class MLR",
-            "$f: \\bbR{n} \\ni x \\mapsto p = \\mathrm{Softmax}(Ax + b) \\in \\bbR{c}$",
-            "$f: \\cor{n} \\ni C \\mapsto p \\in \\bbR{c}$"
+            "$f: \\mathbb{R}^{n} \\ni x \\mapsto p = \\mathrm{Softmax}(Ax + b) \\in \\mathbb{R}^{c}$",
+            "$f: \\mathcal{C}_{++}^{n} \\ni C \\mapsto p \\in \\mathbb{R}^{c}$"
           ],
           [
             "FC layer",
-            "$\\calF: \\bbR{n} \\ni x \\mapsto y = Ax + b \\in \\bbR{m}$",
-            "$\\calF: \\cor{n} \\ni C \\mapsto Y \\in \\cor{m}$"
+            "$\\mathcal{F}: \\mathbb{R}^{n} \\ni x \\mapsto y = Ax + b \\in \\mathbb{R}^{m}$",
+            "$\\mathcal{F}: \\mathcal{C}_{++}^{n} \\ni C \\mapsto Y \\in \\mathcal{C}_{++}^{m}$"
           ],
           [
             "Convolution",
@@ -7341,20 +7341,20 @@
             "Explanation"
           ],
           [
-            "$\\{\\calN, g^\\calN\\}$",
-            "Riemannian manifold $\\calN$ with Riemannian metric $g^\\calN$"
+            "$\\{\\mathcal{N}, g^\\mathcal{N}\\}$",
+            "Riemannian manifold $\\mathcal{N}$ with Riemannian metric $g^\\mathcal{N}$"
           ],
           [
-            "$\\{\\calM, g^\\calM\\}$",
-            "Riemannian manifold $\\calM$ with Riemannian metric $g^\\calM$"
+            "$\\{\\mathcal{M}, g^\\mathcal{M}\\}$",
+            "Riemannian manifold $\\mathcal{M}$ with Riemannian metric $g^\\mathcal{M}$"
           ],
           [
             "$E$",
             "Origin of the manifold of interest"
           ],
           [
-            "$T_P\\calM$",
-            "Tangent space at $P \\in \\calM$"
+            "$T_P\\mathcal{M}$",
+            "Tangent space at $P \\in \\mathcal{M}$"
           ],
           [
             "$g_p(\\cdot ,\\cdot)$ or $\\langle \\cdot, \\cdot \\rangle_P$",
@@ -7362,70 +7362,70 @@
           ],
           [
             "$\\| \\cdot \\|_P$",
-            "The norm induced by $\\langle \\cdot, \\cdot \\rangle_P$ on $T_P\\calM$"
+            "The norm induced by $\\langle \\cdot, \\cdot \\rangle_P$ on $T_P\\mathcal{M}$"
           ],
           [
-            "$\\dist(X,Y)$",
+            "$\\operatorname{dist}(X,Y)$",
             "Geodesic distance between points $X$ and $Y$"
           ],
           [
-            "$\\dist(X,H)$",
+            "$\\operatorname{dist}(X,H)$",
             "Point-to-hyperplane pseudo-distance from $X$ to $H$"
           ],
           [
-            "$\\rielog_P$",
+            "$\\operatorname{Log}_P$",
             "Riemannian logarithm at $P$"
           ],
           [
-            "$\\rieexp_P$",
+            "$\\operatorname{Exp}_P$",
             "Riemannian exponential map at $P$"
           ],
           [
-            "$\\pt{P}{Q}$",
+            "$\\Gamma_{P \\to Q}$",
             "Parallel transport from $P$ to $Q$ along the geodesic"
           ],
           [
             "$f_{*,P}$",
-            "Differential map of the smooth map $f$ at $P \\in \\calM$"
+            "Differential map of the smooth map $f$ at $P \\in \\mathcal{M}$"
           ],
           [
             "$\\{B_i\\}_{i=1}^m$",
-            "Standard orthonormal basis over the $m$-dimensional $T_E\\calM$"
+            "Standard orthonormal basis over the $m$-dimensional $T_E\\mathcal{M}$"
           ],
           [
-            "$\\pball{n}, \\klein{n}$ and $\\bbh{n}$",
+            "$\\mathbb{B}_{K}^{n}, \\mathbb{K}_{K}^{n}$ and $\\mathbb{H}_{K}^{n}$",
             "Hyperbolic models of Poincar\u00e9 ball, Beltrami--Klein, and hyperboloid ($K<0$)"
           ],
           [
-            "$\\bbR{n}$",
+            "$\\mathbb{R}^{n}$",
             "Euclidean space of $n$-dimensional vectors"
           ],
           [
-            "$\\Linner{\\cdot}{\\cdot}$",
+            "$\\langle \\cdot, \\cdot \\rangle_{\\mathcal{L}}$",
             "Lorentz inner product"
           ],
           [
-            "$\\Moplus$ and $\\Motimes$",
+            "$\\oplus_{\\mathcal{M}}$ and $\\otimes_{\\mathcal{M}}$",
             "M\u00f6bius gyro addition and scalar product"
           ],
           [
-            "$\\Eoplus$ and $\\Eotimes$",
+            "$\\oplus_{\\mathrm{E}}$ and $\\otimes_{\\mathrm{E}}$",
             "Einstein gyro addition and scalar product"
           ],
           [
-            "$\\pi_{\\klein{n} \\to \\pball{n}}$ and $\\pi_{\\pball{n} \\to \\klein{n}}$",
+            "$\\pi_{\\mathbb{K}_{K}^{n} \\to \\mathbb{B}_{K}^{n}}$ and $\\pi_{\\mathbb{B}_{K}^{n} \\to \\mathbb{K}_{K}^{n}}$",
             "Riemannian isometries between Beltrami--Klein and Poincar\u00e9 ball"
           ],
           [
-            "$\\spd{n}$",
+            "$\\mathcal{S}_{++}^{n}$",
             "Space of $n \\times n$ SPD matrices"
           ],
           [
-            "$\\sym{n}$",
+            "$\\mathcal{S}^{n}$",
             "Euclidean space of $n \\times n$ symmetric matrices"
           ],
           [
-            "$\\tril{n}$",
+            "$\\mathcal{L}_{++}^{n}$",
             "Euclidean space of $n \\times n$ lower triangular matrices"
           ],
           [
@@ -7434,10 +7434,10 @@
           ],
           [
             "$\\langle \\cdot, \\cdot \\rangle^{(\\alpha, \\beta)}$",
-            "$\\orth{n}$-invariant Euclidean metric on $\\sym{n}$ s.t. $\\min (\\alpha, \\alpha+n \\beta)>0$"
+            "$\\operatorname{SO}(n)$-invariant Euclidean metric on $\\mathcal{S}^{n}$ s.t. $\\min (\\alpha, \\alpha+n \\beta)>0$"
           ],
           [
-            "$\\Fnorm{\\cdot}$",
+            "$\\|\\cdot\\|_{\\mathrm{F}}$",
             "Frobenius Norm"
           ],
           [
@@ -7453,15 +7453,15 @@
             "Matrix power for SPD matrix $P$"
           ],
           [
-            "$\\calL_{P}[\\cdot]$",
-            "Lyapunov operator by $P \\in \\spd{n}$"
+            "$\\mathcal{L}_{P}[\\cdot]$",
+            "Lyapunov operator by $P \\in \\mathcal{S}_{++}^{n}$"
           ],
           [
-            "$\\scrL$",
+            "$\\mathcal{L}$",
             "Cholesky decomposition"
           ],
           [
-            "$\\dlog$",
+            "$\\operatorname{dlog}$",
             "Diagonal element-wise logarithm"
           ],
           [
@@ -7469,11 +7469,11 @@
             "Strictly lower triangular part of a square matrix"
           ],
           [
-            "$\\bbD(\\cdot)$",
+            "$\\operatorname{Diag}(\\cdot)$",
             "A diagonal matrix with diagonal elements from a square matrix"
           ],
           [
-            "$\\grasonb{p,n}$",
+            "$\\operatorname{St}(p,n)$",
             "Grassmannian under the ONB perspective"
           ]
         ],
@@ -7484,38 +7484,38 @@
         "rows": [
           [
             "Operator",
-            "$\\pball{n} =\\left\\{x \\in \\mathbb{R}^{n} \\mid \\norm{x}^2 < -\\frac{1}{K} \\right\\}$",
-            "$\\bbh{n}=\\left\\{x \\in \\mathbb{R}^{n+1} \\mid \\Lnorm{x}^2 = \\frac{1}{K}, x_1 > 0 \\right\\}$,"
+            "$\\mathbb{B}_{K}^{n} =\\left\\{x \\in \\mathbb{R}^{n} \\mid \\|x\\|^2 < -\\frac{1}{K} \\right\\}$",
+            "$\\mathbb{H}_{K}^{n}=\\left\\{x \\in \\mathbb{R}^{n+1} \\mid \\|x\\|_{\\mathcal{L}}^2 = \\frac{1}{K}, x_1 > 0 \\right\\}$,"
           ],
           [
             "$g_x(v,w)$",
-            "$(\\lambda^K_x)^2 \\inner{v}{w}$",
+            "$(\\lambda^K_x)^2 \\langle v, w \\rangle$",
             ""
           ],
           [
             "$\\lambda^K_x =\\frac{2}{\\left(1+K\\|x\\|^2\\right)}$",
-            "$\\Linner{v}{w} = \\sum_{i=2}^{n+1} v_i w_i - v_1 w_1$",
+            "$\\langle v, w \\rangle_{\\mathcal{L}} = \\sum_{i=2}^{n+1} v_i w_i - v_1 w_1$",
             ""
           ],
           [
-            "$\\dist(x,y)$",
-            "$\\frac{2}{\\sqrt{|K|}} \\tanh ^{-1}\\left(\\sqrt{|K|}\\|- x \\Moplus y\\| \\right)$",
-            "$\\frac{1}{\\sqrt{|K|}} \\cosh ^{-1}\\left(K \\Linner{x}{y} \\right)$"
+            "$\\operatorname{dist}(x,y)$",
+            "$\\frac{2}{\\sqrt{|K|}} \\tanh ^{-1}\\left(\\sqrt{|K|}\\|- x \\oplus_{\\mathcal{M}} y\\| \\right)$",
+            "$\\frac{1}{\\sqrt{|K|}} \\cosh ^{-1}\\left(K \\langle x, y \\rangle_{\\mathcal{L}} \\right)$"
           ],
           [
-            "$\\rielog_x (y)$",
-            "$\\frac{2}{\\sqrt{|K|} \\lambda_{x}^K} \\tanh ^{-1}\\left(\\sqrt{|K|}\\left\\|-x \\Moplus y\\right\\| \\right) \\frac{-x \\Moplus y}{\\left\\|-x \\Moplus y\\right\\| }$",
-            "$\\frac{\\cosh^{-1}\\left(K\\langle x, y\\rangle_\\calL \\right)}{\\sinh \\left(\\cosh^{-1}\\left(K\\langle x, y\\rangle_\\calL \\right)\\right)}\\left(y-K\\langle x, y\\rangle_\\calL x\\right)$"
+            "$\\operatorname{Log}_x (y)$",
+            "$\\frac{2}{\\sqrt{|K|} \\lambda_{x}^K} \\tanh ^{-1}\\left(\\sqrt{|K|}\\left\\|-x \\oplus_{\\mathcal{M}} y\\right\\| \\right) \\frac{-x \\oplus_{\\mathcal{M}} y}{\\left\\|-x \\oplus_{\\mathcal{M}} y\\right\\| }$",
+            "$\\frac{\\cosh^{-1}\\left(K\\langle x, y\\rangle_\\mathcal{L} \\right)}{\\sinh \\left(\\cosh^{-1}\\left(K\\langle x, y\\rangle_\\mathcal{L} \\right)\\right)}\\left(y-K\\langle x, y\\rangle_\\mathcal{L} x\\right)$"
           ],
           [
             "$\\Gamma_{x \\rightarrow y} (v)$",
-            "$\\frac{\\lambda_x^K}{\\lambda_y^K} \\gyr[y,-x] v$",
-            "$v-\\frac{K \\langle y, v\\rangle_\\calL}{1+ K \\langle x, y\\rangle_\\calL}(x+y)$"
+            "$\\frac{\\lambda_x^K}{\\lambda_y^K} \\operatorname{gyr}[y,-x] v$",
+            "$v-\\frac{K \\langle y, v\\rangle_\\mathcal{L}}{1+ K \\langle x, y\\rangle_\\mathcal{L}}(x+y)$"
           ],
           [
-            "$\\rieexp_x (v)$",
-            "$x \\Moplus\\left(\\tanh \\left(\\sqrt{|K|} \\frac{\\lambda_x^K\\|v\\|}{2}\\right) \\frac{v}{\\sqrt{|K|}\\|v\\|}\\right)$",
-            "$\\cosh \\left(\\sqrt{|K|} \\Lnorm{v} \\right) x+\\sinh \\left(\\sqrt{|K|} \\Lnorm{v} \\right) \\frac{v}{\\sqrt{|K|} \\Lnorm{v}}$"
+            "$\\operatorname{Exp}_x (v)$",
+            "$x \\oplus_{\\mathcal{M}}\\left(\\tanh \\left(\\sqrt{|K|} \\frac{\\lambda_x^K\\|v\\|}{2}\\right) \\frac{v}{\\sqrt{|K|}\\|v\\|}\\right)$",
+            "$\\cosh \\left(\\sqrt{|K|} \\|v\\|_{\\mathcal{L}} \\right) x+\\sinh \\left(\\sqrt{|K|} \\|v\\|_{\\mathcal{L}} \\right) \\frac{v}{\\sqrt{|K|} \\|v\\|_{\\mathcal{L}}}$"
           ],
           [
             "References",
@@ -7530,23 +7530,23 @@
         "rows": [
           [
             "Operators",
-            "$\\klein{n} = \\{x \\in \\bbR{n} \\mid \\|x\\|^2 < -\\tfrac{1}{K}\\}$"
+            "$\\mathbb{K}_{K}^{n} = \\{x \\in \\mathbb{R}^{n} \\mid \\|x\\|^2 < -\\tfrac{1}{K}\\}$"
           ],
           [
             "$g_x(v,w)$",
-            "$\\frac{\\inner{v}{w}}{1+ K \\norm{x} ^2} - \\frac{K \\inner{x}{v} \\inner{x}{w}}{\\left(1 + K \\norm{x} ^2\\right)^2}$"
+            "$\\frac{\\langle v, w \\rangle}{1+ K \\|x\\| ^2} - \\frac{K \\langle x, v \\rangle \\langle x, w \\rangle}{\\left(1 + K \\|x\\| ^2\\right)^2}$"
           ],
           [
-            "$\\dist(x,y)$",
-            "$\\frac{2}{\\sqrt{-K}} \\tanh^{-1}\\left( \\sqrt{-K} \\frac{\\| -x \\Eoplus y \\|}{1+\\sqrt{1+K\\| -x \\Eoplus y \\|^2}} \\right)$"
+            "$\\operatorname{dist}(x,y)$",
+            "$\\frac{2}{\\sqrt{-K}} \\tanh^{-1}\\left( \\sqrt{-K} \\frac{\\| -x \\oplus_{\\mathrm{E}} y \\|}{1+\\sqrt{1+K\\| -x \\oplus_{\\mathrm{E}} y \\|^2}} \\right)$"
           ],
           [
-            "$\\rieexp_x(v)$",
-            "$x \\Eoplus \\rieexp_{\\bbzero}\\left( \\frac{1}{\\sqrt{1+K\\|x\\|^2}} v - \\frac{K \\langle x,v\\rangle}{(1+\\sqrt{1+K\\|x\\|^2})(1+K\\|x\\|^2)} x \\right)$"
+            "$\\operatorname{Exp}_x(v)$",
+            "$x \\oplus_{\\mathrm{E}} \\operatorname{Exp}_{\\mathbf{0}}\\left( \\frac{1}{\\sqrt{1+K\\|x\\|^2}} v - \\frac{K \\langle x,v\\rangle}{(1+\\sqrt{1+K\\|x\\|^2})(1+K\\|x\\|^2)} x \\right)$"
           ],
           [
-            "$\\rielog_x(y)$",
-            "$\\frac{1}{\\lambda_{\\tilde{x}}^K} (\\pi_{\\pball{n}\\to\\klein{n}})_{*,\\tilde{x}} \\left( \\rielog_{\\bbzero}(-x \\Eoplus y) \\right), \\quad \\tilde{x} = \\pi_{\\klein{n}\\to\\pball{n}}(x)$"
+            "$\\operatorname{Log}_x(y)$",
+            "$\\frac{1}{\\lambda_{\\tilde{x}}^K} (\\pi_{\\mathbb{B}_{K}^{n}\\to\\mathbb{K}_{K}^{n}})_{*,\\tilde{x}} \\left( \\operatorname{Log}_{\\mathbf{0}}(-x \\oplus_{\\mathrm{E}} y) \\right), \\quad \\tilde{x} = \\pi_{\\mathbb{K}_{K}^{n}\\to\\mathbb{B}_{K}^{n}}(x)$"
           ],
           [
             "References",
@@ -7566,12 +7566,12 @@
           ],
           [
             "$g_P(V,W)$",
-            "$\\langle \\log_{*,P} (V), \\log_{*,P} (W) \\rangle^{\\alphabeta}$",
-            "$\\langle P^{-1}V, W P^{-1} \\rangle^{\\alphabeta}$",
-            "$\\frac{1}{\\theta^2}\\langle \\pow_{\\theta*,P} (V), \\pow_{\\theta*,P} (W) \\rangle^{\\alphabeta}$"
+            "$\\langle \\log_{*,P} (V), \\log_{*,P} (W) \\rangle^{(\\alpha,\\beta)}$",
+            "$\\langle P^{-1}V, W P^{-1} \\rangle^{(\\alpha,\\beta)}$",
+            "$\\frac{1}{\\theta^2}\\langle \\operatorname{Pow}_{\\theta*,P} (V), \\operatorname{Pow}_{\\theta*,P} (W) \\rangle^{(\\alpha,\\beta)}$"
           ],
           [
-            "$\\rielog_P Q$",
+            "$\\operatorname{Log}_P Q$",
             "$(\\log_{*,P})^{-1} \\left[ \\log(Q) - \\log(P) \\right]$",
             "$P^{\\frac{1}{2}} \\log \\left(P^{-\\frac{1}{2}} Q P^{-\\frac{1}{2}}\\right) P^{\\frac{1}{2}}$",
             "$(P_{\\theta*,P})^{-1} \\left(Q^\\theta-P^\\theta \\right)$"
@@ -7580,10 +7580,10 @@
             "$\\Gamma_{P \\rightarrow Q} (V)$",
             "$(\\log_{*,Q})^{-1} \\circ \\log_{*,P} (V)$",
             "$(Q P^{-1})^{\\frac{1}{2}} V (P^{-1} Q)^{\\frac{1}{2}}$",
-            "$(\\pow_{\\theta *,Q})^{-1} \\circ \\pow_{\\theta*,P} (V)$"
+            "$(\\operatorname{Pow}_{\\theta *,Q})^{-1} \\circ \\operatorname{Pow}_{\\theta*,P} (V)$"
           ],
           [
-            "$\\rieexp_P(V)$",
+            "$\\operatorname{Exp}_P(V)$",
             "$\\exp \\left( \\log(P) + \\log_{*,P}(V) \\right)$",
             "$P^{\\frac{1}{2}} \\exp \\left(P^{-\\frac{1}{2}} V P^{-\\frac{1}{2}}\\right) P^{\\frac{1}{2}}$",
             "$\\left(P^{\\theta}+ P_{\\theta*,P} (V) \\right)^{\\frac{1}{\\theta}}$"
@@ -7595,14 +7595,14 @@
             ""
           ],
           [
-            "$\\orth{n}$-invariance",
+            "$\\operatorname{SO}(n)$-invariance",
             "Lie group left-invariance",
             "",
             ""
           ],
           [
-            "$\\GL{n}$-invariance",
-            "$\\orth{n}$-invariance",
+            "$\\operatorname{GL}(n)$-invariance",
+            "$\\operatorname{SO}(n)$-invariance",
             "",
             ""
           ],
@@ -7625,28 +7625,28 @@
           ],
           [
             "$g_P(V,W)$",
-            "$\\langle \\lfloor \\widetilde{V} \\rfloor , \\lfloor \\widetilde{W} \\rfloor \\rangle + \\langle \\widetilde{\\bbV}\\widetilde{\\bbL}^{-1}, \\widetilde{\\bbW}\\widetilde{\\bbL}^{-1} \\rangle$",
-            "$\\frac{1}{2} \\langle \\calL_{P}[V], W \\rangle$"
+            "$\\langle \\lfloor \\widetilde{V} \\rfloor , \\lfloor \\widetilde{W} \\rfloor \\rangle + \\langle \\widetilde{D_V}\\widetilde{D_L}^{-1}, \\widetilde{D_W}\\widetilde{D_L}^{-1} \\rangle$",
+            "$\\frac{1}{2} \\langle \\mathcal{L}_{P}[V], W \\rangle$"
           ],
           [
-            "$\\rielog_P Q$",
-            "$(\\chol^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor + \\bbL \\dlog (\\bbL^{-1} \\bbK ) \\right]$",
+            "$\\operatorname{Log}_P Q$",
+            "$(\\operatorname{Chol}^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor + D_L \\operatorname{dlog} (D_L^{-1} D_K ) \\right]$",
             "$(P Q )^{\\frac{1}{2}}+(Q P)^{\\frac{1}{2}} -2 P$"
           ],
           [
             "$\\Gamma_{P \\rightarrow Q} (V)$",
-            "$(\\chol^{-1})_{*, K} \\left[\\lfloor \\widetilde{V} \\rfloor+\\bbK \\bbL^{-1} \\widetilde{\\bbV} \\right]$",
+            "$(\\operatorname{Chol}^{-1})_{*, K} \\left[\\lfloor \\widetilde{V} \\rfloor+D_K D_L^{-1} \\widetilde{D_V} \\right]$",
             "$U\\left[\\sqrt{\\frac{\\delta_i+\\delta_j}{\\sigma_i+\\sigma_j}}\\left[U^{\\top} V U \\right]_{i j}\\right] U^{\\top}$"
           ],
           [
-            "$\\rieexp_P(V)$",
-            "$\\chol^{-1} \\left[ \\lfloor L \\rfloor + \\lfloor \\widetilde{V} \\rfloor + \\bbL \\dexp (\\bbL^{-1} \\widetilde{V} ) \\right]$",
-            "$P + V + \\calL_{P}[V] P \\calL_{P}[V]$"
+            "$\\operatorname{Exp}_P(V)$",
+            "$\\operatorname{Chol}^{-1} \\left[ \\lfloor L \\rfloor + \\lfloor \\widetilde{V} \\rfloor + D_L \\operatorname{dexp} (D_L^{-1} \\widetilde{V} ) \\right]$",
+            "$P + V + \\mathcal{L}_{P}[V] P \\mathcal{L}_{P}[V]$"
           ],
           [
             "Invariance",
             "Lie group bi-invariance",
-            "$\\orth{n}$-invariance"
+            "$\\operatorname{SO}(n)$-invariance"
           ],
           [
             "References",
@@ -7661,16 +7661,16 @@
         "rows": [
           [
             "Operators",
-            "$\\grasonb{p,n}$",
-            "$\\graspp{p,n}$"
+            "$\\operatorname{St}(p,n)$",
+            "$\\operatorname{Gr}(p,n)$"
           ],
           [
             "$g_P(V,W)$",
-            "$\\inner{V}{W}$",
-            "$\\frac{1}{2} \\inner{V}{W}$"
+            "$\\langle V, W \\rangle$",
+            "$\\frac{1}{2} \\langle V, W \\rangle$"
           ],
           [
-            "$\\rielog_P Q$",
+            "$\\operatorname{Log}_P Q$",
             "$O \\arctan(\\Sigma) R^\\top$",
             ""
           ],
@@ -7681,18 +7681,18 @@
           ],
           [
             "$\\Gamma_{P \\rightarrow Q} (V)$",
-            "$ ( ( arraycc P R",
-            "O array ) ( arrayc - ( )"
+            "( (  P R",
+            "O  ) (  - ( )"
           ],
           [
-            "$\\rielog_{P}(Q) \\stackrel{\\mathrm{SVD}}{:=} O \\Sigma R^\\top$",
+            "$\\operatorname{Log}_{P}(Q) \\stackrel{\\mathrm{SVD}}{:=} O \\Sigma R^\\top$",
             "$\\exp(\\left[\\log_{P} (Q), P \\right]) V \\exp (-[\\log_{P} (Q), P])$",
             ""
           ],
           [
-            "$\\rieexp_P V$",
-            "$ ( arraycc P R",
-            "O array ) ( arrayc ( )"
+            "$\\operatorname{Exp}_P V$",
+            "(  P R",
+            "O  ) (  ( )"
           ],
           [
             "$V \\stackrel{\\mathrm{SVD}}{:=} O\\Sigma R^\\top$",
@@ -7720,38 +7720,38 @@
           ],
           [
             "M\u00f6bius",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "Tangent",
-            "$\\rieexp _\\bbzero (M \\rielog _\\bbzero (x))$",
-            "$M \\in \\bbR{m \\times n}$",
+            "$\\operatorname{Exp} _\\mathbf{0} (M \\operatorname{Log} _\\mathbf{0} (x))$",
+            "$M \\in \\mathbb{R}^{m \\times n}$",
             "[Def. 3.2]ganea2018hyperbolic"
           ],
           [
             "Klein",
-            "$\\klein{n}$",
+            "$\\mathbb{K}_{K}^{n}$",
             "Tangent",
-            "$\\rieexp _\\bbzero (M \\rielog _\\bbzero (x))$",
-            "$M \\in \\bbR{m \\times n}$",
+            "$\\operatorname{Exp} _\\mathbf{0} (M \\operatorname{Log} _\\mathbf{0} (x))$",
+            "$M \\in \\mathbb{R}^{m \\times n}$",
             "[Thm. 9]mao2024klein"
           ],
           [
             "LFC",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "Spacetime",
-            "$ [ arrayc \\| W x \\|^2 - 1/K v^ x v^",
+            "[  \\| W x \\|^2 - 1/K v^ x v^",
             "",
             ""
           ],
           [
-            "W array ] x$",
-            "$M \\in \\bbR{m \\times (n+1)}$",
+            "W  ] x",
+            "$M \\in \\mathbb{R}^{m \\times (n+1)}$",
             "",
             "",
             "",
             ""
           ],
           [
-            "$v \\in \\bbR{n+1}$",
+            "$v \\in \\mathbb{R}^{n+1}$",
             "[Sec 3.1]chen2022fully",
             "",
             "",
@@ -7760,14 +7760,14 @@
           ],
           [
             "NestFC",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "Nested projection",
             "$\\displaystyle y=\\frac{Wx}{\\|Wx\\|_L},\\quad WJ_nW^\\top=J_m$",
             "$Q\\in\\mathrm{SO}(n)$",
             ""
           ],
           [
-            "$\\alpha\\in\\bbRscalar$",
+            "$\\alpha\\in\\mathbb{R}$",
             "[Eq. (14) and Sec. 3.3]fan2022nested",
             "",
             "",
@@ -7776,7 +7776,7 @@
           ],
           [
             "Poincar\u00e9 FC",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "Poincar\u00e9",
             "$w\\left(1+\\sqrt{1-K\\|w\\|^2}\\right)^{-1}$",
             "",
@@ -7784,14 +7784,14 @@
           ],
           [
             "$v_k$ is defined by [Eq. (6)]shimizu2021hyperbolic",
-            "$\\{z_i \\in \\bbR{n}\\}_{i=1}^m$",
+            "$\\{z_i \\in \\mathbb{R}^{n}\\}_{i=1}^m$",
             "",
             "",
             "",
             ""
           ],
           [
-            "$\\{\\gamma _i \\in \\bbRscalar \\}_{i=1}^m$",
+            "$\\{\\gamma _i \\in \\mathbb{R} \\}_{i=1}^m$",
             "[Sec. 3.2]shimizu2021hyperbolic",
             "",
             "",
@@ -7800,14 +7800,14 @@
           ],
           [
             "HilightColor Ours",
-            "$\\pball{n}, \\klein{n},\\bbh{n}$",
+            "$\\mathbb{B}_{K}^{n}, \\mathbb{K}_{K}^{n},\\mathbb{H}_{K}^{n}$",
             "Riemannian",
             "app:thm:pball_fc,app:thm:hyperboloid_fc",
-            "$\\{z_i \\in \\bbR{n}\\}_{i=1}^m$",
+            "$\\{z_i \\in \\mathbb{R}^{n}\\}_{i=1}^m$",
             ""
           ],
           [
-            "$\\{\\gamma _i \\in \\bbRscalar \\}_{i=1}^m$",
+            "$\\{\\gamma _i \\in \\mathbb{R} \\}_{i=1}^m$",
             "app:thm:pball_fc,app:thm:hyperboloid_fc",
             "",
             "",
@@ -7828,55 +7828,55 @@
           ],
           [
             "M\u00f6bius",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm$"
           ],
           [
             "Einstein",
-            "$\\klein{n}$",
+            "$\\mathbb{K}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm$"
           ],
           [
             "LorentzTan",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm$"
           ],
           [
             "LFC",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "$O(Bnm)$",
             "$m(n+1)+m+(n+1)+2$"
           ],
           [
             "NestFC",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "$\\underline{O(n^3+Bn^2)}$",
             "$\\underline{\\frac{n(n-1)}{2}+mn-\\frac{m(m+1)}{2}+1}$"
           ],
           [
             "Poincar\u00e9 FC",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm+m$"
           ],
           [
             "HilightColor HFC-P",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm+m$"
           ],
           [
             "HilightColor HFC-K",
-            "$\\klein{n}$",
+            "$\\mathbb{K}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm+m$"
           ],
           [
             "HilightColor HFC-H",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "$O(Bnm)$",
             "$nm+m$"
           ]
@@ -8577,7 +8577,7 @@
           [
             "M\u00f6bius",
             "Tangent",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "76.73 $\\pm$ 4.86",
             "464",
             "77.20",
@@ -8594,7 +8594,7 @@
           [
             "Einstein",
             "Tangent",
-            "$\\klein{n}$",
+            "$\\mathbb{K}_{K}^{n}$",
             "77.34 $\\pm$ 2.56",
             "464",
             "77.32",
@@ -8611,7 +8611,7 @@
           [
             "LorentzTan",
             "Tangent",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "76.54 $\\pm$ 0.83",
             "464",
             "82.03",
@@ -8628,7 +8628,7 @@
           [
             "LFC",
             "Spacetime",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "78.00 $\\pm$ 0.60",
             "563",
             "77.28",
@@ -8645,7 +8645,7 @@
           [
             "NestFC",
             "Nested projection",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "71.30 $\\pm$ 3.50",
             "<u>811</u>",
             "78.35",
@@ -8662,7 +8662,7 @@
           [
             "Poincar\u00e9 FC",
             "Riemannian",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "79.19 $\\pm$ 2.05",
             "528",
             "78.72",
@@ -8679,7 +8679,7 @@
           [
             "HilightColor HFC-P",
             "Riemannian",
-            "$\\pball{n}$",
+            "$\\mathbb{B}_{K}^{n}$",
             "80.66 $\\pm$ 1.35",
             "496",
             "83.42",
@@ -8696,7 +8696,7 @@
           [
             "HilightColor HFC-K",
             "Riemannian",
-            "$\\klein{n}$",
+            "$\\mathbb{K}_{K}^{n}$",
             "80.58 $\\pm$ 1.59",
             "496",
             "85.10",
@@ -8713,7 +8713,7 @@
           [
             "HilightColor HFC-H",
             "Riemannian",
-            "$\\bbh{n}$",
+            "$\\mathbb{H}_{K}^{n}$",
             "82.93 $\\pm$ 0.89",
             "496",
             "<u>89.82</u>",
@@ -9023,31 +9023,31 @@
             "Explanation"
           ],
           [
-            "$\\{\\calM , g \\}$ or abbreviated as $\\calM$",
+            "$\\{\\mathcal{M} , g \\}$ or abbreviated as $\\mathcal{M}$",
             "A Riemannian manifold"
           ],
           [
-            "$T_P\\calM$",
-            "The tangent space at $P \\in \\calM$"
+            "$T_P\\mathcal{M}$",
+            "The tangent space at $P \\in \\mathcal{M}$"
           ],
           [
             "$g_p(\\cdot ,\\cdot)$ or $\\langle \\cdot, \\cdot \\rangle_P$",
-            "The Riemannian metric at $P \\in \\calM$"
+            "The Riemannian metric at $P \\in \\mathcal{M}$"
           ],
           [
             "$\\| \\cdot \\|_P$",
-            "The norm induced by $\\langle \\cdot, \\cdot \\rangle_P$ on $T_P\\calM$"
+            "The norm induced by $\\langle \\cdot, \\cdot \\rangle_P$ on $T_P\\mathcal{M}$"
           ],
           [
-            "$\\rielog_P$",
+            "$\\operatorname{Log}_P$",
             "The Riemannian logarithmic map at $P$"
           ],
           [
-            "$\\rieexp_P$",
+            "$\\operatorname{Exp}_P$",
             "The Riemannian exponential map at $P$"
           ],
           [
-            "$\\pt{P_1}{P_2}$",
+            "$\\Gamma_{P_1 \\to P_2}$",
             "The Riemannian parallel transportation along the geodesic connecting $P_1$ and $P_2$"
           ],
           [
@@ -9063,7 +9063,7 @@
             "A Lie group operation"
           ],
           [
-            "$\\{\\calM, \\odot\\}$",
+            "$\\{\\mathcal{M}, \\odot\\}$",
             "A Lie group"
           ],
           [
@@ -9072,22 +9072,22 @@
           ],
           [
             "$L_P$",
-            "The Lie group left translation by $P \\in \\calM$"
+            "The Lie group left translation by $P \\in \\mathcal{M}$"
           ],
           [
             "$f_{*,P}$",
-            "The differential map of the smooth map $f$ at $P \\in \\calM$"
+            "The differential map of the smooth map $f$ at $P \\in \\mathcal{M}$"
           ],
           [
             "$f^*g$",
             "The pullback metric by $f$ from $g$"
           ],
           [
-            "$\\spd{n}$",
+            "$\\mathcal{S}_{++}^{n}$",
             "The SPD manifold"
           ],
           [
-            "$\\sym{n}$",
+            "$\\mathcal{S}^{n}$",
             "The Euclidean space of symmetric matrices"
           ],
           [
@@ -9095,27 +9095,27 @@
             "The standard Frobenius inner product"
           ],
           [
-            "$\\| \\cdot \\|_\\rmF$",
+            "$\\| \\cdot \\|_\\mathrm{F}$",
             "The standard Frobenius norm"
           ],
           [
-            "$\\bfst$",
-            "$\\bfst = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
+            "$\\Delta_{\\alpha,\\beta}$",
+            "$\\Delta_{\\alpha,\\beta} = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
           ],
           [
-            "$\\langle \\cdot, \\cdot \\rangle^{\\alphabeta}$",
-            "The $\\orth{n}$-invariant Euclidean inner product"
+            "$\\langle \\cdot, \\cdot \\rangle^{(\\alpha,\\beta)}$",
+            "The $\\operatorname{SO}(n)$-invariant Euclidean inner product"
           ],
           [
-            "$\\mlog$",
+            "$\\log$",
             "Matrix logarithm"
           ],
           [
-            "$\\chol$",
+            "$\\operatorname{Chol}$",
             "Cholesky decomposition"
           ],
           [
-            "$\\dlog(\\cdot)$",
+            "$\\operatorname{dlog}(\\cdot)$",
             "The diagonal element-wise logarithm"
           ],
           [
@@ -9123,7 +9123,7 @@
             "The strictly lower triangular part of a square matrix"
           ],
           [
-            "$\\bbD(\\cdot)$",
+            "$\\operatorname{Diag}(\\cdot)$",
             "A diagonal matrix with diagonal elements from a square matrix"
           ],
           [
@@ -9349,31 +9349,31 @@
           [
             "Parallelly moving",
             "$V \\rightarrow V$",
-            "$\\pt{x}{y}(V)$"
+            "$\\Gamma_{x \\to y}(V)$"
           ]
         ],
         "source": "arXiv:2609.35436 & arXiv:2305.11288 (.tar.gz e-prints)"
       },
       {
-        "caption": "Riemannian operators of $\\biparamLEM$ and LCM on SPD manifolds.",
+        "caption": "Riemannian operators of $g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$ and LCM on SPD manifolds.",
         "rows": [
           [
             "Name",
             "$g_P(V,W)$",
-            "$\\rielog_P Q$",
+            "$\\operatorname{Log}_P Q$",
             "$\\Gamma_{P \\rightarrow Q} (V)$"
           ],
           [
-            "$\\biparamLEM$",
-            "$\\langle \\mlog_{*,P} (V), \\mlog_{*,P} (W) \\rangle^{\\alphabeta}$",
-            "$(\\mlog_{*,P})^{-1} \\left[ \\mlog(Q) - \\mlog(P) \\right]$",
-            "$(\\mlog_{*,Q})^{-1} \\circ \\mlog_{*,P} (V)$"
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$",
+            "$\\langle \\log_{*,P} (V), \\log_{*,P} (W) \\rangle^{(\\alpha,\\beta)}$",
+            "$(\\log_{*,P})^{-1} \\left[ \\log(Q) - \\log(P) \\right]$",
+            "$(\\log_{*,Q})^{-1} \\circ \\log_{*,P} (V)$"
           ],
           [
             "LCM",
             "$\\sum_{i>j} \\tilde{V}_{i j} \\tilde{W}_{i j}+\\sum_{j=1}^n \\tilde{V}_{j j} \\tilde{W}_{j j} L_{j j}^{-2}$",
-            "$(\\chol^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+\\bbD(L) \\dlog (\\bbD(L)^{-1} \\bbD(K)) \\right]$",
-            "$(\\chol^{-1})_{*, K} \\left[\\lfloor \\tilde{V} \\rfloor+\\bbD(K) \\bbD(L)^{-1} \\bbD(\\tilde{V}) \\right]$"
+            "$(\\operatorname{Chol}^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+\\operatorname{Diag}(L) \\operatorname{dlog} (\\operatorname{Diag}(L)^{-1} \\operatorname{Diag}(K)) \\right]$",
+            "$(\\operatorname{Chol}^{-1})_{*, K} \\left[\\lfloor \\tilde{V} \\rfloor+\\operatorname{Diag}(K) \\operatorname{Diag}(L)^{-1} \\operatorname{Diag}(\\tilde{V}) \\right]$"
           ]
         ],
         "source": "arXiv:2609.35436 & arXiv:2305.11288 (.tar.gz e-prints)"
@@ -13311,14 +13311,14 @@
         "caption": "Basic operators based on the BWM .",
         "rows": [
           [
-            "minipage $ arrayrcl g_ X_1^BW( S_1, S_2)",
+            "g_ X_1^BW( S_1, S_2)",
             "=",
-            "12tr ($ L$_ X_1( S_1) S_2 )"
+            "12tr ($L$_ X_1( S_1) S_2 )"
           ],
           [
             "",
             "=",
-            "12vec( S_1)^T( X_1 X_1)^-1vec( S_2) array $ minipage"
+            "12vec( S_1)^T( X_1 X_1)^-1vec( S_2)"
           ]
         ],
         "source": "arXiv:2504.00660 (.tar.gz e-print)"
@@ -13864,7 +13864,7 @@
     ],
     "imported_tables": [
       {
-        "caption": "Results of iSQRT-COV on four datasets with different covariance matrix classifiers. The backbone network on ImageNet is ResNet-18, while the one on the other three FGVC datasets is ResNet-50. Power is set to be $\\nicefrac{1}{2}$ for Pow-TMLR, ScalePow-EMLR and Pow-EMLR.",
+        "caption": "Results of iSQRT-COV on four datasets with different covariance matrix classifiers. The backbone network on ImageNet is ResNet-18, while the one on the other three FGVC datasets is ResNet-50. Power is set to be $\\tfrac{1}{2}$ for Pow-TMLR, ScalePow-EMLR and Pow-EMLR.",
         "rows": [
           [
             "Classifier",
@@ -14043,7 +14043,7 @@
         "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
       },
       {
-        "caption": "Intrinsic explanations of some classifiers for GCP. For Cho-TMLR, $\\tilde{L}=\\chol(S^\\theta)$. For Pow-TMLR, $\\theta_0=\\frac{\\theta_1+\\theta_2}{2}$ for $\\MPEM$, $\\theta_0=\\theta$ for $\\triparamEM$, $\\theta_0=2\\theta$ for $\\paramBWM$ and $(2\\theta,\\phi_{2\\theta}(S))\\text{-BWM}$. Here, $\\fsoftmax(\\cdot)$ denotes the softmax, $\\calF(\\cdot)$ denotes the FC layer, and $\\tilde{V} = \\frac{1}{\\theta}\\left[\\lfloor \\tilde{L} \\rfloor + \\lfloor \\tilde{L} \\rfloor^\\top + 2\\dlog(\\bbD(\\tilde{L})) \\right]$ with $S^{\\theta}= \\tilde{L}\\tilde{L}^\\top$ as the Cholesky decomposition.",
+        "caption": "Intrinsic explanations of some classifiers for GCP. For Cho-TMLR, $\\tilde{L}=\\operatorname{Chol}(S^\\theta)$. For Pow-TMLR, $\\theta_0=\\frac{\\theta_1+\\theta_2}{2}$ for $\\mathrm{MPEM}$, $\\theta_0=\\theta$ for $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$, $\\theta_0=2\\theta$ for $g_{\\mathrm{BWM}}$ and $(2\\theta,\\phi_{2\\theta}(S))\\text{-BWM}$. Here, $\\operatorname{Softmax}(\\cdot)$ denotes the softmax, $\\mathcal{F}(\\cdot)$ denotes the FC layer, and $\\tilde{V} = \\frac{1}{\\theta}\\left[\\lfloor \\tilde{L} \\rfloor + \\lfloor \\tilde{L} \\rfloor^\\top + 2\\operatorname{dlog}(\\operatorname{Diag}(\\tilde{L})) \\right]$ with $S^{\\theta}= \\tilde{L}\\tilde{L}^\\top$ as the Cholesky decomposition.",
         "rows": [
           [
             "",
@@ -14055,15 +14055,15 @@
           ],
           [
             "Expression",
-            "$\\fsoftmax\\left(\\calF \\left(f_{\\mathrm{vec}}\\left(\\mlog(S) \\right) \\right)\\right)$",
-            "$\\fsoftmax\\left(\\calF \\left(f_{\\mathrm{vec}}\\left(S^\\theta \\right) \\right)\\right)$",
+            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(\\log(S) \\right) \\right)\\right)$",
+            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(S^\\theta \\right) \\right)\\right)$",
             "",
             "",
             ""
           ],
           [
             "($\\theta>0$)",
-            "$\\fsoftmax\\left(\\calF \\left(f_{\\mathrm{vec}}\\left(\\frac{1}{\\theta}S^\\theta \\right) \\right)\\right)$",
+            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(\\frac{1}{\\theta}S^\\theta \\right) \\right)\\right)$",
             "",
             "",
             "",
@@ -14071,8 +14071,8 @@
           ],
           [
             "($\\theta>0$)",
-            "$\\fsoftmax\\left(\\calF \\left(f_{\\mathrm{vec}}\\left(\\frac{1}{\\theta_0}(S^{\\theta_0}-I) \\right) \\right)\\right)$",
-            "$\\fsoftmax\\left(\\calF \\left(f_{\\mathrm{vec}}\\left( \\tilde{V} \\right) \\right)\\right)$",
+            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(\\frac{1}{\\theta_0}(S^{\\theta_0}-I) \\right) \\right)\\right)$",
+            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left( \\tilde{V} \\right) \\right)\\right)$",
             "",
             "",
             ""
@@ -14090,12 +14090,12 @@
             "LEM",
             "$(\\theta,1,0)$-EM",
             "$(\\theta,1,0)$-EM",
-            "$\\triparamEM$, $\\MPEM$,",
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$, $\\mathrm{MPEM}$,",
             ""
           ],
           [
-            "$\\paramBWM$, $(2\\theta,\\phi_{2\\theta}(S))\\text{-BWM}$",
-            "$\\paramLCM$",
+            "$g_{\\mathrm{BWM}}$, $(2\\theta,\\phi_{2\\theta}(S))\\text{-BWM}$",
+            "$g_{\\mathrm{LCM}}$",
             "",
             "",
             "",
@@ -14129,36 +14129,36 @@
         "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
       },
       {
-        "caption": "$\\rielog_I$ under seven families of metrics. $\\theta_0=\\frac{\\theta_1+\\theta_2}{2}$ for $\\MPEM$, $\\theta_0=\\theta$ for $\\triparamEM$ and $\\paramBWM$, and $(2\\theta,\\phi_{2\\theta}(P))\\text{-BWM}$.",
+        "caption": "$\\operatorname{Log}_I$ under seven families of metrics. $\\theta_0=\\frac{\\theta_1+\\theta_2}{2}$ for $\\mathrm{MPEM}$, $\\theta_0=\\theta$ for $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$ and $g_{\\mathrm{BWM}}$, and $(2\\theta,\\phi_{2\\theta}(P))\\text{-BWM}$.",
         "rows": [
           [
             "Metric",
-            "$\\rielog_{I}P$",
+            "$\\operatorname{Log}_{I}P$",
             "Metric",
-            "$\\rielog_{I}P$"
+            "$\\operatorname{Log}_{I}P$"
           ],
           [
-            "$\\biparamLEM$",
-            "$\\mlog(P)$",
-            "$\\triparamEM$",
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$",
+            "$\\log(P)$",
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$",
             "$\\frac{1}{\\theta_0}(P^{\\theta_0}-I)$"
           ],
           [
-            "$\\triparamAIM$",
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$",
             "",
-            "$\\MPEM$",
+            "$\\mathrm{MPEM}$",
             ""
           ],
           [
-            "$\\paramLCM$",
-            "$\\frac{1}{\\theta}\\left[\\lfloor \\tilde{L} \\rfloor + \\lfloor \\tilde{L} \\rfloor^\\top + 2\\dlog(\\bbD(\\tilde{L})) \\right]$",
-            "$\\paramBWM$",
+            "$g_{\\mathrm{LCM}}$",
+            "$\\frac{1}{\\theta}\\left[\\lfloor \\tilde{L} \\rfloor + \\lfloor \\tilde{L} \\rfloor^\\top + 2\\operatorname{dlog}(\\operatorname{Diag}(\\tilde{L})) \\right]$",
+            "$g_{\\mathrm{BWM}}$",
             ""
           ],
           [
             "",
             "",
-            "$\\powPGBWM$",
+            "$g_{\\mathrm{GBW}}$",
             ""
           ]
         ],
@@ -14206,31 +14206,31 @@
             "Explanation"
           ],
           [
-            "$\\spd{n}$",
+            "$\\mathcal{S}_{++}^{n}$",
             "The SPD manifold"
           ],
           [
-            "$\\sym{n}$",
+            "$\\mathcal{S}^{n}$",
             "The Euclidean space of symmetric matrices"
           ],
           [
-            "$\\tril{n}$",
+            "$\\mathcal{L}_{++}^{n}$",
             "The Euclidean space of $n \\times n$ lower triangular matrices"
           ],
           [
-            "$T_P\\spd{n}$",
-            "The tangent space at $P \\in \\spd{n}$"
+            "$T_P\\mathcal{S}_{++}^{n}$",
+            "The tangent space at $P \\in \\mathcal{S}_{++}^{n}$"
           ],
           [
             "$g_P(\\cdot ,\\cdot)$ or $\\langle \\cdot, \\cdot \\rangle_P$",
-            "The Riemannian metric at $P \\in \\spd{n}$"
+            "The Riemannian metric at $P \\in \\mathcal{S}_{++}^{n}$"
           ],
           [
             "$\\langle \\cdot, \\cdot \\rangle$ or $\\cdot : \\cdot$",
             "The standard Frobenius inner product"
           ],
           [
-            "$\\rielog_P$",
+            "$\\operatorname{Log}_P$",
             "The Riemannian logarithm at $P$"
           ],
           [
@@ -14239,74 +14239,74 @@
           ],
           [
             "$f_{*,P}$",
-            "The differential map of $f$ at $P \\in \\spd{n}$"
+            "The differential map of $f$ at $P \\in \\mathcal{S}_{++}^{n}$"
           ],
           [
             "$f^*g$",
             "The pullback metric by $f$ from $g$"
           ],
           [
-            "$\\ad(\\cdot)$",
+            "$\\operatorname{ad}(\\cdot)$",
             "The adjoint operator of linear maps"
           ],
           [
-            "$\\bfst$",
-            "$\\bfst = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
+            "$\\Delta_{\\alpha,\\beta}$",
+            "$\\Delta_{\\alpha,\\beta} = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
           ],
           [
-            "$\\langle \\cdot, \\cdot \\rangle^{\\alphabeta}$",
-            "The $\\orth{n}$-invariant Euclidean inner product"
+            "$\\langle \\cdot, \\cdot \\rangle^{(\\alpha,\\beta)}$",
+            "The $\\operatorname{SO}(n)$-invariant Euclidean inner product"
           ],
           [
-            "$\\gbiparamLE$",
-            "The Riemannian metric of $\\biparamLEM$"
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{LE}}$",
+            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$"
           ],
           [
-            "$\\gbiparamAI$",
-            "The Riemannian metric of $\\biparamAIM$"
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{AI}}$",
+            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{AIM}}$"
           ],
           [
-            "$\\gtriparamAI$",
-            "The Riemannian metric of $\\triparamAIM$"
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$",
+            "The Riemannian metric of $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$"
           ],
           [
-            "$\\gbiparamE$",
-            "The Riemannian metric of $\\biparamEM$"
+            "$g^{(\\alpha,\\beta)}_{\\mathrm{E}}$",
+            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{EM}}$"
           ],
           [
-            "$\\gtriparamE$",
-            "The Riemannian metric of $\\triparamEM$"
+            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$",
+            "The Riemannian metric of $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$"
           ],
           [
-            "$\\gMPE$",
-            "The Riemannian metric of $\\MPEM$"
+            "$g^{\\mathrm{MPE}}$",
+            "The Riemannian metric of $\\mathrm{MPEM}$"
           ],
           [
-            "$\\gBW$",
+            "$g^{\\mathrm{BW}}$",
             "The Riemannian metric of BWM"
           ],
           [
-            "$\\gGBW$",
-            "The Riemannian metric of $\\GBWM$"
+            "$g^{\\mathrm{GBW}}$",
+            "The Riemannian metric of $\\mathrm{GBWM}$"
           ],
           [
-            "$\\gparamGBW$",
-            "The Riemannian metric of $\\biparamBWM$"
+            "$g_{\\mathrm{GBW}}$",
+            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{BWM}}$"
           ],
           [
-            "$\\gLC$",
+            "$g^{\\mathrm{LC}}$",
             "The Riemannian metric of LCM"
           ],
           [
-            "$\\gparamLC$",
-            "The Riemannian metric of $\\paramLCM$"
+            "$g_{\\mathrm{LCM}}$",
+            "The Riemannian metric of $g_{\\mathrm{LCM}}$"
           ],
           [
-            "$f_{\\mathrm{FC}}$ or $\\calF(\\cdot;A,b)$",
+            "$f_{\\mathrm{FC}}$ or $\\mathcal{F}(\\cdot;A,b)$",
             "The FC layer"
           ],
           [
-            "$\\pow_{\\theta}$ or $(\\cdot)^{\\theta}$",
+            "$\\operatorname{Pow}_{\\theta}$ or $(\\cdot)^{\\theta}$",
             "The matrix power"
           ],
           [
@@ -14318,23 +14318,23 @@
             "A Euclidean classifier"
           ],
           [
-            "$\\mlog$",
+            "$\\log$",
             "The matrix logarithm"
           ],
           [
-            "$\\calL_{P}[\\cdot]$",
+            "$\\mathcal{L}_{P}[\\cdot]$",
             "The Lyapunov operator"
           ],
           [
-            "$\\chol$",
+            "$\\operatorname{Chol}$",
             "The Cholesky decomposition"
           ],
           [
-            "$\\calL_{P,M}[\\cdot]$",
+            "$\\mathcal{L}_{P,M}[\\cdot]$",
             "The generalized Lyapunov operator"
           ],
           [
-            "$\\dlog(\\cdot)$",
+            "$\\operatorname{dlog}(\\cdot)$",
             "The diagonal element-wise logarithm"
           ],
           [
@@ -14440,50 +14440,50 @@
           [
             "Name",
             "Riemannian Metric $g_P(V,W)$",
-            "Riemannian Logarithm $\\rielog_P Q$",
+            "Riemannian Logarithm $\\operatorname{Log}_P Q$",
             "Deformation"
           ],
           [
             "",
-            "$\\langle \\mlog_{*,P} (V), \\mlog_{*,P} (W) \\rangle^{\\alphabeta}$",
-            "$(\\mlog_{*,P})^{-1} \\left[ \\mlog(Q) - \\mlog(P) \\right]$",
-            "$\\frac{1}{\\theta^2}\\pow_{\\theta}^* \\gbiparamLE$"
+            "$\\langle \\log_{*,P} (V), \\log_{*,P} (W) \\rangle^{(\\alpha,\\beta)}$",
+            "$(\\log_{*,P})^{-1} \\left[ \\log(Q) - \\log(P) \\right]$",
+            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{(\\alpha,\\beta)}_{\\mathrm{LE}}$"
           ],
           [
             "",
-            "$\\langle P^{-1}V, W P^{-1} \\rangle^{\\alphabeta}$",
-            "$P^{1 / 2} \\mlog \\left(P^{-1 / 2} Q P^{-1 / 2}\\right) P^{1 / 2}$",
-            "$\\frac{1}{\\theta^2}\\pow_{\\theta}^* \\gbiparamAI$"
+            "$\\langle P^{-1}V, W P^{-1} \\rangle^{(\\alpha,\\beta)}$",
+            "$P^{1 / 2} \\log \\left(P^{-1 / 2} Q P^{-1 / 2}\\right) P^{1 / 2}$",
+            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{(\\alpha,\\beta)}_{\\mathrm{AI}}$"
           ],
           [
             "",
-            "$\\langle V, W \\rangle^{\\alphabeta}$",
+            "$\\langle V, W \\rangle^{(\\alpha,\\beta)}$",
             "$Q-P$",
-            "$\\frac{1}{\\theta^2}\\pow_{\\theta}^* \\gbiparamE$"
+            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{(\\alpha,\\beta)}_{\\mathrm{E}}$"
           ],
           [
             "",
-            "$\\frac{1}{\\theta_1 \\theta_2} \\langle \\pow_{\\theta_1 *,P} (V), \\pow_{\\theta_2 *,P} (W) \\rangle$",
-            "$(\\pow_{\\theta *, P})^{-1} (Q^\\theta -P^\\theta)$, with $\\theta=(\\theta_1+\\theta_2)/2$",
+            "$\\frac{1}{\\theta_1 \\theta_2} \\langle \\operatorname{Pow}_{\\theta_1 *,P} (V), \\operatorname{Pow}_{\\theta_2 *,P} (W) \\rangle$",
+            "$(\\operatorname{Pow}_{\\theta *, P})^{-1} (Q^\\theta -P^\\theta)$, with $\\theta=(\\theta_1+\\theta_2)/2$",
             "N/A"
           ],
           [
             "LCM",
             "$\\sum_{i>j} \\tilde{V}_{i j} \\tilde{W}_{i j}+\\sum_{j=1}^n \\tilde{V}_{j j} \\tilde{W}_{j j} L_{j j}^{-2}$",
-            "$(\\chol^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+\\bbD(L) \\dlog (\\bbD(L)^{-1} \\bbD(K)) \\right]$",
-            "$\\frac{1}{\\theta^2}\\pow_{\\theta}^* \\gLC$"
+            "$(\\operatorname{Chol}^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+\\operatorname{Diag}(L) \\operatorname{dlog} (\\operatorname{Diag}(L)^{-1} \\operatorname{Diag}(K)) \\right]$",
+            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{\\mathrm{LC}}$"
           ],
           [
             "BWM",
-            "$\\frac{1}{2} \\langle \\calL_P[V], W \\rangle$",
+            "$\\frac{1}{2} \\langle \\mathcal{L}_P[V], W \\rangle$",
             "$(P Q)^{1 / 2}+(Q P)^{1 / 2}-2 P$",
-            "$\\frac{1}{4\\theta^2}\\pow_{2\\theta}^* \\gBW$"
+            "$\\frac{1}{4\\theta^2}\\operatorname{Pow}_{2\\theta}^* g^{\\mathrm{BW}}$"
           ],
           [
             "GBWM",
-            "$\\frac{1}{2} \\langle \\calL_{P,M}[V], W \\rangle$",
+            "$\\frac{1}{2} \\langle \\mathcal{L}_{P,M}[V], W \\rangle$",
             "$M\\left(M^{-1} P M^{-1} Q\\right)^{1 / 2}+\\left(Q M^{-1} P M^{-1}\\right)^{1 / 2} M-2 P$",
-            "$\\frac{1}{4\\theta^2}\\pow_{2\\theta}^* \\gGBW$"
+            "$\\frac{1}{4\\theta^2}\\operatorname{Pow}_{2\\theta}^* g^{\\mathrm{GBW}}$"
           ]
         ],
         "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
@@ -15567,7 +15567,7 @@
             "No"
           ],
           [
-            "$W \\in \\calO(n)$",
+            "$W \\in \\mathcal{O}(n)$",
             "Yes",
             "Yes",
             "Yes",

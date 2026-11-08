@@ -1696,18 +1696,188 @@ PDF_EXTRACTED_TABLES: dict[str, list[dict[str, Any]]] = {
 }
 
 
+_CUSTOM_ZERO_ARG_MACROS: dict[str, str] = {
+    "\\spdnetbn": "\\text{SPDNetBN}",
+    "\\spdnet": "\\text{SPDNet}",
+    "\\calM": "\\mathcal{M}",
+    "\\calN": "\\mathcal{N}",
+    "\\calO": "\\mathcal{O}",
+    "\\calL": "\\mathcal{L}",
+    "\\calF": "\\mathcal{F}",
+    "\\scrL": "\\mathcal{L}",
+    "\\bbRplusscalar": "\\mathbb{R}_{>0}",
+    "\\bbRscalar": "\\mathbb{R}",
+    "\\bbD": "\\operatorname{Diag}",
+    "\\bbM": "{\\mathbb{M}}",
+    "\\bbP": "{\\mathbb{P}}",
+    "\\bbV": "{\\mathbb{V}}",
+    "\\bbW": "{\\mathbb{W}}",
+    "\\bbX": "{\\mathbb{X}}",
+    "\\bbY": "{\\mathbb{Y}}",
+    "\\bbK": "{\\mathbb{K}}",
+    "\\bbL": "{\\mathbb{L}}",
+    "\\bbzero": "{\\mathbf{0}}",
+    "\\trilK": "\\lfloor K \\rfloor",
+    "\\trilL": "\\lfloor L \\rfloor",
+    "\\trilLi": "\\lfloor L_i \\rfloor",
+    "\\trilX": "\\lfloor X \\rfloor",
+    "\\trilY": "\\lfloor Y \\rfloor",
+    "\\rielog": "\\operatorname{Log}",
+    "\\rieexp": "\\operatorname{Exp}",
+    "\\mlog": "\\log",
+    "\\mexp": "\\exp",
+    "\\dlog": "\\operatorname{dlog}",
+    "\\dexp": "\\operatorname{dexp}",
+    "\\clog": "\\operatorname{clog}",
+    "\\chol": "\\operatorname{Chol}",
+    "\\covtocor": "\\operatorname{Cor}",
+    "\\coropt": "\\operatorname{Cor}",
+    "\\offlog": "\\operatorname{Log}^{\\mathrm{OL}}",
+    "\\offexp": "\\operatorname{Exp}^{\\mathrm{OL}}",
+    "\\off": "\\operatorname{Off}",
+    "\\logscaled": "\\operatorname{Log}^{\\mathrm{LS}}",
+    "\\expscaled": "\\operatorname{Exp}^{\\mathrm{LS}}",
+    "\\dist": "\\operatorname{dist}",
+    "\\fm": "\\operatorname{FM}",
+    "\\wfm": "\\operatorname{WFM}",
+    "\\gyr": "\\operatorname{gyr}",
+    "\\ad": "\\operatorname{ad}",
+    "\\lyp": "\\mathcal{L}",
+    "\\skewtinize": "\\operatorname{skew}",
+    "\\fsoftmax": "\\operatorname{Softmax}",
+    "\\pow": "\\operatorname{Pow}",
+    "\\dpow": "\\operatorname{dPow}",
+    "\\dplus": "\\mathcal{D}_{+}",
+    "\\dstar": "\\mathcal{D}_{*}",
+    "\\rmF": "\\mathrm{F}",
+    "\\alphabeta": "(\\alpha,\\beta)",
+    "\\bfst": "\\Delta_{\\alpha,\\beta}",
+    "\\odotai": "\\odot_{\\mathrm{AI}}",
+    "\\odotle": "\\odot_{\\mathrm{LE}}",
+    "\\odotlc": "\\odot_{\\mathrm{LC}}",
+    "\\Eoplus": "\\oplus_{\\mathrm{E}}",
+    "\\Eotimes": "\\otimes_{\\mathrm{E}}",
+    "\\Moplus": "\\oplus_{\\mathcal{M}}",
+    "\\Motimes": "\\otimes_{\\mathcal{M}}",
+    "\\EC": "\\mathrm{EC}",
+    "\\LEC": "\\mathrm{LEC}",
+    "\\OL": "\\mathrm{OL}",
+    "\\LS": "\\mathrm{LS}",
+    "\\GBWM": "\\mathrm{GBWM}",
+    "\\MPEM": "\\mathrm{MPEM}",
+    "\\gBW": "g^{\\mathrm{BW}}",
+    "\\gGBW": "g^{\\mathrm{GBW}}",
+    "\\gE": "g^{\\mathrm{E}}",
+    "\\gLC": "g^{\\mathrm{LC}}",
+    "\\gMPE": "g^{\\mathrm{MPE}}",
+    "\\biparamAIM": "g^{(\\alpha,\\beta)}_{\\mathrm{AIM}}",
+    "\\biparamLEM": "g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}",
+    "\\biparamBWM": "g^{(\\alpha,\\beta)}_{\\mathrm{BWM}}",
+    "\\biparamEM": "g^{(\\alpha,\\beta)}_{\\mathrm{EM}}",
+    "\\gbiparamAI": "g^{(\\alpha,\\beta)}_{\\mathrm{AI}}",
+    "\\gbiparamai": "g^{(\\alpha,\\beta)}_{\\mathrm{AI}}",
+    "\\gbiparamLE": "g^{(\\alpha,\\beta)}_{\\mathrm{LE}}",
+    "\\gbiparamE": "g^{(\\alpha,\\beta)}_{\\mathrm{E}}",
+    "\\gtriparamAI": "g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}",
+    "\\triparamAIM": "g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}",
+    "\\gtriparamE": "g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}",
+    "\\triparamEM": "g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}",
+    "\\gparamGBW": "g_{\\mathrm{GBW}}",
+    "\\defDGBWM": "g_{\\mathrm{GBW}}",
+    "\\powPGBWM": "g_{\\mathrm{GBW}}",
+    "\\gparamLC": "g_{\\mathrm{LCM}}",
+    "\\paramLCM": "g_{\\mathrm{LCM}}",
+    "\\paramBWM": "g_{\\mathrm{BWM}}",
+    "\\defDBWM": "g_{\\mathrm{BWM}}",
+    "\\defCDBWM": "g_{\\mathrm{BWM}}",
+    "\\defCDEM": "g_{\\mathrm{EM}}",
+    "\\defDPM": "g_{\\mathrm{PM}}",
+}
+
+
+def _expand_custom_tex_macros(inner: str) -> str:
+    """Expand author-defined 2-arg, 1-arg, and 0-arg LaTeX macros into standard KaTeX."""
+    _B = r"\{([^{}]*(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}[^{}]*)*)\}"
+    # Fix any glued tokens from previous pass
+    inner = (
+        inner.replace("T_D_P", "T_{\\mathbb{P}}")
+        .replace("\\thetaD_L", "\\theta {\\mathbb{L}}")
+        .replace("D_L_{i}", "{\\mathbb{L}}_{i}")
+        .replace("\\bbLD_K", "{\\mathbb{L}}{\\mathbb{K}}")
+    )
+    # 2-argument macros
+    two_arg_rules = [
+        (rf"\\Linner{_B}{_B}", r"\\langle \1, \2 \\rangle_{\\mathcal{L}}"),
+        (rf"\\holinner{_B}{_B}", r"\\langle \1, \2 \\rangle_{\\mathrm{hol}}"),
+        (rf"\\rzeroinner{_B}{_B}", r"\\langle \1, \2 \\rangle_{\\mathrm{r0}}"),
+        (rf"\\inner{_B}{_B}", r"\\langle \1, \2 \\rangle"),
+        (rf"\\pt{_B}{_B}", r"\\Gamma_{\1 \\to \2}"),
+        (rf"\\geodesic{_B}{_B}", r"\\gamma_{\1, \2}"),
+        (rf"\\nicefrac{_B}{_B}", r"\\tfrac{\1}{\2}"),
+    ]
+    for _ in range(3):
+        for pat, repl in two_arg_rules:
+            inner = re.sub(pat, repl, inner)
+
+    # 1-argument macros
+    one_arg_rules = [
+        (rf"\\(?:Fnorm|fnorm){_B}", r"\\|\1\\|_{\\mathrm{F}}"),
+        (rf"\\Lnorm{_B}", r"\\|\1\\|_{\\mathcal{L}}"),
+        (rf"\\holnorm{_B}", r"\\|\1\\|_{\\mathrm{hol}}"),
+        (rf"\\rzeronorm{_B}", r"\\|\1\\|_{\\mathrm{r0}}"),
+        (rf"\\norm{_B}", r"\\|\1\\|"),
+        (rf"\\spd{_B}", r"\\mathcal{S}_{++}^{\1}"),
+        (rf"\\sym{_B}", r"\\mathcal{S}^{\1}"),
+        (rf"\\cor{_B}", r"\\mathcal{C}_{++}^{\1}"),
+        (rf"\\(?:tril|chospace){_B}", r"\\mathcal{L}_{++}^{\1}"),
+        (rf"\\(?:stril|LTzero){_B}", r"\\mathcal{L}_{0}^{\1}"),
+        (rf"\\LTone{_B}", r"\\mathcal{L}_{1}^{\1}"),
+        (rf"\\hol{_B}", r"\\mathcal{H}_{0}^{\1}"),
+        (rf"\\rzero{_B}", r"\\mathcal{R}_{0}^{\1}"),
+        (rf"\\(?:orth|so){_B}", r"\\operatorname{SO}(\1)"),
+        (rf"\\soLieAlgebra{_B}", r"\\mathfrak{so}(\1)"),
+        (rf"\\GL{_B}", r"\\operatorname{GL}(\1)"),
+        (rf"\\grasonb{_B}", r"\\operatorname{St}(\1)"),
+        (rf"\\graspp{_B}", r"\\operatorname{Gr}(\1)"),
+        (rf"\\pball{_B}", r"\\mathbb{B}_{K}^{\1}"),
+        (rf"\\klein{_B}", r"\\mathbb{K}_{K}^{\1}"),
+        (rf"\\bbh{_B}", r"\\mathbb{H}_{K}^{\1}"),
+        (rf"\\bbDplus{_B}", r"\\mathcal{D}_{++}^{\1}"),
+        (rf"\\bbPHS{_B}", r"\\mathcal{P}\\mathcal{H}\\mathcal{S}^{\1}"),
+        (rf"\\bbRplus{_B}", r"\\mathbb{R}_{>0}^{\1}"),
+        (rf"\\bbR{_B}", r"\\mathbb{R}^{\1}"),
+    ]
+    for _ in range(3):
+        for pat, repl in one_arg_rules:
+            inner = re.sub(pat, repl, inner)
+
+    # Sort zero-arg macros longest-first so prefix collisions never happen
+    for k in sorted(_CUSTOM_ZERO_ARG_MACROS.keys(), key=len, reverse=True):
+        v = _CUSTOM_ZERO_ARG_MACROS[k]
+        inner = re.sub(rf"{re.escape(k)}(?![a-zA-Z])", lambda _, r=v: r, inner)
+    inner = re.sub(r"\\bbR(?![a-zA-Z])", r"\\mathbb{R}", inner)
+    return inner
+
+
 def _clean_math_segment(m: str) -> str:
     """Clean a LaTeX $...$ segment so KaTeX renders it without unknown-macro errors."""
     inner = m[1:-1].strip()
     if not inner:
         return ""
-    inner = inner.replace("\\spdnetbn", "\\text{SPDNetBN}").replace("\\spdnet", "\\text{SPDNet}")
+    inner = _expand_custom_tex_macros(inner)
     inner = re.sub(r"\\bm\{([^{}]*)\}", r"\\boldsymbol{\1}", inner)
     inner = re.sub(r"\\textbf\{([^{}]*)\}", r"\\mathbf{\1}", inner)
     inner = re.sub(r"\\textit\{([^{}]*)\}", r"\\mathit{\1}", inner)
     inner = re.sub(r"\\emph\{([^{}]*)\}", r"\\mathit{\1}", inner)
     inner = re.sub(r"\\cite[a-zA-Z*]*\{[^}]*\}", "", inner)
     inner = re.sub(r"\\(?:footnotesize|small|scriptsize|tiny|normalsize|large|centering|noindent)", "", inner)
+    # Balance unmatched \{ or \} at segment boundaries when comma-split in source
+    open_b = len(re.findall(r"(?<!\\)\{", inner))
+    close_b = len(re.findall(r"(?<!\\)\}", inner))
+    if open_b > close_b:
+        inner = inner + ("}" * (open_b - close_b))
+    elif close_b > open_b:
+        inner = ("{" * (close_b - open_b)) + inner
     return f"${inner}$"
 
 
@@ -1721,6 +1891,10 @@ def clean_latex_cell(s: str) -> str:
     s = re.sub(r"\\multirow\{\d+\}\{[^}]*\}\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}", r"\1", s)
     s = re.sub(r"\\(?:toprule|midrule|bottomrule|hline|cline\{[^}]*\}|cmidrule(?:\([^)]*\))?\{[^}]*\})", "", s)
 
+    # If a cell has an odd number of unescaped $, close it so it never bleeds across <td> tags
+    if s.count("$") % 2 == 1:
+        s = s + "$"
+
     # Protect $...$ math segments while cleaning outer LaTeX markup
     parts = re.split(r"(\$[^$]+\$)", s)
     out_parts: list[str] = []
@@ -1728,7 +1902,7 @@ def clean_latex_cell(s: str) -> str:
         if part.startswith("$") and part.endswith("$") and len(part) >= 2:
             out_parts.append(_clean_math_segment(part))
             continue
-        p_txt = part
+        p_txt = _expand_custom_tex_macros(part)
         p_txt = re.sub(r"\\textbf\{([^{}]*)\}", r"<strong>\1</strong>", p_txt)
         p_txt = re.sub(r"\\textit\{([^{}]*)\}", r"<em>\1</em>", p_txt)
         p_txt = re.sub(r"\\underline\{([^{}]*)\}", r"<u>\1</u>", p_txt)
@@ -1768,14 +1942,21 @@ def clean_latex_cell(s: str) -> str:
     return " ".join(res.split())
 
 
-
 def parse_tabular_to_rows(raw: str) -> list[list[str]]:
     m = re.search(r"\\begin\{tabular\*?\}(?:\{[^}]*\})?\{[^}]*\}(.*?)\\end\{tabular\*?\}", raw, re.S)
     if not m:
         return []
     body = m.group(1)
     body = re.sub(r"(?<!\\)%.*", "", body)
-    lines = re.split(r"\\\\(?:\[[^\]]*\])?", body)
+
+    # Protect \\ and & inside $...$ math segments (e.g. \begin{cases} or \begin{array})
+    def _protect_math(match: re.Match) -> str:
+        seg = match.group(0)
+        seg = seg.replace("\\\\", "__MATH_ROWSEP__").replace("&", "__MATH_COLSEP__")
+        return seg
+
+    body_protected = re.sub(r"\$[^$]+\$", _protect_math, body)
+    lines = re.split(r"\\\\(?:\[[^\]]*\])?", body_protected)
     rows: list[list[str]] = []
     for ln in lines:
         ln_clean = re.sub(
@@ -1785,7 +1966,11 @@ def parse_tabular_to_rows(raw: str) -> list[list[str]]:
         ).strip()
         if not ln_clean:
             continue
-        cells = [clean_latex_cell(c) for c in ln_clean.split("&")]
+        raw_cells = ln_clean.split("&")
+        cells = [
+            clean_latex_cell(c.replace("__MATH_ROWSEP__", "\\\\").replace("__MATH_COLSEP__", "&"))
+            for c in raw_cells
+        ]
         if any(c for c in cells) and len(cells) >= 2:
             rows.append(cells)
     return rows
@@ -1828,6 +2013,35 @@ def main() -> None:
                 tables_out.append({**t, "source": ARXIV_SOURCE_BADGE[pid]})
         if not tables_out and pid in existing_out:
             tables_out = existing_out[pid].get("imported_tables", [])
+
+        # Normalize all captions and cells in tables_out so custom macros & split math are cleaned
+        cleaned_tables_out: list[dict[str, Any]] = []
+        for t in tables_out:
+            cap_str = str(t.get("caption", ""))
+            cap_parts = re.split(r"(\$[^$]+\$)", cap_str)
+            cap_clean = "".join(
+                _clean_math_segment(cp) if (cp.startswith("$") and cp.endswith("$") and len(cp) >= 2) else _expand_custom_tex_macros(cp)
+                for cp in cap_parts
+            )
+            cleaned_rows: list[list[str]] = []
+            for r in t.get("rows", []):
+                new_r: list[str] = []
+                for cell in r:
+                    c_str = str(cell)
+                    # Fix any split cases/array fragments from earlier tabular splits
+                    if c_str.count("$") % 2 == 1:
+                        c_str = c_str.replace("$", "")
+                    if "cases" in c_str or "array" in c_str:
+                        c_str = re.sub(r"\b(?:cases|array(?:rcl|cc|c)?|minipage)\b", "", c_str).replace("$", "").strip()
+                    c_parts = re.split(r"(\$[^$]+\$)", c_str)
+                    c_clean = "".join(
+                        _clean_math_segment(cp) if (cp.startswith("$") and cp.endswith("$") and len(cp) >= 2) else _expand_custom_tex_macros(cp)
+                        for cp in c_parts
+                    )
+                    new_r.append(c_clean)
+                cleaned_rows.append(new_r)
+            cleaned_tables_out.append({**t, "caption": cap_clean, "rows": cleaned_rows})
+        tables_out = cleaned_tables_out
 
         # 2. Collect curated original PNG figures & clean up unused PNGs in ENCORE_ORIG_DIR / pid
         figs_out = PREFERRED_FIGURES.get(pid, [])
