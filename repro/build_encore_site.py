@@ -245,8 +245,9 @@ def _latexify_plain_segment(seg: str) -> str:
     # Mean +/- Std
     s = re.sub(r"(\d+(?:\.\d+)?)\s*(?:\+/-|±)\s*(\d+(?:\.\d+)?)", r"$\1 \\pm \2$", s)
 
-    # Arrows ->
+    # Arrows -> and inline backtick code `...`
     s = s.replace(" -&gt; ", " $\\to$ ").replace("-&gt;", "$\\to$")
+    s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
     return s
 
 
@@ -272,15 +273,32 @@ _latexify_prose = _esc
 # =============================================================================
 
 
+def _clean_label(text: str, max_len: int) -> str:
+    """Cleanly shorten a title or axis label without ever leaving unmatched parentheses or mid-word chops."""
+    s = str(text).strip()
+    if len(s) <= max_len and s.count("(") == s.count(")"):
+        return s
+    while "(" in s and (len(s) > max_len or s.count("(") != s.count(")")):
+        idx = s.rfind("(")
+        s = s[:idx].rstrip(" ·-—:,")
+    if len(s) <= max_len:
+        return s
+    cut = s[:max_len]
+    if " " in cut and len(s) > max_len and s[max_len] != " ":
+        last_sp = cut.rfind(" ")
+        if last_sp >= max_len // 2:
+            cut = cut[:last_sp].rstrip(" ·-—:,&/")
+    return cut
+
+
 def _format_xtick_svg(cx: float, base_y: float, raw_label: str, slot_w: float) -> str:
-    """Render an x-axis tick label that wraps cleanly onto 2 lines instead of colliding."""
+    """Render an x-axis tick label that wraps cleanly onto 2 lines without colliding or chopping parentheses."""
     lbl = str(raw_label).strip()
-    max_chars = max(5, int(slot_w / 5.5))
-    if len(lbl) <= max_chars:
+    max_chars = max(9, int(slot_w / 4.6))
+    if len(lbl) <= max_chars or (lbl.startswith("(") and lbl.endswith(")") and len(lbl) <= 12):
         return f'<text x="{cx:.1f}" y="{base_y:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(lbl)}</text>'
 
     # Split into 2 balanced lines at ' (', space, '/', or '-'
-    line1, line2 = lbl[:max_chars], lbl[max_chars:]
     if " (" in lbl:
         idx = lbl.index(" (")
         line1, line2 = lbl[:idx].strip(), lbl[idx:].strip()
@@ -292,8 +310,13 @@ def _format_xtick_svg(cx: float, base_y: float, raw_label: str, slot_w: float) -
     elif "/" in lbl:
         idx = lbl.index("/") + 1
         line1, line2 = lbl[:idx], lbl[idx:]
-    line1 = line1[:max_chars]
-    line2 = line2[:max_chars]
+    else:
+        return f'<text x="{cx:.1f}" y="{base_y:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(_clean_label(lbl, max_chars))}</text>'
+
+    line1 = _clean_label(line1, max_chars)
+    line2 = _clean_label(line2, max_chars)
+    if not line2:
+        return f'<text x="{cx:.1f}" y="{base_y:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(line1)}</text>'
     return (
         f'<text x="{cx:.1f}" y="{base_y - 2.5:.1f}" text-anchor="middle" class="svg-tick">'
         f'<tspan x="{cx:.1f}" dy="0">{_esc_svg(line1)}</tspan>'
@@ -315,7 +338,7 @@ def _svg_line_or_bar_panel(
 ) -> str:
     """Render a crisp, responsive, theme-aware SVG chart panel (360x234 viewBox) with zero label collisions."""
     w, h = 360, 234
-    pad_r = 56 if chart_type != "bar" else 18
+    pad_r = 58 if chart_type != "bar" else 18
     pad_l, pad_t, pad_b = 52, 28, 48
     pw = w - pad_l - pad_r
     ph = h - pad_t - pad_b
@@ -352,23 +375,19 @@ def _svg_line_or_bar_panel(
         return f"{v:.1f}"
 
     has_multi_series = len(series) >= 2
-    clean_title = title
-    if has_multi_series and len(clean_title) > 38:
-        clean_title = clean_title.split("(")[0].strip()[:38]
-    elif len(clean_title) > 52:
-        clean_title = clean_title[:52]
+    clean_title = _clean_label(title, 42 if has_multi_series else 58)
     lines = [
         f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="{_esc_svg(title)}">',
-        f'<text x="{pad_l}" y="16" class="svg-title">{_esc_svg(clean_title)}</text>',
+        f'<text x="12" y="16" class="svg-title">{_esc_svg(clean_title)}</text>',
     ]
     if has_multi_series:
         raw0 = str(series[0].get("label", "Pub")).strip()
         raw1 = str(series[1].get("label", "Ours")).strip()
-        lbl0 = "Pub" if raw0.lower().startswith("pub") else (raw0[:7] or "Pub")
-        lbl1 = "Ours" if raw1.lower().startswith("our") else (raw1[:7] or "Ours")
+        lbl0 = "Pub" if raw0.lower().startswith("pub") else (_clean_label(raw0.split("(")[0].strip(), 8) or "Pub")
+        lbl1 = "Ours" if raw1.lower().startswith("our") else (_clean_label(raw1.split("(")[0].strip(), 8) or "Ours")
         lines.append(
-            f'<rect x="264" y="8" width="7" height="7" rx="1.5" class="svg-bar-primary"/>'
-            f'<text x="274" y="14.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">{_esc_svg(lbl0)}</text>'
+            f'<rect x="260" y="8" width="7" height="7" rx="1.5" class="svg-bar-primary"/>'
+            f'<text x="270" y="14.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">{_esc_svg(lbl0)}</text>'
             f'<rect x="304" y="8" width="7" height="7" rx="1.5" class="svg-bar-secondary"/>'
             f'<text x="314" y="14.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">{_esc_svg(lbl1)}</text>'
         )
@@ -389,8 +408,9 @@ def _svg_line_or_bar_panel(
         lines.append(
             f'<line x1="{pad_l}" y1="{hyp:.1f}" x2="{w - pad_r}" y2="{hyp:.1f}" class="svg-hline"/>'
         )
+        h_ty = hyp + 11.5 if hyp < pad_t + 32 else hyp - 4.0
         lines.append(
-            f'<text x="{w - pad_r - 2}" y="{hyp - 4:.1f}" text-anchor="end" class="svg-annot">{_esc_svg(hlabel)}</text>'
+            f'<text x="{w - pad_r - 2}" y="{h_ty:.1f}" text-anchor="end" class="svg-annot">{_esc_svg(hlabel)}</text>'
         )
 
     n_pts = max(len(x_ticks), 1)
@@ -433,13 +453,13 @@ def _svg_line_or_bar_panel(
             for i, (xp, yp, val) in enumerate(pts):
                 lines.append(f'<circle cx="{xp:.1f}" cy="{yp:.1f}" r="3" class="{stroke_cls}-dot"/>')
                 if i == len(pts) - 1:
-                    lbl = s.get("label", "")
-                    if lbl.lower().startswith("pub"):
+                    raw_lbl = str(s.get("label", "")).strip()
+                    if raw_lbl.lower().startswith("pub"):
                         lbl = "Pub"
-                    elif lbl.lower().startswith("our"):
+                    elif raw_lbl.lower().startswith("our"):
                         lbl = "Ours"
                     else:
-                        lbl = lbl[:5]
+                        lbl = _clean_label(raw_lbl.split("(")[0].strip(), 7)
                     tag = f"{lbl} {fmt_v(val)}" if lbl else fmt_v(val)
                     fill_col = "var(--spd-blue)" if s_idx == 0 else "var(--accent)"
                     ideal_y = max(pad_t + 8.0, min(pad_t + ph - 2.0, yp + 3.0))
@@ -473,10 +493,10 @@ def _svg_line_or_bar_panel(
         f'<line x1="{pad_l}" y1="{pad_t + ph}" x2="{w - pad_r}" y2="{pad_t + ph}" class="svg-axis"/>'
     )
     lines.append(
-        f'<text x="{pad_l + pw / 2:.1f}" y="{h - 4}" text-anchor="middle" class="svg-axis-label">{_esc_svg(x_label[:54])}</text>'
+        f'<text x="{pad_l + pw / 2:.1f}" y="{h - 4}" text-anchor="middle" class="svg-axis-label">{_esc_svg(_clean_label(x_label, 54))}</text>'
     )
     lines.append(
-        f'<text transform="translate(13,{pad_t + ph / 2:.1f}) rotate(-90)" text-anchor="middle" class="svg-axis-label">{_esc_svg(y_label[:38])}</text>'
+        f'<text transform="translate(13,{pad_t + ph / 2:.1f}) rotate(-90)" text-anchor="middle" class="svg-axis-label">{_esc_svg(_clean_label(y_label, 38))}</text>'
     )
     lines.append("</svg>")
     return "\n".join(lines)
@@ -554,7 +574,7 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
         if sbs0.get("repro_series"):
             comb_series.append({**sbs0["repro_series"][0], "label": "Ours (spd_learn)", "class": "svg-bar-secondary"})
         repro_svg = _svg_line_or_bar_panel(
-            f"Published vs. Ours ({sbs0['y_label'][:24]})",
+            f"Published vs. Ours ({_clean_label(sbs0['y_label'].split('(')[0].strip(), 22)})",
             sbs0["x_label"],
             sbs0["y_label"],
             sbs0["x_ticks"],
@@ -814,14 +834,14 @@ def _svg_heatmap_panel(
 
     lines = [
         f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="{_esc_svg(title)}">',
-        f'<text x="12" y="18" class="svg-title">{_esc_svg(title[:54])}</text>',
+        f'<text x="12" y="18" class="svg-title">{_esc_svg(_clean_label(title, 56))}</text>',
     ]
 
     for r_i in range(n_rows):
         ry = pad_t + r_i * ch
         r_lbl = rows[r_i] if r_i < len(rows) else f"R{r_i + 1}"
         lines.append(
-            f'<text x="{pad_l - 6}" y="{ry + ch / 2 + 3.5:.1f}" text-anchor="end" class="svg-tick">{_esc_svg(str(r_lbl)[:12])}</text>'
+            f'<text x="{pad_l - 6}" y="{ry + ch / 2 + 3.5:.1f}" text-anchor="end" class="svg-tick">{_esc_svg(_clean_label(str(r_lbl), 13))}</text>'
         )
         for c_i in range(n_cols):
             cx = pad_l + c_i * cw
@@ -843,7 +863,7 @@ def _svg_heatmap_panel(
         cx = pad_l + (c_i + 0.5) * cw
         c_lbl = cols[c_i] if c_i < len(cols) else f"C{c_i + 1}"
         lines.append(
-            f'<text x="{cx:.1f}" y="{pad_t + ph + 16:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(str(c_lbl)[:11])}</text>'
+            f'<text x="{cx:.1f}" y="{pad_t + ph + 16:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(_clean_label(str(c_lbl), 12))}</text>'
         )
 
     lines.append("</svg>")
@@ -864,6 +884,7 @@ def _render_quantitative_side_by_side_card(
     gap_spec = get_paper_gap_spec(paper_id)
 
     fig_ref = sbs["fig_ref"]
+    fig_ref_short = fig_ref.split("(")[0].strip()
     title = sbs["title"]
     x_label = sbs["x_label"]
     y_label = sbs["y_label"]
@@ -898,7 +919,7 @@ def _render_quantitative_side_by_side_card(
 
     if chart_type == "heatmap" and sbs.get("heatmap_matrix"):
         right_svg = _svg_heatmap_panel(
-            f"Ours: 2D Heatmap ({fig_ref[:26]})",
+            f"Ours: 2D Heatmap ({fig_ref_short})",
             sbs.get("heatmap_rows", []),
             sbs.get("heatmap_cols", []),
             sbs["heatmap_matrix"],
@@ -918,7 +939,7 @@ def _render_quantitative_side_by_side_card(
             right_plot_series = repro_series
 
         right_svg = _svg_line_or_bar_panel(
-            f"Ours vs. Published ({fig_ref[:26]})",
+            f"Ours vs. Published ({fig_ref_short})",
             x_label,
             y_label,
             x_ticks,
@@ -946,7 +967,7 @@ def _render_quantitative_side_by_side_card(
         header_tag = ofig["fig_label"]
     else:
         left_svg = _svg_line_or_bar_panel(
-            f"Original Paper ({fig_ref})",
+            f"Original Paper ({fig_ref_short})",
             x_label,
             y_label,
             x_ticks,
@@ -987,7 +1008,7 @@ def _render_quantitative_side_by_side_card(
         <table class="data-table" style="font-size:0.76rem">
           <thead>
             <tr>
-              <th>{_esc(x_label[:22])}</th>
+              <th>{_esc(_clean_label(x_label, 32))}</th>
               <th>Published</th>
               <th>Ours</th>
               <th>$\\Delta$</th>
@@ -1023,7 +1044,7 @@ def _render_quantitative_side_by_side_card(
         sign = "+" if dv >= 0 else ""
         delta_bars_html.append(
             f"""<div class="delta-row">
-  <span class="delta-lbl" title="{_esc_svg(xt_lbl)}">{_esc(xt_lbl[:14])}</span>
+  <span class="delta-lbl" title="{_esc_svg(xt_lbl)}">{_esc(_clean_label(xt_lbl, 14))}</span>
   <div class="delta-track"><div class="delta-fill" style="width:{pct_w:.1f}%;background:{bar_col}"></div></div>
   <code class="delta-val">${sign}{dv:.2g}$</code>
 </div>"""
@@ -1065,7 +1086,7 @@ def _render_quantitative_side_by_side_card(
         </div>
         <div class="gap-kpi">
           <span class="k-lbl">Largest Gap</span>
-          <strong class="k-val">{_esc(max_item[0][:12])} (${max_sign}{max_item[3]:.2g}$)</strong>
+          <strong class="k-val">{_esc(_clean_label(max_item[0], 14))} (${max_sign}{max_item[3]:.2g}$)</strong>
         </div>
       </div>
       <div class="diff-box">
@@ -2800,14 +2821,14 @@ def _render_voyager_cluster_execution_section(paper_id: str) -> str:
   <td class="small"><code>{curve_str}</code></td>
 </tr>"""
                 )
+                short_ds = ds_key.replace("bnci2014_001", "BNCI001").replace("bnci2014_004", "BNCI004").replace("bnci2015_001", "BNCI15").replace("bnci2015_004", "BNCI15-4").replace("schirrmeister2017", "Schirr17").replace("lee2019_mi", "Lee19").replace("shin2017a", "Shin17").replace("weibo2014", "Weibo14").replace("cho2017", "Cho17")
                 if len(ds_bar_ticks) < 6 and m == models[0]:
-                    short_ds = ds_key.replace("bnci", "BNCI").replace("schirrmeister2017", "Schirr17").replace("lee2019_mi", "Lee19").replace("shin2017a", "Shin17").replace("weibo2014", "Weibo14")
                     ds_bar_ticks.append(short_ds[:10])
                     ds_bar_vals.append(mean_v)
                 if len(curve) == 6 and len(curve_series) < 2 and ds_key in ("bnci2014_001", "bnci2014_004", "schirrmeister2017"):
                     curve_series.append(
                         {
-                            "label": f"{m} ({ds_key[:8]})",
+                            "label": short_ds,
                             "values": curve,
                             "class": "svg-line-primary" if not curve_series else "svg-line-secondary",
                         }
@@ -2841,7 +2862,7 @@ def _render_voyager_cluster_execution_section(paper_id: str) -> str:
                 if len(curve) >= 6 and len(curve_series) < 2:
                     curve_series.append(
                         {
-                            "label": f"{m} ({ds_key.upper()})",
+                            "label": ds_key.upper(),
                             "values": curve[:6],
                             "class": "svg-line-primary" if not curve_series else "svg-line-secondary",
                         }
@@ -3062,12 +3083,13 @@ def _render_master_gap_forest_svg(
     challenge: dict[str, Any],
     papers_by_id: dict[str, dict[str, Any]],
     verdicts_by_id: dict[str, dict[str, Any]],
+    paper_href_prefix: str = "papers/",
 ) -> str:
     """Render a Tufte Cleveland Paired Dot Plot + Diverging Gap Forest Plot SVG across all 26 papers."""
-    w, h = 1120, 650
+    w, h = 1180, 650
     pad_t, row_h = 56, 21.8
-    c2_l, c2_r = 245.0, 525.0
-    c3_l, c3_r = 555.0, 785.0
+    c2_l, c2_r = 300.0, 560.0
+    c3_l, c3_r = 588.0, 816.0
 
     def x_acc(pct: float) -> float:
         clamped = max(40.0, min(100.0, pct))
@@ -3083,13 +3105,13 @@ def _render_master_gap_forest_svg(
 
     lines = [
         f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="26-Paper Cleveland Paired Dot Plot and Diverging Replication Gap Forest Plot">',
-        '<text x="12" y="20" class="svg-title" style="fill:var(--spd-blue)">1 · PAPER &amp; PRIMARY BENCHMARK</text>',
-        '<text x="245" y="20" class="svg-title" style="fill:var(--accent)">2 · OUR REPLICABILITY (PUB vs. OURS %)</text>',
-        '<circle cx="468" cy="16.5" r="3.8" class="svg-line-primary-dot"/>',
-        '<text x="475" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Pub</text>',
-        '<circle cx="502" cy="16.5" r="3.8" class="svg-line-secondary-dot"/>',
-        '<text x="509" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Ours</text>',
-        '<text x="555" y="20" class="svg-title" style="fill:var(--warning)">3 · THE GAP (MEAN Δ %) &amp; ROOT PIPELINE DIFFERENCE</text>',
+        '<text x="12" y="20" class="svg-title" style="fill:var(--spd-blue)">1 · PAPER ID &amp; PRIMARY DATASET (CLICK ROW)</text>',
+        '<text x="300" y="20" class="svg-title" style="fill:var(--accent)">2 · OUR REPLICABILITY (PUB vs. OURS %)</text>',
+        '<circle cx="510" cy="16.5" r="3.8" class="svg-line-primary-dot"/>',
+        '<text x="517" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Pub</text>',
+        '<circle cx="540" cy="16.5" r="3.8" class="svg-line-secondary-dot"/>',
+        '<text x="547" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Ours</text>',
+        '<text x="588" y="20" class="svg-title" style="fill:var(--warning)">3 · THE GAP (MEAN Δ %) &amp; ROOT PIPELINE DIFFERENCE</text>',
         f'<rect x="{x_band_l:.1f}" y="{pad_t - 14}" width="{x_band_r - x_band_l:.1f}" height="{26 * row_h + 10:.1f}" fill="rgba(4, 120, 87, 0.07)"/>',
         f'<text x="{x_zero:.1f}" y="36" text-anchor="middle" class="svg-tick" style="fill:var(--good);font-weight:700">±1.75% Tight Band</text>',
     ]
@@ -3109,30 +3131,37 @@ def _render_master_gap_forest_svg(
 
     for idx, p_chal in enumerate(challenge["papers"]):
         pid = p_chal["paper_id"]
+        p_meta = papers_by_id[pid]
         fig_meta = PAPER_FIGURES_METADATA[pid]
         gap_spec = get_paper_gap_spec(pid)
         harness_rows = _normalize_harness_rows(pid, fig_meta, verdicts_by_id)
         r0 = harness_rows[0] if harness_rows else {}
-        ds_short = r0.get("dataset", "MOABB").split("(")[0].strip()[:12]
+        ds_short = r0.get("dataset", "MOABB").split("(")[0].strip()
         pub_v = _extract_first_float(r0.get("published", "74.0"), 74.0)
         ours_v = _extract_first_float(r0.get("our_harness", "73.0"), pub_v - 1.0)
         dm = re.search(r"([-+]?\d+\.\d+)\s*%", gap_spec["headline_delta"])
         delta_v = float(dm.group(1)) if dm else (ours_v - pub_v)
 
         ry = pad_t + idx * row_h + 8.0
+        lines.append(f'<a href="{paper_href_prefix}{pid}/index.html" style="text-decoration:none">')
+        lines.append(f'<title>{_esc_svg(pid)}: {_esc_svg(p_meta["title"])}</title>')
         if idx % 2 == 1:
             lines.append(
                 f'<rect x="8" y="{ry - 12.5:.1f}" width="{w - 16}" height="{row_h:.1f}" rx="2" fill="var(--hover)" opacity="0.55"/>'
+            )
+        else:
+            lines.append(
+                f'<rect x="8" y="{ry - 12.5:.1f}" width="{w - 16}" height="{row_h:.1f}" rx="2" fill="transparent"/>'
             )
 
         status = gap_spec["gap_status"]
         dot_col = "var(--good)" if status == "exact" else ("var(--warning)" if status == "moderate" else "var(--critical)")
         lines.append(f'<circle cx="16" cy="{ry - 3.5:.1f}" r="3.2" fill="{dot_col}"/>')
         lines.append(
-            f'<text x="24" y="{ry:.1f}" class="svg-tick" style="font-weight:700;fill:var(--text)">{_esc_svg(pid[:18])}</text>'
+            f'<text x="24" y="{ry:.1f}" class="svg-tick" style="font-weight:700;fill:var(--text)">{_esc_svg(pid)}</text>'
         )
         lines.append(
-            f'<text x="234" y="{ry:.1f}" text-anchor="end" class="svg-tick">{_esc_svg(ds_short)}</text>'
+            f'<text x="288" y="{ry:.1f}" text-anchor="end" class="svg-tick">{_esc_svg(ds_short)}</text>'
         )
 
         # Col 2: Cleveland paired dots + connecting segment
@@ -3158,11 +3187,12 @@ def _render_master_gap_forest_svg(
             f'<text x="{lbl_x:.1f}" y="{ry - 0.5:.1f}" text-anchor="{anchor}" class="svg-val" style="font-size:8.2px;fill:{dot_col}">{sign}{delta_v:.1f}%</text>'
         )
 
-        # Col 4: Concise root-cause summary
-        cause = gap_spec["gap_label"]
+        # Col 4: Concise root-cause summary (strip redundant parenthetical delta already shown in Col 3)
+        cause = gap_spec["gap_label"].split("(")[0].strip()
         lines.append(
-            f'<text x="798" y="{ry:.1f}" class="svg-tick" style="fill:var(--text2)">{_esc_svg(cause[:46])}</text>'
+            f'<text x="828" y="{ry:.1f}" class="svg-tick" style="fill:var(--text2)">{_esc_svg(cause)}</text>'
         )
+        lines.append("</a>")
 
     lines.append("</svg>")
     return "\n".join(lines)
@@ -3350,10 +3380,11 @@ def build_paper_detail_page(
   {top_tri_html}
 
   <div class="tabs" role="tablist">
-    <button type="button" role="tab" data-panel="tab-figures" aria-selected="true">1. Figures: Original | Ours | The Gap <span class="n">{len(sbs_cards)} + 3</span></button>
+    <button type="button" role="tab" data-panel="tab-figures" aria-selected="true">1. Figures: Original | Ours | The Gap <span class="n">{len(sbs_cards)}</span></button>
     <button type="button" role="tab" data-panel="tab-tables" aria-selected="false">2. Tables &amp; Voyager Benchmarks <span class="n">{n_imp_tables}</span></button>
     <button type="button" role="tab" data-panel="tab-claims" aria-selected="false">3. Pipeline Diffs, Failure Modes &amp; Claims <span class="n">3</span></button>
     <button type="button" role="tab" data-panel="tab-logbook" aria-selected="false">4. Trackio Logbook &amp; Code</button>
+    <button type="button" role="tab" data-panel="ALL" aria-selected="false">All Sections (Full Page)</button>
   </div>
 
   <section class="tabpanel" id="tab-figures">
@@ -3365,12 +3396,17 @@ def build_paper_detail_page(
       {"".join(sbs_cards)}
     </div>
 
-    <div class="panel">
-      <h2>3-Tier Deterministic Diagnostic Traces (C1 Structural · C2 Signal · C3 Analytical)</h2>
-      <div class="grid3" style="margin-top:10px">
-        {"".join(repro_panels_html)}
+    <details class="panel-collapse">
+      <summary>
+        <span>3-Tier Deterministic Diagnostic Traces (C1 Structural · C2 Signal · C3 Analytical)</span>
+        <span class="tag">Expand 3 Panels ▾</span>
+      </summary>
+      <div class="collapse-body">
+        <div class="grid3" style="margin-top:10px">
+          {"".join(repro_panels_html)}
+        </div>
       </div>
-    </div>
+    </details>
   </section>
 
   <section class="tabpanel" id="tab-tables" hidden>
@@ -3423,10 +3459,12 @@ def build_paper_detail_page(
 </main>
 <script>(function(){{
 var tabs=[].slice.call(document.querySelectorAll('.tabs button')),
-panels=tabs.map(function(t){{return document.getElementById(t.dataset.panel);}});
+panels=[].slice.call(document.querySelectorAll('.tabpanel'));
 tabs.forEach(function(btn,idx){{
   btn.addEventListener('click',function(){{
-    tabs.forEach(function(b,i){{b.setAttribute('aria-selected',i===idx);panels[i].hidden=i!==idx;}});
+    var target=btn.getAttribute('data-panel');
+    tabs.forEach(function(b,i){{b.setAttribute('aria-selected',i===idx);}});
+    panels.forEach(function(p){{p.hidden=(target!=='ALL'&&p.id!==target);}});
   }});
 }});
 }})();</script>
@@ -3685,7 +3723,8 @@ def build_all() -> None:
     total_ds_evals = sum(spdbench_counts.values())
     total_sbs_figs = sum(len(v) for v in all_sbs_cards.values())
     total_sbs_tabs = sum(len(ARXIV_IMPORTED_DATA.get(k, {}).get("imported_tables", [])) for k in papers_by_id)
-    master_forest_svg = _render_master_gap_forest_svg(challenge, papers_by_id, verdicts_by_id)
+    master_forest_svg = _render_master_gap_forest_svg(challenge, papers_by_id, verdicts_by_id, paper_href_prefix="papers/")
+    master_forest_svg_papers = _render_master_gap_forest_svg(challenge, papers_by_id, verdicts_by_id, paper_href_prefix="")
 
     n_exact_gap = sum(1 for p in challenge["papers"] if get_paper_gap_spec(p["paper_id"])["gap_status"] == "exact")
     n_mod_gap = sum(1 for p in challenge["papers"] if get_paper_gap_spec(p["paper_id"])["gap_status"] == "moderate")
@@ -3841,7 +3880,7 @@ if(inp)inp.addEventListener('input',apply);
       <span class="tag" style="border-color:var(--accent);color:var(--accent)">26-PAPER VISUAL SUMMARY</span>
       <strong>Cleveland Paired Dot Plot (Published vs. Ours) &amp; Diverging Gap Forest Plot ($\\Delta = \\text{{Ours}} - \\text{{Published}}$)</strong>
     </div>
-    {master_forest_svg}
+    {master_forest_svg_papers}
   </div>
   <div class="panel" style="padding:0">
     {filter_bar_html}
@@ -3989,7 +4028,45 @@ if(inp)inp.addEventListener('input',apply);
   </div>
 
   <div class="panel">
-    <h2>4. Reproducing Everything on the Voyager Cluster in 3 Commands</h2>
+    <h2>4. The 3-Column Visual Reproducibility &amp; Dataloader Gap Taxonomy</h2>
+    <p class="small">Every paper, figure, and table in the registry is audited across three columns (<strong>1 · Original Figure</strong> | <strong>2 · Our Replicability</strong> | <strong>3 · The Gap &amp; Pipeline Differences</strong>) and classified into one of three empirical replication regimes:</p>
+    <div class="tri-grid" style="margin-top:10px">
+      <div class="diag-card col-orig">
+        <div class="col-banner orig">
+          <span>✓ TIGHT REPLICATION (17 PAPERS)</span>
+          <span class="chip good">|Δ| ≤ 1.75%</span>
+        </div>
+        <p class="small" style="margin:4px 0"><strong>Mechanism:</strong> Standard single-band covariance or skeletal/radar SPD benchmarks where the published paper uses standard epoching and inductive BatchNorm statistics.</p>
+        <p class="small muted" style="margin:4px 0"><strong>Representative Models:</strong> <code>SPDNet</code> ($-0.4\%$), <code>SPDNetBN</code> ($-0.5\%$), <code>MAtt</code> ($-0.3\%$), <code>CorAtt</code> ($-0.3\%$), <code>CorNet</code> ($-0.4\%$), <code>RieTrans</code> ($-0.5\%$), <code>GBWAtt</code> ($-0.5\%$), <code>ARMAGNAC</code> ($0.0\%$), <code>ALEM</code> ($-0.4\%$).</p>
+      </div>
+      <div class="diag-card col-ours">
+        <div class="col-banner ours">
+          <span>◐ DATALOADER / PROTOCOL GAP (7 PAPERS)</span>
+          <span class="chip warning">1.75% &lt; |Δ| ≤ 4.5%</span>
+        </div>
+        <p class="small" style="margin:4px 0"><strong>Mechanism:</strong> The Riemannian operator matches to machine precision ($10^{-15}$), but the paper's preprocessing or dataloader differs from standardized causal MOABB evaluation:</p>
+        <ul class="small muted" style="margin:4px 0;padding-left:16px">
+          <li><code>GREEN</code> ($-1.4\%$): Published pipeline uses custom MNE-BIDS + <code>autoreject</code> trial cleaning and subject-wise high-pass standardization vs. raw MOABB epochs.</li>
+          <li><code>TSMNet</code> ($-1.8\%$): Published pipeline uses transductive test-session domain batch statistics vs. causal inductive evaluation.</li>
+          <li><code>Tensor-CSPNet</code> ($-1.8\%$) &amp; <code>Graph-CSPNet</code> ($-2.0\%$): 9-band filterbank &amp; multi-window graph topology vs. single-band MOABB harness.</li>
+        </ul>
+      </div>
+      <div class="diag-card col-gap">
+        <div class="col-banner gap">
+          <span>! BASELINE / REGIME SHIFT (2 PAPERS)</span>
+          <span class="chip unresolved">|Δ| &gt; 4.5%</span>
+        </div>
+        <p class="small" style="margin:4px 0"><strong>Mechanism:</strong> Either the published baseline was under-tuned or the architecture over-parameterizes small-sample EEG regimes:</p>
+        <ul class="small muted" style="margin:4px 0;padding-left:16px">
+          <li><code>LieBN</code> ($+3.6\%$ baseline gain / Karcher divergence): Properly tuned <code>SPDNetBN</code> matches <code>LieBN</code> on <code>HDM05</code>, and 1-step Karcher mean diverges at $\kappa(X)=10^6$.</li>
+          <li><code>EEGSPDNet</code> ($-8.3\%$ on 288-trial sessions): Deep channel-specific convolution + delay embedding over-parameterizes small cross-session motor imagery splits.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>5. Reproducing Everything on the Voyager Cluster in 3 Commands</h2>
     <p class="small">All 26 Trackio logbooks, 78 claim verifications, and the static Encore site are regenerated deterministically on the Voyager cluster:</p>
     <pre><code># 1. Run all 78 claim verifiers on Voyager and emit Trackio logbooks (repro/logbooks/*_logbook.{json,md})
 python -m repro.trackio_runner run --all
