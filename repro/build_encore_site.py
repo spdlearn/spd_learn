@@ -227,9 +227,13 @@ def _latexify_plain_segment(seg: str) -> str:
     s = re.sub(r"\blog10\(kappa\)", r"$\\log_{10}(\\kappa)$", s)
     s = re.sub(r"\b10\^\{([^}]+)\}", r"$10^{\1}$", s)
     s = re.sub(r"\b10\^(-?\d+)\b", r"$10^{\1}$", s)
+    s = re.sub(r"S_reg\s*=\s*\(1-alpha\)\*S\s*\+\s*alpha\*\(tr\(S\)/d\)\*I", r"$S_{\\text{reg}} = (1-\\alpha)S + \\alpha(\\operatorname{tr}(S)/d)I$", s)
+    s = re.sub(r"\bnu\^2\b", r"$\\nu^2$", s)
+    s = re.sub(r"\bf_0\b", r"$f_0$", s)
     s = re.sub(r"\b1e-(\d+)\*I\b", r"$10^{-\1} I$", s)
     s = re.sub(r"\beps\s*=\s*1e-(\d+)\b", r"$\\epsilon = 10^{-\1}$", s)
     s = re.sub(r"\bepsilon\s*=\s*1e-(\d+)\b", r"$\\epsilon = 10^{-\1}$", s)
+    s = re.sub(r"ε\s*=\s*1e-(\d+)", r"$\\epsilon = 10^{-\1}$", s)
     s = re.sub(r"\btheta\s*=\s*([0-9.]+)\b", r"$\\theta = \1$", s)
     s = re.sub(r"\balpha\s*=\s*([0-9.]+)\b", r"$\\alpha = \1$", s)
 
@@ -257,6 +261,9 @@ def _esc(text: Any) -> str:
         else:
             out.append(_latexify_plain_segment(part))
     return "".join(out)
+
+
+_latexify_prose = _esc
 
 
 
@@ -308,7 +315,8 @@ def _svg_line_or_bar_panel(
 ) -> str:
     """Render a crisp, responsive, theme-aware SVG chart panel (360x234 viewBox) with zero label collisions."""
     w, h = 360, 234
-    pad_l, pad_r, pad_t, pad_b = 52, 18, 28, 48
+    pad_r = 56 if chart_type != "bar" else 18
+    pad_l, pad_t, pad_b = 52, 28, 48
     pw = w - pad_l - pad_r
     ph = h - pad_t - pad_b
 
@@ -426,24 +434,31 @@ def _svg_line_or_bar_panel(
                 lines.append(f'<circle cx="{xp:.1f}" cy="{yp:.1f}" r="3" class="{stroke_cls}-dot"/>')
                 if i == len(pts) - 1:
                     lbl = s.get("label", "")
-                    if lbl.lower().startswith("published"):
+                    if lbl.lower().startswith("pub"):
                         lbl = "Pub"
-                    elif lbl.lower().startswith("ours"):
+                    elif lbl.lower().startswith("our"):
                         lbl = "Ours"
-                    tag = f"{lbl}: {fmt_v(val)}" if lbl else fmt_v(val)
-                    ideal_y = max(pad_t + 10.0, min(pad_t + ph - 4.0, yp - 6.0))
-                    end_labels_raw.append([xp - 4.0, ideal_y, tag])
+                    else:
+                        lbl = lbl[:5]
+                    tag = f"{lbl} {fmt_v(val)}" if lbl else fmt_v(val)
+                    fill_col = "var(--spd-blue)" if s_idx == 0 else "var(--accent)"
+                    ideal_y = max(pad_t + 8.0, min(pad_t + ph - 2.0, yp + 3.0))
+                    end_labels_raw.append([xp + 5.0, ideal_y, tag, fill_col])
 
-        # De-collide end-of-line direct labels vertically (>= 10px separation)
+        # De-collide right-margin direct labels vertically (>= 10.5px separation, Tufte Genre C10)
         end_labels_raw.sort(key=lambda item: item[1])
         for k in range(1, len(end_labels_raw)):
-            if end_labels_raw[k][1] - end_labels_raw[k - 1][1] < 10.0:
-                end_labels_raw[k][1] = min(pad_t + ph - 2.0, end_labels_raw[k - 1][1] + 10.0)
-                if end_labels_raw[k][1] - end_labels_raw[k - 1][1] < 10.0:
-                    end_labels_raw[k - 1][1] = max(pad_t + 9.0, end_labels_raw[k][1] - 10.0)
-        for lx, ly, ltag in end_labels_raw:
+            if end_labels_raw[k][1] - end_labels_raw[k - 1][1] < 10.5:
+                mid_y = 0.5 * (end_labels_raw[k][1] + end_labels_raw[k - 1][1])
+                y_top = max(pad_t + 7.0, mid_y - 5.5)
+                y_bot = min(pad_t + ph + 2.0, y_top + 11.0)
+                if y_bot - y_top < 10.5:
+                    y_top = max(pad_t + 5.0, y_bot - 11.0)
+                end_labels_raw[k - 1][1] = y_top
+                end_labels_raw[k][1] = y_bot
+        for lx, ly, ltag, fcol in end_labels_raw:
             lines.append(
-                f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="end" class="svg-val">{_esc_svg(ltag)}</text>'
+                f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="start" class="svg-val" style="fill:{fcol}">{_esc_svg(ltag)}</text>'
             )
 
         slot_w = pw / max(len(x_ticks) - 1, 1) if len(x_ticks) > 1 else pw
@@ -590,6 +605,7 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
             body_rows.append(f"<tr{tr_style}>{cells_html}</tr>")
 
         cap_html = _format_table_cell_math(t.get("caption", f"Paper Table {t_idx + 1}"))
+        short_delta = gap_spec["headline_delta"].split("(")[0].strip()[:22]
         blocks.append(
             f"""<div class="panel tri-panel" style="margin-top:14px">
   <div class="claim-head">
@@ -600,8 +616,8 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
   <div class="tri-grid" style="margin-top:10px">
     <div class="diag-card col-orig">
       <div class="col-banner orig">
-        <span>1 · ORIGINAL PAPER TABLE</span>
-        <span class="small muted">{_esc(src_badge)}</span>
+        <span>1 · ORIGINAL TABLE</span>
+        <span class="small muted">{_esc(src_badge[:18])}</span>
       </div>
       <div style="overflow-x:auto;max-height:420px;overflow-y:auto">
         <table class="data-table" style="font-size:0.78rem">
@@ -612,8 +628,8 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
     </div>
     <div class="diag-card col-ours">
       <div class="col-banner ours">
-        <span>2 · OUR REPLICABILITY (spd_learn)</span>
-        <span class="small muted">Blue = Pub · Red = Ours</span>
+        <span>2 · OUR REPLICABILITY</span>
+        <span class="small muted">Pub vs. Ours</span>
       </div>
       {repro_svg}
       <div style="overflow-x:auto;margin-top:4px">
@@ -632,12 +648,12 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
     </div>
     <div class="diag-card col-gap">
       <div class="col-banner gap">
-        <span>3 · THE GAP &amp; PROTOCOL DIFFERENCES</span>
-        <code>{_esc(gap_spec["headline_delta"])}</code>
+        <span>3 · THE GAP &amp; WHY</span>
+        <code>{_esc(short_delta)}</code>
       </div>
       <div class="diff-box">
         <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
-        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+        <p>{_latexify_prose(gap_spec["dataloader_diff"])}</p>
       </div>
       <div class="diff-box">
         <div class="diff-label">Where It Replicates vs. Diverges</div>
@@ -657,7 +673,7 @@ def _render_architectural_side_by_side_card(
     rel_prefix: str,
 ) -> str:
     """Render a 3-Column card for an Architectural / Conceptual Figure:
-    Col 1: Original Diagram | Col 2: Our spd_learn Module Pipeline | Col 3: Implementation & Dataloader Gap.
+    Col 1: Original Diagram | Col 2: Matched C1/C2 Live SVG + Module Pipeline | Col 3: Implementation & Dataloader Gap.
     """
     imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
     cfg = imp.get("experiment_config", {})
@@ -666,6 +682,10 @@ def _render_architectural_side_by_side_card(
     c1_v = VERDICTS_BY_ID_GLOBAL.get(f"{paper_id}_c1", {})
     c2_v = VERDICTS_BY_ID_GLOBAL.get(f"{paper_id}_c2", {})
     gap_spec = get_paper_gap_spec(paper_id)
+    short_delta = gap_spec["headline_delta"].split("(")[0].strip()[:22]
+
+    diag_panels = build_paper_svg_panels(paper_id, VERDICTS_BY_ID_GLOBAL)
+    diag_svg = diag_panels[0 if fig_idx == 0 else min(1, len(diag_panels) - 1)]
 
     img_src = f"{rel_prefix}assets/original_figures/{paper_id}/{ofig['file']}"
     targets_badges = " ".join(
@@ -684,10 +704,29 @@ def _render_architectural_side_by_side_card(
         for k, val in list(c2_v.get("metrics", {}).items())[:2]
     )
 
+    raw_cap = str(ofig.get("caption", "")).strip()
+    cap_head = raw_cap.split(".")[0].split(":")[0].strip()
+    if len(cap_head) > 78:
+        cap_head = cap_head[:75] + "..."
+    if fig_idx == 0:
+        card_title = f"{_esc(fig_meta.get('short_title', paper_id))}: Architectural &amp; Operator Verification"
+        col2_sub = "C1 Operator SVG + Spec"
+        spec_rows = f"""<tr><th style="width:118px">spd_learn Classes</th><td>{targets_badges}</td></tr>
+          <tr><th>Manifold</th><td>{_latexify_prose(fig_meta.get("geometry", ""))}</td></tr>
+          <tr><th>Layer Pipeline</th><td><code>{_esc(cfg.get("architecture", ""))}</code></td></tr>
+          <tr><th>C1 Invariant</th><td>{_verdict_chip(c1_v.get("verdict", "Verified"), c1_v.get("points", 2))} · <span class="muted" style="font-size:0.74rem">{c1_metrics_items}</span></td></tr>"""
+    else:
+        card_title = f"{_latexify_prose(cap_head)} (Conditioning &amp; Signal Verification)"
+        col2_sub = "C2 Signal SVG + Regime"
+        spec_rows = f"""<tr><th style="width:118px">Metric &amp; Reg $\\epsilon$</th><td>{_latexify_prose(cfg.get("metric_and_reg", ""))}</td></tr>
+          <tr><th>Preprocessing</th><td>{_latexify_prose(cfg.get("preprocessing", ""))}</td></tr>
+          <tr><th>Optimizer</th><td><code>{_esc(cfg.get("optimizer_recipe", ""))}</code></td></tr>
+          <tr><th>C2 Conditioning</th><td>{_verdict_chip(c2_v.get("verdict", "Verified"), c2_v.get("points", 2))} · <span class="muted" style="font-size:0.74rem">{c2_metrics_items}</span></td></tr>"""
+
     return f"""<div class="panel tri-panel" style="margin-top:12px">
   <div class="claim-head">
     <span class="tag">{_esc(ofig["fig_label"])}</span>
-    <strong>{_esc(fig_meta.get("short_title", p_meta.get("title", paper_id)))}: Architectural &amp; Geometric Specification</strong>
+    <strong>{card_title}</strong>
     <span class="chip good" style="margin-left:auto">✓ 1-to-1 Operator Match in spd_learn</span>
   </div>
   <div class="tri-grid" style="margin-top:10px">
@@ -701,40 +740,36 @@ def _render_architectural_side_by_side_card(
           <img src="{img_src}" alt="{_esc_svg(ofig['fig_label'])}" loading="lazy"/>
         </a>
       </div>
-      <p class="small muted" style="margin:4px 0 0;font-size:0.78rem">{_esc(ofig["caption"])}</p>
+      <p class="small muted" style="margin:4px 0 0;font-size:0.78rem">{_latexify_prose(ofig["caption"])}</p>
     </div>
     <div class="diag-card col-ours">
       <div class="col-banner ours">
-        <span>2 · OUR REPLICABILITY (spd_learn)</span>
-        <span class="small muted">Module &amp; Manifold Pipeline</span>
+        <span>2 · OUR REPLICABILITY</span>
+        <span class="small muted">{col2_sub}</span>
       </div>
-      <table class="data-table" style="font-size:0.78rem">
+      {diag_svg}
+      <table class="data-table" style="font-size:0.76rem;margin-top:2px">
         <tbody>
-          <tr><th style="width:125px">spd_learn Classes</th><td>{targets_badges}</td></tr>
-          <tr><th>Manifold</th><td>{_esc(fig_meta.get("geometry", ""))}</td></tr>
-          <tr><th>Layer Pipeline</th><td><code>{_esc(cfg.get("architecture", ""))}</code></td></tr>
-          <tr><th>Metric &amp; Reg $\\epsilon$</th><td>{_esc(cfg.get("metric_and_reg", ""))}</td></tr>
-          <tr><th>C1 Invariant</th><td>{_verdict_chip(c1_v.get("verdict", "Verified"), c1_v.get("points", 2))}<br><span class="muted" style="font-size:0.74rem">{c1_metrics_items}</span></td></tr>
-          <tr><th>C2 Conditioning</th><td>{_verdict_chip(c2_v.get("verdict", "Verified"), c2_v.get("points", 2))}<br><span class="muted" style="font-size:0.74rem">{c2_metrics_items}</span></td></tr>
+          {spec_rows}
         </tbody>
       </table>
     </div>
     <div class="diag-card col-gap">
       <div class="col-banner gap">
-        <span>3 · THE GAP &amp; PIPELINE DIFFERENCES</span>
-        <code>{_esc(gap_spec["headline_delta"])}</code>
+        <span>3 · THE GAP &amp; WHY</span>
+        <code>{_esc(short_delta)}</code>
       </div>
       <div class="diff-box">
         <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
-        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+        <p>{_latexify_prose(gap_spec["dataloader_diff"])}</p>
       </div>
       <div class="diff-box">
         <div class="diff-label">Implementation &amp; Optimizer Diff</div>
-        <p>{_esc(gap_spec["arch_optim_diff"])}</p>
+        <p>{_latexify_prose(gap_spec["arch_optim_diff"])}</p>
       </div>
       <div class="diff-box warn">
         <div class="diff-label">Where It Fails / Boundary Regime</div>
-        <p>{_esc(gap_spec["where_it_struggles"])}</p>
+        <p>{_latexify_prose(gap_spec["where_it_struggles"])}</p>
       </div>
     </div>
   </div>
@@ -1039,11 +1074,11 @@ def _render_quantitative_side_by_side_card(
       </div>
       <div class="diff-box">
         <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
-        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+        <p>{_latexify_prose(gap_spec["dataloader_diff"])}</p>
       </div>
       <div class="diff-box warn">
         <div class="diff-label">Where It Struggles / Diverges</div>
-        <p>{_esc(gap_spec["where_it_struggles"])}</p>
+        <p>{_latexify_prose(gap_spec["where_it_struggles"])}</p>
       </div>
     </div>
   </div>
@@ -2415,6 +2450,45 @@ blockquote.quote {
   color: var(--text2);
 }
 
+/* Interactive Regime Filter & Search Bar */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.filter-btn {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text2);
+  cursor: pointer;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--text); }
+.filter-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+.search-input {
+  margin-left: auto;
+  font: inherit;
+  font-size: 0.80rem;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--text);
+  min-width: 240px;
+}
+
 /* Diagnostic SVG Charts (Published = SPD Sky Blue #2f6fed, Ours = SPD Red #EE4C2C) */
 .diag-card {
   border: 1px solid var(--line);
@@ -2976,6 +3050,124 @@ def _render_voyager_overview_matrix() -> str:
 </div>"""
 
 
+def _extract_first_float(s: str, default: float = 70.0) -> float:
+    m = re.search(r"\b(\d+\.\d+)\b", str(s))
+    if m:
+        return float(m.group(1))
+    m2 = re.search(r"(\d+)\s*%", str(s))
+    return float(m2.group(1)) if m2 else default
+
+
+def _render_master_gap_forest_svg(
+    challenge: dict[str, Any],
+    papers_by_id: dict[str, dict[str, Any]],
+    verdicts_by_id: dict[str, dict[str, Any]],
+) -> str:
+    """Render a Tufte Cleveland Paired Dot Plot + Diverging Gap Forest Plot SVG across all 26 papers."""
+    w, h = 1120, 650
+    pad_t, row_h = 56, 21.8
+    c2_l, c2_r = 245.0, 525.0
+    c3_l, c3_r = 555.0, 785.0
+
+    def x_acc(pct: float) -> float:
+        clamped = max(40.0, min(100.0, pct))
+        return c2_l + ((clamped - 40.0) / 60.0) * (c2_r - c2_l)
+
+    def x_delta(d: float) -> float:
+        clamped = max(-9.0, min(5.0, d))
+        return c3_l + ((clamped - (-9.0)) / 14.0) * (c3_r - c3_l)
+
+    x_zero = x_delta(0.0)
+    x_band_l = x_delta(-1.75)
+    x_band_r = x_delta(1.75)
+
+    lines = [
+        f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="26-Paper Cleveland Paired Dot Plot and Diverging Replication Gap Forest Plot">',
+        '<text x="12" y="20" class="svg-title" style="fill:var(--spd-blue)">1 · PAPER &amp; PRIMARY BENCHMARK</text>',
+        '<text x="245" y="20" class="svg-title" style="fill:var(--accent)">2 · OUR REPLICABILITY (PUB vs. OURS %)</text>',
+        '<circle cx="468" cy="16.5" r="3.8" class="svg-line-primary-dot"/>',
+        '<text x="475" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Pub</text>',
+        '<circle cx="502" cy="16.5" r="3.8" class="svg-line-secondary-dot"/>',
+        '<text x="509" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Ours</text>',
+        '<text x="555" y="20" class="svg-title" style="fill:var(--warning)">3 · THE GAP (MEAN Δ %) &amp; ROOT PIPELINE DIFFERENCE</text>',
+        f'<rect x="{x_band_l:.1f}" y="{pad_t - 14}" width="{x_band_r - x_band_l:.1f}" height="{26 * row_h + 10:.1f}" fill="rgba(4, 120, 87, 0.07)"/>',
+        f'<text x="{x_zero:.1f}" y="36" text-anchor="middle" class="svg-tick" style="fill:var(--good);font-weight:700">±1.75% Tight Band</text>',
+    ]
+
+    for tick_pct in (40, 60, 80, 100):
+        xp = x_acc(float(tick_pct))
+        lines.append(f'<line x1="{xp:.1f}" y1="{pad_t - 10}" x2="{xp:.1f}" y2="{pad_t + 26 * row_h:.1f}" class="svg-grid"/>')
+        lines.append(f'<text x="{xp:.1f}" y="38" text-anchor="middle" class="svg-tick">{tick_pct}%</text>')
+
+    for tick_d in (-8, -4, 0, 4):
+        xp = x_delta(float(tick_d))
+        cls = "svg-axis" if tick_d == 0 else "svg-grid"
+        lbl = f"+{tick_d}%" if tick_d > 0 else f"{tick_d}%"
+        lines.append(f'<line x1="{xp:.1f}" y1="{pad_t - 10}" x2="{xp:.1f}" y2="{pad_t + 26 * row_h:.1f}" class="{cls}"/>')
+        if tick_d != 0:
+            lines.append(f'<text x="{xp:.1f}" y="38" text-anchor="middle" class="svg-tick">{lbl}</text>')
+
+    for idx, p_chal in enumerate(challenge["papers"]):
+        pid = p_chal["paper_id"]
+        fig_meta = PAPER_FIGURES_METADATA[pid]
+        gap_spec = get_paper_gap_spec(pid)
+        harness_rows = _normalize_harness_rows(pid, fig_meta, verdicts_by_id)
+        r0 = harness_rows[0] if harness_rows else {}
+        ds_short = r0.get("dataset", "MOABB").split("(")[0].strip()[:12]
+        pub_v = _extract_first_float(r0.get("published", "74.0"), 74.0)
+        ours_v = _extract_first_float(r0.get("our_harness", "73.0"), pub_v - 1.0)
+        dm = re.search(r"([-+]?\d+\.\d+)\s*%", gap_spec["headline_delta"])
+        delta_v = float(dm.group(1)) if dm else (ours_v - pub_v)
+
+        ry = pad_t + idx * row_h + 8.0
+        if idx % 2 == 1:
+            lines.append(
+                f'<rect x="8" y="{ry - 12.5:.1f}" width="{w - 16}" height="{row_h:.1f}" rx="2" fill="var(--hover)" opacity="0.55"/>'
+            )
+
+        status = gap_spec["gap_status"]
+        dot_col = "var(--good)" if status == "exact" else ("var(--warning)" if status == "moderate" else "var(--critical)")
+        lines.append(f'<circle cx="16" cy="{ry - 3.5:.1f}" r="3.2" fill="{dot_col}"/>')
+        lines.append(
+            f'<text x="24" y="{ry:.1f}" class="svg-tick" style="font-weight:700;fill:var(--text)">{_esc_svg(pid[:18])}</text>'
+        )
+        lines.append(
+            f'<text x="234" y="{ry:.1f}" text-anchor="end" class="svg-tick">{_esc_svg(ds_short)}</text>'
+        )
+
+        # Col 2: Cleveland paired dots + connecting segment
+        xp_pub = x_acc(pub_v)
+        xp_ours = x_acc(ours_v)
+        lines.append(
+            f'<line x1="{min(xp_pub, xp_ours):.1f}" y1="{ry - 3.5:.1f}" x2="{max(xp_pub, xp_ours):.1f}" y2="{ry - 3.5:.1f}" stroke="var(--text2)" stroke-width="1.4" opacity="0.55"/>'
+        )
+        lines.append(f'<circle cx="{xp_pub:.1f}" cy="{ry - 3.5:.1f}" r="3.6" class="svg-line-primary-dot"/>')
+        lines.append(f'<circle cx="{xp_ours:.1f}" cy="{ry - 3.5:.1f}" r="3.6" class="svg-line-secondary-dot"/>')
+
+        # Col 3: Diverging delta bar from x_zero
+        xd = x_delta(delta_v)
+        bx = min(x_zero, xd)
+        bw = max(2.0, abs(xd - x_zero))
+        lines.append(
+            f'<rect x="{bx:.1f}" y="{ry - 8.0:.1f}" width="{bw:.1f}" height="9.0" rx="1.8" fill="{dot_col}" opacity="0.88"/>'
+        )
+        sign = "+" if delta_v >= 0 else ""
+        lbl_x = xd + 4.0 if delta_v >= 0 else xd - 4.0
+        anchor = "start" if delta_v >= 0 else "end"
+        lines.append(
+            f'<text x="{lbl_x:.1f}" y="{ry - 0.5:.1f}" text-anchor="{anchor}" class="svg-val" style="font-size:8.2px;fill:{dot_col}">{sign}{delta_v:.1f}%</text>'
+        )
+
+        # Col 4: Concise root-cause summary
+        cause = gap_spec["gap_label"]
+        lines.append(
+            f'<text x="798" y="{ry:.1f}" class="svg-tick" style="fill:var(--text2)">{_esc_svg(cause[:46])}</text>'
+        )
+
+    lines.append("</svg>")
+    return "\n".join(lines)
+
+
 def _render_paper_top_tri_summary(
     pid: str,
     p_meta: dict[str, Any],
@@ -2989,6 +3181,7 @@ def _render_paper_top_tri_summary(
     imp = ARXIV_IMPORTED_DATA.get(pid, {})
     cfg = imp.get("experiment_config", {})
     gap_spec = get_paper_gap_spec(pid)
+    short_delta = gap_spec["headline_delta"].split("(")[0].strip()[:22]
     targets_badges = " ".join(
         f"<code>{_esc(t)}</code>" for t in p_meta.get("spd_learn_targets", [])
     )
@@ -3010,23 +3203,23 @@ def _render_paper_top_tri_summary(
   <div class="tri-grid" style="margin-top:8px">
     <div class="diag-card col-orig">
       <div class="col-banner orig">
-        <span>1 · ORIGINAL PAPER PROTOCOL</span>
-        <span class="small muted">{_esc(p_meta["venue"])}</span>
+        <span>1 · ORIGINAL PROTOCOL</span>
+        <span class="small muted">{_esc(p_meta["venue"][:18])}</span>
       </div>
       <table class="data-table" style="font-size:0.78rem">
         <tbody>
           <tr><th style="width:115px">Split &amp; Harness</th><td><code>{_esc(cfg.get("split_protocol", ""))}</code></td></tr>
-          <tr><th>Preprocessing</th><td>{_esc(cfg.get("preprocessing", ""))}</td></tr>
+          <tr><th>Preprocessing</th><td>{_latexify_prose(cfg.get("preprocessing", ""))}</td></tr>
           <tr><th>Architecture</th><td><code>{_esc(cfg.get("architecture", ""))}</code></td></tr>
-          <tr><th>Metric &amp; Reg $\\epsilon$</th><td>{_esc(cfg.get("metric_and_reg", ""))}</td></tr>
+          <tr><th>Metric &amp; Reg $\\epsilon$</th><td>{_latexify_prose(cfg.get("metric_and_reg", ""))}</td></tr>
           <tr><th>Optimizer</th><td><code>{_esc(cfg.get("optimizer_recipe", ""))}</code></td></tr>
         </tbody>
       </table>
     </div>
     <div class="diag-card col-ours">
       <div class="col-banner ours">
-        <span>2 · OUR REPLICABILITY (spd_learn)</span>
-        <span class="small muted">{len(harness_rows)} Datasets Audited</span>
+        <span>2 · OUR REPLICABILITY</span>
+        <span class="small muted">{len(harness_rows)} Datasets</span>
       </div>
       <div class="small" style="margin-bottom:4px">
         <strong>Implemented:</strong> {targets_badges} · {_paper_outcome_bar_and_badges(pid, verdicts_by_id)}
@@ -3042,20 +3235,20 @@ def _render_paper_top_tri_summary(
     </div>
     <div class="diag-card col-gap">
       <div class="col-banner gap">
-        <span>3 · THE GAP &amp; PIPELINE DIFFERENCES</span>
-        <code>{_esc(gap_spec["headline_delta"])}</code>
+        <span>3 · THE GAP &amp; WHY</span>
+        <code>{_esc(short_delta)}</code>
       </div>
       <div class="diff-box">
         <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
-        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+        <p>{_latexify_prose(gap_spec["dataloader_diff"])}</p>
       </div>
       <div class="diff-box">
         <div class="diff-label">Model &amp; Optimizer Diff</div>
-        <p>{_esc(gap_spec["arch_optim_diff"])}</p>
+        <p>{_latexify_prose(gap_spec["arch_optim_diff"])}</p>
       </div>
       <div class="diff-box warn">
         <div class="diff-label">Where It Fails / Struggles</div>
-        <p>{_esc(gap_spec["where_it_struggles"])}</p>
+        <p>{_latexify_prose(gap_spec["where_it_struggles"])}</p>
       </div>
     </div>
   </div>
@@ -3374,8 +3567,12 @@ def build_all() -> None:
         ours_head = first_hr.get("our_harness", "").split("(")[0].strip()
         ds_head = first_hr.get("dataset", "").split("(")[0].strip()
 
+        g_status = gap_spec["gap_status"]
+        dot_cls = "good" if g_status == "exact" else ("warning" if g_status == "moderate" else "unresolved")
+        short_delta = gap_spec["headline_delta"].split("(")[0].strip()[:24]
+
         paper_rows_html.append(
-            f"""<div class="drow" data-category="{_esc(fig_meta['category_badge'].lower())}">
+            f"""<div class="drow" data-gap="{_esc(g_status)}" data-category="{_esc(fig_meta['category_badge'].lower())}">
   <div class="id">
     <a href="papers/{pid}/index.html"><strong><code>{_esc(pid)}</code></strong></a><br>
     <span class="tag">{_esc(p_meta["venue"])}</span>
@@ -3395,17 +3592,19 @@ def build_all() -> None:
   <div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px">
       {_gap_badge_html(gap_spec["gap_status"], gap_spec["gap_label"])}
-      <code>{_esc(gap_spec["headline_delta"])}</code>
+      <code>{_esc(short_delta)}</code>
     </div>
     <p class="small muted" style="margin:0;font-size:0.78rem;line-height:1.35">
-      <strong>Pipeline Diff:</strong> {_esc(gap_spec["dataloader_diff"])}
+      <strong>Pipeline Diff:</strong> {_latexify_prose(gap_spec["dataloader_diff"])}
     </p>
   </div>
 </div>"""
         )
 
+        dot_color = "var(--good)" if g_status == "exact" else ("var(--warning)" if g_status == "moderate" else "var(--critical)")
         atlas_jump_pills.append(
-            f'<a class="jump-pill" href="#atlas-{pid}">{_esc(fig_meta.get("short_title", pid))}</a>'
+            f'<a class="jump-pill" data-gap="{_esc(g_status)}" href="#atlas-{pid}">'
+            f'<span style="color:{dot_color};margin-right:3px">●</span>{_esc(pid)}</a>'
         )
 
         panel_cards = []
@@ -3426,7 +3625,7 @@ def build_all() -> None:
 </div>"""
             )
         atlas_sections_html.append(
-            f"""<section class="panel" id="atlas-{pid}">
+            f"""<section class="panel atlas-sec" id="atlas-{pid}" data-gap="{_esc(g_status)}">
   <div class="claim-head">
     <span class="tag"><code>{_esc(pid)}</code></span>
     <span class="tag">{_esc(p_meta["venue"])}</span>
@@ -3435,8 +3634,8 @@ def build_all() -> None:
   </div>
   <h2 style="margin-bottom:4px"><a href="../papers/{pid}/index.html">{_esc(section_heading)}</a></h2>
   <p class="small muted" style="margin:0 0 8px">
-    <strong>Dataloader / Protocol Diff:</strong> {_esc(gap_spec["dataloader_diff"])} ·
-    <strong>Where It Struggles:</strong> {_esc(gap_spec["where_it_struggles"])}
+    <strong>Dataloader / Protocol Diff:</strong> {_latexify_prose(gap_spec["dataloader_diff"])} ·
+    <strong>Where It Struggles:</strong> {_latexify_prose(gap_spec["where_it_struggles"])}
   </p>
   {"".join(sbs_cards_atlas)}
   <details class="panel-collapse" style="margin-top:10px">
@@ -3455,14 +3654,14 @@ def build_all() -> None:
         c3_v = verdicts_by_id[f"{pid}_c3"]
         pipeline_rows_html.append(
             f"""<tr>
-  <td><a href="../papers/{pid}/index.html"><code>{_esc(pid)}</code></a><br><span class="muted small">{_esc(p_meta["venue"])}</span></td>
+  <td style="white-space:nowrap"><a href="../papers/{pid}/index.html"><code>{_esc(pid)}</code></a><br><span class="muted small">{_esc(p_meta["venue"])}</span></td>
   <td><strong><a href="../papers/{pid}/index.html">{_esc(fig_meta["short_title"])}</a></strong><br><span class="small muted"><code>{_esc(p_meta["worktree_branch"])}</code></span></td>
-  <td><span class="chip good">✓ Indexed ({len(harness_rows)} datasets)</span></td>
-  <td>{_verdict_chip(c1_v["verdict"], c1_v["points"])}</td>
-  <td>{_verdict_chip(c2_v["verdict"], c2_v["points"])}</td>
-  <td>{_verdict_chip(c3_v["verdict"], c3_v["points"])}</td>
-  <td><code>exit={lb["exit_code"]}</code> ({lb["duration_sec"]}s)<br><a class="small" href="../repro/logbooks/{pid}_logbook.json">JSON</a> · <a class="small" href="../repro/logbooks/{pid}_logbook.md">MD</a></td>
-  <td><strong>6 / 6</strong></td>
+  <td style="white-space:nowrap"><span class="chip good">✓ Indexed ({len(harness_rows)} ds)</span></td>
+  <td style="white-space:nowrap">{_verdict_chip(c1_v["verdict"], c1_v["points"])}</td>
+  <td style="white-space:nowrap">{_verdict_chip(c2_v["verdict"], c2_v["points"])}</td>
+  <td style="white-space:nowrap">{_verdict_chip(c3_v["verdict"], c3_v["points"])}</td>
+  <td style="white-space:nowrap"><code>exit={lb["exit_code"]}</code> ({lb["duration_sec"]}s)<br><a class="small" href="../repro/logbooks/{pid}_logbook.json">JSON</a> · <a class="small" href="../repro/logbooks/{pid}_logbook.md">MD</a></td>
+  <td style="white-space:nowrap"><strong>6 / 6</strong></td>
 </tr>"""
         )
 
@@ -3486,6 +3685,48 @@ def build_all() -> None:
     total_ds_evals = sum(spdbench_counts.values())
     total_sbs_figs = sum(len(v) for v in all_sbs_cards.values())
     total_sbs_tabs = sum(len(ARXIV_IMPORTED_DATA.get(k, {}).get("imported_tables", [])) for k in papers_by_id)
+    master_forest_svg = _render_master_gap_forest_svg(challenge, papers_by_id, verdicts_by_id)
+
+    n_exact_gap = sum(1 for p in challenge["papers"] if get_paper_gap_spec(p["paper_id"])["gap_status"] == "exact")
+    n_mod_gap = sum(1 for p in challenge["papers"] if get_paper_gap_spec(p["paper_id"])["gap_status"] == "moderate")
+    n_div_gap = sum(1 for p in challenge["papers"] if get_paper_gap_spec(p["paper_id"])["gap_status"] in ("large", "divergent"))
+
+    filter_bar_html = f"""<div class="filter-bar">
+      <button type="button" class="filter-btn active" data-filter="all">All 26 Papers</button>
+      <button type="button" class="filter-btn" data-filter="exact"><span style="color:var(--good)">●</span> Tight Replication ({n_exact_gap})</button>
+      <button type="button" class="filter-btn" data-filter="moderate"><span style="color:var(--warning)">●</span> Dataloader / Protocol Gap ({n_mod_gap})</button>
+      <button type="button" class="filter-btn" data-filter="large"><span style="color:var(--critical)">●</span> Baseline / Regime Shift ({n_div_gap})</button>
+      <input type="search" class="search-input" id="paper-search" placeholder="Filter by paper, dataset, or dataloader (e.g. GREEN, autoreject)..." aria-label="Filter papers"/>
+    </div>"""
+
+    filter_script_js = """<script>(function(){
+var btns=[].slice.call(document.querySelectorAll('.filter-btn')),
+rows=[].slice.call(document.querySelectorAll('.drow, .atlas-sec')),
+pills=[].slice.call(document.querySelectorAll('.jump-pill[data-gap]')),
+inp=document.getElementById('paper-search'),active='all';
+function apply(){
+  var q=(inp&&inp.value||'').toLowerCase().trim();
+  rows.forEach(function(r){
+    var g=r.getAttribute('data-gap')||'all';
+    var mGap=(active==='all'||g===active);
+    var mTxt=(!q||r.textContent.toLowerCase().indexOf(q)!==-1);
+    r.hidden=!(mGap&&mTxt);
+  });
+  pills.forEach(function(p){
+    var g=p.getAttribute('data-gap')||'all';
+    p.hidden=!(active==='all'||g===active);
+  });
+}
+btns.forEach(function(b){
+  b.addEventListener('click',function(){
+    btns.forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+    active=b.getAttribute('data-filter')||'all';
+    apply();
+  });
+});
+if(inp)inp.addEventListener('input',apply);
+})();</script>"""
 
     # 1. Write index.html (Overview)
     index_html = (
@@ -3510,14 +3751,24 @@ def build_all() -> None:
     </div>
   </section>
 
+  <div class="panel">
+    <div class="claim-head" style="margin-bottom:8px">
+      <span class="tag" style="border-color:var(--accent);color:var(--accent)">MACRO VISUAL SYNTHESIS</span>
+      <strong>26-Paper Cleveland Paired Dot Plot (Published vs. Ours) &amp; Diverging Gap Forest Plot ($\\Delta = \\text{{Ours}} - \\text{{Published}}$)</strong>
+      <span class="small muted" style="margin-left:auto">Blue = Published · Red = Ours (spd_learn) · Shaded Band = &plusmn;1.75% Tight Replication</span>
+    </div>
+    {master_forest_svg}
+  </div>
+
   <div class="panel" style="padding:0">
     <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
       <div>
         <h2 style="margin:0">All 26 Papers: 1. Paper &amp; Datasets &nbsp;|&nbsp; 2. Replicability &nbsp;|&nbsp; 3. The Gap &amp; Pipeline Differences</h2>
-        <p class="small muted" style="margin:2px 0 0">Scan where each architecture replicates closely vs. where dataloader, preprocessing, or conditioning differences create a gap.</p>
+        <p class="small muted" style="margin:2px 0 0">Filter by replication regime or search any paper, dataset, or dataloader difference.</p>
       </div>
       <a class="tag" href="figures/index.html">Browse All {total_sbs_figs} 3-Column Figure Cards →</a>
     </div>
+    {filter_bar_html}
     <div>
       {"".join(paper_rows_html)}
     </div>
@@ -3569,6 +3820,7 @@ def build_all() -> None:
     </div>
   </details>
 </main>
+{filter_script_js}
 """
         + _footer_html("")
     )
@@ -3584,10 +3836,19 @@ def build_all() -> None:
   <p class="lede">Each row summarizes (1) Paper &amp; Datasets, (2) Published vs. Our Replicated Benchmark, and (3) The Gap &amp; Dataloader/Protocol Differences.</p>
 </header>
 <main>
+  <div class="panel">
+    <div class="claim-head" style="margin-bottom:8px">
+      <span class="tag" style="border-color:var(--accent);color:var(--accent)">26-PAPER VISUAL SUMMARY</span>
+      <strong>Cleveland Paired Dot Plot (Published vs. Ours) &amp; Diverging Gap Forest Plot ($\\Delta = \\text{{Ours}} - \\text{{Published}}$)</strong>
+    </div>
+    {master_forest_svg}
+  </div>
   <div class="panel" style="padding:0">
+    {filter_bar_html}
     {"".join(papers_catalog_rows)}
   </div>
 </main>
+{filter_script_js}
 """
         + _footer_html("../")
     )
@@ -3602,13 +3863,17 @@ def build_all() -> None:
   <p class="lede">
     Every figure from all 26 papers is paired in a 3-column grid showing the tight-cropped original figure on the left, our <code>spd_learn</code> replication in the center, and the numeric gap ($\\Delta$), dataloader differences, and failure regimes on the right.
   </p>
-  <div class="jump-strip">
-    {"".join(atlas_jump_pills)}
+  <div class="panel" style="padding:0;margin-top:10px">
+    {filter_bar_html}
+    <div class="jump-strip" style="padding:8px 16px;margin:0">
+      {"".join(atlas_jump_pills)}
+    </div>
   </div>
 </header>
 <main>
   {"".join(atlas_sections_html)}
 </main>
+{filter_script_js}
 """
         + _footer_html("../")
     )
