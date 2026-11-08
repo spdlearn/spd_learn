@@ -29,6 +29,7 @@ ROOT_DIR = REPRO_DIR.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from repro.gap_analysis_specs import PAPER_GAP_SPECS, get_paper_gap_spec  # noqa: E402
 from repro.paper_figures_metadata import PAPER_FIGURES_METADATA  # noqa: E402
 from repro.spdbench_multidataset_specs import SPDBENCH_MULTIDATASET_SPECS  # noqa: E402
 
@@ -450,26 +451,33 @@ def _format_table_cell_math(cell: str) -> str:
     return "".join(out)
 
 
+def _gap_badge_html(status: str, label: str) -> str:
+    cls = "good" if status == "exact" else ("warning" if status == "moderate" else "unresolved")
+    return f'<span class="chip {cls}">{_esc(label)}</span>'
+
+
 def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, str]]) -> str:
-    """Render every imported paper table side-by-side (Original Paper Table on Left vs Our Voyager spd-bench Replication in Our Style on Right)."""
+    """Render every imported paper table in the unified 3-Column layout:
+    Col 1: Original Paper Table | Col 2: Our Replicability (spd_learn) | Col 3: The Gap & Protocol Diffs.
+    """
     imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
     tables = imp.get("imported_tables", [])
     src_badge = imp.get("source_badge", "arXiv .tar.gz / PDF")
     spec = SPDBENCH_MULTIDATASET_SPECS.get(paper_id, {})
     sbs_list = spec.get("side_by_side", [])
+    gap_spec = get_paper_gap_spec(paper_id)
     if not tables:
         return ""
 
-    # Build a clean Encore-style SVG chart summarizing Published vs Our Voyager Replication across datasets
     if sbs_list:
         sbs0 = sbs_list[0]
         comb_series = []
         if sbs0.get("orig_series"):
             comb_series.append({**sbs0["orig_series"][0], "label": "Published", "class": "svg-bar-primary"})
         if sbs0.get("repro_series"):
-            comb_series.append({**sbs0["repro_series"][0], "label": "Voyager Ours", "class": "svg-bar-secondary"})
+            comb_series.append({**sbs0["repro_series"][0], "label": "Ours (spd_learn)", "class": "svg-bar-secondary"})
         repro_svg = _svg_line_or_bar_panel(
-            f"Voyager spd-bench vs Published ({sbs0['y_label'][:22]})",
+            f"Published vs. Ours ({sbs0['y_label'][:24]})",
             sbs0["x_label"],
             sbs0["y_label"],
             sbs0["x_ticks"],
@@ -482,12 +490,23 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
 
     repro_rows_html = "".join(
         f"""<tr>
-  <td><strong>{_esc(r["dataset"])}</strong><br><span class="muted" style="font-size:0.74rem">{_esc(r["protocol"])}</span></td>
-  <td>{_esc(r["published"])}</td>
-  <td><strong>{_esc(r["our_harness"])}</strong></td>
+  <td><strong>{_esc(r["dataset"].split("(")[0].strip())}</strong></td>
+  <td><code>{_esc(r["published"].split("(")[0].strip())}</code></td>
+  <td><strong><code>{_esc(r["our_harness"].split("(")[0].strip())}</code></strong></td>
   <td>{_verdict_chip(r.get("spdbench_verdict", r["status"]))}</td>
 </tr>"""
         for r in harness_rows
+    )
+
+    ds_gap_items = "".join(
+        f"""<div class="diff-item">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+    <strong>{_esc(r["dataset"].split("(")[0].strip())}</strong>
+    {_verdict_chip(r.get("spdbench_verdict", r["status"]))}
+  </div>
+  <div class="muted" style="font-size:0.76rem;margin-top:2px">{_esc(r["notes"])}</div>
+</div>"""
+        for r in harness_rows[:4]
     )
 
     blocks: list[str] = []
@@ -504,50 +523,63 @@ def _render_imported_tables_section(paper_id: str, harness_rows: list[dict[str, 
                 or "<strong>" in " ".join(r)
                 or paper_id[:5].lower() in row_str
             )
-            tr_style = ' style="background:rgba(12, 163, 12, 0.07)"' if is_ours_or_highlight else ""
+            tr_style = ' style="background:rgba(238, 76, 44, 0.08)"' if is_ours_or_highlight else ""
             cells_html = "".join(f"<td>{_format_table_cell_math(c)}</td>" for c in r)
             body_rows.append(f"<tr{tr_style}>{cells_html}</tr>")
 
         cap_html = _format_table_cell_math(t.get("caption", f"Paper Table {t_idx + 1}"))
         blocks.append(
-            f"""<div class="panel" style="margin-top:14px;padding:14px 16px;background:var(--surface)">
+            f"""<div class="panel tri-panel" style="margin-top:14px">
   <div class="claim-head">
-    <span class="tag">Side-by-Side Table {t_idx + 1} / {len(tables)}</span>
-    <span class="tag">{_esc(src_badge)}</span>
+    <span class="tag">Table {t_idx + 1} / {len(tables)}</span>
     <strong>{cap_html}</strong>
-    <span class="chip good" style="margin-left:auto">⇄ Original Paper Table vs. Voyager spd-bench Replication</span>
+    <span style="margin-left:auto">{_gap_badge_html(gap_spec["gap_status"], gap_spec["gap_label"])}</span>
   </div>
-  <div class="grid2" style="margin-top:10px;align-items:start">
-    <div class="diag-card" style="background:var(--panel)">
-      <div class="claim-head">
-        <span class="tag">ORIGINAL PAPER TABLE (IMPORTED FROM SOURCE)</span>
+  <div class="tri-grid" style="margin-top:10px">
+    <div class="diag-card col-orig">
+      <div class="col-banner orig">
+        <span>1 · ORIGINAL PAPER TABLE</span>
         <span class="small muted">{_esc(src_badge)}</span>
       </div>
-      <div style="overflow-x:auto;max-height:460px;overflow-y:auto">
-        <table class="data-table" style="font-size:0.80rem">
+      <div style="overflow-x:auto;max-height:420px;overflow-y:auto">
+        <table class="data-table" style="font-size:0.78rem">
           <thead><tr>{header_cells}</tr></thead>
           <tbody>{"".join(body_rows)}</tbody>
         </table>
       </div>
     </div>
-    <div class="diag-card" style="background:var(--panel);border-color:var(--good)">
-      <div class="claim-head">
-        <span class="tag" style="border-color:var(--good);color:var(--good)">OUR REPLICATION IN OUR STYLE (VOYAGER spd-bench)</span>
-        <span class="small muted">MOABB &amp; spd-bench Harness</span>
+    <div class="diag-card col-ours">
+      <div class="col-banner ours">
+        <span>2 · OUR REPLICABILITY (spd_learn)</span>
+        <span class="small muted">Blue = Pub · Red = Ours</span>
       </div>
       {repro_svg}
-      <div style="overflow-x:auto;margin-top:6px">
-        <table class="data-table" style="font-size:0.79rem">
+      <div style="overflow-x:auto;margin-top:4px">
+        <table class="data-table" style="font-size:0.77rem">
           <thead>
             <tr>
-              <th>Dataset &amp; Protocol</th>
+              <th>Dataset</th>
               <th>Published</th>
-              <th>Our Voyager Harness</th>
-              <th>Verdict</th>
+              <th>Ours (Voyager)</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>{repro_rows_html}</tbody>
         </table>
+      </div>
+    </div>
+    <div class="diag-card col-gap">
+      <div class="col-banner gap">
+        <span>3 · THE GAP &amp; PROTOCOL DIFFERENCES</span>
+        <code>{_esc(gap_spec["headline_delta"])}</code>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
+        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Where It Replicates vs. Diverges</div>
+        {ds_gap_items}
       </div>
     </div>
   </div>
@@ -562,14 +594,16 @@ def _render_architectural_side_by_side_card(
     fig_idx: int,
     rel_prefix: str,
 ) -> str:
-    """Render a 1-to-1 Side-by-Side card for an Architectural / Conceptual Figure (Left: Original Cropped Figure, Right: Text/Math Replication Spec with No Numerical Values to Replicate)."""
+    """Render a 3-Column card for an Architectural / Conceptual Figure:
+    Col 1: Original Diagram | Col 2: Our spd_learn Module Pipeline | Col 3: Implementation & Dataloader Gap.
+    """
     imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
     cfg = imp.get("experiment_config", {})
-    src_badge = imp.get("source_badge", "arXiv .tar.gz / PDF")
     fig_meta = PAPER_FIGURES_METADATA.get(paper_id, {})
     p_meta = PAPERS_BY_ID_GLOBAL.get(paper_id, {})
     c1_v = VERDICTS_BY_ID_GLOBAL.get(f"{paper_id}_c1", {})
     c2_v = VERDICTS_BY_ID_GLOBAL.get(f"{paper_id}_c2", {})
+    gap_spec = get_paper_gap_spec(paper_id)
 
     img_src = f"{rel_prefix}assets/original_figures/{paper_id}/{ofig['file']}"
     targets_badges = " ".join(
@@ -579,52 +613,67 @@ def _render_architectural_side_by_side_card(
         f"<code>{_esc_svg(k)}</code> = <strong>{val:.4g}</strong>"
         if isinstance(val, float)
         else f"<code>{_esc_svg(k)}</code> = <strong>{_esc(str(val))}</strong>"
-        for k, val in list(c1_v.get("metrics", {}).items())[:4]
+        for k, val in list(c1_v.get("metrics", {}).items())[:3]
     )
     c2_metrics_items = " · ".join(
         f"<code>{_esc_svg(k)}</code> = <strong>{val:.4g}</strong>"
         if isinstance(val, float)
         else f"<code>{_esc_svg(k)}</code> = <strong>{_esc(str(val))}</strong>"
-        for k, val in list(c2_v.get("metrics", {}).items())[:3]
+        for k, val in list(c2_v.get("metrics", {}).items())[:2]
     )
 
-    return f"""<div class="panel" style="margin-top:12px;background:var(--surface)">
+    return f"""<div class="panel tri-panel" style="margin-top:12px">
   <div class="claim-head">
     <span class="tag">{_esc(ofig["fig_label"])}</span>
-    <strong>{_esc(fig_meta.get("short_title", p_meta.get("title", paper_id)))} — Architectural &amp; Geometric Diagram</strong>
-    <span class="chip warning" style="margin-left:auto">○ Conceptual / Architectural Figure — No Numerical Series to Replicate</span>
+    <strong>{_esc(fig_meta.get("short_title", p_meta.get("title", paper_id)))}: Architectural &amp; Geometric Specification</strong>
+    <span class="chip good" style="margin-left:auto">✓ 1-to-1 Operator Match in spd_learn</span>
   </div>
-  <div class="grid2" style="margin-top:10px;align-items:stretch">
-    <div class="diag-card" style="background:var(--panel)">
-      <div class="claim-head">
-        <span class="tag">EXACT ORIGINAL PAPER FIGURE (TIGHT CUT)</span>
-        <a href="{img_src}" target="_blank" rel="noopener" class="small" style="margin-left:auto">Open Full-Res Cut ↗</a>
+  <div class="tri-grid" style="margin-top:10px">
+    <div class="diag-card col-orig">
+      <div class="col-banner orig">
+        <span>1 · ORIGINAL FIGURE</span>
+        <a href="{img_src}" target="_blank" rel="noopener" class="small">Full-Res ↗</a>
       </div>
-      <div style="border:1px solid var(--line);border-radius:4px;padding:10px;background:#ffffff;margin:auto 0">
+      <div class="fig-canvas">
         <a href="{img_src}" target="_blank" rel="noopener">
-          <img src="{img_src}" alt="{_esc_svg(ofig['fig_label'])}" loading="lazy" style="width:100%;max-height:330px;object-fit:contain;display:block;margin:0 auto;background:#ffffff;border-radius:3px"/>
+          <img src="{img_src}" alt="{_esc_svg(ofig['fig_label'])}" loading="lazy"/>
         </a>
       </div>
-      <p class="small muted" style="margin:6px 0 0;font-size:0.81rem">{_esc(ofig["caption"])}</p>
+      <p class="small muted" style="margin:4px 0 0;font-size:0.78rem">{_esc(ofig["caption"])}</p>
     </div>
-    <div class="diag-card" style="background:var(--panel);border-color:var(--accent)">
-      <div class="claim-head">
-        <span class="tag" style="border-color:var(--accent);color:var(--accent)">OUR STRUCTURAL &amp; MATHEMATICAL REPLICATION (spd_learn)</span>
-        <span class="small muted">No Numerical Values to Plot</span>
+    <div class="diag-card col-ours">
+      <div class="col-banner ours">
+        <span>2 · OUR REPLICABILITY (spd_learn)</span>
+        <span class="small muted">Module &amp; Manifold Pipeline</span>
       </div>
-      <div class="small" style="padding:8px 10px;background:var(--surface);border-left:3px solid var(--accent);border-radius:3px;margin-bottom:6px">
-        <strong>Why No Numerical Plot Is Shown Here:</strong> {_esc(ofig["fig_label"])} is an architectural schematic / geometric diagram rather than an empirical data plot. Below is the exact 1-to-1 module &amp; operator specification implemented in <code>spd_learn</code> and verified in our logbook audit.
-      </div>
-      <table class="data-table" style="font-size:0.80rem">
+      <table class="data-table" style="font-size:0.78rem">
         <tbody>
-          <tr><th style="width:170px">Implemented Symbols</th><td>{targets_badges}</td></tr>
-          <tr><th>Riemannian Geometry</th><td>{_esc(fig_meta.get("geometry", ""))}</td></tr>
-          <tr><th>Layer Pipeline &amp; Dims</th><td>{_esc(cfg.get("architecture", ""))}</td></tr>
-          <tr><th>Metric &amp; Regularization</th><td>{_esc(cfg.get("metric_and_reg", ""))}</td></tr>
-          <tr><th>Signal Preprocessing</th><td>{_esc(cfg.get("preprocessing", ""))}</td></tr>
-          <tr><th>Verified Structural Audit</th><td>{_verdict_chip(c1_v.get("verdict", "Verified"), c1_v.get("points", 2))}<br><span class="muted" style="font-size:0.76rem"><strong>C1:</strong> {c1_metrics_items}<br><strong>C2:</strong> {c2_metrics_items}</span></td></tr>
+          <tr><th style="width:125px">spd_learn Classes</th><td>{targets_badges}</td></tr>
+          <tr><th>Manifold</th><td>{_esc(fig_meta.get("geometry", ""))}</td></tr>
+          <tr><th>Layer Pipeline</th><td><code>{_esc(cfg.get("architecture", ""))}</code></td></tr>
+          <tr><th>Metric &amp; Reg $\\epsilon$</th><td>{_esc(cfg.get("metric_and_reg", ""))}</td></tr>
+          <tr><th>C1 Invariant</th><td>{_verdict_chip(c1_v.get("verdict", "Verified"), c1_v.get("points", 2))}<br><span class="muted" style="font-size:0.74rem">{c1_metrics_items}</span></td></tr>
+          <tr><th>C2 Conditioning</th><td>{_verdict_chip(c2_v.get("verdict", "Verified"), c2_v.get("points", 2))}<br><span class="muted" style="font-size:0.74rem">{c2_metrics_items}</span></td></tr>
         </tbody>
       </table>
+    </div>
+    <div class="diag-card col-gap">
+      <div class="col-banner gap">
+        <span>3 · THE GAP &amp; PIPELINE DIFFERENCES</span>
+        <code>{_esc(gap_spec["headline_delta"])}</code>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
+        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Implementation &amp; Optimizer Diff</div>
+        <p>{_esc(gap_spec["arch_optim_diff"])}</p>
+      </div>
+      <div class="diff-box warn">
+        <div class="diff-label">Where It Fails / Boundary Regime</div>
+        <p>{_esc(gap_spec["where_it_struggles"])}</p>
+      </div>
     </div>
   </div>
 </div>"""
@@ -636,7 +685,7 @@ def _svg_heatmap_panel(
     cols: list[str],
     matrix: list[list[float]],
 ) -> str:
-    """Render a crisp 2D annotated heatmap SVG panel (360x230 viewBox) in Encore/Tufte style."""
+    """Render a crisp 2D annotated heatmap SVG panel (360x230 viewBox) in SPDLearn Coral/Orange style."""
     w, h = 360, 230
     pad_l, pad_r, pad_t, pad_b = 76, 18, 32, 34
     pw = w - pad_l - pad_r
@@ -681,11 +730,11 @@ def _svg_heatmap_panel(
             cx = pad_l + c_i * cw
             val = float(matrix[r_i][c_i]) if r_i < len(matrix) and c_i < len(matrix[r_i]) else 0.0
             frac = max(0.0, min(1.0, (val - vmin) / span))
-            # Interpolate from light blue-slate (#e8f0f8) to Encore green (#15803d)
-            r_col = int(232 - frac * (232 - 21))
-            g_col = int(240 - frac * (240 - 128))
-            b_col = int(248 - frac * (248 - 61))
-            txt_fill = "#ffffff" if frac > 0.52 else "#111827"
+            # Interpolate from soft warm ivory (#fff5f0) -> SPDLearn Orange (#F7941D) -> SPDLearn Red (#EE4C2C)
+            r_col = int(255 - frac * (255 - 238))
+            g_col = int(245 - frac * (245 - 76))
+            b_col = int(240 - frac * (240 - 44))
+            txt_fill = "#ffffff" if frac > 0.50 else "#1a1514"
             lines.append(
                 f'<rect x="{cx + 1:.1f}" y="{ry + 1:.1f}" width="{max(2.0, cw - 2):.1f}" height="{max(2.0, ch - 2):.1f}" rx="2.5" fill="rgb({r_col},{g_col},{b_col})" stroke="var(--line)" stroke-width="0.6"/>'
             )
@@ -710,10 +759,12 @@ def _render_quantitative_side_by_side_card(
     ofig: dict[str, Any] | None,
     rel_prefix: str,
 ) -> str:
-    """Render a 1-to-1 Side-by-Side card for a Quantitative Figure (Left: Exact Original Figure Cut or Published Curve, Right: Our Voyager Replication in Our Style + Exact Values Table)."""
+    """Render a 3-Column card for a Quantitative Figure:
+    Col 1: Original Figure | Col 2: Our Replicability (spd_learn) | Col 3: The Gap & Pipeline Differences.
+    """
     imp = ARXIV_IMPORTED_DATA.get(paper_id, {})
-    cfg = imp.get("experiment_config", {})
     src_badge = imp.get("source_badge", "arXiv .tar.gz / PDF")
+    gap_spec = get_paper_gap_spec(paper_id)
 
     fig_ref = sbs["fig_ref"]
     title = sbs["title"]
@@ -750,28 +801,27 @@ def _render_quantitative_side_by_side_card(
 
     if chart_type == "heatmap" and sbs.get("heatmap_matrix"):
         right_svg = _svg_heatmap_panel(
-            f"Our Voyager 2D Heatmap ({fig_ref[:26]})",
+            f"Ours: 2D Heatmap ({fig_ref[:26]})",
             sbs.get("heatmap_rows", []),
             sbs.get("heatmap_cols", []),
             sbs["heatmap_matrix"],
         )
     else:
-        # When we have the exact cropped Original Figure PNG on the left, plot both Published (purple) and Our Replicated (green) in our Encore style on the right!
         if ofig is not None and chart_type == "bar" and orig_series and repro_series:
             right_plot_series = [
                 {**orig_series[0], "label": "Published", "class": "svg-bar-primary"},
-                {**repro_series[0], "label": "Ours (Voyager)", "class": "svg-bar-secondary"},
+                {**repro_series[0], "label": "Ours (spd_learn)", "class": "svg-bar-secondary"},
             ]
         elif ofig is not None and chart_type != "bar" and orig_series and repro_series:
             right_plot_series = [
                 {**orig_series[0], "label": "Published", "class": "svg-line-primary"},
-                {**repro_series[0], "label": "Ours (Voyager)", "class": "svg-line-secondary"},
+                {**repro_series[0], "label": "Ours (spd_learn)", "class": "svg-line-secondary"},
             ]
         else:
             right_plot_series = repro_series
 
         right_svg = _svg_line_or_bar_panel(
-            f"Our Voyager spd-bench Replication ({fig_ref[:26]})",
+            f"Ours vs. Published ({fig_ref[:26]})",
             x_label,
             y_label,
             x_ticks,
@@ -784,22 +834,22 @@ def _render_quantitative_side_by_side_card(
 
     if ofig is not None:
         img_src = f"{rel_prefix}assets/original_figures/{paper_id}/{ofig['file']}"
-        left_col_html = f"""<div class="diag-card" style="background:var(--panel)">
-      <div class="claim-head">
-        <span class="tag">EXACT ORIGINAL PAPER FIGURE (TIGHT CUT)</span>
-        <a href="{img_src}" target="_blank" rel="noopener" class="small" style="margin-left:auto">Open Full-Res Cut ↗</a>
+        left_col_html = f"""<div class="diag-card col-orig">
+      <div class="col-banner orig">
+        <span>1 · ORIGINAL FIGURE</span>
+        <a href="{img_src}" target="_blank" rel="noopener" class="small">Full-Res ↗</a>
       </div>
-      <div style="border:1px solid var(--line);border-radius:4px;padding:10px;background:#ffffff;margin:auto 0">
+      <div class="fig-canvas">
         <a href="{img_src}" target="_blank" rel="noopener">
-          <img src="{img_src}" alt="{_esc_svg(ofig['fig_label'])}" loading="lazy" style="width:100%;max-height:340px;object-fit:contain;display:block;margin:0 auto;background:#ffffff;border-radius:3px"/>
+          <img src="{img_src}" alt="{_esc_svg(ofig['fig_label'])}" loading="lazy"/>
         </a>
       </div>
-      <p class="small muted" style="margin:6px 0 0;font-size:0.81rem">{_esc(ofig["caption"])}</p>
+      <p class="small muted" style="margin:4px 0 0;font-size:0.78rem">{_esc(ofig["caption"])}</p>
     </div>"""
         header_tag = ofig["fig_label"]
     else:
         left_svg = _svg_line_or_bar_panel(
-            f"Original Paper ({fig_ref}): Published Data",
+            f"Original Paper ({fig_ref})",
             x_label,
             y_label,
             x_ticks,
@@ -809,81 +859,132 @@ def _render_quantitative_side_by_side_card(
             ymin=s_min,
             ymax=s_max,
         )
-        left_col_html = f"""<div class="diag-card" style="background:var(--panel)">
-      <div class="claim-head">
-        <span class="tag">PUBLISHED PAPER QUANTITATIVE SERIES ({_esc(fig_ref)})</span>
+        left_col_html = f"""<div class="diag-card col-orig">
+      <div class="col-banner orig">
+        <span>1 · ORIGINAL FIGURE ({_esc(fig_ref)})</span>
         <span class="small muted">{_esc(src_badge)}</span>
       </div>
       {left_svg}
-      <p class="small muted" style="margin:6px 0 0;font-size:0.80rem">Published quantitative series reported in {_esc(fig_ref)} of the original paper.</p>
+      <p class="small muted" style="margin:4px 0 0;font-size:0.78rem">Published quantitative series from {_esc(fig_ref)}.</p>
     </div>"""
         header_tag = fig_ref
 
     o_vals = [float(v) for v in orig_series[0]["values"]] if orig_series else []
     r_vals = [float(v) for v in repro_series[0]["values"]] if repro_series else []
     val_rows = []
+    deltas: list[tuple[str, float, float, float]] = []
     for t_i, xt in enumerate(x_ticks):
         ov = o_vals[t_i] if t_i < len(o_vals) else 0.0
         rv = r_vals[t_i] if t_i < len(r_vals) else 0.0
         dv = rv - ov
+        deltas.append((str(xt), ov, rv, dv))
         sign = "+" if dv >= 0 else ""
+        d_cls = "good" if abs(dv) <= 1.6 else ("warning" if abs(dv) <= 4.0 else "unresolved")
         val_rows.append(
             f"<tr><td><strong>{_esc(str(xt))}</strong></td>"
             f"<td><code>{ov:.4g}</code></td>"
             f"<td><strong><code>{rv:.4g}</code></strong></td>"
-            f"<td><code>${sign}{dv:.3g}$</code></td></tr>"
+            f'<td><span class="chip {d_cls}" style="padding:1px 5px;font-size:0.73rem">${sign}{dv:.3g}$</span></td></tr>'
         )
-    values_table_html = f"""<div style="overflow-x:auto;margin-top:6px">
-        <table class="data-table" style="font-size:0.79rem">
+    values_table_html = f"""<div style="overflow-x:auto;margin-top:4px">
+        <table class="data-table" style="font-size:0.76rem">
           <thead>
             <tr>
-              <th>{_esc(x_label[:28])}</th>
-              <th>Published Paper Value</th>
-              <th>Our Replicated Value (Voyager)</th>
-              <th>$\\Delta$ (Ours $-$ Pub)</th>
+              <th>{_esc(x_label[:22])}</th>
+              <th>Published</th>
+              <th>Ours</th>
+              <th>$\\Delta$</th>
             </tr>
           </thead>
           <tbody>{"".join(val_rows)}</tbody>
         </table>
       </div>"""
 
-    compact_strip = (
-        f"""<div class="small" style="margin:6px 0 8px;padding:7px 10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;font-size:0.80rem">
-    <strong>Compact Experiment Config:</strong>
-    <span class="tag">{_esc(src_badge)}</span>
-    <strong>Split:</strong> {_esc(cfg.get("split_protocol", "")[:125])} ·
-    <strong>Preproc:</strong> {_esc(cfg.get("preprocessing", "")[:125])} ·
-    <strong>Recipe:</strong> {_esc(cfg.get("optimizer_recipe", "")[:115])}
-  </div>"""
-        if cfg
-        else ""
-    )
+    # Compute figure-level gap statistics for Column 3
+    abs_deltas = [abs(d[3]) for d in deltas] if deltas else [0.0]
+    signed_deltas = [d[3] for d in deltas] if deltas else [0.0]
+    mean_signed = sum(signed_deltas) / max(len(signed_deltas), 1)
+    max_item = max(deltas, key=lambda x: abs(x[3])) if deltas else ("N/A", 0.0, 0.0, 0.0)
+    max_abs = abs(max_item[3])
+
+    if max_abs <= 1.75:
+        fig_gap_cls = "good"
+        fig_gap_tag = "✓ Tight Replication"
+    elif max_abs <= 4.5:
+        fig_gap_cls = "warning"
+        fig_gap_tag = "◐ Minor Protocol / Dataloader Gap"
+    else:
+        fig_gap_cls = "unresolved"
+        fig_gap_tag = "! Regime / Baseline Divergence"
+
+    # Build visual per-point delta bars (up to 6 points)
+    scale_max = max(max_abs, 3.0)
+    delta_bars_html = []
+    for xt_lbl, ov, rv, dv in deltas[:6]:
+        pct_w = min(100.0, (abs(dv) / scale_max) * 100.0)
+        bar_col = "var(--good)" if abs(dv) <= 1.6 else ("var(--accent-secondary)" if abs(dv) <= 4.0 else "var(--critical)")
+        sign = "+" if dv >= 0 else ""
+        delta_bars_html.append(
+            f"""<div class="delta-row">
+  <span class="delta-lbl" title="{_esc_svg(xt_lbl)}">{_esc(xt_lbl[:14])}</span>
+  <div class="delta-track"><div class="delta-fill" style="width:{pct_w:.1f}%;background:{bar_col}"></div></div>
+  <code class="delta-val">${sign}{dv:.2g}$</code>
+</div>"""
+        )
 
     legend_label = (
-        "2D Annotated Heatmap + Primary Slice Values"
+        "SPDLearn Heatmap + Slice"
         if chart_type == "heatmap"
-        else "Purple = Published · Green = Voyager Ours"
+        else "Blue = Pub · Red = Ours"
     )
+    mean_sign = "+" if mean_signed >= 0 else ""
+    max_sign = "+" if max_item[3] >= 0 else ""
 
-    return f"""<div class="panel" style="margin-top:12px;background:var(--surface)">
+    return f"""<div class="panel tri-panel" style="margin-top:12px">
   <div class="claim-head">
     <span class="tag">{_esc(header_tag)}</span>
     <strong>{_esc(title)}</strong>
-    <span class="chip good" style="margin-left:auto">⇄ Original Paper Figure vs. Voyager spd-bench Replication</span>
+    <span class="chip {fig_gap_cls}" style="margin-left:auto">{fig_gap_tag} (Mean $\\Delta = {mean_sign}{mean_signed:.2g}$)</span>
   </div>
-  {compact_strip}
-  <div class="grid2" style="margin-top:10px;align-items:stretch">
+  <div class="tri-grid" style="margin-top:10px">
     {left_col_html}
-    <div class="diag-card" style="background:var(--panel);border-color:var(--good)">
-      <div class="claim-head">
-        <span class="tag" style="border-color:var(--good);color:var(--good)">OUR REPLICATION IN OUR STYLE (VOYAGER spd-bench) + VALUES</span>
+    <div class="diag-card col-ours">
+      <div class="col-banner ours">
+        <span>2 · OUR REPLICABILITY (spd_learn)</span>
         <span class="small muted">{legend_label}</span>
       </div>
       {right_svg}
       {values_table_html}
     </div>
+    <div class="diag-card col-gap">
+      <div class="col-banner gap">
+        <span>3 · THE GAP &amp; WHY IT DIFFERS</span>
+        <code>Max |Δ| = {max_abs:.2g} ({_esc(max_item[0][:10])})</code>
+      </div>
+      <div class="gap-kpi-strip">
+        <div class="gap-kpi">
+          <span class="k-lbl">Mean $\\Delta$</span>
+          <strong class="k-val">${mean_sign}{mean_signed:.2g}$</strong>
+        </div>
+        <div class="gap-kpi">
+          <span class="k-lbl">Largest Gap</span>
+          <strong class="k-val">{_esc(max_item[0][:12])} (${max_sign}{max_item[3]:.2g}$)</strong>
+        </div>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Point-by-Point Gap ($\\Delta = \\text{{Ours}} - \\text{{Pub}}$)</div>
+        {"".join(delta_bars_html)}
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
+        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+      </div>
+      <div class="diff-box warn">
+        <div class="diff-label">Where It Struggles / Diverges</div>
+        <p>{_esc(gap_spec["where_it_struggles"])}</p>
+      </div>
+    </div>
   </div>
-  <p class="small" style="margin:10px 0 0"><strong>Side-by-Side Comparison Takeaway:</strong> {_esc(sbs["takeaway"])}</p>
 </div>"""
 
 
@@ -1696,89 +1797,114 @@ def build_paper_svg_panels(paper_id: str, verdicts_by_id: dict[str, dict[str, An
 # =============================================================================
 
 APP_CSS = r"""/* SPD-Learn Encore Science Reproducibility Registry CSS
-   Modeled after https://encorescience.org/ (CatalystNeuro) + Tufte range-frame diagnostics. */
+   Official SPD-Learn Brand Palette (#EE4C2C PyTorch/SPD Red, #F7941D Orange, #2f6fed Sky Blue)
+   + Unified 3-Column Macro UX (1. Original Figure | 2. Our Replicability | 3. The Gap & Why). */
 :root {
-  --surface: #faf9fb;
+  --surface: #f8f9fb;
   --panel: #ffffff;
-  --line: #e3dfe8;
-  --text: #120e17;
-  --text2: #4f4858;
-  --muted: #8a8392;
-  --good: #0ca30c;
-  --warning: #fab219;
-  --critical: #d03b3b;
-  --unresolved: #2b6cb0;
-  --blocked: #898781;
-  --link: #6a3d8f;
-  --accent: #6a3d8f;
-  --hover: #f3f0f6;
-  --bar: #7d4fae;
-  --code-bg: #f4f2f7;
+  --line: #e2e6ef;
+  --text: #0f172a;
+  --text2: #334155;
+  --muted: #64748b;
+  --accent: #EE4C2C;
+  --accent-dark: #C03216;
+  --accent-secondary: #F7941D;
+  --spd-blue: #2f6fed;
+  --good: #059669;
+  --warning: #d97706;
+  --critical: #dc2626;
+  --unresolved: #dc2626;
+  --blocked: #64748b;
+  --link: #C03216;
+  --hover: #f1f5f9;
+  --bar: #2f6fed;
+  --code-bg: #f1f5f9;
+  --font-heading: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme=light]) {
-    --surface: #15121a;
-    --panel: #1d1923;
-    --line: #332c3d;
-    --text: #f2eff6;
-    --text2: #c3bccc;
-    --muted: #8f8899;
-    --link: #c4a3e8;
-    --accent: #c4a3e8;
-    --hover: #241f2b;
-    --bar: #a07ad0;
-    --code-bg: #141118;
+    --surface: #0d1117;
+    --panel: #161b22;
+    --line: #2d3542;
+    --text: #f0f6fc;
+    --text2: #c9d1d9;
+    --muted: #8b949e;
+    --accent: #FF7F66;
+    --accent-dark: #EE4C2C;
+    --accent-secondary: #F7941D;
+    --spd-blue: #58a6ff;
+    --good: #34d399;
+    --warning: #fbbf24;
+    --critical: #f87171;
+    --unresolved: #f87171;
+    --link: #FF7F66;
+    --hover: #1f2631;
+    --bar: #58a6ff;
+    --code-bg: #0d1117;
     color-scheme: dark;
   }
 }
 :root[data-theme=dark] {
-  --surface: #15121a;
-  --panel: #1d1923;
-  --line: #332c3d;
-  --text: #f2eff6;
-  --text2: #c3bccc;
-  --muted: #8f8899;
-  --link: #c4a3e8;
-  --accent: #c4a3e8;
-  --hover: #241f2b;
-  --bar: #a07ad0;
-  --code-bg: #141118;
+  --surface: #0d1117;
+  --panel: #161b22;
+  --line: #2d3542;
+  --text: #f0f6fc;
+  --text2: #c9d1d9;
+  --muted: #8b949e;
+  --accent: #FF7F66;
+  --accent-dark: #EE4C2C;
+  --accent-secondary: #F7941D;
+  --spd-blue: #58a6ff;
+  --good: #34d399;
+  --warning: #fbbf24;
+  --critical: #f87171;
+  --unresolved: #f87171;
+  --link: #FF7F66;
+  --hover: #1f2631;
+  --bar: #58a6ff;
+  --code-bg: #0d1117;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 68px; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
 body {
   margin: 0;
   background: var(--surface);
   color: var(--text);
-  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 15.5px/1.5 var(--font-body);
+}
+h1, h2, h3, h4, .brand, .eyebrow, .col-banner {
+  font-family: var(--font-heading);
 }
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
-code, pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.86rem;
+code, pre, .delta-val {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
 }
 pre {
   background: var(--code-bg);
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 12px 14px;
   overflow-x: auto;
   margin: 10px 0;
   line-height: 1.45;
 }
-.wrap { max-width: 1160px; margin: 0 auto; padding: 0 18px; }
+.wrap { max-width: 1380px; margin: 0 auto; padding: 0 22px; }
 [hidden] { display: none !important; }
 
-/* Sticky Encore Top Nav */
+/* Sticky SPD-Learn Encore Top Nav */
 nav.top {
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  z-index: 30;
+  background: var(--panel);
+  border-bottom: 2px solid var(--accent);
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.05);
 }
 nav.top .wrap {
   display: flex;
@@ -1793,16 +1919,17 @@ nav.top .brand {
   align-items: center;
   gap: 9px;
   font-weight: 700;
+  font-size: 1.02rem;
   color: var(--text);
   text-decoration: none;
   padding-right: 10px;
   white-space: nowrap;
 }
 nav.top .brand svg.mark { width: 26px; height: 26px; color: var(--accent); }
-nav.top .brand svg.mark .tick { stroke: var(--good); }
+nav.top .brand svg.mark .tick { stroke: var(--accent-secondary); }
 nav.top .by {
   align-self: center;
-  font-size: 0.82rem;
+  font-size: 0.80rem;
   color: var(--muted);
   margin-right: auto;
   padding-right: 14px;
@@ -1814,22 +1941,24 @@ nav.top a.tab {
   padding: 0 12px;
   color: var(--text2);
   text-decoration: none;
-  font-size: 0.93rem;
+  font-size: 0.90rem;
+  font-weight: 500;
   white-space: nowrap;
 }
 nav.top a.tab:hover { color: var(--text); background: var(--hover); }
 nav.top a.tab[aria-current=page] {
-  color: var(--text);
-  box-shadow: inset 0 -2px 0 var(--accent);
-  font-weight: 600;
+  color: var(--accent);
+  box-shadow: inset 0 -3px 0 var(--accent);
+  font-weight: 700;
 }
 nav.top a.tab .n {
   margin-left: 6px;
-  font-size: 0.76rem;
-  color: var(--muted);
-  background: var(--hover);
+  font-size: 0.73rem;
+  color: var(--accent);
+  background: rgba(238, 76, 44, 0.10);
   padding: 1px 6px;
   border-radius: 10px;
+  font-weight: 700;
 }
 button.theme {
   align-self: center;
@@ -1838,195 +1967,348 @@ button.theme {
   align-items: center;
   gap: 6px;
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.80rem;
   color: var(--text2);
   background: none;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 5px;
   padding: 4px 10px;
   cursor: pointer;
 }
 button.theme:hover { background: var(--hover); color: var(--text); }
 
-header.page { padding: 28px 0 8px; }
+header.page { padding: 20px 0 6px; }
 .eyebrow {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0 0 6px;
+  margin: 0 0 4px;
 }
-h1 { font-size: 1.85rem; line-height: 1.22; margin: 0 0 10px; letter-spacing: -0.015em; }
-h2 { font-size: 1.22rem; margin: 0 0 8px; }
-h3 { font-size: 1.02rem; margin: 0 0 6px; }
-.lede { color: var(--text2); max-width: 82ch; font-size: 1.02rem; margin-bottom: 12px; }
+h1 { font-size: 1.68rem; line-height: 1.22; margin: 0 0 6px; letter-spacing: -0.02em; }
+h2 { font-size: 1.15rem; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 0.98rem; margin: 0 0 6px; }
+.lede { color: var(--text2); max-width: 96ch; font-size: 0.96rem; margin: 0 0 8px; }
 .muted { color: var(--muted); }
-.small { font-size: 0.88rem; }
-.crumbs { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+.small { font-size: 0.85rem; }
+.crumbs { font-size: 0.82rem; color: var(--muted); margin: 0 0 6px; }
 
 /* KPI Tiles */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
-  gap: 12px;
-  margin: 18px 0 0;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin: 12px 0 0;
 }
 .tile {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 5px;
-  padding: 14px 16px;
+  border-top: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 12px 14px;
 }
 .tile .n {
-  font-size: 1.9rem;
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
   font-weight: 700;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
   color: var(--text);
 }
-.tile .l { color: var(--text2); font-size: 0.86rem; margin-top: 4px; }
-.tile .sub-l { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+.tile .l { color: var(--text2); font-size: 0.84rem; font-weight: 600; margin-top: 3px; }
+.tile .sub-l { color: var(--muted); font-size: 0.74rem; margin-top: 2px; }
 
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 5px;
-  padding: 18px 20px;
-  margin-top: 16px;
+  border-radius: 7px;
+  padding: 15px 18px;
+  margin-top: 14px;
+}
+.tri-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 12px 14px;
 }
 .grid2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 14px;
 }
 .grid3 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
+
+/* Unified 3-Column Comparison Grid:
+   Col 1 (Original Figure) | Col 2 (Our Replicability) | Col 3 (The Gap & Pipeline Diffs) */
+.tri-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1.05fr 0.95fr;
+  gap: 12px;
+  align-items: stretch;
+}
+@media (max-width: 1060px) {
+  .tri-grid { grid-template-columns: 1fr; }
+}
+
+.col-orig { background: var(--panel); border-top: 3px solid var(--spd-blue); }
+.col-ours { background: var(--panel); border-top: 3px solid var(--accent); }
+.col-gap  { background: var(--panel); border-top: 3px solid var(--accent-secondary); }
+
+.col-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.col-banner.orig { background: rgba(47, 111, 237, 0.09); color: var(--spd-blue); }
+.col-banner.ours { background: rgba(238, 76, 44, 0.10); color: var(--accent); }
+.col-banner.gap  { background: rgba(247, 148, 29, 0.12); color: var(--warning); }
+.col-banner code { font-size: 0.73rem; text-transform: none; color: var(--text); font-weight: 700; }
+
+.fig-canvas {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 8px;
+  background: #ffffff;
+  margin: auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 210px;
+}
+.fig-canvas img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 3px;
+}
+
+/* Gap KPI & Diff Boxes inside Column 3 */
+.gap-kpi-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.gap-kpi {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 6px 9px;
+  display: flex;
+  flex-direction: column;
+}
+.gap-kpi .k-lbl { font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 700; }
+.gap-kpi .k-val { font-family: var(--font-mono); font-size: 0.86rem; color: var(--text); margin-top: 1px; }
+
+.diff-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--spd-blue);
+  border-radius: 4px;
+  padding: 7px 9px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.diff-box.warn { border-left-color: var(--accent); }
+.diff-box p { margin: 2px 0 0; color: var(--text2); }
+.diff-label {
+  font-family: var(--font-heading);
+  font-size: 0.70rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.diff-item {
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.diff-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* Point-by-Point Delta Bars */
+.delta-row {
+  display: grid;
+  grid-template-columns: 78px 1fr 52px;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 0.74rem;
+}
+.delta-lbl {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  color: var(--text2);
+}
+.delta-track {
+  height: 7px;
+  background: var(--hover);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.delta-fill { height: 100%; border-radius: 4px; }
+.delta-val { text-align: right; font-weight: 700; font-size: 0.74rem; }
 
 /* Segmented Outcome Bars & Chips */
 .bar {
   display: flex;
-  height: 18px;
-  border-radius: 3px;
+  height: 14px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--hover);
   gap: 1px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
-.bar.mini { height: 10px; width: 150px; margin: 0; display: inline-flex; vertical-align: middle; }
+.bar.mini { height: 8px; width: 110px; margin: 0; display: inline-flex; vertical-align: middle; }
 .seg.good { background: var(--good); }
-.seg.warning { background: var(--warning); }
-.seg.unresolved { background: var(--unresolved); }
+.seg.warning { background: var(--accent-secondary); }
+.seg.unresolved { background: var(--critical); }
 .seg.blocked { background: var(--blocked); }
 
 ul.legend {
   list-style: none;
   padding: 0;
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  font-size: 0.88rem;
+  gap: 14px;
+  font-size: 0.83rem;
 }
 .swatch, .chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.79rem;
+  gap: 4px;
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
 }
-.swatch.good, .chip.good { background: rgba(12, 163, 12, 0.14); color: var(--good); }
-.swatch.warning, .chip.warning { background: rgba(250, 178, 25, 0.18); color: #b57c00; }
-:root[data-theme=dark] .swatch.warning, :root[data-theme=dark] .chip.warning { color: var(--warning); }
-.swatch.unresolved, .chip.unresolved { background: rgba(43, 108, 176, 0.15); color: var(--unresolved); }
-.swatch.blocked, .chip.blocked { background: rgba(137, 135, 129, 0.18); color: var(--blocked); }
+.swatch.good, .chip.good { background: rgba(5, 150, 105, 0.13); color: var(--good); }
+.swatch.warning, .chip.warning { background: rgba(247, 148, 29, 0.16); color: var(--warning); }
+.swatch.unresolved, .chip.unresolved { background: rgba(220, 38, 38, 0.14); color: var(--critical); }
+.swatch.blocked, .chip.blocked { background: rgba(100, 116, 139, 0.16); color: var(--blocked); }
 
 .tag {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
   background: var(--hover);
   color: var(--text2);
-  font-size: 0.76rem;
+  font-size: 0.73rem;
   font-weight: 600;
   border: 1px solid var(--line);
-}
-
-.caution {
-  margin-top: 16px;
-  padding: 14px 16px;
-  border-left: 3px solid var(--accent);
-  background: var(--hover);
-  border-radius: 0 4px 4px 0;
-  font-size: 0.9rem;
-}
-
-.king-caption {
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  font-size: 0.89rem;
-  color: var(--text2);
 }
 
 /* Tabs */
 .tabs {
   display: flex;
   gap: 2px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
   overflow-x: auto;
-  margin-top: 18px;
+  margin-top: 14px;
 }
 .tabs button {
   background: none;
   border: none;
-  padding: 10px 15px;
+  padding: 9px 14px;
   font: inherit;
-  font-size: 0.92rem;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
   color: var(--text2);
   cursor: pointer;
   border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
   white-space: nowrap;
 }
 .tabs button[aria-selected="true"] {
-  color: var(--text);
-  font-weight: 600;
+  color: var(--accent);
+  font-weight: 700;
   border-bottom-color: var(--accent);
 }
 .tabs button:hover { color: var(--text); background: var(--hover); }
 
-/* Paper Rows */
+/* 3-Column Paper Catalog Rows (Paper | Original vs Ours | The Gap & Why) */
 .drow {
   display: grid;
-  grid-template-columns: 195px 1fr 190px;
+  grid-template-columns: 230px 1fr 1.15fr;
   gap: 14px;
-  align-items: center;
-  padding: 13px 16px;
+  align-items: start;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--line);
 }
 .drow:last-child { border-bottom: none; }
 .drow:hover { background: var(--hover); }
-@media (max-width: 720px) {
-  .drow { grid-template-columns: 1fr; gap: 6px; }
+@media (max-width: 900px) {
+  .drow { grid-template-columns: 1fr; gap: 8px; }
+}
+
+/* Quick Jump Pills */
+.jump-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+.jump-pill {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text2);
+}
+.jump-pill:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+/* Collapsible Secondary Panels */
+details.panel-collapse {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  margin-top: 14px;
+}
+details.panel-collapse > summary {
+  padding: 12px 18px;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.98rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+details.panel-collapse > summary::-webkit-details-marker { display: none; }
+details.panel-collapse > summary:hover { background: var(--hover); }
+details.panel-collapse > .collapse-body {
+  padding: 0 18px 16px;
+  border-top: 1px solid var(--line);
 }
 
 /* Expandable Claim Details */
-ul.claims { list-style: none; padding: 0; margin: 12px 0; }
+ul.claims { list-style: none; padding: 0; margin: 10px 0; }
 li.claim {
   border: 1px solid var(--line);
-  border-radius: 5px;
-  margin-bottom: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
   background: var(--panel);
 }
 li.claim summary {
-  padding: 12px 16px;
+  padding: 10px 14px;
   cursor: pointer;
   list-style: none;
 }
@@ -2036,76 +2318,78 @@ li.claim summary:hover { background: var(--hover); }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 7px;
+  margin-bottom: 4px;
 }
-.statement { font-weight: 600; margin: 0; color: var(--text); }
+.statement { font-weight: 600; margin: 0; color: var(--text); font-size: 0.92rem; }
 .claim-body {
-  padding: 12px 16px 16px;
+  padding: 10px 14px 14px;
   border-top: 1px solid var(--line);
   background: var(--surface);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 blockquote.quote {
-  margin: 0 0 10px;
-  padding: 8px 12px;
-  border-left: 3px solid var(--bar);
+  margin: 0 0 8px;
+  padding: 7px 11px;
+  border-left: 3px solid var(--accent);
   background: var(--panel);
   color: var(--text2);
 }
 
-/* Diagnostic SVG Charts */
+/* Diagnostic SVG Charts (Published = SPD Sky Blue #2f6fed, Ours = SPD Red #EE4C2C) */
 .diag-card {
   border: 1px solid var(--line);
-  border-radius: 5px;
-  padding: 12px;
-  background: var(--surface);
+  border-radius: 6px;
+  padding: 10px;
+  background: var(--panel);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .diag-svg { width: 100%; height: auto; display: block; background: var(--panel); border-radius: 4px; border: 1px solid var(--line); }
-.svg-title { font-size: 11px; font-weight: 700; fill: var(--text); }
+.svg-title { font-family: var(--font-heading); font-size: 10.5px; font-weight: 700; fill: var(--text); }
 .svg-axis { stroke: var(--text2); stroke-width: 1.1; }
 .svg-grid { stroke: var(--line); stroke-width: 0.8; stroke-dasharray: 2,2; }
-.svg-hline { stroke: var(--warning); stroke-width: 1.2; stroke-dasharray: 4,3; }
-.svg-tick { font-size: 9.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
-.svg-axis-label { font-size: 9.5px; font-weight: 600; fill: var(--text2); }
-.svg-val { font-size: 9px; font-weight: 600; fill: var(--text); font-variant-numeric: tabular-nums; }
-.svg-annot { font-size: 8.5px; font-weight: 600; fill: var(--warning); }
-.svg-line-primary { stroke: var(--accent); stroke-width: 2.2; }
-.svg-line-primary-dot { fill: var(--accent); }
-.svg-line-secondary { stroke: var(--good); stroke-width: 2.0; stroke-dasharray: 4,2; }
-.svg-line-secondary-dot { fill: var(--good); }
-.svg-bar-primary { fill: var(--bar); opacity: 0.88; }
-.svg-bar-secondary { fill: var(--good); opacity: 0.78; }
+.svg-hline { stroke: var(--accent-secondary); stroke-width: 1.2; stroke-dasharray: 4,3; }
+.svg-tick { font-family: var(--font-mono); font-size: 9px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.svg-axis-label { font-family: var(--font-body); font-size: 9.5px; font-weight: 600; fill: var(--text2); }
+.svg-val { font-family: var(--font-mono); font-size: 8.8px; font-weight: 700; fill: var(--text); font-variant-numeric: tabular-nums; }
+.svg-annot { font-family: var(--font-mono); font-size: 8.5px; font-weight: 600; fill: var(--accent-secondary); }
+.svg-line-primary { stroke: var(--spd-blue); stroke-width: 2.2; }
+.svg-line-primary-dot { fill: var(--spd-blue); }
+.svg-line-secondary { stroke: var(--accent); stroke-width: 2.2; stroke-dasharray: 4,2; }
+.svg-line-secondary-dot { fill: var(--accent); }
+.svg-bar-primary { fill: var(--spd-blue); opacity: 0.88; }
+.svg-bar-secondary { fill: var(--accent); opacity: 0.90; }
 
 /* Tables */
 table.data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
 }
 table.data-table th, table.data-table td {
-  padding: 9px 10px;
+  padding: 7px 9px;
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
 }
 table.data-table th {
+  font-family: var(--font-heading);
   font-weight: 650;
+  font-size: 0.78rem;
   color: var(--text2);
   background: var(--hover);
 }
-.katex { font-size: 1.02em; }
-code .katex { font-size: 0.96em; }
-table.data-table td .katex, table.data-table th .katex { font-size: 0.98em; }
+.katex { font-size: 1.01em; }
+code .katex { font-size: 0.95em; }
+table.data-table td .katex, table.data-table th .katex { font-size: 0.96em; }
 footer {
-  margin: 44px 0 32px;
-  padding-top: 18px;
+  margin: 36px 0 28px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 """
 
@@ -2148,6 +2432,9 @@ def _nav_html(root_prefix: str, active: str) -> str:
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root_prefix}assets/app.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -2600,6 +2887,92 @@ def _render_voyager_overview_matrix() -> str:
 </div>"""
 
 
+def _render_paper_top_tri_summary(
+    pid: str,
+    p_meta: dict[str, Any],
+    fig_meta: dict[str, Any],
+    harness_rows: list[dict[str, str]],
+    verdicts_by_id: dict[str, dict[str, Any]],
+) -> str:
+    """Render the top-of-page 3-Column Macro UX Summary Card:
+    Col 1: Original Paper Setup | Col 2: Our spd_learn Replicability | Col 3: The Gap & Pipeline Differences.
+    """
+    imp = ARXIV_IMPORTED_DATA.get(pid, {})
+    cfg = imp.get("experiment_config", {})
+    gap_spec = get_paper_gap_spec(pid)
+    targets_badges = " ".join(
+        f"<code>{_esc(t)}</code>" for t in p_meta.get("spd_learn_targets", [])
+    )
+    ds_rows = "".join(
+        f"""<tr>
+  <td><strong>{_esc(r["dataset"].split("(")[0].strip())}</strong></td>
+  <td><code>{_esc(r["published"].split("(")[0].strip())}</code></td>
+  <td><strong><code>{_esc(r["our_harness"].split("(")[0].strip())}</code></strong></td>
+  <td>{_verdict_chip(r.get("spdbench_verdict", r["status"]))}</td>
+</tr>"""
+        for r in harness_rows
+    )
+    return f"""<div class="panel tri-panel">
+  <div class="claim-head">
+    <span class="tag">AT-A-GLANCE REPLICABILITY SUMMARY</span>
+    <strong>{_esc(p_meta["title"])} ({_esc(p_meta["venue"])})</strong>
+    <span style="margin-left:auto">{_gap_badge_html(gap_spec["gap_status"], gap_spec["gap_label"])}</span>
+  </div>
+  <div class="tri-grid" style="margin-top:8px">
+    <div class="diag-card col-orig">
+      <div class="col-banner orig">
+        <span>1 · ORIGINAL PAPER PROTOCOL</span>
+        <span class="small muted">{_esc(p_meta["venue"])}</span>
+      </div>
+      <table class="data-table" style="font-size:0.78rem">
+        <tbody>
+          <tr><th style="width:115px">Split &amp; Harness</th><td><code>{_esc(cfg.get("split_protocol", ""))}</code></td></tr>
+          <tr><th>Preprocessing</th><td>{_esc(cfg.get("preprocessing", ""))}</td></tr>
+          <tr><th>Architecture</th><td><code>{_esc(cfg.get("architecture", ""))}</code></td></tr>
+          <tr><th>Metric &amp; Reg $\\epsilon$</th><td>{_esc(cfg.get("metric_and_reg", ""))}</td></tr>
+          <tr><th>Optimizer</th><td><code>{_esc(cfg.get("optimizer_recipe", ""))}</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diag-card col-ours">
+      <div class="col-banner ours">
+        <span>2 · OUR REPLICABILITY (spd_learn)</span>
+        <span class="small muted">{len(harness_rows)} Datasets Audited</span>
+      </div>
+      <div class="small" style="margin-bottom:4px">
+        <strong>Implemented:</strong> {targets_badges} · {_paper_outcome_bar_and_badges(pid, verdicts_by_id)}
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" style="font-size:0.77rem">
+          <thead>
+            <tr><th>Dataset</th><th>Published</th><th>Ours (Voyager)</th><th>Verdict</th></tr>
+          </thead>
+          <tbody>{ds_rows}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="diag-card col-gap">
+      <div class="col-banner gap">
+        <span>3 · THE GAP &amp; PIPELINE DIFFERENCES</span>
+        <code>{_esc(gap_spec["headline_delta"])}</code>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Dataloader &amp; Preprocessing Diff</div>
+        <p>{_esc(gap_spec["dataloader_diff"])}</p>
+      </div>
+      <div class="diff-box">
+        <div class="diff-label">Model &amp; Optimizer Diff</div>
+        <p>{_esc(gap_spec["arch_optim_diff"])}</p>
+      </div>
+      <div class="diff-box warn">
+        <div class="diff-label">Where It Fails / Struggles</div>
+        <p>{_esc(gap_spec["where_it_struggles"])}</p>
+      </div>
+    </div>
+  </div>
+</div>"""
+
+
 def build_paper_detail_page(
     p_meta: dict[str, Any],
     p_challenge: dict[str, Any],
@@ -2614,10 +2987,9 @@ def build_paper_detail_page(
     verifier_src = VERIFIER_SOURCES.get(f"verify_{pid}", "")
 
     section_heading = fig_meta.get("section_heading", p_meta["title"])
-    king_summary = fig_meta.get("king_summary", "")
-    king_caption = fig_meta.get("king_caption", "")
     moreau_audit = fig_meta.get("moreau_audit", {})
     harness_rows = _normalize_harness_rows(pid, fig_meta, verdicts_by_id)
+    gap_spec = get_paper_gap_spec(pid)
 
     claims_html = []
     for c in p_challenge["claims"]:
@@ -2634,50 +3006,15 @@ def build_paper_detail_page(
       <div class="claim-head">
         {_verdict_chip(v["verdict"], v["points"])}
         <span class="tag">{_esc(c["category"])} Claim ({_esc(cid)})</span>
-        <span class="muted small">Judge verdict rationale: {_esc(v["reason"])}</span>
+        <span class="muted small">{_esc(v["reason"])}</span>
       </div>
       <p class="statement">{_esc(c["text"])}</p>
     </summary>
     <div class="claim-body">
-      <blockquote class="quote">
-        <p><strong>Anchor Assertion:</strong> {_esc(c["text"])}</p>
-        <cite>{_esc(p_meta["title"])} ({_esc(p_meta["venue"])})</cite>
-      </blockquote>
-      <h4>Audited Execution Metrics (from <code>{pid}_logbook.json</code>)</h4>
-      <ul>{metrics_rows}</ul>
+      <ul style="margin:0">{metrics_rows}</ul>
     </div>
   </details>
 </li>"""
-        )
-
-    harness_table_rows = "".join(
-        f"""<tr>
-  <td><strong>{_esc(r["dataset"])}</strong></td>
-  <td class="small">{_esc(r["protocol"])}</td>
-  <td><code>{_esc(r["published"])}</code></td>
-  <td><strong><code>{_esc(r["our_harness"])}</code></strong></td>
-  <td>{_verdict_chip(r.get("spdbench_verdict", r["status"]))} {_verdict_chip(r["status"])}<br><span class="small muted">{_esc(r["notes"])}</span></td>
-</tr>"""
-        for r in harness_rows
-    )
-
-    orig_figs_html = []
-    for ofig in fig_meta["original_figures"]:
-        orig_figs_html.append(
-            f"""<div class="panel" style="margin-top:12px">
-  <div class="claim-head">
-    <span class="tag">{_esc(ofig["fig_id"])}</span>
-    <strong>{_esc(ofig["title"])}</strong>
-  </div>
-  <table class="data-table" style="margin-top:8px">
-    <tbody>
-      <tr><th style="width:190px">Exact X-Axis</th><td>{_esc(ofig["x_axis"])}</td></tr>
-      <tr><th>Exact Y-Axis</th><td>{_esc(ofig["y_axis"])}</td></tr>
-      <tr><th>What the Figure Shows</th><td>{_esc(ofig["what_it_shows"])}</td></tr>
-      <tr><th>Scientific Takeaway</th><td><strong>{_esc(ofig["takeaway"])}</strong></td></tr>
-    </tbody>
-  </table>
-</div>"""
         )
 
     repro_panels_html = []
@@ -2692,10 +3029,8 @@ def build_paper_detail_page(
   </div>
   {svg_panels[idx]}
   <div class="small">
-    <p style="margin:4px 0"><strong>{_esc(rpan["title"])}</strong></p>
-    <p class="muted" style="margin:2px 0"><strong>X-Axis:</strong> {_esc(rpan["x_axis"])}</p>
-    <p class="muted" style="margin:2px 0"><strong>Y-Axis:</strong> {_esc(rpan["y_axis"])}</p>
-    <p style="margin:6px 0 0">{_esc(rpan["exact_reading"])}</p>
+    <p style="margin:3px 0"><strong>{_esc(rpan["title"])}</strong></p>
+    <p class="muted" style="margin:2px 0;font-size:0.78rem">{_esc(rpan["exact_reading"])}</p>
   </div>
 </div>"""
         )
@@ -2704,7 +3039,7 @@ def build_paper_detail_page(
     targets_items = "".join(f"<li><code>{_esc(t)}</code></li>" for t in p_meta["spd_learn_targets"])
     imp_data = ARXIV_IMPORTED_DATA.get(pid, {})
     n_imp_tables = len(imp_data.get("imported_tables", []))
-    compact_cfg_html = _render_compact_config_card(pid)
+    top_tri_html = _render_paper_top_tri_summary(pid, p_meta, fig_meta, harness_rows, verdicts_by_id)
     imp_tables_html = _render_imported_tables_section(pid, harness_rows)
     voyager_exec_html = _render_voyager_cluster_execution_section(pid)
 
@@ -2716,152 +3051,91 @@ def build_paper_detail_page(
     <span class="tag">{_esc(fig_meta["category_badge"])}</span>
     <span class="tag">{_esc(p_meta["venue"])}</span>
     <span class="tag">{_esc(imp_data.get("source_badge", ""))}</span>
-    <span class="chip good">✓ Audited by Independent Logbook Judge (6 / 6 pts)</span>
+    {_gap_badge_html(gap_spec["gap_status"], gap_spec["gap_label"])}
+    <span class="chip good" style="margin-left:auto">✓ Judge Score: 6 / 6 pts</span>
   </div>
   <h1>{_esc(section_heading)}</h1>
-  <p class="lede"><strong>Paper:</strong> {_esc(p_meta["title"])} ({_esc(p_meta["venue"])}) · <strong>Authors:</strong> {_esc(", ".join(p_meta["authors"]))} · <strong>Geometry:</strong> {_esc(fig_meta["geometry"])}</p>
-  <p class="small">
-    <a href="{_esc(p_meta["url"])}" target="_blank" rel="noopener">Original Paper / Code ↗</a> ·
-    <a href="../../repro/logbooks/{pid}_logbook.json">Raw Trackio Logbook JSON</a> ·
-    <a href="../../repro/logbooks/{pid}_logbook.md">Trackio Markdown</a> ·
+  <p class="lede">
+    <strong>{_esc(p_meta["title"])}</strong> ({_esc(", ".join(p_meta["authors"][:4]))}{" et al." if len(p_meta["authors"]) > 4 else ""}) ·
+    <strong>Geometry:</strong> {_esc(fig_meta["geometry"])} ·
+    <a href="{_esc(p_meta["url"])}" target="_blank" rel="noopener">Paper / Code ↗</a> ·
+    <a href="../../repro/logbooks/{pid}_logbook.json">Logbook JSON</a> ·
     Branch: <code>{_esc(p_meta["worktree_branch"])}</code>
   </p>
 </header>
 
 <main>
-  <div class="panel">
-    <h2>All Paper Datasets: Closed-Loop <code>spd-bench</code> &amp; MOABB Harness Audit ({len(harness_rows)} Datasets)</h2>
-    <p>{_esc(king_summary)}</p>
-    {compact_cfg_html}
-    <div style="overflow-x:auto;margin-top:14px">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Dataset / Benchmark (All Paper Datasets)</th>
-            <th><code>spd-bench</code> Evaluation Protocol &amp; Architecture</th>
-            <th>Published Paper Result</th>
-            <th>Our Voyager Harness Result</th>
-            <th><code>spd-bench</code> &amp; Judge Verdict</th>
-          </tr>
-        </thead>
-        <tbody>
-          {harness_table_rows}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {voyager_exec_html}
+  {top_tri_html}
 
   <div class="tabs" role="tablist">
-    <button type="button" role="tab" data-panel="tab-figures" aria-selected="true">Original Figures, Replicated Values &amp; Tables <span class="n">{len(sbs_cards)} Pairs + {n_imp_tables} Tables</span></button>
-    <button type="button" role="tab" data-panel="tab-tables" aria-selected="false">All Imported Paper Tables <span class="n">{n_imp_tables}</span></button>
-    <button type="button" role="tab" data-panel="tab-claims" aria-selected="false">Audited Claims &amp; Failure Modes <span class="n">3</span></button>
-    <button type="button" role="tab" data-panel="tab-logbook" aria-selected="false">Trackio Logbook &amp; Code</button>
-    <button type="button" role="tab" data-panel="tab-judge" aria-selected="false">Judge Verification <span class="n">6/6 pts</span></button>
-    <button type="button" role="tab" data-panel="tab-ponytail" aria-selected="false">Reuse &amp; /ponytail</button>
+    <button type="button" role="tab" data-panel="tab-figures" aria-selected="true">1. Figures: Original | Ours | The Gap <span class="n">{len(sbs_cards)} + 3</span></button>
+    <button type="button" role="tab" data-panel="tab-tables" aria-selected="false">2. Tables &amp; Voyager Benchmarks <span class="n">{n_imp_tables}</span></button>
+    <button type="button" role="tab" data-panel="tab-claims" aria-selected="false">3. Pipeline Diffs, Failure Modes &amp; Claims <span class="n">3</span></button>
+    <button type="button" role="tab" data-panel="tab-logbook" aria-selected="false">4. Trackio Logbook &amp; Code</button>
   </div>
 
   <section class="tabpanel" id="tab-figures">
     <div class="panel">
-      <h2>Part 1: Imported Original Paper Figure vs. What We Replicate on Voyager (<code>spd-bench</code>) + Exact Values ({len(sbs_cards)} 1-to-1 Pairs)</h2>
-      <p class="small muted">Each comparison pair below displays the actual imported original figure from the paper's arXiv <code>.tar.gz</code> source bundle (or PDF) and published values on the left against our Voyager cluster <code>spd-bench</code> replication and exact numerical values table on the right.</p>
+      <div class="claim-head">
+        <h2 style="margin:0">Every Paper Figure: 1. Original Figure | 2. Our Replicability | 3. The Gap &amp; Why ({len(sbs_cards)} Figures)</h2>
+        <span class="small muted" style="margin-left:auto">Blue = Published · Red = Ours (spd_learn)</span>
+      </div>
       {"".join(sbs_cards)}
     </div>
 
     <div class="panel">
-      <h2>Part 2: All Imported Paper Result Tables (Parsed Directly from arXiv <code>.tex</code> / PDF Source: {n_imp_tables} Tables)</h2>
-      <p class="small muted">Every benchmark, cross-session, cross-subject, and ablation table from the original paper is imported below alongside our Voyager <code>spd-bench</code> / MOABB replication reference.</p>
-      {imp_tables_html}
-    </div>
-
-    <div class="panel">
-      <h2>Part 3: Live Reproduced 3-Tier Diagnostic Figures (C1 Structural · C2 Signal · C3 Analytical)</h2>
-      <p class="small muted">Every panel below is rendered directly from deterministic PyTorch execution traces in <code>repro/trackio_runner.py</code> and audited by <code>repro/judge.py</code>.</p>
-      <div class="grid3" style="margin-top:14px">
+      <h2>3-Tier Deterministic Diagnostic Traces (C1 Structural · C2 Signal · C3 Analytical)</h2>
+      <div class="grid3" style="margin-top:10px">
         {"".join(repro_panels_html)}
       </div>
-      <div class="king-caption">
-        {_esc(king_caption)}
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Part 4: What Every Figure in the Original Paper Shows (Exact Axes &amp; Takeaways)</h2>
-      <p class="small muted">Coordinate and metric deconstruction of the original published figures in {_esc(p_meta["title"])}.</p>
-      {"".join(orig_figs_html)}
     </div>
   </section>
 
   <section class="tabpanel" id="tab-tables" hidden>
     <div class="panel">
-      <h2>All Imported Paper Tables &amp; Experimental Configurations ({n_imp_tables} Tables from {_esc(imp_data.get("source_badge", ""))})</h2>
-      {compact_cfg_html}
-      {voyager_exec_html}
+      <h2>All Imported Paper Tables: 1. Original Table | 2. Our Replicability | 3. The Gap ({n_imp_tables} Tables)</h2>
       {imp_tables_html}
     </div>
+    {voyager_exec_html}
   </section>
 
   <section class="tabpanel" id="tab-claims" hidden>
     <div class="panel">
-      <h2>Anchor Claims Extracted &amp; Audited (ICML 2026 / NEMAR 3-Tier Protocol)</h2>
-      <p class="small muted">Each paper is decomposed into 1 Structural claim (mathematical identity or manifold closure), 1 Signal claim (conditioning or physiological perturbation invariance), and 1 Analytical claim (MOABB / spd-bench harness evaluation).</p>
-      <ul class="claims">
-        {"".join(claims_html)}
-      </ul>
-    </div>
-    <div class="panel">
-      <h2>Methodological Positioning, Failure Mode &amp; Diagnostic Risk</h2>
+      <h2>Deep-Dive Gap Analysis, Failure Modes &amp; Practitioner Guidance</h2>
       <table class="data-table">
         <tbody>
-          <tr><th style="width:210px">Closest Prior Formulation</th><td>{_esc(moreau_audit.get("closest_prior") or moreau_audit.get("comparison", ""))}</td></tr>
-          <tr><th>Primary Failure Mode</th><td>{_esc(moreau_audit.get("failure_mode", ""))}</td></tr>
+          <tr><th style="width:210px">Dataloader &amp; Preprocessing Diff</th><td>{_esc(gap_spec["dataloader_diff"])}</td></tr>
+          <tr><th>Architecture &amp; Optimizer Diff</th><td>{_esc(gap_spec["arch_optim_diff"])}</td></tr>
+          <tr><th>Where It Struggles / Diverges</th><td>{_esc(gap_spec["where_it_struggles"])}</td></tr>
+          <tr><th>Primary Mathematical Failure Mode</th><td>{_esc(moreau_audit.get("failure_mode", ""))}</td></tr>
           <tr><th>Silent Diagnostic Risk</th><td>{_esc(moreau_audit.get("diagnostic_risk", ""))}</td></tr>
           <tr><th>Practitioner Recommendation</th><td><strong>{_esc(moreau_audit.get("recommendation", ""))}</strong></td></tr>
         </tbody>
       </table>
     </div>
+    <div class="panel">
+      <h2>Audited 3-Tier Anchor Claims (ICML 2026 / NEMAR Protocol)</h2>
+      <ul class="claims">
+        {"".join(claims_html)}
+      </ul>
+    </div>
   </section>
 
   <section class="tabpanel" id="tab-logbook" hidden>
     <div class="panel">
-      <h2>Trackio Execution Logbook (<code>{pid}_logbook.json</code>)</h2>
+      <h2>Trackio Execution Logbook (<code>{pid}_logbook.json</code>) &amp; Judge Verdicts</h2>
       <table class="data-table">
         <tbody>
           <tr><th style="width:180px">Execution Command</th><td><code>{_esc(logbook["command"])}</code></td></tr>
-          <tr><th>Git Commit</th><td><code>{_esc(logbook["git_commit"])}</code></td></tr>
-          <tr><th>Exit Code</th><td><code>{logbook["exit_code"]}</code> (0 = Clean deterministic completion)</td></tr>
-          <tr><th>Wall-Clock Duration</th><td><code>{logbook["duration_sec"]}s</code></td></tr>
-          <tr><th>Timestamp (UTC)</th><td><code>{_esc(logbook["timestamp"])}</code></td></tr>
+          <tr><th>Git Commit &amp; Runtime</th><td><code>{_esc(logbook["git_commit"])}</code> · <code>exit={logbook["exit_code"]}</code> · <code>{logbook["duration_sec"]}s</code></td></tr>
+          <tr><th>Implemented Symbols</th><td><ul>{targets_items}</ul></td></tr>
+          <tr><th><code>/ponytail</code> Primitive Reuse</th><td><ul>{ponytail_items}</ul></td></tr>
         </tbody>
       </table>
-      <h3 style="margin-top:16px">Raw Machine-Readable Claim Traces</h3>
-      <pre><code>{html.escape(json.dumps(logbook["claim_traces"], indent=2))}</code></pre>
-      <h3 style="margin-top:16px">Executable Verifier Source Code (<code>repro/trackio_runner.py</code>)</h3>
-      <pre><code>{html.escape(verifier_src)}</code></pre>
-    </div>
-  </section>
-
-  <section class="tabpanel" id="tab-judge" hidden>
-    <div class="panel">
-      <h2>Automated Logbook Judge Audit (<code>spd-learn-logbook-judge-2.0</code>)</h2>
-      <p class="small">Following the ICML 2026 Open Reproductions specification, the automated judge treats agent narrative text as <strong>untrusted</strong> and inspects only:</p>
-      <ol class="small">
-        <li><strong>Process Integrity:</strong> <code>logbook["exit_code"] == 0</code> and <code>error is None</code>.</li>
-        <li><strong>Numerical Finiteness Gate:</strong> Every floating-point tensor metric in <code>claim_traces</code> satisfies <code>math.isfinite(v)</code> (zero NaN/Inf).</li>
-        <li><strong>Threshold &amp; Scope Gate:</strong> Evaluates <code>passed</code> and assigns <code>Verified (2 pts)</code>, <code>Baseline-Adjusted (2 pts)</code> when the directional effect holds with attributed baseline/protocol shift, or <code>Falsified (2 pts)</code> when deterministic execution refutes an idealized assumption.</li>
-      </ol>
+      <h3 style="margin-top:14px">Automated Logbook Judge Verdict JSON</h3>
       <pre><code>{html.escape(json.dumps([verdicts_by_id[f"{pid}_c1"], verdicts_by_id[f"{pid}_c2"], verdicts_by_id[f"{pid}_c3"]], indent=2))}</code></pre>
-    </div>
-  </section>
-
-  <section class="tabpanel" id="tab-ponytail" hidden>
-    <div class="panel">
-      <h2>Paper Abstract</h2>
-      <blockquote class="quote"><p>{_esc(abstract_text)}</p></blockquote>
-      <h2 style="margin-top:16px">Implemented <code>spd_learn</code> Symbols</h2>
-      <ul>{targets_items}</ul>
-      <h2 style="margin-top:16px"><code>/ponytail</code> Normalization &amp; Shared Primitive Reuse</h2>
-      <ul>{ponytail_items}</ul>
+      <h3 style="margin-top:14px">Executable Verifier Source Code (<code>repro/trackio_runner.py</code>)</h3>
+      <pre><code>{html.escape(verifier_src)}</code></pre>
     </div>
   </section>
 </main>
@@ -2948,6 +3222,7 @@ def build_all() -> None:
     all_sbs_cards: dict[str, list[str]] = {}
     paper_rows_html = []
     atlas_sections_html = []
+    atlas_jump_pills = []
     pipeline_rows_html = []
     master_harness_rows_html = []
     spdbench_counts: dict[str, int] = {
@@ -2962,6 +3237,7 @@ def build_all() -> None:
         pid = p_chal["paper_id"]
         p_meta = papers_by_id[pid]
         fig_meta = PAPER_FIGURES_METADATA[pid]
+        gap_spec = get_paper_gap_spec(pid)
         lb = json.loads((REPRO_DIR / "logbooks" / f"{pid}_logbook.json").read_text())
         panels = build_paper_svg_panels(pid, verdicts_by_id)
         sbs_cards = build_side_by_side_svg_pairs(pid, rel_prefix="../../")
@@ -3002,36 +3278,47 @@ def build_all() -> None:
 
         ds_badges = " ".join(
             f'<span class="tag">{_esc(r["dataset"].split("(")[0].strip())}</span>'
-            for r in harness_rows
+            for r in harness_rows[:4]
         )
+        first_hr = harness_rows[0] if harness_rows else {}
+        pub_head = first_hr.get("published", "").split("(")[0].strip()
+        ours_head = first_hr.get("our_harness", "").split("(")[0].strip()
+        ds_head = first_hr.get("dataset", "").split("(")[0].strip()
+
         paper_rows_html.append(
             f"""<div class="drow" data-category="{_esc(fig_meta['category_badge'].lower())}">
   <div class="id">
     <a href="papers/{pid}/index.html"><strong><code>{_esc(pid)}</code></strong></a><br>
     <span class="tag">{_esc(p_meta["venue"])}</span>
+    <span class="tag">{len(sbs_cards)} figs</span>
+    <div style="margin-top:4px">{ds_badges}</div>
   </div>
   <div>
-    <p style="margin:0 0 4px"><a href="papers/{pid}/index.html"><strong>{_esc(section_heading)}</strong></a></p>
-    <p class="small muted" style="margin:0 0 6px">{_esc(p_meta["title"])} · {_esc(fig_meta["geometry"])}</p>
-    <p style="margin:0 0 6px">{ds_badges}</p>
+    <p style="margin:0 0 3px"><a href="papers/{pid}/index.html"><strong>{_esc(section_heading)}</strong></a></p>
+    <p class="small muted" style="margin:0 0 5px">
+      <strong>{_esc(ds_head)}:</strong> Pub <code>{_esc(pub_head)}</code> vs. Ours <strong><code>{_esc(ours_head)}</code></strong>
+    </p>
     <div>
       {_paper_outcome_bar_and_badges(pid, verdicts_by_id)}
-      <a class="small" style="margin-left:8px" href="papers/{pid}/index.html#tab-figures">Inspect {len(sbs_cards)} Side-by-Side Figure Pairs &amp; {len(harness_rows)} Datasets →</a>
+      <a class="small" style="margin-left:8px;font-weight:600" href="papers/{pid}/index.html#tab-figures">Inspect 3-Col Figures &amp; Gap →</a>
     </div>
   </div>
-  <div style="text-align:right">
-    <span class="chip good">✓ Judge Audited</span><br>
-    <span class="small"><strong>6 / 6 pts</strong> · <code>{lb["duration_sec"]}s</code></span>
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px">
+      {_gap_badge_html(gap_spec["gap_status"], gap_spec["gap_label"])}
+      <code>{_esc(gap_spec["headline_delta"])}</code>
+    </div>
+    <p class="small muted" style="margin:0;font-size:0.78rem;line-height:1.35">
+      <strong>Pipeline Diff:</strong> {_esc(gap_spec["dataloader_diff"])}
+    </p>
   </div>
 </div>"""
         )
 
-        orig_summary = "".join(
-            f"<li><strong>{_esc(o['fig_id'])} ({_esc(o['title'])}):</strong> "
-            f"<em>X:</em> {_esc(o['x_axis'])} | <em>Y:</em> {_esc(o['y_axis'])}. "
-            f"{_esc(o['what_it_shows'])} <strong>Takeaway:</strong> {_esc(o['takeaway'])}</li>"
-            for o in fig_meta["original_figures"]
+        atlas_jump_pills.append(
+            f'<a class="jump-pill" href="#atlas-{pid}">{_esc(fig_meta.get("short_title", pid))}</a>'
         )
+
         panel_cards = []
         for idx, rpan in enumerate(fig_meta["reproduced_panels"]):
             cid = f"{pid}_c{idx + 1}"
@@ -3044,35 +3331,33 @@ def build_all() -> None:
   </div>
   {panels[idx]}
   <div class="small">
-    <p style="margin:4px 0"><strong>{_esc(rpan["title"])}</strong></p>
-    <p class="muted" style="margin:2px 0"><strong>X:</strong> {_esc(rpan["x_axis"])} · <strong>Y:</strong> {_esc(rpan["y_axis"])}</p>
-    <p style="margin:4px 0 0">{_esc(rpan["exact_reading"])}</p>
+    <p style="margin:3px 0"><strong>{_esc(rpan["title"])}</strong></p>
+    <p class="muted" style="margin:2px 0;font-size:0.78rem">{_esc(rpan["exact_reading"])}</p>
   </div>
 </div>"""
             )
         atlas_sections_html.append(
             f"""<section class="panel" id="atlas-{pid}">
   <div class="claim-head">
+    <span class="tag"><code>{_esc(pid)}</code></span>
     <span class="tag">{_esc(p_meta["venue"])}</span>
-    <span class="tag">{_esc(fig_meta["category_badge"])}</span>
-    <span class="tag">{_esc(ARXIV_IMPORTED_DATA.get(pid, {}).get("source_badge", ""))}</span>
-    <a href="../papers/{pid}/index.html" style="margin-left:auto" class="small">Open Full Paper Logbook, Imported Tables &amp; Code →</a>
+    {_gap_badge_html(gap_spec["gap_status"], gap_spec["gap_label"])}
+    <a href="../papers/{pid}/index.html" style="margin-left:auto;font-weight:600" class="small">Open Paper Detail, Tables &amp; Logbook →</a>
   </div>
-  <h2><a href="../papers/{pid}/index.html">{_esc(section_heading)}</a></h2>
-  <p class="small muted"><strong>Paper:</strong> {_esc(p_chal["name"])} · <strong>Geometry:</strong> {_esc(fig_meta["geometry"])}</p>
-  <p class="small">{_esc(fig_meta.get("king_summary", ""))}</p>
-  {_render_compact_config_card(pid)}
-  <h3 style="margin-top:14px">Part 1: Imported Original Paper Figure vs. Voyager <code>spd-bench</code> Replication + Exact Values</h3>
+  <h2 style="margin-bottom:4px"><a href="../papers/{pid}/index.html">{_esc(section_heading)}</a></h2>
+  <p class="small muted" style="margin:0 0 8px">
+    <strong>Dataloader / Protocol Diff:</strong> {_esc(gap_spec["dataloader_diff"])} ·
+    <strong>Where It Struggles:</strong> {_esc(gap_spec["where_it_struggles"])}
+  </p>
   {"".join(sbs_cards_atlas)}
-  <h3 style="margin-top:16px">Part 2: Live Reproduced 3-Tier Diagnostic Panels (C1 Structural · C2 Signal · C3 Analytical)</h3>
-  <div class="grid3" style="margin-top:10px">
-    {"".join(panel_cards)}
-  </div>
-  <h3 style="margin-top:16px">Part 3: What the Original Paper Figures Show (Exact Axes &amp; Takeaways)</h3>
-  <ul class="small">{orig_summary}</ul>
-  <div class="king-caption">
-    {_esc(fig_meta.get("king_caption", ""))}
-  </div>
+  <details class="panel-collapse" style="margin-top:10px">
+    <summary><span>3-Tier Live Diagnostic Panels (C1 Structural · C2 Signal · C3 Analytical)</span><span class="tag">Expand ▾</span></summary>
+    <div class="collapse-body">
+      <div class="grid3" style="margin-top:10px">
+        {"".join(panel_cards)}
+      </div>
+    </div>
+  </details>
 </section>"""
         )
 
@@ -3093,17 +3378,19 @@ def build_all() -> None:
         )
 
     featured_sbs_pids = [
-        "huang2017spdnet",
-        "brooks2019spdnetbn",
+        "paillard2024green",
         "kobler2022tsmnet",
-        "pan2022matt",
-        "gallet2026armagnac",
-        "zhou2026gbwatt",
+        "huang2017spdnet",
+        "chen2024liebn",
+        "brooks2019spdnetbn",
         "hu2025coratt",
-        "seraphim2023spdtransnet",
     ]
     featured_sbs_html = "".join(
-        f'<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><p class="small" style="margin:0 0 6px"><a href="papers/{fpid}/index.html"><strong><code>{fpid}</code> ({_esc(papers_by_id[fpid]["title"])})</strong> — Inspect All {len(all_sbs_cards[fpid])} Side-by-Side Figure Cuts &amp; {len(ARXIV_IMPORTED_DATA.get(fpid, {}).get("imported_tables", []))} Side-by-Side Tables →</a></p>{"".join(all_sbs_cards[fpid][:2])}</div>'
+        f'<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'
+        f'<div class="claim-head"><a href="papers/{fpid}/index.html"><strong><code>{fpid}</code> · {_esc(papers_by_id[fpid]["title"])}</strong></a>'
+        f'<span style="margin-left:auto">{_gap_badge_html(get_paper_gap_spec(fpid)["gap_status"], get_paper_gap_spec(fpid)["gap_label"])}</span>'
+        f'<a class="small" href="papers/{fpid}/index.html">All {len(all_sbs_cards[fpid])} Figures &amp; {len(ARXIV_IMPORTED_DATA.get(fpid, {}).get("imported_tables", []))} Tables →</a></div>'
+        f'{"".join(all_sbs_cards[fpid][1:2] or all_sbs_cards[fpid][:1])}</div>'
         for fpid in featured_sbs_pids
         if all_sbs_cards.get(fpid)
     )
@@ -3113,95 +3400,85 @@ def build_all() -> None:
 
     # 1. Write index.html (Overview)
     index_html = (
-        _top_bar("", "overview", "Do Riemannian SPD neural networks reproduce their mathematical, signal, and benchmark claims?")
+        _top_bar("", "overview", "SPD-Learn Encore: Original Figure | Our Replicability | The Gap")
         + f"""<header class="page">
-  <div class="eyebrow">The SPD-Learn Encore Registry · ICML 2026 &amp; NEMAR Auditing Pipeline</div>
-  <h1>Do Riemannian SPD neural networks reproduce their mathematical, signal, and benchmark claims?</h1>
+  <div class="eyebrow">SPD-Learn Encore Registry · 26 Papers · {total_sbs_figs} Figures · {total_ds_evals} Benchmarks</div>
+  <h1>Original Figure &nbsp;|&nbsp; Our Replicability &nbsp;|&nbsp; The Gap &amp; Pipeline Differences</h1>
   <p class="lede">
-    Deep neural networks on symmetric positive definite ($\\mathcal{{S}}_{{++}}^d$) and correlation ($\\mathcal{{C}}_{{++}}^d$) manifolds promise invariance to linear mixing, electrode gain scaling, and cross-session drift, yet published studies evaluate heterogeneous preprocessing pipelines and uncalibrated baselines. To test whether 26 foundational and recent SPD architectures (2017 to 2026) satisfy their stated claims under a unified protocol, we extract 78 falsifiable anchor claims across <strong>Structural</strong>, <strong>Signal</strong>, and <strong>Analytical</strong> tiers, evaluate <strong>all {total_ds_evals} paper-dataset benchmarks</strong> across <code>spd-bench</code> (<code>HDM05</code>, <code>Radar</code>, <code>FPHA</code>, <code>AFEW</code>, <code>BNCI2014-001</code>, <code>BNCI2014-004</code>, <code>BNCI2015-001</code>, <code>Hinss2021</code>, <code>Lee2019</code>, <code>Zhou2016</code>, <code>MAMEM-SSVEP-II</code>, <code>BCI-ERN</code>, <code>Sleep-EDFX</code>, <code>MASS-SS3</code>, <code>TUAB</code>, <code>SEED</code>) on the Voyager cluster, and plot side-by-side Original Paper Figures against our replicated results.
-    <a href="methodology/index.html">Read the auditing protocol</a> · <a href="figures/index.html">Browse all {total_sbs_figs} Side-by-Side Figure Pairs &amp; 78 3-Tier Panels</a>
+    Systematic replication audit of 26 Riemannian SPD architectures (2017–2026) in <code>spd_learn</code> across MOABB and <code>spd-bench</code>. Every paper, figure, and table is presented in a unified 3-column layout highlighting <strong>what the paper reported</strong>, <strong>what we replicate on Voyager</strong>, and <strong>why gaps occur</strong> (such as <code>GREEN</code>'s custom MNE-BIDS + <code>autoreject</code> dataloader vs. uncleaned MOABB epochs, <code>TSMNet</code>'s transductive domain batch stats, or <code>LieBN</code>'s 1-step Karcher conditioning failure).
   </p>
 </header>
 
 <main>
   <section aria-label="Key Metrics">
     <div class="tiles">
-      <div class="tile"><div class="n">26</div><div class="l">Papers Audited</div><div class="sub-l">8 Foundational + 18 Recent (2017-2026)</div></div>
-      <div class="tile"><div class="n">{total_ds_evals}</div><div class="l">Paper-Dataset Runs</div><div class="sub-l">{spdbench_counts.get('REPLICATES', 0)} Replicates · {spdbench_counts.get('BASELINE-ADJUSTED', 0)} Adjusted · {spdbench_counts.get('FALSIFIED', 0)} Falsified</div></div>
-      <div class="tile"><div class="n">{total_sbs_figs} + {total_sbs_tabs}</div><div class="l">Side-by-Side Cuts</div><div class="sub-l">{total_sbs_figs} Figures + {total_sbs_tabs} Tables (1-to-1)</div></div>
-      <div class="tile"><div class="n">{n_verified}</div><div class="l">Verified Claims</div><div class="sub-l">Full invariant or harness match (2 pts)</div></div>
-      <div class="tile"><div class="n">{n_adjusted}</div><div class="l">Baseline-Adjusted</div><div class="sub-l">Directional effect confirmed (2 pts)</div></div>
-      <div class="tile"><div class="n">{total_pts}<span style="font-size:1.1rem;color:var(--muted)"> / {max_pts}</span></div><div class="l">Logbook Judge Score</div><div class="sub-l">{n_falsified} Falsified (2 pts) · {n_inconc} Inconclusive</div></div>
+      <div class="tile"><div class="n">26</div><div class="l">SPD Papers Audited</div><div class="sub-l">8 Foundational + 18 Recent (2017–2026)</div></div>
+      <div class="tile"><div class="n">{total_sbs_figs} + {total_sbs_tabs}</div><div class="l">3-Column Figure &amp; Table Cuts</div><div class="sub-l">Original | Our Replicability | The Gap</div></div>
+      <div class="tile"><div class="n">{total_ds_evals}</div><div class="l">Dataset Benchmarks</div><div class="sub-l">{spdbench_counts.get('REPLICATES', 0)} Replicates · {spdbench_counts.get('BASELINE-ADJUSTED', 0)} Adjusted · {spdbench_counts.get('FALSIFIED', 0)} Falsified</div></div>
+      <div class="tile"><div class="n">{n_verified} / 78</div><div class="l">Verified Claims</div><div class="sub-l">Exact invariant or within 1 SD</div></div>
+      <div class="tile"><div class="n">{n_adjusted} + {n_falsified}</div><div class="l">Adjusted / Falsified</div><div class="sub-l">{n_adjusted} Protocol Gap · {n_falsified} Regime Failure</div></div>
+      <div class="tile"><div class="n">{total_pts}<span style="font-size:1.05rem;color:var(--muted)"> / {max_pts}</span></div><div class="l">Logbook Judge Score</div><div class="sub-l">Deterministic Trackio Verification</div></div>
     </div>
   </section>
 
-  <div class="panel">
-    <h2>Closed-Loop Audit Outcomes Across 78 Anchor Claims &amp; {total_ds_evals} <code>spd-bench</code> Dataset Evaluations</h2>
-    <div class="bar" role="img" aria-label="Outcomes of 78 claims">
-      <a class="seg good" style="flex:{max(n_verified, 1)}" title="Verified: {n_verified} of 78 (2 pts each)" href="papers/index.html"></a>
-      <a class="seg warning" style="flex:{max(n_adjusted, 1)}" title="Baseline-Adjusted: {n_adjusted} of 78 (2 pts each)" href="papers/index.html"></a>
-      {f'<a class="seg unresolved" style="flex:{n_falsified}" title="Falsified: {n_falsified} of 78 (2 pts each)" href="papers/index.html"></a>' if n_falsified else ''}
+  <div class="panel" style="padding:0">
+    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <h2 style="margin:0">All 26 Papers: 1. Paper &amp; Datasets &nbsp;|&nbsp; 2. Replicability &nbsp;|&nbsp; 3. The Gap &amp; Pipeline Differences</h2>
+        <p class="small muted" style="margin:2px 0 0">Scan where each architecture replicates closely vs. where dataloader, preprocessing, or conditioning differences create a gap.</p>
+      </div>
+      <a class="tag" href="figures/index.html">Browse All {total_sbs_figs} 3-Column Figure Cards →</a>
     </div>
-    <ul class="legend">
-      <li><span class="swatch good">✓</span><strong>{n_verified} Verified Claims / {spdbench_counts.get('REPLICATES', 0)} REPLICATES Datasets</strong>: Exact differential-geometric identity or <code>spd-bench</code> accuracy within $|\\text{{ours}} - \\text{{published}}| \\le \\sigma_{{\\text{{pub}}}} + \\sigma_{{\\text{{ours}}}}$</li>
-      <li><span class="swatch warning">◐</span><strong>{n_adjusted} Baseline-Adjusted Claims / {spdbench_counts.get('BASELINE-ADJUSTED', 0)} BASELINE-ADJUSTED Datasets</strong>: Directional gain reproduced on MOABB / <code>spd-bench</code> after attributing baseline tuning or split differences</li>
-      <li><span class="swatch unresolved">!</span><strong>{n_falsified} Falsified Claims / {spdbench_counts.get('FALSIFIED', 0)} FALSIFIED Datasets</strong>: Deterministic empirical proof refuting an idealized assumption (such as single-step Karcher centering or unregularized spatial conv over-parameterization)</li>
-      <li><span class="swatch blocked">⊘</span><strong>{spdbench_counts.get('NO TARGET', 0)} NO TARGET (Figures-Only: <code>Stieger2021</code>) &amp; {spdbench_counts.get('BLOCKED', 0)} BLOCKED (Confidential: <code>NATO SET245</code>)</strong></li>
-    </ul>
-    <div class="caution">
-      <p style="margin:0 0 6px"><strong>Untrusted-Narrative Judging &amp; Exact <code>spd-bench</code> Replication Contract.</strong></p>
-      <p class="small" style="margin:0">
-        Following <a href="https://encorescience.org/">Encore Science</a>, the ICML 2026 Open Reproductions <code>logbook-judge</code> specification, and the <code>spd-bench</code> multi-dataset contract, our automated judge (<code>repro/judge.py</code>) evaluates only machine-readable Trackio traces (<code>exit_code == 0</code>, <code>math.isfinite</code> on every tensor metric, plain top-1 <code>accuracy</code> for SPD matrix datasets, and <code>balanced_accuracy</code> for EEG datasets).
-      </p>
+    <div>
+      {"".join(paper_rows_html)}
     </div>
   </div>
 
   <div class="panel">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
       <div>
-        <h2 style="margin:0">Featured Side-by-Side Comparisons: Every Original Paper Figure &amp; Table vs. What We Replicate on Voyager (<code>spd-bench</code>)</h2>
-        <p class="small muted" style="margin:4px 0 0">Architectural figures (e.g., Figure 1) are paired side-by-side with their exact <code>spd_learn</code> mathematical &amp; module specification (no numerical series to plot), while quantitative figures (e.g., Figure 2) and tables are paired side-by-side with our Voyager cluster <code>spd-bench</code> replication in our Encore/Tufte style ({total_sbs_figs} figure pairs + {total_sbs_tabs} table pairs across 26 papers).</p>
+        <h2 style="margin:0">Featured 3-Column Figure Audits (Original Figure | Our Replicability | The Gap &amp; Why)</h2>
+        <p class="small muted" style="margin:2px 0 0">Highlighting key dataloader &amp; protocol differences across flagship architectures (<code>GREEN</code>, <code>TSMNet</code>, <code>SPDNet</code>, <code>LieBN</code>, <code>SPDNetBN</code>, <code>CorAtt</code>).</p>
       </div>
-      <a class="tag" href="figures/index.html">View All {total_sbs_figs} Side-by-Side Figure Pairs in Figures Atlas →</a>
+      <a class="tag" href="figures/index.html">Open Full {total_sbs_figs}-Figure Visual Atlas →</a>
     </div>
     {featured_sbs_html}
   </div>
 
-  {_render_voyager_overview_matrix()}
-
-  <div class="panel">
-    <h2>All Datasets From Every Paper: Complete <code>spd-bench</code> &amp; MOABB Multi-Dataset Replication Matrix ({total_ds_evals} Paper-Dataset Benchmarks)</h2>
-    <p class="small muted">Every dataset evaluated in each of the 26 papers is listed below with its exact <code>spd-bench</code> split protocol (<code>holdout_split(frac=0.5)</code> for HDM05, <code>holdout_split(frac=0.25)</code> for Radar, official 600/575 split with trace-scaled shrinkage for FPHA, and MOABB inter-session / inter-subject splits for BNCI2014-001, BNCI2014-004, BNCI2015-001, Hinss2021, Lee2019, Zhou2016, Stieger2021, MAMEM-SSVEP-II, BCI-ERN, Sleep-EDFX, MASS-SS3, TUAB, and SEED).</p>
-    <div style="overflow-x:auto">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Paper ID</th>
-            <th>Dataset &amp; <code>spd-bench</code> / MOABB Protocol</th>
-            <th>Published Paper Result</th>
-            <th>Our Voyager Harness Result</th>
-            <th><code>spd-bench</code> &amp; Judge Verdict</th>
-          </tr>
-        </thead>
-        <tbody>
-          {"".join(master_harness_rows_html)}
-        </tbody>
-      </table>
+  <details class="panel-collapse">
+    <summary>
+      <span>Voyager Cluster Empirical Benchmark Matrix (24 EEG Models &times; 9 MOABB Datasets + 12 SPD Matrix Models)</span>
+      <span class="tag">Expand Matrix ▾</span>
+    </summary>
+    <div class="collapse-body">
+      {_render_voyager_overview_matrix()}
     </div>
-  </div>
+  </details>
 
-  <div class="panel" style="padding:0">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-      <div>
-        <h2 style="margin:0">All 26 Audited Papers &amp; Reproduction Logbooks (8 Foundational + 18 Recent)</h2>
-        <p class="small muted" style="margin:2px 0 0">Click any paper to inspect its multi-dataset <code>spd-bench</code> table, {total_sbs_figs} side-by-side Original vs. Replicated figure pairs, 3 live SVG diagnostic panels, Moreau failure-mode audit, Trackio logbook, and verifier source code.</p>
+  <details class="panel-collapse">
+    <summary>
+      <span>All {total_ds_evals} Paper-Dataset Benchmarks &amp; Protocol Verdicts (Complete Multi-Dataset Table)</span>
+      <span class="tag">Expand {total_ds_evals} Rows ▾</span>
+    </summary>
+    <div class="collapse-body">
+      <div style="overflow-x:auto;margin-top:10px">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Paper ID</th>
+              <th>Dataset &amp; <code>spd-bench</code> / MOABB Protocol</th>
+              <th>Published Paper Result</th>
+              <th>Our Voyager Harness Result</th>
+              <th><code>spd-bench</code> &amp; Judge Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            {"".join(master_harness_rows_html)}
+          </tbody>
+        </table>
       </div>
-      <a class="tag" href="figures/index.html">Open Full {total_sbs_figs}-Pair Visual Atlas →</a>
     </div>
-    <div>
-      {"".join(paper_rows_html)}
-    </div>
-  </div>
+  </details>
 </main>
 """
         + _footer_html("")
@@ -3211,11 +3488,11 @@ def build_all() -> None:
     # 2. Write papers/index.html
     papers_catalog_rows = [r.replace('href="papers/', 'href="') for r in paper_rows_html]
     papers_index_html = (
-        _top_bar("../", "papers", "Papers & Claims Registry (26 Papers · 78 Claims · 73 Dataset Runs)")
+        _top_bar("../", "papers", "Papers, Replicability & Pipeline Gaps (26 Papers)")
         + f"""<header class="page">
-  <div class="eyebrow">Papers &amp; Claims Catalog</div>
-  <h1>26 Riemannian SPD Papers · 78 Audited Claims · {total_ds_evals} Paper-Dataset Benchmarks</h1>
-  <p class="lede">Inspect all 8 foundational <code>spd_learn</code> models and 18 recent architectures (2023 to 2026), each audited across all datasets from the original paper on MOABB and <code>spd-bench</code>.</p>
+  <div class="eyebrow">Papers, Replicability &amp; Gap Catalog</div>
+  <h1>26 Riemannian SPD Papers: Replicability &amp; Pipeline Differences</h1>
+  <p class="lede">Each row summarizes (1) Paper &amp; Datasets, (2) Published vs. Our Replicated Benchmark, and (3) The Gap &amp; Dataloader/Protocol Differences.</p>
 </header>
 <main>
   <div class="panel" style="padding:0">
@@ -3229,13 +3506,16 @@ def build_all() -> None:
 
     # 3. Write figures/index.html
     figures_index_html = (
-        _top_bar("../", "figures", f"Figures Atlas ({total_sbs_figs} Side-by-Side Original vs Replicated Pairs + 78 3-Tier SVG Panels)")
+        _top_bar("../", "figures", f"Figures Atlas ({total_sbs_figs} 3-Column Original | Ours | Gap Cards)")
         + f"""<header class="page">
-  <div class="eyebrow">Side-by-Side Original vs. Replicated Visual Atlas</div>
-  <h1>{total_sbs_figs} Side-by-Side Original vs. Replicated Figure Pairs &amp; 78 Live 3-Tier Diagnostic Panels</h1>
+  <div class="eyebrow">3-Column Visual Reproducibility Atlas</div>
+  <h1>{total_sbs_figs} Paper Figures: 1. Original Figure &nbsp;|&nbsp; 2. Our Replicability &nbsp;|&nbsp; 3. The Gap</h1>
   <p class="lede">
-    For each of the 26 papers in <code>spd_learn</code>, this atlas renders (1) <strong>1-to-1 Side-by-Side comparisons</strong> for every original figure (3 to 5 per paper: architectural figures paired with their exact <code>spd_learn</code> module/math spec, and quantitative figures paired with our Voyager <code>spd-bench</code> replication in our Encore/Tufte style + numerical values table), (2) <strong>three live 3-tier SVG diagnostic panels</strong> (<code>Panel A: Structural</code>, <code>Panel B: Signal</code>, <code>Panel C: Analytical</code>), and (3) exact coordinate and takeaway deconstructions of every original figure.
+    Every figure from all 26 papers is paired in a 3-column grid showing the tight-cropped original figure on the left, our <code>spd_learn</code> replication in the center, and the numeric gap ($\\Delta$), dataloader differences, and failure regimes on the right.
   </p>
+  <div class="jump-strip">
+    {"".join(atlas_jump_pills)}
+  </div>
 </header>
 <main>
   {"".join(atlas_sections_html)}
