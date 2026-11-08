@@ -265,6 +265,36 @@ def _esc(text: Any) -> str:
 # =============================================================================
 
 
+def _format_xtick_svg(cx: float, base_y: float, raw_label: str, slot_w: float) -> str:
+    """Render an x-axis tick label that wraps cleanly onto 2 lines instead of colliding."""
+    lbl = str(raw_label).strip()
+    max_chars = max(5, int(slot_w / 5.5))
+    if len(lbl) <= max_chars:
+        return f'<text x="{cx:.1f}" y="{base_y:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(lbl)}</text>'
+
+    # Split into 2 balanced lines at ' (', space, '/', or '-'
+    line1, line2 = lbl[:max_chars], lbl[max_chars:]
+    if " (" in lbl:
+        idx = lbl.index(" (")
+        line1, line2 = lbl[:idx].strip(), lbl[idx:].strip()
+    elif " " in lbl:
+        parts = lbl.split(" ")
+        mid = max(1, len(parts) // 2)
+        line1 = " ".join(parts[:mid])
+        line2 = " ".join(parts[mid:])
+    elif "/" in lbl:
+        idx = lbl.index("/") + 1
+        line1, line2 = lbl[:idx], lbl[idx:]
+    line1 = line1[:max_chars]
+    line2 = line2[:max_chars]
+    return (
+        f'<text x="{cx:.1f}" y="{base_y - 2.5:.1f}" text-anchor="middle" class="svg-tick">'
+        f'<tspan x="{cx:.1f}" dy="0">{_esc_svg(line1)}</tspan>'
+        f'<tspan x="{cx:.1f}" dy="9.5">{_esc_svg(line2)}</tspan>'
+        f"</text>"
+    )
+
+
 def _svg_line_or_bar_panel(
     title: str,
     x_label: str,
@@ -276,9 +306,9 @@ def _svg_line_or_bar_panel(
     ymin: float | None = None,
     ymax: float | None = None,
 ) -> str:
-    """Render a crisp, responsive, theme-aware SVG chart panel (360x230 viewBox)."""
-    w, h = 360, 230
-    pad_l, pad_r, pad_t, pad_b = 52, 18, 28, 44
+    """Render a crisp, responsive, theme-aware SVG chart panel (360x234 viewBox) with zero label collisions."""
+    w, h = 360, 234
+    pad_l, pad_r, pad_t, pad_b = 52, 18, 28, 48
     pw = w - pad_l - pad_r
     ph = h - pad_t - pad_b
 
@@ -295,7 +325,7 @@ def _svg_line_or_bar_panel(
     if abs(vmax - vmin) < 1e-12:
         vmax = vmin + 1.0
     if ymax is None:
-        vmax = vmax + 0.08 * (vmax - vmin)
+        vmax = vmax + 0.10 * (vmax - vmin)
     span = vmax - vmin
 
     def y_px(v: float) -> float:
@@ -313,10 +343,27 @@ def _svg_line_or_bar_panel(
             return f"{v:.2f}"
         return f"{v:.1f}"
 
+    has_multi_series = len(series) >= 2
+    clean_title = title
+    if has_multi_series and len(clean_title) > 38:
+        clean_title = clean_title.split("(")[0].strip()[:38]
+    elif len(clean_title) > 52:
+        clean_title = clean_title[:52]
     lines = [
         f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="{_esc_svg(title)}">',
-        f'<text x="{pad_l}" y="16" class="svg-title">{_esc_svg(title[:54])}</text>',
+        f'<text x="{pad_l}" y="16" class="svg-title">{_esc_svg(clean_title)}</text>',
     ]
+    if has_multi_series:
+        raw0 = str(series[0].get("label", "Pub")).strip()
+        raw1 = str(series[1].get("label", "Ours")).strip()
+        lbl0 = "Pub" if raw0.lower().startswith("pub") else (raw0[:7] or "Pub")
+        lbl1 = "Ours" if raw1.lower().startswith("our") else (raw1[:7] or "Ours")
+        lines.append(
+            f'<rect x="264" y="8" width="7" height="7" rx="1.5" class="svg-bar-primary"/>'
+            f'<text x="274" y="14.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">{_esc_svg(lbl0)}</text>'
+            f'<rect x="304" y="8" width="7" height="7" rx="1.5" class="svg-bar-secondary"/>'
+            f'<text x="314" y="14.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">{_esc_svg(lbl1)}</text>'
+        )
 
     for frac in (0.0, 0.5, 1.0):
         val = vmin + frac * span
@@ -355,16 +402,16 @@ def _svg_line_or_bar_panel(
                 lines.append(
                     f'<rect x="{cx - bar_w / 2:.1f}" y="{top:.1f}" width="{bar_w:.1f}" height="{bh:.1f}" rx="2" class="{color_cls}"/>'
                 )
-                if n_pts <= 6 and n_ser <= 2:
+                # Tufte Remedy B1: Only place per-bar value text on single-series bars where slot width prevents collision
+                if n_ser == 1 and n_pts <= 7:
                     lines.append(
                         f'<text x="{cx:.1f}" y="{max(pad_t + 9, top - 3):.1f}" text-anchor="middle" class="svg-val">{fmt_v(val)}</text>'
                     )
         for i, xt in enumerate(x_ticks):
             cx = pad_l + (i + 0.5) * group_w
-            lines.append(
-                f'<text x="{cx:.1f}" y="{pad_t + ph + 15:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(str(xt))}</text>'
-            )
+            lines.append(_format_xtick_svg(cx, pad_t + ph + 13.5, str(xt), group_w))
     else:
+        end_labels_raw: list[list[Any]] = []
         for s_idx, s in enumerate(series):
             stroke_cls = s.get("class", "svg-line-primary" if s_idx == 0 else "svg-line-secondary")
             vals = s["values"]
@@ -379,15 +426,30 @@ def _svg_line_or_bar_panel(
                 lines.append(f'<circle cx="{xp:.1f}" cy="{yp:.1f}" r="3" class="{stroke_cls}-dot"/>')
                 if i == len(pts) - 1:
                     lbl = s.get("label", "")
+                    if lbl.lower().startswith("published"):
+                        lbl = "Pub"
+                    elif lbl.lower().startswith("ours"):
+                        lbl = "Ours"
                     tag = f"{lbl}: {fmt_v(val)}" if lbl else fmt_v(val)
-                    lines.append(
-                        f'<text x="{xp - 4:.1f}" y="{max(pad_t + 10, yp - 6):.1f}" text-anchor="end" class="svg-val">{_esc_svg(tag)}</text>'
-                    )
+                    ideal_y = max(pad_t + 10.0, min(pad_t + ph - 4.0, yp - 6.0))
+                    end_labels_raw.append([xp - 4.0, ideal_y, tag])
+
+        # De-collide end-of-line direct labels vertically (>= 10px separation)
+        end_labels_raw.sort(key=lambda item: item[1])
+        for k in range(1, len(end_labels_raw)):
+            if end_labels_raw[k][1] - end_labels_raw[k - 1][1] < 10.0:
+                end_labels_raw[k][1] = min(pad_t + ph - 2.0, end_labels_raw[k - 1][1] + 10.0)
+                if end_labels_raw[k][1] - end_labels_raw[k - 1][1] < 10.0:
+                    end_labels_raw[k - 1][1] = max(pad_t + 9.0, end_labels_raw[k][1] - 10.0)
+        for lx, ly, ltag in end_labels_raw:
+            lines.append(
+                f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="end" class="svg-val">{_esc_svg(ltag)}</text>'
+            )
+
+        slot_w = pw / max(len(x_ticks) - 1, 1) if len(x_ticks) > 1 else pw
         for i, xt in enumerate(x_ticks):
             xp = pad_l + (i / max(len(x_ticks) - 1, 1)) * pw
-            lines.append(
-                f'<text x="{xp:.1f}" y="{pad_t + ph + 15:.1f}" text-anchor="middle" class="svg-tick">{_esc_svg(str(xt))}</text>'
-            )
+            lines.append(_format_xtick_svg(xp, pad_t + ph + 13.5, str(xt), slot_w))
 
     lines.append(
         f'<line x1="{pad_l}" y1="{pad_t}" x2="{pad_l}" y2="{pad_t + ph}" class="svg-axis"/>'
@@ -396,7 +458,7 @@ def _svg_line_or_bar_panel(
         f'<line x1="{pad_l}" y1="{pad_t + ph}" x2="{w - pad_r}" y2="{pad_t + ph}" class="svg-axis"/>'
     )
     lines.append(
-        f'<text x="{pad_l + pw / 2:.1f}" y="{h - 6}" text-anchor="middle" class="svg-axis-label">{_esc_svg(x_label[:54])}</text>'
+        f'<text x="{pad_l + pw / 2:.1f}" y="{h - 4}" text-anchor="middle" class="svg-axis-label">{_esc_svg(x_label[:54])}</text>'
     )
     lines.append(
         f'<text transform="translate(13,{pad_t + ph / 2:.1f}) rotate(-90)" text-anchor="middle" class="svg-axis-label">{_esc_svg(y_label[:38])}</text>'
@@ -950,7 +1012,7 @@ def _render_quantitative_side_by_side_card(
     {left_col_html}
     <div class="diag-card col-ours">
       <div class="col-banner ours">
-        <span>2 · OUR REPLICABILITY (spd_learn)</span>
+        <span>2 · OUR REPLICABILITY</span>
         <span class="small muted">{legend_label}</span>
       </div>
       {right_svg}
@@ -958,8 +1020,8 @@ def _render_quantitative_side_by_side_card(
     </div>
     <div class="diag-card col-gap">
       <div class="col-banner gap">
-        <span>3 · THE GAP &amp; WHY IT DIFFERS</span>
-        <code>Max |Δ| = {max_abs:.2g} ({_esc(max_item[0][:10])})</code>
+        <span>3 · THE GAP &amp; WHY</span>
+        <code>Max |Δ| = {max_abs:.2g}</code>
       </div>
       <div class="gap-kpi-strip">
         <div class="gap-kpi">
@@ -1810,11 +1872,11 @@ APP_CSS = r"""/* SPD-Learn Encore Science Reproducibility Registry CSS
   --accent-dark: #C03216;
   --accent-secondary: #F7941D;
   --spd-blue: #2f6fed;
-  --good: #059669;
-  --warning: #d97706;
-  --critical: #dc2626;
-  --unresolved: #dc2626;
-  --blocked: #64748b;
+  --good: #047857;
+  --warning: #b45309;
+  --critical: #b91c1c;
+  --unresolved: #b91c1c;
+  --blocked: #475569;
   --link: #C03216;
   --hover: #f1f5f9;
   --bar: #2f6fed;
@@ -1869,12 +1931,14 @@ APP_CSS = r"""/* SPD-Learn Encore Science Reproducibility Registry CSS
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; max-width: 100%; overflow-x: hidden; }
 body {
   margin: 0;
   background: var(--surface);
   color: var(--text);
   font: 15.5px/1.5 var(--font-body);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 h1, h2, h3, h4, .brand, .eyebrow, .col-banner {
   font-family: var(--font-heading);
@@ -2046,12 +2110,15 @@ h3 { font-size: 0.98rem; margin: 0 0 6px; }
    Col 1 (Original Figure) | Col 2 (Our Replicability) | Col 3 (The Gap & Pipeline Diffs) */
 .tri-grid {
   display: grid;
-  grid-template-columns: 1.05fr 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: 12px;
   align-items: stretch;
 }
+.tri-grid > *, .grid2 > *, .grid3 > *, .drow > *, .diag-card {
+  min-width: 0;
+}
 @media (max-width: 1060px) {
-  .tri-grid { grid-template-columns: 1fr; }
+  .tri-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 .col-orig { background: var(--panel); border-top: 3px solid var(--spd-blue); }
@@ -2063,17 +2130,29 @@ h3 { font-size: 0.98rem; margin: 0 0 6px; }
   justify-content: space-between;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
+  padding: 5px 8px;
+  min-height: 29px;
   border-radius: 4px;
-  font-size: 0.73rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.col-banner.orig { background: rgba(47, 111, 237, 0.09); color: var(--spd-blue); }
-.col-banner.ours { background: rgba(238, 76, 44, 0.10); color: var(--accent); }
-.col-banner.gap  { background: rgba(247, 148, 29, 0.12); color: var(--warning); }
-.col-banner code { font-size: 0.73rem; text-transform: none; color: var(--text); font-weight: 700; }
+.col-banner > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+.col-banner.orig { background: rgba(47, 111, 237, 0.09); color: #1d4ed8; }
+.col-banner.ours { background: rgba(238, 76, 44, 0.09); color: #C03216; }
+.col-banner.gap  { background: rgba(247, 148, 29, 0.13); color: #9a3412; }
+:root[data-theme=dark] .col-banner.orig { color: #79c0ff; }
+:root[data-theme=dark] .col-banner.ours { color: #FF7F66; }
+:root[data-theme=dark] .col-banner.gap  { color: #fbbf24; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) .col-banner.orig { color: #79c0ff; }
+  :root:not([data-theme=light]) .col-banner.ours { color: #FF7F66; }
+  :root:not([data-theme=light]) .col-banner.gap  { color: #fbbf24; }
+}
+.col-banner code { font-size: 0.72rem; text-transform: none; color: var(--text); font-weight: 700; }
 
 .fig-canvas {
   border: 1px solid var(--line);
@@ -2373,6 +2452,16 @@ table.data-table th, table.data-table td {
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+code { overflow-wrap: anywhere; word-break: break-word; }
+@media (max-width: 640px) {
+  .wrap { padding: 0 12px; }
+  h1 { font-size: 1.32rem; }
+  .panel, .tri-panel { padding: 10px 12px; }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  nav.top .by { display: none; }
 }
 table.data-table th {
   font-family: var(--font-heading);
