@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: ARMAGNAC Harmonic-Arithmetic BatchNorm (Signal Processing 2026) (`gallet2026armagnac`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id gallet2026armagnac`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.358s`
+- **Duration**: `0.260s`
 
 ## Claim Execution Traces
 
@@ -12,8 +12,8 @@
 
 ```json
 {
-  "harmonic_endpoint_err": 1.9747640154760356e-15,
-  "arithmetic_endpoint_err": 1.151395379243484e-14,
+  "harmonic_endpoint_err": 2.3728087722579146e-15,
+  "arithmetic_endpoint_err": 9.505547718436904e-15,
   "passed": true,
   "scope": "full"
 }
@@ -24,8 +24,8 @@
 
 ```json
 {
-  "learned_alpha_for_harmonic_target": 0.02373824471434667,
-  "learned_alpha_for_arithmetic_target": 0.9848944355058329,
+  "learned_alpha_for_harmonic_target": 0.023738213924507097,
+  "learned_alpha_for_arithmetic_target": 0.9848944181048256,
   "passed": true,
   "scope": "full"
 }
@@ -37,8 +37,8 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "armagnac_10_calls_sec": 0.00731,
-  "karcher5_10_calls_sec": 0.01715,
+  "armagnac_10_calls_sec": 0.0051,
+  "karcher5_10_calls_sec": 0.01408,
   "bnci_subj3_train_acc_pct": 73.96,
   "bnci_subj3_test_acc_pct": 70.49,
   "passed": true,

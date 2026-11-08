@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: SPDNet-AE & SSGCNet: Riemannian Autoencoding & Stiefel-SPD Graph Conv (HAL / IEEE TNSRE 2026) (`boucherie2026spdnetae_ssgcnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id boucherie2026spdnetae_ssgcnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `7.162s`
+- **Duration**: `7.224s`
 
 ## Claim Execution Traces
 
@@ -12,8 +12,8 @@
 
 ```json
 {
-  "latent_min_eig": 0.12310659885406494,
-  "reconstructed_min_eig": 0.12310611456632614,
+  "latent_min_eig": 0.12242593616247177,
+  "reconstructed_min_eig": 0.12242554873228073,
   "passed": true,
   "scope": "full"
 }
@@ -24,8 +24,8 @@
 
 ```json
 {
-  "initial_geodesic_recon_loss": 65.17560577392578,
-  "final_geodesic_recon_loss": 40.52341842651367,
+  "initial_geodesic_recon_loss": 68.68144226074219,
+  "final_geodesic_recon_loss": 44.5163688659668,
   "passed": true,
   "scope": "full"
 }
@@ -37,10 +37,10 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "spdnetae_bnci_subj3_test_acc_pct": 67.01,
-  "ssgcnet_bnci_subj3_test_acc_pct": 68.4,
+  "spdnetae_bnci_subj3_test_acc_pct": 64.58,
+  "ssgcnet_bnci_subj3_test_acc_pct": 57.64,
   "chance_level_pct": 25.0,
-  "passed": true,
+  "passed": false,
   "scope": "full"
 }
 ```

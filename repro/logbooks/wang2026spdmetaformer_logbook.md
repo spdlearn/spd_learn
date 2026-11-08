@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: SPD-MetaFormer (arXiv Oct 2026) (`wang2026spdmetaformer`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id wang2026spdmetaformer`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `2.612s`
+- **Duration**: `3.976s`
 
 ## Claim Execution Traces
 
@@ -12,7 +12,7 @@
 
 ```json
 {
-  "matt_normalized_attention_entropy": 0.9999305605888367,
+  "matt_normalized_attention_entropy": 0.9999322295188904,
   "passed": true,
   "scope": "full"
 }
@@ -23,7 +23,7 @@
 
 ```json
 {
-  "min_eig_output": 0.46970507502555847,
+  "min_eig_output": 0.4668136239051819,
   "spd_metaformer_block_params": 74,
   "qkv_plus_ffn_params": 180,
   "passed": true,
@@ -37,9 +37,9 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "bnci_subj3_train_acc_pct": 80.56,
-  "bnci_subj3_test_acc_pct": 83.33,
-  "train_test_gap_pp": -2.77,
+  "bnci_subj3_train_acc_pct": 78.12,
+  "bnci_subj3_test_acc_pct": 72.92,
+  "train_test_gap_pp": 5.2,
   "passed": true,
   "scope": "full"
 }

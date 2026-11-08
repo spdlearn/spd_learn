@@ -308,10 +308,10 @@ class SPDResBlock(nn.Module):
         d = log_eigvals.shape[-1]
         log_flat = log_eigvals.reshape(-1, 1, d)
         s_flat = self.cnn(log_flat)
-        s = s_flat.view(*batch_shape, d)
+        s = 3.0 * torch.tanh(s_flat.view(*batch_shape, d) / 3.0)
 
-        f_x = ensure_sym(eigvecs @ torch.diag_embed(torch.exp(s)) @ eigvecs.mT)
-        return ensure_sym(self.residual(X, f_x))
+        out_eigvals = torch.exp(log_eigvals + s)
+        return ensure_sym(eigvecs @ torch.diag_embed(out_eigvals) @ eigvecs.mT)
 
 
 class AdaptiveLogEuclidean(nn.Module):

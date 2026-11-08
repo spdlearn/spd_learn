@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: CorAtt: Correlation Manifold Self-Attention (IJCAI 2025) (`hu2025coratt`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id hu2025coratt`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `3.205s`
+- **Duration**: `4.177s`
 
 ## Claim Execution Traces
 

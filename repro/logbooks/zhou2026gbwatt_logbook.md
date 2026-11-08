@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: GBWAtt: Generalized Bures-Wasserstein Self-Attention (KDD 2026) (`zhou2026gbwatt`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id zhou2026gbwatt`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `5.861s`
+- **Duration**: `17.761s`
 
 ## Claim Execution Traces
 
@@ -12,7 +12,7 @@
 
 ```json
 {
-  "min_eig_output": 0.6079550981521606,
+  "min_eig_output": 0.6496408581733704,
   "min_eig_reference_M": 1.0,
   "passed": true,
   "scope": "full"
@@ -24,8 +24,8 @@
 
 ```json
 {
-  "gbw_grad_norm_kappa_1e6": 975.8703002929688,
-  "lem_grad_norm_kappa_1e6": 2382.6689453125,
+  "gbw_grad_norm_kappa_1e6": 226.65166147972505,
+  "lem_grad_norm_kappa_1e6": 2754.513776269605,
   "grad_finite": true,
   "passed": true,
   "scope": "full"
@@ -43,8 +43,8 @@
   "our_9subj_harness_mean_pct": 75.1,
   "our_9subj_harness_sd_pct": 11.2,
   "delta_pct": -1.32,
-  "bnci_subj3_train_acc_pct": 77.78,
-  "bnci_subj3_test_acc_pct": 70.83,
+  "bnci_subj3_train_acc_pct": 84.72,
+  "bnci_subj3_test_acc_pct": 73.96,
   "passed": true,
   "scope": "full"
 }

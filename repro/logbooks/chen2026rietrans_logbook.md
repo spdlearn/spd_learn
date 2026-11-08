@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: RieTrans: SPDLinear, SPDRMLR & SPNN (NeurIPS 2024 / 2026) (`chen2026rietrans`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2026rietrans`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.760s`
+- **Duration**: `2.764s`
 
 ## Claim Execution Traces
 
@@ -40,8 +40,8 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "bnci_subj3_train_acc_pct": 63.89,
-  "bnci_subj3_test_acc_pct": 65.28,
+  "bnci_subj3_train_acc_pct": 69.79,
+  "bnci_subj3_test_acc_pct": 66.32,
   "chance_level_pct": 25.0,
   "passed": true,
   "scope": "full"

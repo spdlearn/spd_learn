@@ -55,10 +55,10 @@ PAPER_TO_VOYAGER_MODELS: dict[str, list[str]] = {
     "paillard2024green": ["Green"],
     "carrara2024phasespdnet": ["PhaseSPDNet", "SPDNet"],
     "wilson2025eegspdnet": ["EEGSPDNet", "SPDNet"],
-    "chen2026pcm_bwcm": ["BWCM", "SPDNet"],
+    "chen2026pcm_bwcm": ["PCM", "BWCM", "SPDNet"],
     "hu2025coratt": ["CorAtt"],
     "chen2026cornet": ["CorNet", "CorNet-OLM", "CorNet-LSM"],
-    "chen2026rietrans": ["RieTrans-SPDRMLR", "SPDNet"],
+    "chen2026rietrans": ["RieTrans-SPDRMLR", "SPNN", "SPDNet"],
     "wang2025gyroatt": ["GyroAtt"],
     "ju2023graphcspnet": ["GraphCSPNet"],
     "zhou2026gbwatt": ["GBWAtt"],
@@ -66,7 +66,7 @@ PAPER_TO_VOYAGER_MODELS: dict[str, list[str]] = {
     "wang2026spdmetaformer": ["SPDMetaFormer"],
     "hu2026rhop": ["RHOP"],
     "ju2024deepgeocca": ["DeepGeoCCA"],
-    "gallet2026armagnac": ["SPDNetBN", "TSMNet"],
+    "gallet2026armagnac": ["ARMAGNAC-Harmonic", "ARMAGNAC-GAH", "ARMAGNAC-Arithmetic", "SPDNetBN"],
     "zhou2025gbwbn_cbn": ["GBWBN", "CBN"],
     "tibermacine2025rceegnet": ["RCEEGNet"],
     "wang2024starnet": ["STaRNet"],
@@ -3347,7 +3347,7 @@ def _render_voyager_cluster_execution_section(paper_id: str) -> str:
     <strong>Multi-Dataset, Subject-Level &amp; Epoch-Curve Replicability ({", ".join(models)})</strong>
   </div>
   <p class="small muted" style="margin:4px 0 10px">
-    Executed across distributed Voyager CPU/HPU shards (<code>1,456</code> EEG subject-model runs + <code>116</code> SPD matrix runs). Below are the exact per-dataset means, standard deviations, subject-by-subject accuracies ($S_1 \\dots S_9$), Cohen's $\\kappa$, and 6-stage epoch convergence trajectories.
+    Executed across distributed Voyager CPU/HPU shards (<code>1,560</code> EEG subject-model runs + <code>156</code> SPD matrix runs). Below are the exact per-dataset means, standard deviations, subject-by-subject accuracies ($S_1 \\dots S_9$), Cohen's $\\kappa$, and 6-stage epoch convergence trajectories.
   </p>
   <div class="grid2" style="margin-bottom:12px">
     <div class="diag-card" style="background:var(--panel)">
@@ -3394,6 +3394,7 @@ def _render_voyager_overview_matrix() -> str:
         ("schirrmeister2017", "Schirr2017"),
         ("shin2017a", "Shin2017A"),
         ("weibo2014", "Weibo2014"),
+        ("zhou2020", "Zhou2020"),
     ]
     all_eeg_models = sorted(eeg_ds.get("bnci2014_001", {}).keys())
     eeg_rows_html = []
@@ -3427,20 +3428,20 @@ def _render_voyager_overview_matrix() -> str:
     return f"""<div class="panel">
   <div class="claim-head">
     <span class="tag" style="border-color:var(--good);color:var(--good)">VOYAGER DISTRIBUTED CLUSTER SHARD MATRIX</span>
-    <span class="tag">9 Shards · 1,456 EEG Subject Runs · 116 SPD Matrix Runs</span>
+    <span class="tag">15 Shards · 1,560 EEG Subject Runs · 156 SPD Matrix Runs</span>
     <strong>Cross-Model &times; Cross-Dataset Empirical Benchmark Matrix (<code>repro/voyager_spdbench_results.json</code>)</strong>
   </div>
   <p class="small muted" style="margin:4px 0 10px">
-    All 24 EEG SPD architectures evaluated across 9 MOABB motor-imagery benchmarks (mean $\\pm$ SD balanced accuracy % across subjects) and 12 SPD matrix models evaluated on <code>Radar</code> (5 seeds + sample-scarcity regime) and <code>HDM05</code> (117 classes, 3 seeds).
+    All 24 EEG SPD architectures evaluated across all 10 MOABB motor-imagery benchmarks (mean $\\pm$ SD balanced accuracy % across subjects) and all 16 SPD matrix models evaluated on <code>Radar</code> (5 seeds + sample-scarcity regime) and <code>HDM05</code> (117 classes, 3 seeds).
   </p>
-  <h3 style="margin:10px 0 6px;font-size:0.95rem">A. MOABB EEG Decoding Matrix (24 SPD Models &times; 9 Datasets, Mean &plusmn; SD %)</h3>
+  <h3 style="margin:10px 0 6px;font-size:0.95rem">A. MOABB EEG Decoding Matrix (24 SPD Models &times; 10 Datasets, Mean &plusmn; SD %)</h3>
   <div style="overflow-x:auto;max-height:420px;overflow-y:auto">
     <table class="data-table" style="font-size:0.78rem">
       <thead><tr><th>SPD Model</th>{eeg_headers}</tr></thead>
       <tbody>{"".join(eeg_rows_html)}</tbody>
     </table>
   </div>
-  <h3 style="margin:14px 0 6px;font-size:0.95rem">B. SPD Matrix Benchmark Matrix (12 SPD Models on Radar &amp; HDM05 + Sample Scarcity)</h3>
+  <h3 style="margin:14px 0 6px;font-size:0.95rem">B. SPD Matrix Benchmark Matrix (16 SPD Models on Radar &amp; HDM05 + Sample Scarcity)</h3>
   <div style="overflow-x:auto">
     <table class="data-table" style="font-size:0.80rem">
       <thead>

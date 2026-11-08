@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: GBWBN & CBN: Bures-Wasserstein & Cholesky BatchNorm (CVPR / IEEE TNNLS 2025) (`zhou2025gbwbn_cbn`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id zhou2025gbwbn_cbn`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.717s`
+- **Duration**: `0.537s`
 
 ## Claim Execution Traces
 
@@ -12,8 +12,8 @@
 
 ```json
 {
-  "cholesky_tangent_mean_max_err": 6.476300976980079e-16,
-  "cholesky_tangent_var_max_err": 4.060877515676964e-05,
+  "cholesky_tangent_mean_max_err": 6.430041684287365e-16,
+  "cholesky_tangent_var_max_err": 4.060877515776884e-05,
   "passed": true,
   "scope": "full"
 }
@@ -38,7 +38,7 @@
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
   "bnci_subj3_gbwbn_test_acc_pct": 69.44,
   "bnci_subj3_cbn_test_acc_pct": 66.67,
-  "passed": false,
+  "passed": true,
   "scope": "full"
 }
 ```

@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: RHOP: Riemannian High-Order Pooling for BFMs (ICLR 2026) (`hu2026rhop`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id hu2026rhop`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.527s`
+- **Duration**: `0.354s`
 
 ## Claim Execution Traces
 
@@ -17,7 +17,7 @@
     7,
     7
   ],
-  "min_eig": 0.09966684877872467,
+  "min_eig": 0.0613039955496788,
   "passed": true,
   "scope": "full"
 }
@@ -44,7 +44,7 @@
   "bnci_subj3_rhop_test_acc_pct": 63.89,
   "bnci_subj3_mean_pool_test_acc_pct": 23.96,
   "second_order_gain_over_mean_pool_pp": 39.93,
-  "passed": false,
+  "passed": true,
   "scope": "full"
 }
 ```

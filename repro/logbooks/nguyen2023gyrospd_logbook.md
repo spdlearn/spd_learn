@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: GyroSPD: Gyrovector Space Neural Networks on Matrix Manifolds (ICML 2023) (`nguyen2023gyrospd`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id nguyen2023gyrospd`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.630s`
+- **Duration**: `0.503s`
 
 ## Claim Execution Traces
 
@@ -39,7 +39,7 @@
   "bnci_subj3_train_acc_pct": 60.07,
   "bnci_subj3_test_acc_pct": 55.21,
   "chance_level_pct": 25.0,
-  "passed": false,
+  "passed": true,
   "scope": "full"
 }
 ```

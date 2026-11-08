@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: STaRNet: Spatio-Temporal and Riemannian Network (Neural Networks 2024) (`wang2024starnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id wang2024starnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `6.474s`
+- **Duration**: `1.930s`
 
 ## Claim Execution Traces
 
@@ -26,8 +26,8 @@
 
 ```json
 {
-  "riemannian_bimap_grad_norm": 0.9951378107070923,
-  "euclidean_se_grad_sum": 130.30490112304688,
+  "riemannian_bimap_grad_norm": 20.21647071838379,
+  "euclidean_se_grad_sum": 121.55802536010742,
   "passed": true,
   "scope": "full"
 }
@@ -44,8 +44,8 @@
   "our_9subj_harness_mean_pct": 74.2,
   "our_9subj_harness_sd_pct": 11.6,
   "delta_pct": -1.2,
-  "bnci_subj3_train_acc_pct": 80.56,
-  "bnci_subj3_test_acc_pct": 73.61,
+  "bnci_subj3_train_acc_pct": 76.04,
+  "bnci_subj3_test_acc_pct": 71.53,
   "passed": true,
   "scope": "full"
 }

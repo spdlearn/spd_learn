@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: Tensor-CSPNet: Time-Frequency-Spatial SPD Network (IEEE TNNLS 2022) (`ju2022tensorcspnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id ju2022tensorcspnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `4.609s`
+- **Duration**: `2.632s`
 
 ## Claim Execution Traces
 
@@ -30,9 +30,9 @@
 
 ```json
 {
-  "single_band_fisher_ratio": 0.243,
-  "multiband_fisher_ratio": 0.131,
-  "passed": false,
+  "single_band_fisher_ratio": 20.0104,
+  "multiband_fisher_ratio": 31.4855,
+  "passed": true,
   "scope": "full"
 }
 ```

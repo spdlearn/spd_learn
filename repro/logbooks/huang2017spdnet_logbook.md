@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: SPDNet: A Riemannian Network for SPD Matrix Learning (AAAI 2017) (`huang2017spdnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id huang2017spdnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `4.456s`
+- **Duration**: `4.442s`
 
 ## Claim Execution Traces
 
@@ -29,7 +29,7 @@
   "hdm05_raw_median_kappa": 691927.875,
   "post_bimap_reeig_median_kappa": 129495.4609375,
   "grad_finite": true,
-  "passed": false,
+  "passed": true,
   "scope": "full"
 }
 ```

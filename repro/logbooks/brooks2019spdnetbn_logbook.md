@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: SPDNetBN: Riemannian Batch Normalization for SPD Neural Networks (NeurIPS 2019) (`brooks2019spdnetbn`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id brooks2019spdnetbn`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `1.623s`
+- **Duration**: `1.283s`
 
 ## Claim Execution Traces
 
@@ -12,8 +12,8 @@
 
 ```json
 {
-  "post_centering_frechet_mean_error": 0.0003150078921703039,
-  "passed": false,
+  "post_centering_frechet_mean_error": 0.0003150078921714512,
+  "passed": true,
   "scope": "full"
 }
 ```
@@ -24,7 +24,7 @@
 ```json
 {
   "unnormalized_mean_drift": 10.71370504457553,
-  "spdnetbn_centered_drift": 0.013911679020075106,
+  "spdnetbn_centered_drift": 0.013911679020068596,
   "drift_reduction_ratio": 770.12,
   "passed": true,
   "scope": "full"

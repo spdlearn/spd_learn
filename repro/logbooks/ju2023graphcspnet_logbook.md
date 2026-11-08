@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: Graph-CSPNet & GraphBiMap (IEEE TNNLS 2023) (`ju2023graphcspnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id ju2023graphcspnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `3.833s`
+- **Duration**: `5.377s`
 
 ## Claim Execution Traces
 
@@ -12,7 +12,7 @@
 
 ```json
 {
-  "min_eig_output": 0.6969856023788452,
+  "min_eig_output": 0.7349068522453308,
   "output_shape": [
     4,
     6,
@@ -47,9 +47,9 @@
   "our_9subj_harness_mean_pct": 76.8,
   "our_9subj_harness_sd_pct": 10.9,
   "delta_pct": -0.75,
-  "bnci_subj3_train_acc_pct": 83.68,
-  "bnci_subj3_test_acc_pct": 79.17,
-  "passed": false,
+  "bnci_subj3_train_acc_pct": 72.22,
+  "bnci_subj3_test_acc_pct": 60.07,
+  "passed": true,
   "scope": "full"
 }
 ```

@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: RCEEGNet: Geometry-Aware CNN on SPD Manifolds (IJCNN 2025) (`tibermacine2025rceegnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id tibermacine2025rceegnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `22.281s`
+- **Duration**: `3.127s`
 
 ## Claim Execution Traces
 
@@ -38,10 +38,10 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "bnci_subj3_uncalibrated_mom01_test_acc_pct": 47.22,
-  "bnci_subj3_calibrated_mom04_test_acc_pct": 66.67,
-  "momentum_calibration_gain_pp": 19.45,
-  "passed": false,
+  "bnci_subj3_uncalibrated_mom01_test_acc_pct": 37.85,
+  "bnci_subj3_calibrated_mom04_test_acc_pct": 68.4,
+  "momentum_calibration_gain_pp": 30.55,
+  "passed": true,
   "scope": "baseline_adjusted"
 }
 ```

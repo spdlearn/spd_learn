@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: SPDTransNet & Structure-Preserving MHA (arXiv 2023) (`seraphim2023spdtransnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id seraphim2023spdtransnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `2.489s`
+- **Duration**: `0.560s`
 
 ## Claim Execution Traces
 
@@ -17,7 +17,7 @@
   "combined_attn_shape": [
     3,
     6,
-    6
+    15
   ],
   "passed": true,
   "scope": "full"
@@ -29,7 +29,7 @@
 
 ```json
 {
-  "reconstructed_spd_min_eig": 0.6505951285362244,
+  "reconstructed_spd_min_eig": 0.9459019303321838,
   "passed": true,
   "scope": "full"
 }
@@ -41,10 +41,10 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "bnci_subj3_train_acc_pct": 76.04,
-  "bnci_subj3_test_acc_pct": 65.97,
-  "train_test_gap_pp": 10.07,
-  "passed": true,
+  "bnci_subj3_train_acc_pct": 49.65,
+  "bnci_subj3_test_acc_pct": 50.0,
+  "train_test_gap_pp": -0.35,
+  "passed": false,
   "scope": "baseline_adjusted"
 }
 ```

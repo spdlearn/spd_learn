@@ -83,7 +83,7 @@ def cohen_kappa_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 
 
 # =============================================================================
-# 1. Unified EEG Model Factory (All 23 Models in spd_learn)
+# 1. Unified EEG Model Factory (All 24 Models in spd_learn)
 # =============================================================================
 
 ALL_EEG_MODELS = [
@@ -97,7 +97,7 @@ ALL_EEG_MODELS = [
     "CorAtt",
     "CorNet",
     "SPNN",
-    "GyroSPDAtt",
+    "GyroAtt",
     "GraphCSPNet",
     "GBWAtt",
     "SPDTransNet",
@@ -107,14 +107,26 @@ ALL_EEG_MODELS = [
     "RCEEGNet",
     "STaRNet",
     "SPDResNet",
+    "ALEM",
     "GyroSPD",
     "SPDNetAE",
     "SSGCNet",
 ]
 
+PURE_COV_EEG_MODELS = {
+    "SPDNet",
+    "PhaseSPDNet",
+    "CorNet",
+    "SPNN",
+    "SPDResNet",
+    "ALEM",
+    "GyroSPD",
+    "SPDNetAE",
+}
+
 
 class RHOPClassifier(nn.Module):
-    """End-to-end EEG classifier using temporal/spatial conv + RiemannianHighOrderPooling."""
+    """End-to-end EEG classifier using temporal/spatial conv + RHOP."""
 
     def __init__(self, n_chans: int, n_outputs: int) -> None:
         super().__init__()
@@ -128,7 +140,7 @@ class RHOPClassifier(nn.Module):
             nn.ELU(),
             nn.AvgPool2d(kernel_size=(1, 8), stride=(1, 8)),
         )
-        self.rhop = modules.RiemannianHighOrderPooling(in_features=feat_d, reduced_dim=sub_d, eps=1e-4)
+        self.rhop = modules.RHOP(in_features=feat_d, reduced_dim=sub_d, eps=1e-4)
         self.head = nn.Linear(feat_d, n_outputs)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -156,8 +168,8 @@ def build_eeg_model(
         ff_d = tok_d * (tok_d + 1) // 2
         return models.SPDTransNet(
             matrix_size=n_chans,
-            n_bands=1,
-            n_subwindows=4,
+            n_bands=3,
+            n_subwindows=2,
             context_epochs=1,
             token_matrix_size=tok_d,
             feature_tokens=2,
@@ -168,30 +180,51 @@ def build_eeg_model(
             feedforward_dim=ff_d,
             classifier_dim=ff_d,
             n_outputs=n_outputs,
+            eigenvalue_floor=1e-4,
         )
-    cls = getattr(models, model_name)
+    cls_name = "GyroAtt" if model_name == "GyroSPDAtt" else model_name
+    cls = getattr(models, cls_name)
     kw: dict[str, Any] = dict(n_chans=n_chans, n_outputs=n_outputs)
-    if model_name == "Green":
-        kw.update(sfreq=sfreq, bi_out=[sub_d])
-    elif model_name == "TensorCSPNet":
+    if cls_name == "Green":
+        kw.update(sfreq=sfreq, n_freqs_init=8, kernel_width_s=0.5, bi_out=[sub_d], hidden_dim=None)
+    elif cls_name == "TensorCSPNet":
         kw.update(dims=(n_chans, mid_d, mid_d, sub_d), parametrized=True)
-    elif model_name == "GraphCSPNet":
+    elif cls_name == "GraphCSPNet":
         kw.update(dims=(n_chans, mid_d, sub_d), n_patches=4)
-    elif model_name == "SPDNet":
+    elif cls_name == "SPDNet":
         kw.update(subspacedim=sub_d)
-    elif model_name in ("CorNet", "SPDResNet", "GyroSPD"):
+    elif cls_name == "SPDResNet":
+        kw.update(bimap_dims=(mid_d, sub_d), use_alem=False)
+    elif cls_name == "CorNet":
+        kw.update(bimap_dims=(sub_d,))
+    elif cls_name in ("GyroSPD", "SPNN", "SPDNetAE"):
         kw.update(bimap_dims=(mid_d, sub_d))
-    elif model_name == "PhaseSPDNet":
-        p_ch = n_chans * 2
-        kw.update(subspacedim=max(4, min(16, p_ch)))
+    elif cls_name == "DeepGeoCCA":
+        kw.update(bimap_dims=(mid_d, sub_d), outdim_size=max(3, min(10, sub_d)))
+    elif cls_name == "PhaseSPDNet":
+        ord_val = 4 if n_chans <= 6 else 2
+        p_ch = n_chans * ord_val
+        kw.update(order=ord_val, lag=2, subspacedim=max(4, min(22, p_ch)))
+    elif cls_name == "STaRNet":
+        k1 = min(3, n_chans)
+        k2 = max(1, min(11, n_chans // 2))
+        k3 = n_chans
+        sp_kernels = tuple(sorted({k1, k2, k3}))
+        kw.update(
+            spatial_kernel_sizes=sp_kernels,
+            spatial_expansion_coeff=max(8, min(32, n_chans * 2)),
+            bimap_reduced_dimension=max(4, min(20, n_chans * 2)),
+        )
     return cls(**kw)
 
 
 # =============================================================================
-# 2. Fast Braindecode / MOABB Cache Loader on Voyager Ceph
+# 2. Fast Braindecode / MOABB Cache Loader on Voyager Ceph & Local Mac
 # =============================================================================
 
 _SUBJECT_DATA_CACHE: dict[tuple[str, int], dict[str, Any]] = {}
+LOCAL_BNCI_MAT_DIR = Path.home() / "mne_data" / "NEMAR" / "nm000139" / "sourcedata"
+LOCAL_SPD_DATA_DIR = Path("/Users/bruaristimunha/Projects/spd/spd_learn/data")
 
 
 def _compute_9band_filterbank(X: np.ndarray, sfreq: float = 128.0) -> np.ndarray:
@@ -204,12 +237,68 @@ def _compute_9band_filterbank(X: np.ndarray, sfreq: float = 128.0) -> np.ndarray
     return np.stack(out, axis=1)
 
 
+def _load_local_bnci2014_001_mat(subject_id: int) -> dict[str, Any]:
+    """Load BNCI2014-001 subject from local NEMAR A0xT.mat / A0xE.mat files."""
+    from scipy.io import loadmat
+
+    def _extract_sess(mat_path: Path) -> tuple[np.ndarray, np.ndarray]:
+        data = loadmat(str(mat_path), squeeze_me=False)["data"][0]
+        trials_list, labels_list = [], []
+        sos_bp = butter(4, [4.0, 38.0], btype="bandpass", fs=250.0, output="sos")
+        for run_idx in range(len(data)):
+            run = data[run_idx][0, 0]
+            y_run = run["y"].flatten()
+            if len(y_run) == 0:
+                continue
+            X_cnt = run["X"][:, :22].T.astype(np.float64)
+            X_filt = sosfiltfilt(sos_bp, X_cnt, axis=-1)
+            trial_onsets = run["trial"].flatten()
+            artifacts = run["artifacts"].flatten() if "artifacts" in run.dtype.names else np.zeros_like(y_run)
+            for onset, label, art in zip(trial_onsets, y_run, artifacts):
+                if art != 0:
+                    continue
+                s = int(onset) + int(2.5 * 250)
+                e = int(onset) + int(6.0 * 250)
+                if e <= X_filt.shape[-1]:
+                    ep = X_filt[:, s:e:2]  # decimate 250 -> 125 Hz (375 samples)
+                    ep = ep - ep.mean(axis=-1, keepdims=True)
+                    trials_list.append(ep.astype(np.float32))
+                    labels_list.append(int(label) - 1)
+        return np.stack(trials_list, axis=0), np.array(labels_list, dtype=np.int64)
+
+    Xtr, ytr = _extract_sess(LOCAL_BNCI_MAT_DIR / f"A{subject_id:02d}T.mat")
+    Xte, yte = _extract_sess(LOCAL_BNCI_MAT_DIR / f"A{subject_id:02d}E.mat")
+    std_val = float(np.std(Xtr))
+    if std_val > 0:
+        Xtr = Xtr / std_val
+        Xte = Xte / std_val
+    Xfb_tr = _compute_9band_filterbank(Xtr, sfreq=125.0)
+    Xfb_te = _compute_9band_filterbank(Xte, sfreq=125.0)
+    return {
+        "Xtr": torch.from_numpy(Xtr),
+        "ytr": torch.from_numpy(ytr),
+        "Xte": torch.from_numpy(Xte),
+        "yte": torch.from_numpy(yte),
+        "Xfb_tr": torch.from_numpy(Xfb_tr),
+        "Xfb_te": torch.from_numpy(Xfb_te),
+        "n_chans": 22,
+        "n_outputs": 4,
+        "sfreq": 125,
+    }
+
+
 def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
-    """Load pre-windowed EEG subject data from Voyager Ceph cache."""
+    """Load pre-windowed EEG subject data from Voyager Ceph cache or local disk."""
     cache_key = (dataset_name, subject_id)
     if cache_key in _SUBJECT_DATA_CACHE:
         return _SUBJECT_DATA_CACHE[cache_key]
     _SUBJECT_DATA_CACHE.clear()
+
+    stage_eeg_pt = DATA_STAGE_DIR / "eeg_cache_v2" / f"{dataset_name}_s{subject_id:02d}.pt"
+    if stage_eeg_pt.exists():
+        res = torch.load(stage_eeg_pt, weights_only=False)
+        _SUBJECT_DATA_CACHE[cache_key] = res
+        return res
 
     if dataset_name == "BNCI2014_001":
         npz_path = BNCI_PREPARED_DIR / f"subject-{subject_id:02d}.npz"
@@ -217,6 +306,9 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
             data = np.load(npz_path, allow_pickle=True)
             X = data["X"].astype(np.float32)
             Xfb = data["Xfb"].astype(np.float32)
+            if X.shape[-1] == 500:
+                X = X[:, :, 62:]
+                Xfb = Xfb[:, :, :, 62:]
             y = data["y"].astype(np.int64)
             session = data["session"]
             tr_mask = (session == "0train") | (session == 0) | (session == "0")
@@ -235,6 +327,10 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
                 "n_outputs": int(y.max()) + 1,
                 "sfreq": 125,
             }
+            _SUBJECT_DATA_CACHE[cache_key] = res
+            return res
+        if (LOCAL_BNCI_MAT_DIR / f"A{subject_id:02d}T.mat").exists():
+            res = _load_local_bnci2014_001_mat(subject_id)
             _SUBJECT_DATA_CACHE[cache_key] = res
             return res
 
@@ -262,6 +358,8 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
 
     if not rec_dirs:
         raise FileNotFoundError(f"No recordings found for {dataset_name} subject {subject_id}")
+    if dataset_name == "Zhou2020" and len(rec_dirs) > 12:
+        rec_dirs = rec_dirs[:12]
 
     X_list, y_list, sess_list, run_list = [], [], [], []
     sfreq = 128
@@ -273,7 +371,9 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
         fifs = sorted(rdir.glob("*-raw.fif"))
         raw = mne.io.read_raw_fif(str(fifs[0]), preload=True, verbose="ERROR")
         raw.pick("eeg")
-        sfreq = int(round(float(raw.info["sfreq"])))
+        orig_sfreq = int(round(float(raw.info["sfreq"])))
+        decim = max(1, int(round(orig_sfreq / 128.0)))
+        sfreq = max(64, int(round(orig_sfreq / decim)))
         meta = None
         try:
             meta = pickle.load(open(rdir / "metadata_df.pkl", "rb"))
@@ -290,50 +390,74 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
             starts_l, stops_l, targets_l = [], [], []
             for onset, _, code in ev:
                 name = inv[code]
-                n_s = max(int(round(durs.get(name, 3.0) * sfreq)), int(2.0 * sfreq))
-                starts_l.append(int(onset))
-                stops_l.append(int(onset) + n_s)
+                n_s = max(int(round(durs.get(name, 3.5) * orig_sfreq)), int(3.0 * orig_sfreq))
+                offset = int(0.5 * orig_sfreq) if n_s >= int(2.5 * orig_sfreq) else 0
+                starts_l.append((int(onset) + offset) // decim)
+                stops_l.append((int(onset) + n_s) // decim)
                 targets_l.append(int(code))
             starts = np.array(starts_l, dtype=int)
             stops = np.array(stops_l, dtype=int)
             targets = np.array(targets_l, dtype=int)
         else:
-            starts = meta["i_start_in_trial"].astype(int).to_numpy()
-            stops = meta["i_stop_in_trial"].astype(int).to_numpy()
+            starts_orig = meta["i_start_in_trial"].astype(int).to_numpy()
+            stops_orig = meta["i_stop_in_trial"].astype(int).to_numpy()
+            dur_orig = int(np.min(stops_orig - starts_orig))
+            offset = int(0.5 * orig_sfreq) if dur_orig >= int(2.5 * orig_sfreq) else 0
+            starts = (starts_orig + offset) // decim
+            stops = stops_orig // decim
             targets = meta["target"].astype(int).to_numpy()
         w_len = int(np.min(stops - starts))
         if min_len is None or w_len < min_len:
             min_len = w_len
-        raw_data = raw.get_data()[:32].astype(np.float32, copy=True)
+        raw_data = raw.get_data()[:32, ::decim].astype(np.float32, copy=True)
         del raw
         raw_epochs.append((raw_data, starts, targets, str(desc.get("session", "0")), str(desc.get("run", "0"))))
 
     assert min_len is not None
-    # Cap window length at 512 samples (4s at 128Hz) for uniform speed and memory
-    win_samples = min(min_len, 512)
+    # Cap window length at 384 samples (3.0s at 128Hz) for uniform speed and memory
+    win_samples = min(min_len, 384)
     min_chans = min(r[0].shape[0] for r in raw_epochs)
-    # Cap channels at 32 central/motor channels if dataset has > 32 channels (e.g., 128-ch HGD or 62-ch Lee2019)
     use_chans = min(min_chans, 32)
 
     for raw_data, starts, targets, sess_str, run_str in raw_epochs:
-        valid = [s for s in starts if s + win_samples <= raw_data.shape[1]]
-        if not valid:
+        valid_idx = [idx for idx, s in enumerate(starts) if s + win_samples <= raw_data.shape[1]]
+        if not valid_idx:
             continue
-        arr = np.stack([raw_data[:use_chans, s : s + win_samples] for s in starts[: len(valid)]]).astype(np.float32)
+        arr = np.stack([raw_data[:use_chans, starts[i] : starts[i] + win_samples] for i in valid_idx]).astype(np.float32)
         X_list.append(arr)
-        y_list.append(targets[: len(valid)])
-        sess_list.extend([sess_str] * len(valid))
-        run_list.extend([run_str] * len(valid))
+        y_list.append(targets[valid_idx])
+        sess_list.extend([sess_str] * len(valid_idx))
+        run_list.extend([run_str] * len(valid_idx))
 
     X_all = np.concatenate(X_list, axis=0)
     y_raw = np.concatenate(y_list, axis=0)
+
+    # For Weibo2014 (7 classes), select standard 4-class motor imagery (left_hand, right_hand, hands, feet)
+    # For Zhou2020 (4 classes including rest), select standard 3-class motor imagery (left_hand, right_hand, feet)
+    uniq_y_init = sorted(set(y_raw.tolist()))
+    if dataset_name == "Weibo2014" and len(uniq_y_init) > 4:
+        keep_classes = set(uniq_y_init[:4])
+        keep_mask = np.array([lbl in keep_classes for lbl in y_raw], dtype=bool)
+        X_all = X_all[keep_mask]
+        y_raw = y_raw[keep_mask]
+        sess_list = [s for s, k in zip(sess_list, keep_mask) if k]
+        run_list = [r for r, k in zip(run_list, keep_mask) if k]
+    elif dataset_name == "Zhou2020" and len(uniq_y_init) > 3:
+        keep_classes = set(uniq_y_init[:3])
+        keep_mask = np.array([lbl in keep_classes for lbl in y_raw], dtype=bool)
+        X_all = X_all[keep_mask]
+        y_raw = y_raw[keep_mask]
+        sess_list = [s for s, k in zip(sess_list, keep_mask) if k]
+        run_list = [r for r, k in zip(run_list, keep_mask) if k]
+
     uniq_y = sorted(set(y_raw.tolist()))
     y_map = {lbl: idx for idx, lbl in enumerate(uniq_y)}
     y_all = np.array([y_map[lbl] for lbl in y_raw], dtype=np.int64)
 
-    # Normalize amplitude to O(1) std per channel
+    # Zero-mean per trial and normalize amplitude to O(1) std
+    X_all = X_all - X_all.mean(axis=-1, keepdims=True)
     std_val = float(np.std(X_all))
-    if std_val > 0 and (std_val < 1e-2 or std_val > 100.0):
+    if std_val > 0:
         X_all = X_all / std_val
 
     sess_arr = np.array(sess_list)
@@ -352,7 +476,6 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
         te_mask = np.array([s in te_sess for s in sess_arr])
         tr_mask = ~te_mask
     else:
-        # Chronological 80/20 split per class
         tr_mask = np.zeros(len(y_all), dtype=bool)
         for c in range(len(uniq_y)):
             c_idx = np.where(y_all == c)[0]
@@ -372,6 +495,11 @@ def load_eeg_subject_data(dataset_name: str, subject_id: int) -> dict[str, Any]:
         "n_outputs": len(uniq_y),
         "sfreq": sfreq,
     }
+    try:
+        stage_eeg_pt.parent.mkdir(parents=True, exist_ok=True)
+        torch.save(res, stage_eeg_pt)
+    except Exception:
+        pass
     _SUBJECT_DATA_CACHE[cache_key] = res
     return res
 
@@ -395,24 +523,54 @@ def eval_eeg_cell(args: tuple[str, str, int, int, int]) -> dict[str, Any]:
     ytr = data["ytr"].clone()
     yte = data["yte"].clone()
 
+    # Pure covariance models require sensorimotor [8, 30] Hz (mu+beta) filtering so 4-8 Hz drift does not dominate
+    if model_name in PURE_COV_EEG_MODELS:
+        hi_freq = min(30.0, sfreq / 2.0 - 1.0)
+        sos_mu_beta = butter(4, [8.0, hi_freq], btype="bandpass", fs=float(sfreq), output="sos")
+        Xtr_np = sosfiltfilt(sos_mu_beta, Xtr.numpy(), axis=-1).astype(np.float32)
+        Xte_np = sosfiltfilt(sos_mu_beta, Xte.numpy(), axis=-1).astype(np.float32)
+        ch_std = np.std(Xtr_np, axis=(0, 2), keepdims=True) + 1e-6
+        Xtr = torch.from_numpy(Xtr_np / ch_std)
+        Xte = torch.from_numpy(Xte_np / ch_std)
+    elif not is_fb and model_name != "SPDTransNet":
+        ch_std_t = Xtr.std(dim=(0, 2), keepdim=True).clamp(min=1e-6)
+        Xtr = Xtr / ch_std_t
+        Xte = Xte / ch_std_t
+
     model = build_eeg_model(model_name, n_chans=n_chans, n_outputs=n_outputs, sfreq=sfreq)
 
     if model_name == "SPDTransNet":
-        def _to_seq_spd(x_in: torch.Tensor) -> torch.Tensor:
-            B, C, T = x_in.shape
-            w = T // 4
-            wins = x_in[:, :, : w * 4].reshape(B, C, 4, w).permute(0, 2, 1, 3)
-            covs = F_spd.covariance(wins)
-            tr = covs.diagonal(dim1=-2, dim2=-1).sum(-1, keepdim=True).unsqueeze(-1).clamp(min=1e-6)
-            covs = covs / tr + 1e-3 * torch.eye(C)
-            return covs.unsqueeze(1).unsqueeze(2)
+        # Use 3 sensorimotor frequency bands (8-12, 12-16, 16-20 Hz) x 2 subwindows -> (B, 1, 3, 2, C, C)
+        band_std = data["Xfb_tr"][:, 1:4].std(dim=(0, 2, 3), keepdim=True).clamp(min=1e-6)
 
-        Xtr = _to_seq_spd(Xtr)
-        Xte = _to_seq_spd(Xte)
+        def _to_seq_spd(xfb_in: torch.Tensor) -> torch.Tensor:
+            B, _, C, T = xfb_in.shape
+            w = T // 2
+            xb = (xfb_in[:, 1:4, :, : w * 2] / band_std).reshape(B, 3, C, 2, w).permute(0, 1, 3, 2, 4)
+            covs = F_spd.covariance(xb)
+            tr = covs.diagonal(dim1=-2, dim2=-1).sum(-1, keepdim=True).unsqueeze(-1).clamp(min=1e-6)
+            covs = covs * (float(C) / tr) + 1e-2 * torch.eye(C)
+            return covs.unsqueeze(1)
+
+        Xtr = _to_seq_spd(data["Xfb_tr"])
+        Xte = _to_seq_spd(data["Xfb_te"])
     elif model_name == "GraphCSPNet":
+        ch_std_fb = Xtr.std(dim=(0, 3), keepdim=True).clamp(min=1e-6)
+        Xtr = (Xtr / ch_std_fb) * 10.0
+        Xte = (Xte / ch_std_fb) * 10.0
         model.fit_graph(Xtr[: min(64, len(Xtr))])
 
-    opt = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+    if model_name == "SPDTransNet":
+        lr = 4e-4
+    elif model_name == "CorNet":
+        lr = 8e-3
+    elif model_name in PURE_COV_EEG_MODELS:
+        lr = 3e-3
+    elif model_name in ("Green", "DeepGeoCCA", "RCEEGNet", "SSGCNet", "RHOP"):
+        lr = 4e-3
+    else:
+        lr = 2e-3
+    opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=max(epochs, 1))
     loss_fn = nn.CrossEntropyLoss()
     batch_size = 32
@@ -503,17 +661,18 @@ class SPDMatrixClassifier(nn.Module):
             elif variant == "LieBN-LCM":
                 layers.append(modules.SPDBatchNormLie(b, metric="LCM", theta=0.5, dtype=dtype))
             elif variant in ("ARMAGNAC", "ARMAGNAC-Harmonic"):
-                layers.append(modules.SPDBatchNormHarmonicArithmetic(b, mean_type="harmonic", dtype=dtype))
+                layers.append(modules.SPDBatchNormHarmonic(b, alpha=0.05, learnable_alpha=False, dtype=dtype))
             elif variant == "ARMAGNAC-Arithmetic":
-                layers.append(modules.SPDBatchNormHarmonicArithmetic(b, mean_type="arithmetic", dtype=dtype))
+                layers.append(modules.SPDBatchNormHarmonic(b, alpha=0.95, learnable_alpha=False, dtype=dtype))
             elif variant == "ARMAGNAC-GAH":
-                layers.append(modules.SPDBatchNormHarmonicArithmetic(b, mean_type="gah", dtype=dtype))
+                layers.append(modules.SPDBatchNormHarmonic(b, alpha=0.5, learnable_alpha=True, dtype=dtype))
             elif variant == "GBWBN":
                 layers.append(modules.SPDBatchNormBW(b, dtype=dtype))
             elif variant == "CBN":
                 layers.append(modules.SPDBatchNormCholesky(b, dtype=dtype))
             elif variant == "SPDResNet-ALEM":
                 from spd_learn.models.spdresnet import SPDResBlock
+                layers.append(modules.SPDBatchNormMean(b, dtype=dtype))
                 layers.append(SPDResBlock(b, eps=reeig_eps).to(dtype))
         self.backbone = nn.Sequential(*layers)
         final_d = dims[-1]
@@ -545,21 +704,21 @@ class SPDMatrixClassifier(nn.Module):
         X = self.backbone(X)
         if self.variant == "PCM":
             eye = torch.eye(self.final_d, dtype=X.dtype, device=X.device).expand_as(X)
-            T = F_spd.power_cholesky_log(eye, X, power=0.5)
+            T = F_spd.log_map_pcm(X, eye, theta=0.5)
             X_vec = self.vech(0.5 * (T + T.transpose(-1, -2)))
             return self.head(X_vec)
         if self.variant == "BWCM":
             eye = torch.eye(self.final_d, dtype=X.dtype, device=X.device).expand_as(X)
-            T = F_spd.bures_wasserstein_cholesky_log(eye, X)
+            T = F_spd.log_map_bwcm(X, eye)
             X_vec = self.vech(0.5 * (T + T.transpose(-1, -2)))
             return self.head(X_vec)
         if self.variant == "CorNet-OLM":
             C = F_spd.cov_to_corr(X)
-            X_vec = F_spd.tril_embed(F_spd.corr_olm_log(C))
+            X_vec = F_spd.tril_embed(F_spd.log_map_olm(C))
             return self.head(X_vec)
         if self.variant == "CorNet-LSM":
             C = F_spd.cov_to_corr(X)
-            X_vec = F_spd.tril_embed(F_spd.corr_lsm_log(C))
+            X_vec = F_spd.tril_embed(F_spd.log_map_lsm(C))
             return self.head(X_vec)
         assert self.proj is not None
         return self.head(self.proj(X))
@@ -570,7 +729,59 @@ def load_spd_matrix_dataset(name: str) -> tuple[torch.Tensor, torch.Tensor]:
     if cache_pt.exists():
         d = torch.load(cache_pt, weights_only=False)
         return d["X"].double(), d["y"].long()
-    raise FileNotFoundError(f"Missing {cache_pt}")
+
+    local_cache_pt = LOCAL_SPD_DATA_DIR / f"{name}_cache.pt"
+    if local_cache_pt.exists():
+        d = torch.load(local_cache_pt, weights_only=False)
+        return d["X"].double(), d["y"].long()
+
+    folder_candidates = [
+        DATA_STAGE_DIR / name,
+        LOCAL_SPD_DATA_DIR / name,
+        LOCAL_SPD_DATA_DIR / name.upper(),
+    ]
+    folder = next((p for p in folder_candidates if p.exists()), None)
+    if folder is None:
+        raise FileNotFoundError(f"Missing {cache_pt} and local folder for {name}")
+
+    files = sorted(
+        f for f in glob.glob(str(folder / "**" / "*.npy"), recursive=True)
+        if "__MACOSX" not in f
+    )
+    if not files:
+        raise FileNotFoundError(f"No .npy files found for {name} in {folder}")
+    names = [os.path.basename(f) for f in files]
+    order = np.argsort(names)
+    files = [files[i] for i in order]
+    names = [names[i] for i in order]
+    raw_list = [np.load(f) for f in files]
+    arr = np.stack(raw_list)
+    if arr.ndim == 2:
+        x_win = arr.reshape(arr.shape[0], 20, -1)
+        x_win = x_win - x_win.mean(axis=-1, keepdims=True)
+        cov = np.matmul(x_win, np.conj(np.swapaxes(x_win, -1, -2))) / x_win.shape[-1]
+        arr = np.real(cov).astype(np.float64)
+    elif np.iscomplexobj(arr):
+        arr = np.real(arr).astype(np.float64)
+    else:
+        arr = arr.astype(np.float64)
+    arr = 0.5 * (arr + np.swapaxes(arr, -1, -2))
+    d_dim = arr.shape[-1]
+    tr = np.trace(arr, axis1=-2, axis2=-1)[..., None, None] / d_dim
+    tr = np.maximum(tr, 1e-4)
+    arr = arr + 1e-3 * tr * np.eye(d_dim)
+
+    raw_labels = [int(n.split(".")[0].split("_")[-1]) for n in names]
+    uniq_labels = sorted(set(raw_labels))
+    label_map = {lbl: idx for idx, lbl in enumerate(uniq_labels)}
+    y = torch.tensor([label_map[lbl] for lbl in raw_labels], dtype=torch.long)
+    X = torch.from_numpy(arr)
+    try:
+        local_cache_pt.parent.mkdir(parents=True, exist_ok=True)
+        torch.save({"X": X, "y": y, "names": names}, local_cache_pt)
+    except Exception:
+        pass
+    return X, y
 
 
 def eval_spd_matrix_cell(args: tuple[str, str, int, int, float, int, float]) -> dict[str, Any]:
@@ -739,12 +950,92 @@ def run_shard(shard: str, workers: int, epochs: int) -> dict[str, Any]:
         for var in ["SPDNet", "SPDNetBN", "LieBN-AIM", "ARMAGNAC-Harmonic", "GBWBN", "CBN"]:
             for frac_s in [0.05, 0.10, 0.25, 0.50]:
                 spd_tasks.append(("radar", var, max(epochs, 50), 1024, frac_s, 32, 1e-4))
+    elif shard == "spd_matrices_repair":
+        repair_vars = [
+            "ARMAGNAC-Harmonic",
+            "ARMAGNAC-Arithmetic",
+            "ARMAGNAC-GAH",
+            "PCM",
+            "SPDResNet-ALEM",
+        ]
+        for var in repair_vars:
+            for seed in [1024, 1025, 1026, 1027, 1028]:
+                spd_tasks.append(("radar", var, max(epochs, 60), seed, 1.0, 64, 1e-4))
+            for seed in [1024, 1025, 1026]:
+                spd_tasks.append(("hdm05", var, max(epochs, 50), seed, 1.0, 64, 1e-4))
+        for var in ["ARMAGNAC-Harmonic", "PCM"]:
+            for frac_s in [0.05, 0.10, 0.25, 0.50]:
+                spd_tasks.append(("radar", var, max(epochs, 50), 1024, frac_s, 32, 1e-4))
+    elif shard == "bnci2014_001_repair":
+        repair_eeg_models = [
+            "SPDNet",
+            "PhaseSPDNet",
+            "CorNet",
+            "SPNN",
+            "SPDResNet",
+            "ALEM",
+            "GyroSPD",
+            "SPDNetAE",
+            "SPDTransNet",
+            "Green",
+            "RHOP",
+            "DeepGeoCCA",
+            "RCEEGNet",
+            "SSGCNet",
+        ]
+        for m in repair_eeg_models:
+            for s in range(1, 10):
+                eeg_tasks.append(("BNCI2014_001", m, s, epochs, 42))
+    elif shard == "multids_repair_a":
+        target_models_a = ["STaRNet", "SPDResNet", "ALEM", "SPDTransNet", "PhaseSPDNet", "SPDNet"]
+        ds_subs_a = [
+            ("BNCI2014_002", [1, 2, 3, 4, 5, 6]),
+            ("BNCI2014_004", list(range(1, 10))),
+            ("BNCI2015_001", list(range(1, 13))),
+            ("Cho2017", [1, 2, 3, 4, 5, 6]),
+            ("Lee2019_MI", [1, 2, 3, 4, 5, 6]),
+            ("Shin2017A", [1, 2, 3, 4]),
+        ]
+        for ds, subs in ds_subs_a:
+            for s in subs:
+                for m in target_models_a:
+                    eeg_tasks.append((ds, m, s, epochs, 42))
+    elif shard == "multids_repair_b":
+        ds_subs_b = [
+            ("Schirrmeister2017", [1, 2, 3, 4]),
+            ("Weibo2014", [1, 2, 3, 4, 5]),
+            ("Zhou2020", [1, 2, 3, 4]),
+        ]
+        for ds, subs in ds_subs_b:
+            for s in subs:
+                for m in ALL_EEG_MODELS:
+                    eeg_tasks.append((ds, m, s, epochs, 42))
+    elif shard == "repair_schirr":
+        for s in [1, 2, 3, 4]:
+            for m in ALL_EEG_MODELS:
+                eeg_tasks.append(("Schirrmeister2017", m, s, epochs, 42))
+    elif shard == "repair_weibo":
+        for s in [1, 2, 3, 4, 5]:
+            for m in ALL_EEG_MODELS:
+                eeg_tasks.append(("Weibo2014", m, s, epochs, 42))
+    elif shard == "repair_zhou":
+        for s in [1, 2, 3, 4]:
+            for m in ALL_EEG_MODELS:
+                eeg_tasks.append(("Zhou2020", m, s, epochs, 42))
 
     eeg_records: list[dict[str, Any]] = []
     spd_records: list[dict[str, Any]] = []
 
     if eeg_tasks:
         eeg_tasks.sort(key=lambda t: (t[0], t[2], t[1]))
+        uniq_ds_sub = sorted({(t[0], t[2]) for t in eeg_tasks})
+        print(f"[Shard {shard}] Pre-staging {len(uniq_ds_sub)} subject caches sequentially...", flush=True)
+        for ds_name, s_id in uniq_ds_sub:
+            try:
+                load_eeg_subject_data(ds_name, s_id)
+            except Exception as exc:
+                print(f"  [STAGE WARN] ({ds_name}, S{s_id:02d}): {exc}", flush=True)
+        _SUBJECT_DATA_CACHE.clear()
         print(f"[Shard {shard}] Running {len(eeg_tasks)} EEG cells across {workers} CPU workers...", flush=True)
         with ProcessPoolExecutor(max_workers=workers) as pool:
             futs = {pool.submit(eval_eeg_cell, t): t for t in eeg_tasks}
@@ -803,6 +1094,13 @@ def main() -> None:
             "schirr_shin_zhou",
             "lee2019_cho2017",
             "spd_matrices",
+            "spd_matrices_repair",
+            "bnci2014_001_repair",
+            "multids_repair_a",
+            "multids_repair_b",
+            "repair_schirr",
+            "repair_weibo",
+            "repair_zhou",
             "missing5_all_datasets",
         ],
     )

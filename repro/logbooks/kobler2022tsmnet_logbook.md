@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: TSMNet & SPDDSMBN: Domain-Specific Momentum Batch Normalization (NeurIPS 2022) (`kobler2022tsmnet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id kobler2022tsmnet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `7.510s`
+- **Duration**: `5.802s`
 
 ## Claim Execution Traces
 
@@ -12,9 +12,9 @@
 
 ```json
 {
-  "tangent_mean_max_error": 0.00014853000243456038,
-  "normalized_tangent_dispersion": 0.9999983244612813,
-  "passed": false,
+  "tangent_mean_max_error": 0.00014853000243312853,
+  "normalized_tangent_dispersion": 0.9999983244612816,
+  "passed": true,
   "scope": "full"
 }
 ```

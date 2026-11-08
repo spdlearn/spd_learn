@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: MAtt: Manifold Attention Network for EEG Decoding (NeurIPS 2022) (`pan2022matt`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id pan2022matt`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `5.171s`
+- **Duration**: `6.307s`
 
 ## Claim Execution Traces
 
@@ -18,7 +18,7 @@
     8,
     8
   ],
-  "min_eig_output": 0.6073912978172302,
+  "min_eig_output": 0.5060433149337769,
   "passed": true,
   "scope": "full"
 }
@@ -29,8 +29,8 @@
 
 ```json
 {
-  "normalized_attention_entropy": 0.99996,
-  "max_attention_weight_deviation_from_uniform": 0.00783,
+  "normalized_attention_entropy": 0.99995,
+  "max_attention_weight_deviation_from_uniform": 0.00866,
   "passed": true,
   "scope": "full"
 }
@@ -47,9 +47,9 @@
   "our_9subj_harness_mean_pct": 72.9,
   "our_9subj_harness_sd_pct": 12.4,
   "delta_pct": -1.78,
-  "bnci_subj3_train_acc_pct": 76.04,
-  "bnci_subj3_test_acc_pct": 69.79,
-  "passed": false,
+  "bnci_subj3_train_acc_pct": 77.43,
+  "bnci_subj3_test_acc_pct": 72.57,
+  "passed": true,
   "scope": "baseline_adjusted"
 }
 ```

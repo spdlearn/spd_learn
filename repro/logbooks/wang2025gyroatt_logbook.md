@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: GyroAtt: GyroSPDAttention & SymSPDAttention (NeurIPS 2025) (`wang2025gyroatt`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id wang2025gyroatt`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `2.343s`
+- **Duration**: `1.479s`
 
 ## Claim Execution Traces
 
@@ -12,8 +12,8 @@
 
 ```json
 {
-  "min_eig_gyro": 0.5778074264526367,
-  "min_eig_sym": 0.5684083700180054,
+  "min_eig_gyro": 0.5780397057533264,
+  "min_eig_sym": 0.46700969338417053,
   "passed": true,
   "scope": "full"
 }

@@ -214,8 +214,8 @@ def run_judge() -> dict[str, Any]:
         "",
         f"- **Judge**: `{summary['judge_version']}` (Untrusted-Narrative Execution Trace Auditor)",
         f"- **Audited Timestamp**: `{summary['timestamp_utc']}`",
-        f"- **Papers Audited**: `{summary['total_papers']}` (8 Foundational + 18 Recent)",
-        f"- **Claims Audited**: `{summary['total_claims']}` (`26 Structural`, `26 Signal`, `26 Analytical`)",
+        f"- **Papers Audited**: `{summary['total_papers']}` (9 Foundational + 18 Recent)",
+        f"- **Claims Audited**: `{summary['total_claims']}` (`27 Structural`, `27 Signal`, `27 Analytical`)",
         f"- **Verdict Breakdown**: "
         f"`Verified: {counts['Verified']}` (2 pts) | "
         f"`Baseline-Adjusted: {counts['Baseline-Adjusted']}` (2 pts) | "

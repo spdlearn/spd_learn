@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: CorNet: Riemannian Networks over Full-Rank Correlation Matrices (ICML 2026) (`chen2026cornet`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2026cornet`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.743s`
+- **Duration**: `0.354s`
 
 ## Claim Execution Traces
 
@@ -28,7 +28,7 @@
 
 ```json
 {
-  "max_logit_diff_under_diagonal_scaling": 2.086162567138672e-07,
+  "max_logit_diff_under_diagonal_scaling": 2.384185791015625e-07,
   "passed": true,
   "scope": "full"
 }
@@ -40,10 +40,10 @@
 ```json
 {
   "harness": "MOABB CrossSession BNCI2014-001 (NEMAR nm000139, 0train -> 1test, 4 classes)",
-  "bnci_subj3_clean_test_acc_pct": 56.94,
-  "bnci_subj3_gain_perturbed_test_acc_pct": 25.0,
+  "bnci_subj3_clean_test_acc_pct": 72.92,
+  "bnci_subj3_gain_perturbed_test_acc_pct": 72.92,
   "chance_level_pct": 25.0,
-  "passed": false,
+  "passed": true,
   "scope": "full"
 }
 ```

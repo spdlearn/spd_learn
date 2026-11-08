@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: PCM & BWCM Cholesky Product Metrics (ICLR 2026) (`chen2026pcm_bwcm`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2026pcm_bwcm`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.038s`
+- **Duration**: `0.017s`
 
 ## Claim Execution Traces
 
@@ -26,8 +26,8 @@
 {
   "kappa": 1000000.0,
   "grad_finite": true,
-  "pcm_time_sec": 0.00101,
-  "eigh_time_sec": 0.00015,
+  "pcm_time_sec": 0.00088,
+  "eigh_time_sec": 0.00012,
   "passed": true,
   "scope": "full"
 }

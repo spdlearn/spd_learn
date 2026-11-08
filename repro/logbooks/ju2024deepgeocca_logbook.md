@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: DeepGeoCCA & GeodesicCCALoss (ICLR 2024) (`ju2024deepgeocca`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id ju2024deepgeocca`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `13.327s`
+- **Duration**: `7.329s`
 
 ## Claim Execution Traces
 
@@ -12,8 +12,8 @@
 
 ```json
 {
-  "loss_identical_views": -4.999877452850342,
-  "loss_independent_views": -3.297682046890259,
+  "loss_identical_views": -4.999880790710449,
+  "loss_independent_views": -3.297684669494629,
   "passed": true,
   "scope": "full"
 }
@@ -24,8 +24,8 @@
 
 ```json
 {
-  "cca_loss_initial": -5.984272480010986,
-  "cca_loss_after_12_steps": -5.994248867034912,
+  "cca_loss_initial": -5.984274864196777,
+  "cca_loss_after_12_steps": -5.994247913360596,
   "passed": true,
   "scope": "full"
 }

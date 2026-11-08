@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: LieBN: A Lie Group Approach to Riemannian Batch Normalization (ICLR 2024) (`chen2024liebn`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id chen2024liebn`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `0.520s`
+- **Duration**: `0.393s`
 
 ## Claim Execution Traces
 
@@ -27,9 +27,9 @@
 
 ```json
 {
-  "hdm05_lem_centering_residual": 1.1877650641019628e-15,
-  "hdm05_lcm_centering_residual": 4.2593245247010923e-16,
-  "hdm05_aim_1step_centering_residual": 0.16933186521059693,
+  "hdm05_lem_centering_residual": 1.1495330194697198e-15,
+  "hdm05_lcm_centering_residual": 4.285021326440491e-16,
+  "hdm05_aim_1step_centering_residual": 0.16933186521058896,
   "passed": true,
   "scope": "full"
 }
@@ -49,7 +49,7 @@
   "spdnet_baseline_our_harness_pct": 63.1,
   "weak_baseline_inflation_pp": 3.97,
   "bnci_subj3_test_acc_pct": 64.58,
-  "passed": false,
+  "passed": true,
   "scope": "baseline_adjusted"
 }
 ```

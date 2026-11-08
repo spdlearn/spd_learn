@@ -1,9 +1,9 @@
 # Trackio Reproduction Logbook: GREEN: Gabor Riemann EEGNet with Learnable Wavelets (Patterns 2024) (`paillard2024green`)
 
 - **Command**: `python -m repro.trackio_runner run --paper-id paillard2024green`
-- **Git Commit**: `3a9e18d`
+- **Git Commit**: `db38483`
 - **Exit Code**: `0`
-- **Duration**: `4.657s`
+- **Duration**: `3.610s`
 
 ## Claim Execution Traces
 
