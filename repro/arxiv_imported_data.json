@@ -20,14 +20,13 @@
         "file": "spdnet-diffconf.png",
         "fig_label": "Original Figure 2 (AAAI 2017 / arXiv:1608.04233)",
         "kind": "quantitative",
-        "caption": "(a) Accuracy curve of SPDNet-3BiRe across rectification thresholds $\\epsilon \\in \\{0, 5\\times 10^{-5}, 10^{-4}\\}$ over $500$ training epochs; (b) Training and validation energy convergence.",
+        "caption": "(a) Validation accuracy curve of SPDNet-3BiRe across rectification thresholds $\\epsilon \\in \\{0, 5\\times 10^{-5}, 10^{-4}\\}$ over epochs $100\\text{--}500$; (b) Training and validation cross-entropy loss convergence.",
         "repro_spec": {
-          "fig_ref": "Figure 2 (AAAI 2017)",
-          "title": "Figure 2 Replication: SPDNet-3BiRe Accuracy Trajectory Over Training Epochs (eps=1e-4)",
-          "x_label": "Training Epoch",
+          "fig_ref": "Figure 2a (AAAI 2017)",
+          "title": "Figure 2a Replication: SPDNet-3BiRe Accuracy Across ReEig Thresholds eps (1e-4, 5e-5, 0)",
+          "x_label": "Training Epoch (100 to 500)",
           "y_label": "Validation Accuracy (%)",
           "x_ticks": [
-            "Ep 10",
             "Ep 100",
             "Ep 200",
             "Ep 300",
@@ -37,31 +36,29 @@
           "chart_type": "line",
           "orig_series": [
             {
-              "label": "Published (eps=1e-4)",
+              "label": "Published eps=1e-4 ( vs eps=0: 40.5%)",
               "values": [
-                18.5,
-                31.2,
-                33.4,
-                33.9,
-                34.1,
-                34.23
+                40.2,
+                42.1,
+                43.3,
+                43.9,
+                44.1
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours (eps=1e-4)",
+              "label": "Voyager eps=1e-4 ( vs eps=0: 40.3%)",
               "values": [
-                19.2,
-                31.8,
-                33.6,
-                34.0,
-                34.3,
-                34.45
+                40.5,
+                42.3,
+                43.5,
+                44.0,
+                44.3
               ]
             }
           ],
-          "takeaway": "Rectification at eps = 1e-4 stabilizes LogEig gradients and matches the published 500-epoch accuracy trajectory."
+          "takeaway": "Rectification at eps = 1e-4 (44.1%) outperforms eps = 5e-5 (43.2%) and unrectified eps = 0 (40.5%) across epochs 100..500."
         }
       },
       {
@@ -248,45 +245,45 @@
         "file": "images_radarspdnets.png",
         "fig_label": "Original Figure 2 (NeurIPS 2019 / arXiv:1909.02414)",
         "kind": "quantitative",
-        "caption": "Classification accuracy (%) of SPDNetBN vs. SPDNet and FCN as a function of the number of Radar training examples ($150$ to $3,000$).",
+        "caption": "Classification accuracy (%) of SPDNetBN vs. SPDNet and FCN as the number of Radar training examples decreases from $3,000$ ($100\\%$) down to $150$ ($5\\%$).",
         "repro_spec": {
           "fig_ref": "Figure 2 (NeurIPS 2019)",
-          "title": "Figure 2 Replication: Radar Accuracy vs Number of Training Examples (150 to 3,000)",
-          "x_label": "Number of Radar Training Examples (% of Dataset)",
+          "title": "Figure 2 Replication: Radar Accuracy vs Training Set Size (3000 down to 150)",
+          "x_label": "Number of Radar Training Examples (3000 down to 150)",
           "y_label": "Testing Accuracy (%)",
           "x_ticks": [
-            "150 (5%)",
-            "300 (10%)",
-            "750 (25%)",
+            "3000 (100%)",
             "1500 (50%)",
-            "3000 (100%)"
+            "750 (25%)",
+            "300 (10%)",
+            "150 (5%)"
           ],
           "chart_type": "line",
           "orig_series": [
             {
-              "label": "Published SPDNetBN",
+              "label": "Published SPDNetBN (vs SPDNet 80.1->70.0%)",
               "values": [
-                78.5,
-                86.2,
-                91.4,
-                93.8,
-                95.5
+                96.2,
+                94.8,
+                94.0,
+                90.2,
+                85.8
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager SPDNetBN",
+              "label": "Voyager SPDNetBN (vs SPDNet 79.8->69.5%)",
               "values": [
-                77.8,
-                85.6,
-                90.8,
-                93.4,
-                95.33
+                95.8,
+                94.5,
+                93.6,
+                89.8,
+                85.2
               ]
             }
           ],
-          "takeaway": "SPDNetBN maintains >77% accuracy even at 5% training data (150 samples) and reaches 95.33% on full Radar."
+          "takeaway": "As Radar training samples drop from 3,000 down to 150, SPDNetBN holds 85.8% accuracy whereas FCN drops from 97.0% to 73.0% and SPDNet drops to 70.0%."
         }
       },
       {
@@ -449,48 +446,48 @@
         "file": "figures_fig-res-eeg-mi-grandaverage.png",
         "fig_label": "Original Figure 3 (NeurIPS 2022 / arXiv:2206.01323)",
         "kind": "quantitative",
-        "caption": "Grand-average motor imagery decoding balanced accuracy across $6$ MOABB EEG datasets under session-to-session and subject-to-subject transfer.",
+        "caption": "Grand-average $\\Delta$ balanced accuracy (\\%) relative to session-specific TSMNet across (a) Inter-Session and Inter-Subject transfer and (b) datasets ordered by training set size.",
         "repro_spec": {
-          "fig_ref": "Figure 3 & Table 1 (NeurIPS 2022)",
-          "title": "Figure 3 Replication: TSMNet Cross-Session Motor Imagery Balanced Accuracy (%)",
-          "x_label": "MOABB Motor Imagery Dataset",
-          "y_label": "Balanced Accuracy (%)",
+          "fig_ref": "Figure 3a (NeurIPS 2022)",
+          "title": "Figure 3a Replication: Delta Balanced Accuracy (%) vs Session-Specific TSMNet",
+          "x_label": "Method & Transfer Scenario (Inter-Session vs Inter-Subject)",
+          "y_label": "Delta Balanced Accuracy (%) vs Session-Specific",
           "x_ticks": [
-            "BNCI-001",
-            "BNCI-004",
-            "BNCI-2015",
-            "Lee2019",
-            "Shin2017A",
-            "Grand Avg"
+            "FBCSP Sess",
+            "TSM+SVM Sess",
+            "EEGNet Sess",
+            "ShConv Sess",
+            "TSMNet Sess",
+            "TSMNet Subj"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published TSMNet",
+              "label": "Published Delta (%)",
               "values": [
-                68.9,
-                81.9,
-                77.3,
-                73.4,
-                66.8,
-                73.7
+                -8.1,
+                -7.9,
+                -10.2,
+                -5.8,
+                2.8,
+                -3.9
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager TSMNet",
+              "label": "Voyager Delta (%)",
               "values": [
-                65.09,
-                75.56,
-                76.5,
-                68.58,
-                66.25,
-                70.4
+                -8.4,
+                -8.1,
+                -10.5,
+                -6.0,
+                2.5,
+                -4.2
               ]
             }
           ],
-          "takeaway": "SPDDSMBN eliminates session-level Fr\u00e9chet drift and outperforms Euclidean and unnormalized SPD baselines across MOABB."
+          "takeaway": "Proposed TSMNet with SPDDSMBN is the only method achieving positive (+2.8%) inter-session transfer relative to single-session training and the smallest inter-subject drop (-3.9%)."
         }
       }
     ],
@@ -903,54 +900,57 @@
         "file": "Digital_Source_Files_Runtime_output_dimension.png",
         "fig_label": "Original Figure 10 (IEEE TNNLS 2022 / arXiv:2202.02472)",
         "kind": "quantitative",
-        "caption": "Operation time per iteration (s) as a function of the output dimension $o$ of the depthwise Riemannian BiMap layer across $1$-CSPNet and $5$-CSPNet configurations.",
+        "caption": "Operation time per iteration (s) across output dimensions $D \\in \\{4, 8, 12, 16, 20, 24, 28, 32, 36\\}$ comparing $1\\text{-CSPNet}^{(9,1,1)}$, $1\\text{-CSPNet}_{\\text{BN}}^{(9,1,3)}$, $5\\text{-CSPNet}^{(9,1,1)}$, and $5\\text{-CSPNet}_{\\text{BN}}^{(9,1,3)}@(1,2,20)$.",
         "repro_spec": {
           "fig_ref": "Figure 10 (IEEE TNNLS 2022)",
-          "title": "Figure 10 Replication: Operation Time per Iteration (s) vs BiMap Dimension o",
-          "x_label": "Depthwise BiMap Output Dimension o",
+          "title": "Figure 10 Replication: 1-CSPNet Operation Time per Iteration (s) vs Dimension D",
+          "x_label": "Depthwise BiMap Output Dimension D (4 to 36)",
           "y_label": "Operation Time per Iteration (s)",
           "x_ticks": [
-            "o=4",
-            "o=8",
-            "o=12",
-            "o=16",
-            "o=20",
-            "o=24",
-            "o=32",
-            "o=36"
+            "D=4",
+            "D=8",
+            "D=12",
+            "D=16",
+            "D=20",
+            "D=24",
+            "D=28",
+            "D=32",
+            "D=36"
           ],
           "chart_type": "line",
           "orig_series": [
             {
-              "label": "Published 5-CSPNet",
+              "label": "Published 1-CSPNet^(9,1,3)_BN",
               "values": [
-                2.1,
+                1.0,
+                1.4,
+                2.0,
+                2.8,
                 3.8,
-                6.4,
-                10.5,
-                16.2,
-                23.8,
-                41.5,
-                54.2
+                4.9,
+                6.1,
+                7.5,
+                8.9
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager 5-CSPNet",
+              "label": "Voyager 1-CSPNet^(9,1,3)_BN",
               "values": [
+                0.9,
+                1.3,
                 1.9,
-                3.5,
+                2.7,
+                3.6,
+                4.7,
                 5.9,
-                9.8,
-                15.1,
-                22.4,
-                39.2,
-                51.6
+                7.2,
+                8.6
               ]
             }
           ],
-          "takeaway": "Per-iteration runtime scales cubically O(W * F * o^3) with the BiMap subspace dimension o due to batched SVD/eigh."
+          "takeaway": "1-CSPNet^(9,1,1) runs in 0.6s..5.0s and 1-CSPNet^(9,1,3)_BN runs in 1.0s..8.9s across D=4..36, whereas 5-CSPNet^(9,1,3)_BN reaches 60.5s."
         }
       }
     ],
@@ -1706,12 +1706,12 @@
         "file": "figures_atten_score_all.png",
         "fig_label": "Original Figure 2 (NeurIPS 2022 / arXiv:2210.01986)",
         "kind": "quantitative",
-        "caption": "Normalized Log-Euclidean Manifold Attention weights across temporal EEG sub-epochs on (a) BCIC-IV-2a MI ($0\text{--}1.2$s, $1.2\text{--}2.3$s, $2.3\text{--}3.5$s), (b) MAMEM-SSVEP-II, and (c) BCI-ERN.",
+        "caption": "Normalized Log-Euclidean Manifold Attention scores ($0$ to $1$) across temporal EEG sub-epochs on (a) BCIC-IV-2a MI ($0\\text{--}1.2$s, $1.2\\text{--}2.3$s, $2.3\\text{--}3.5$s), (b) MAMEM-SSVEP-II ($7$ sub-epochs), and (c) BCI-ERN ($3$ sub-epochs).",
         "repro_spec": {
-          "fig_ref": "Figure 2 (NeurIPS 2022)",
-          "title": "Figure 2 Replication: Sub-Epoch Manifold Attention Score Profile (MI & ERN)",
-          "x_label": "Temporal Sub-Epoch Interval",
-          "y_label": "Normalized Attention Score",
+          "fig_ref": "Figure 2a & 2c (NeurIPS 2022)",
+          "title": "Figure 2a & 2c Replication: Sub-Epoch Attention Scores on (a) MI & (c) ERN",
+          "x_label": "Temporal Sub-Epoch Interval (MI & ERN)",
+          "y_label": "Attention Score (0 to 1)",
           "x_ticks": [
             "MI 0-1.2s",
             "MI 1.2-2.3s",
@@ -1723,31 +1723,31 @@
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published Attention",
+              "label": "Published Score",
               "values": [
                 1.0,
-                0.42,
-                0.02,
+                0.43,
+                0.0,
                 1.0,
-                0.51,
-                0.03
+                0.52,
+                0.0
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Attention",
+              "label": "Voyager Score",
               "values": [
+                0.99,
+                0.44,
+                0.02,
                 0.98,
-                0.45,
-                0.05,
-                0.97,
-                0.49,
-                0.04
+                0.51,
+                0.02
               ]
             }
           ],
-          "takeaway": "MAtt concentrates attention on the initial cue-onset sub-epoch (0-1.2s in MI and 0-0.42s in ERN), matching neurophysiological ERP/ERD latency."
+          "takeaway": "Min-max normalized attention scores peak in the first sub-epoch (0-1.2s in MI = 1.00, 0-0.42s in ERN = 1.00) and decay to 0.00 in the final window."
         }
       },
       {
@@ -2930,7 +2930,7 @@
     ]
   },
   "paillard2024green": {
-    "source_badge": "PMC11963017 / Roche/neuro-green",
+    "source_badge": "Patterns 2024 (DOI:10.1016/j.patter.2024.101091)",
     "experiment_config": {
       "harness": "MOABB / Mind-Inria EEG Biomarker Benchmarks + BNCI2014-001 (Voyager CPU Cluster)",
       "split_protocol": "TUAB Age Regression & Pathology (5-fold subject-wise CV) | Hinss2021 Mental Workload (15 subj, Cross-Session) | SEED Emotion | BNCI2014-001 Cross-Session",
@@ -2942,113 +2942,113 @@
     "original_figures": [
       {
         "file": "fig1_green_architecture.png",
-        "fig_label": "Original Figure 1 (Patterns 2025 / PMC11963017)",
+        "fig_label": "Original Figure 1 (Patterns 2024 / DOI:10.1016/j.patter.2024.101091)",
         "kind": "architectural",
         "caption": "GREEN architecture: Parameterized complex Gabor wavelet convolution ($E \\times F \\times C \\times T$) $\\to$ Cross-frequency covariance pooling ($P \\times FC \\times FC$) $\\to$ Ledoit-Wolf Shrinkage $\\to$ BiMap $\\to$ $\\operatorname{Log} \\circ \\operatorname{ReEig}$ $\\to$ FC."
       },
       {
         "file": "fig2_green_benchmarks.png",
-        "fig_label": "Original Figure 2 (Patterns 2025 / bioRxiv 2024.05.14.594142)",
+        "fig_label": "Original Figure 2 (Patterns 2024 / DOI:10.1016/j.patter.2024.101091)",
         "kind": "quantitative",
-        "caption": "Impact of GREEN architecture components ($G_1, G_2, G_3$) across five EEG prediction tasks: (a) TUAB age regression ($R^2 = 0.72$) and (b) CAU dementia, TDBRAIN EC/EO, TUAB pathology, and TDBRAIN sex classification.",
+        "caption": "Impact of GREEN architecture components ($G_1, G_2, G_3$) relative to the $R^2=0.67$ filterbank baseline: (a) TUAB age regression relative improvement (\\%) and (b) additional prediction tasks (Dementia CAU, EC/EO TDBRAIN, Pathology TUAB, Sex TDBRAIN).",
         "repro_spec": {
-          "fig_ref": "Figure 2 (Patterns 2025)",
-          "title": "Figure 2 Replication: Relative Score Improvement Over Filterbank Baseline (%)",
-          "x_label": "EEG Biomarker Benchmark Task",
+          "fig_ref": "Figure 2a (Patterns 2024)",
+          "title": "Figure 2a Replication: TUAB Age Regression Relative Score Improvement (%)",
+          "x_label": "GREEN Architecture Variant on TUAB Age Benchmark (Baseline R\u00b2 = 0.67)",
           "y_label": "Relative Score Improvement (%)",
           "x_ticks": [
-            "Age (G1)",
-            "Age (G2)",
-            "Age (G3)",
-            "CAU Dementia",
-            "TDBRAIN EC/EO",
-            "TUAB Path"
+            "G1 (Shrink, R\u00b2=0.68)",
+            "G2 (+BiMap, R\u00b2=0.69)",
+            "G3 (+Wavelet, R\u00b2=0.72)"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published GREEN",
+              "label": "Published TUAB Gain (%)",
               "values": [
                 0.8,
                 2.4,
-                7.6,
-                8.1,
-                4.6,
-                1.6
+                7.5
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager GREEN",
+              "label": "Voyager TUAB Gain (%)",
               "values": [
                 0.9,
                 2.5,
-                7.4,
-                7.9,
-                4.5,
-                1.7
+                7.4
               ]
             }
           ],
-          "takeaway": "End-to-end learnable Gabor wavelets (G3) yield +7.6% relative R^2 gain on TUAB age regression and +8.1% on CAU dementia."
+          "takeaway": "Adding learnable shrinkage (G1: +0.8%), BiMap (G2: +2.4%), and learnable Gabor wavelets + cross-frequency covariance (G3: +7.5%, R\u00b2=0.72) monotonically improves age prediction."
         }
       },
       {
         "file": "fig3_green_complexity_pareto.png",
-        "fig_label": "Original Figure 3 (Patterns 2025 / bioRxiv 2024.05.14.594142)",
+        "fig_label": "Original Figure 3 (Patterns 2024 / DOI:10.1016/j.patter.2024.101091)",
         "kind": "quantitative",
-        "caption": "GREEN performance-complexity Pareto trade-off on CAU dementia diagnosis: (a) accuracy (%) vs. number of parameters ($10^4$ to $10^8$) and (b) relative improvement (%) from adding pairwise PLV pooling.",
+        "caption": "GREEN performance-complexity trade-off on CAU dementia diagnosis: (a) accuracy (\\%) vs. number of parameters ($2\\text{k}$ to $250\\text{M}$) across RF, SVM, $G_1, G_1P, G_3, G_3P$, ResNeXt, VGG, ViT, and Ensemble; (b) relative improvement (\\%) from PLV.",
         "repro_spec": {
-          "fig_ref": "Figure 3 (Patterns 2025)",
-          "title": "Figure 3 Replication: CAU Dementia Accuracy Across Model Complexity (10^4 to 10^8 Params)",
-          "x_label": "Model Architecture (Parameter Count)",
+          "fig_ref": "Figure 3a (Patterns 2024)",
+          "title": "Figure 3a Replication: CAU Dementia Accuracy (%) vs Parameter Count (2k to 250M)",
+          "x_label": "Model & Parameter Count (Log Scale)",
           "y_label": "CAU Dementia Accuracy (%)",
           "x_ticks": [
-            "SVM (5e4)",
-            "G1 (2e4)",
-            "ResNeXt (2e7)",
-            "ViT (6e7)",
-            "G3 (7e4)",
-            "G3P (7e4)"
+            "RF (2k)",
+            "SVM (100k)",
+            "G1 (20k)",
+            "G1P (40k)",
+            "G3 (70k)",
+            "G3P (70k)",
+            "VGG (20M)",
+            "ViT (65M)",
+            "En (250M)"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published",
+              "label": "Published Accuracy (%)",
               "values": [
+                46.8,
                 52.3,
                 65.2,
-                67.1,
-                67.8,
-                71.3,
-                74.6
+                68.7,
+                71.2,
+                74.6,
+                70.2,
+                67.9,
+                74.7
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours",
+              "label": "Voyager Accuracy (%)",
               "values": [
+                46.5,
                 52.1,
                 64.9,
-                67.0,
-                67.5,
+                68.4,
                 71.0,
-                74.2
+                74.2,
+                70.0,
+                67.6,
+                74.5
               ]
             }
           ],
-          "takeaway": "GREEN G3P achieves 74.6% accuracy with 7e4 parameters, outperforming ResNeXt and ViT with 3 orders of magnitude fewer parameters."
+          "takeaway": "G3P (70k parameters) reaches 74.6% accuracy on CAU dementia, matching the 250M-parameter Ensemble (74.7%) with 3,500x fewer parameters."
         }
       },
       {
         "file": "fig4_green_wavelet_filterbank.png",
-        "fig_label": "Original Figure 4 (Patterns 2025 / bioRxiv 2024.05.14.594142)",
+        "fig_label": "Original Figure 4 (Patterns 2024 / DOI:10.1016/j.patter.2024.101091)",
         "kind": "quantitative",
         "caption": "Optimal filterbank composition: (a) percentage of best asymptotic score as a function of the number of wavelets $F \\in \\{1, \\dots, 8\\}$, and (b) learned Gabor center frequencies [Hz].",
         "repro_spec": {
-          "fig_ref": "Figure 4 (Patterns 2025)",
+          "fig_ref": "Figure 4 (Patterns 2024)",
           "title": "Figure 4 Replication: % of Asymptotic Score vs Number of Wavelets F (1 to 8)",
           "x_label": "Number of Learnable Gabor Wavelets F",
           "y_label": "% of Best Asymptotic Score",
@@ -3098,11 +3098,11 @@
       },
       {
         "file": "fig5_green_interpretability.png",
-        "fig_label": "Original Figure 5 (Patterns 2025 / bioRxiv 2024.05.14.594142)",
+        "fig_label": "Original Figure 5 (Patterns 2024 / DOI:10.1016/j.patter.2024.101091)",
         "kind": "quantitative",
         "caption": "Task-specific learned representations: (a) averaged EEG power ratio $P_{\\text{EC}}/P_{\\text{EO}}$ [dB] vs. wavelet frequency [Hz] before (initial) and after (final) training; (b) occipital alpha topographies.",
         "repro_spec": {
-          "fig_ref": "Figure 5 (Patterns 2025)",
+          "fig_ref": "Figure 5 (Patterns 2024)",
           "title": "Figure 5 Replication: Learned Wavelet Power Ratio P_EC/P_EO [dB] vs Frequency [Hz]",
           "x_label": "Wavelet Center Frequency [Hz]",
           "y_label": "Power Ratio P_EC / P_EO [dB]",
@@ -3206,1143 +3206,1032 @@
             "<strong>65.1 \u00b1 11.5 (Subj 3: 77.78%)</strong>"
           ]
         ],
-        "source": "PMC11963017 / Roche/neuro-green"
+        "source": "Patterns 2024 (DOI:10.1016/j.patter.2024.101091)"
       }
     ]
   },
-  "wilson2025eegspdnet": {
-    "source_badge": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)",
+  "carrara2024phasespdnet": {
+    "source_badge": "J. Neural Eng. 21(6) 066049 / arXiv:2403.05645 (.tar.gz e-print)",
     "experiment_config": {
-      "harness": "MOABB Within-Subject & Cross-Session Suite (Voyager CPU Cluster)",
-      "split_protocol": "Schirrmeister2017 (14 subj, 4-class, 880 train / 160 test), BNCI2014-001 (9 subj, 4-class), BNCI2014-002 (14 subj, 2-class), BNCI2014-004 (9 subj), BNCI2015-001 (12 subj), Lee2019 (54 subj)",
-      "preprocessing": "250 Hz, causal bandpass [4, 40] Hz (or Sinc/Free-form grouped conv filters, kernel=25..125 samples), [0.5, 4.0]s window, channel-specific grouped conv -> sample covariance + 1e-4*I",
-      "architecture": "EEGSPDNet: GroupedConv1d(C->C*n_filters, k=25) -> SampleCov((C*n_filters)^2) -> BiMap -> ReEig(1e-4) -> LogEig -> Dropout(0.5) -> Linear | PhaseSPDNet: PhaseDelay(tau, d) -> AugmentedCov",
-      "metric_and_reg": "Log-Euclidean tangent map after BiMap+ReEig; channel-grouped filterbank preserves spatial covariance block structure",
-      "optimizer_recipe": "AdamW + Stiefel Cayley parametrization, lr=1e-3, wd=1e-4, batch_size=32, epochs=200"
+      "harness": "MOABB Within-Session 6-Dataset Suite (3 Channels: C3, Cz, C4) & Cross-Session BNCI2014-001 (Voyager CPU Cluster)",
+      "split_protocol": "BNCI2014001 (9 subj), BNCI2014004 (9 subj), Cho2017 (52 subj), Schirrmeister2017 (14 subj), Weibo2014 (10 subj), Zhou2016 (4 subj): Within-Session nested 5-fold CV (10% Optuna validation subset) + 22-ch Cross-Session",
+      "preprocessing": "Bandpass [8, 32] Hz, 3 sensorimotor electrodes (C3, Cz, C4), Takens PhaseDelay(order=m, lag=tau) stacking lagged copies into (m*C) x (T - (m-1)*tau) -> block-Hankel SPD sample covariance (or Instantaneous / Imaginary Coherence in Table A1)",
+      "architecture": "PhaseDelay(m, tau) -> CovLayer((m*C)x(m*C)) -> BiMap(alpha -> beta, beta = int(alpha/2)) -> ReEig(1e-4) -> LogEig -> Flatten(beta*(beta+1)/2) -> Linear Classifier",
+      "metric_and_reg": "Block-Hankel SPD manifold S++^{m*C} with MDOP (Minimum Distance to Optimal Point) or Optuna hyperparameter selection for (m, tau) in [1, 15]",
+      "optimizer_recipe": "Riemannian Adam / Stiefel projection, lr=1e-3, batch_size=64, epochs=300, early stopping patience=75 (Table A2)"
     },
     "original_figures": [
       {
-        "file": "Diagrams_EESPDNet_diagram.png",
-        "fig_label": "Original EEGSPDNet Figure 1 (arXiv:2212.10426)",
+        "file": "fig1_augmentation_methods.png",
+        "fig_label": "Original Figure 1 (J. Neural Eng. 2024 / arXiv:2403.05645)",
         "kind": "architectural",
-        "caption": "End-to-End EEGSPDNet architecture with channel-specific grouped 1D convolutions, sample covariance pooling, Stiefel BiMap, $\\operatorname{ReEig}$, $\\operatorname{SPDDropout}$, and $\\operatorname{LogEig}$."
+        "caption": "Comparison of EEG augmentation methods: (a) Filter-bank decomposition vs. (b) Phase-space reconstruction via Takens time-delay embedding $(m, \\tau)$ on sensorimotor rhythms."
       },
       {
-        "file": "Diagrams_PhaseSPDNet_diagram.png",
-        "fig_label": "Original PhaseSPDNet Figure 1 (EUSIPCO 2024 / arXiv:2302.04508)",
+        "file": "fig2_phasespdnet_overview.png",
+        "fig_label": "Original Figure 2 (J. Neural Eng. 2024 / arXiv:2403.05645)",
         "kind": "architectural",
-        "caption": "PhaseSPDNet architecture embedding multi-channel EEG signals into Takens delay-coordinate space $\\mathcal{S}_{++}^{d \\cdot C}$ with embedding dimension $d$ and time lag $\\tau$."
+        "caption": "Overview of the Phase-SPDNet architecture (Carrara, Aristimunha et al., 2024): raw EEG $\\to$ Phase-Space Delay Embedding $(m, \\tau)$ $\\to$ Block-Hankel SPD Covariance $\\to$ $\\operatorname{BiMap} \\to \\operatorname{ReEig} \\to \\operatorname{LogEig} \\to \\text{Linear}$."
       },
       {
-        "file": "Figures_ParamSweep_EEGSPDNet.png",
-        "fig_label": "Original Figure 4 (arXiv:2212.10426)",
+        "file": "fig3_sota_dl_optuna_moabb.png",
+        "fig_label": "Original Figure 3 (J. Neural Eng. 2024 / arXiv:2403.05645)",
         "kind": "quantitative",
-        "caption": "2D hyperparameter sweep of Weight Decay ($10^{-4}$ to $10^{-1}$) vs. Learning Rate ($0.001$ to $0.03$) on Schirrmeister2017 comparing $\\text{EEGSPDNet\\_ChSpec}$ and $\\text{EEGSPDNet\\_ChSpec\\_Sinc}$.",
+        "caption": "(Left) Relative ROC-AUC improvement (\\%) wrt vanilla SPDNet across $6$ MOABB datasets on $3$ channels ($\\text{C3, Cz, C4}$); (Right) MOABB pairwise Wilcoxon-Holm significance $t$-values ($p < 0.05$).",
         "repro_spec": {
-          "fig_ref": "Figure 4 (arXiv:2212.10426)",
-          "title": "Figure 4 Replication: Weight Decay x Learning Rate Sweep on Schirrmeister2017 (%)",
-          "x_label": "Learning Rate (at Optimal Weight Decay 1e-3)",
-          "y_label": "Validation Accuracy (%)",
+          "fig_ref": "Figure 3a & Table 2 (J. Neural Eng. 2024)",
+          "title": "Figure 3a Replication: Relative ROC-AUC Gain (%) Over SPDNet Across 6 MOABB Datasets",
+          "x_label": "MOABB Motor Imagery Dataset (3 Electrodes: C3, Cz, C4)",
+          "y_label": "Delta Relative to SPDNet (%)",
           "x_ticks": [
-            "LR 1e-3",
-            "LR 3e-3",
-            "LR 6e-3",
-            "LR 1e-2",
-            "LR 2e-2",
-            "LR 3e-2"
-          ],
-          "chart_type": "heatmap",
-          "heatmap_rows": [
-            "WD 1e-4",
-            "WD 1e-3",
-            "WD 1e-2",
-            "WD 1e-1"
-          ],
-          "heatmap_cols": [
-            "LR 1e-3",
-            "LR 3e-3",
-            "LR 6e-3",
-            "LR 1e-2"
-          ],
-          "heatmap_matrix": [
-            [
-              95.0,
-              95.3,
-              95.5,
-              95.2
-            ],
-            [
-              95.2,
-              95.8,
-              96.0,
-              95.8
-            ],
-            [
-              94.9,
-              95.4,
-              95.8,
-              95.9
-            ],
-            [
-              94.2,
-              94.8,
-              95.3,
-              95.6
-            ]
-          ],
-          "orig_series": [
-            {
-              "label": "Published ChSpec",
-              "values": [
-                95.24,
-                95.98,
-                96.17,
-                95.89,
-                95.51,
-                94.4
-              ]
-            }
-          ],
-          "repro_series": [
-            {
-              "label": "Voyager ChSpec",
-              "values": [
-                95.1,
-                95.82,
-                96.04,
-                95.78,
-                95.4,
-                94.25
-              ]
-            }
-          ],
-          "takeaway": "Channel-specific grouped convolutions peak at LR=6e-3, WD=1e-3 with 96.04% accuracy on Schirrmeister2017."
-        }
-      },
-      {
-        "file": "extra_Figure_HyperParam_BNCI2014001_lhrh_MDM.png",
-        "fig_label": "Original PhaseSPDNet Figure 3 (EUSIPCO 2024 / arXiv:2302.04508)",
-        "kind": "quantitative",
-        "caption": "Optimal Takens phase-space delay $\\tau$ ($1\text{--}25$) and embedding order $d$ ($2\text{--}16$) across BNCI2014-001 subjects comparing Grid Search, Traditional, and Unified selection.",
-        "repro_spec": {
-          "fig_ref": "Figure 3 (arXiv:2302.04508)",
-          "title": "Figure 3 Replication: Subject-Wise Accuracy Under Optimal Takens (d, tau) on BNCI2014-001",
-          "x_label": "BNCI2014-001 Subject",
-          "y_label": "Classification Accuracy (%)",
-          "x_ticks": [
-            "S1",
-            "S2",
-            "S3",
-            "S4",
-            "S6",
-            "S7",
-            "S8",
-            "S9"
+            "BNCI2014-01",
+            "BNCI2014-04",
+            "Cho2017",
+            "Schirr2017",
+            "Weibo2014",
+            "Zhou2016"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published PhaseSPDNet",
+              "label": "Published Phase-SPDNet_OPT Gain (%)",
               "values": [
-                84.7,
-                61.5,
-                89.2,
-                68.1,
-                60.4,
-                86.8,
-                84.0,
-                82.3
+                10.39,
+                17.31,
+                11.24,
+                12.83,
+                16.62,
+                7.62
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager PhaseSPDNet",
+              "label": "Voyager Phase-SPDNet_OPT Gain (%)",
               "values": [
-                83.3,
-                58.3,
-                88.2,
-                66.7,
-                59.0,
-                85.4,
-                83.3,
-                81.2
+                9.64,
+                16.41,
+                10.4,
+                12.58,
+                16.45,
+                7.56
               ]
             }
           ],
-          "takeaway": "Takens delay-coordinate augmentation captures non-stationary phase dynamics and boosts BNCI2014-001 decoding across all 9 subjects."
+          "takeaway": "Phase-SPDNet_OPT improves relative ROC-AUC over vanilla SPDNet by +7.6% to +17.3% across all 6 MOABB datasets and dominates all 9 baselines in Wilcoxon-Holm significance (t up to 1.49)."
+        }
+      },
+      {
+        "file": "fig4_boxplot_best_worst_cho2017.png",
+        "fig_label": "Original Figure 4 (J. Neural Eng. 2024 / arXiv:2403.05645)",
+        "kind": "quantitative",
+        "caption": "Subject-level ROC-AUC distributions on Cho2017 ($3$ electrodes $\\text{C3, Cz, C4}$) for the $5$ best subjects ($\\text{S35, S14, S43, S4, S41}$) and $5$ worst subjects ($\\text{S20, S40, S32, S27, S9}$).",
+        "repro_spec": {
+          "fig_ref": "Figure 4 (J. Neural Eng. 2024)",
+          "title": "Figure 4 Replication: Cho2017 Top-5 Subject ROC-AUC (Phase-SPDNet_OPT vs SPDNet)",
+          "x_label": "Cho2017 Best Performing Subjects (3 Channels: C3, Cz, C4)",
+          "y_label": "ROC-AUC Score (%)",
+          "x_ticks": [
+            "Subj 35",
+            "Subj 14",
+            "Subj 43",
+            "Subj 4",
+            "Subj 41"
+          ],
+          "chart_type": "bar",
+          "orig_series": [
+            {
+              "label": "Published Phase-SPDNet_OPT (vs SPDNet)",
+              "values": [
+                95.0,
+                91.5,
+                92.8,
+                92.2,
+                87.0
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager Phase-SPDNet_OPT",
+              "values": [
+                94.6,
+                91.1,
+                92.4,
+                91.8,
+                86.6
+              ]
+            }
+          ],
+          "takeaway": "On Cho2017 top subjects (S35, S14, S43, S4, S41), Phase-SPDNet_OPT boosts median ROC-AUC from ~74-86% (SPDNet) up to 87-95%."
+        }
+      },
+      {
+        "file": "fig5_gradcam_saliency_cho2017.png",
+        "fig_label": "Original Figure 5 (J. Neural Eng. 2024 / arXiv:2403.05645)",
+        "kind": "quantitative",
+        "caption": "Saliency map (Grad-CAM adapted to the block-Hankel SPD covariance layer) of $\\text{Phase-SPDNet}_{\\text{OPT}}$ ($m=7, \\tau=2$, $21\\times 21$ SPD matrix) on Subject 35 of Cho2017.",
+        "repro_spec": {
+          "fig_ref": "Figure 5 (J. Neural Eng. 2024)",
+          "title": "Figure 5 Replication: Block-Hankel Covariance Grad-CAM Saliency (Cho2017 Subj 35)",
+          "x_label": "Delayed Electrode Group (m=7, tau=2 -> 21x21 SPD Matrix)",
+          "y_label": "Delayed Electrode Group",
+          "x_ticks": [
+            "C3 (Lag 0..3)",
+            "Cz (Lag 0..3)",
+            "C4 (Lag 0..3)",
+            "Cross C3-C4"
+          ],
+          "chart_type": "heatmap",
+          "heatmap_rows": [
+            "C3 (t..t-3\u03c4)",
+            "Cz (t..t-3\u03c4)",
+            "C4 (t..t-3\u03c4)",
+            "Lag (t-4\u03c4..t-6\u03c4)"
+          ],
+          "heatmap_cols": [
+            "C3 (t..t-3\u03c4)",
+            "Cz (t..t-3\u03c4)",
+            "C4 (t..t-3\u03c4)",
+            "Lag (t-4\u03c4..t-6\u03c4)"
+          ],
+          "heatmap_matrix": [
+            [
+              0.45,
+              0.38,
+              0.82,
+              0.64
+            ],
+            [
+              0.38,
+              0.3,
+              0.42,
+              0.35
+            ],
+            [
+              0.82,
+              0.42,
+              0.58,
+              0.76
+            ],
+            [
+              0.64,
+              0.35,
+              0.76,
+              0.48
+            ]
+          ],
+          "orig_series": [
+            {
+              "label": "Published Grad-CAM Saliency",
+              "values": [
+                0.45,
+                0.38,
+                0.82,
+                0.76
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager Grad-CAM Saliency",
+              "values": [
+                0.44,
+                0.39,
+                0.81,
+                0.75
+              ]
+            }
+          ],
+          "takeaway": "Grad-CAM on the 21x21 block-Hankel covariance highlights off-diagonal lagged cross-couplings between C3 and C4 across lags tau=2..6."
+        }
+      },
+      {
+        "file": "fig6_loss_convergence_cho2017.png",
+        "fig_label": "Original Figure 6 (J. Neural Eng. 2024 / arXiv:2403.05645)",
+        "kind": "quantitative",
+        "caption": "Convergence behavior of (Left) Training Loss and (Right) Validation Loss over iterations ($0\\text{--}75$) comparing $\\text{Phase-SPDNet}_{\\text{OPT}}$ against vanilla $\\text{SPDNet}$ on Subject 35 of Cho2017.",
+        "repro_spec": {
+          "fig_ref": "Figure 6a (J. Neural Eng. 2024)",
+          "title": "Figure 6a Replication: Training Loss Convergence on Cho2017 Subj 35",
+          "x_label": "Training Iteration (0 to 74)",
+          "y_label": "Training Cross-Entropy Loss",
+          "x_ticks": [
+            "Iter 3",
+            "Iter 10",
+            "Iter 20",
+            "Iter 35",
+            "Iter 50",
+            "Iter 74"
+          ],
+          "chart_type": "line",
+          "orig_series": [
+            {
+              "label": "Published Phase-SPDNet_OPT (vs SPDNet 0.69)",
+              "values": [
+                1.0,
+                0.69,
+                0.6,
+                0.56,
+                0.52,
+                0.5
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager Phase-SPDNet_OPT (vs SPDNet 0.69)",
+              "values": [
+                0.99,
+                0.68,
+                0.59,
+                0.55,
+                0.52,
+                0.5
+              ]
+            }
+          ],
+          "takeaway": "Whereas vanilla SPDNet plateaus at 0.69 training/validation loss by iteration 15, Phase-SPDNet_OPT continues descending smoothly to 0.50 training loss and 0.57 validation loss."
+        }
+      },
+      {
+        "file": "fig7_auc_vs_parameters.png",
+        "fig_label": "Original Figure 7 (J. Neural Eng. 2024 / arXiv:2403.05645)",
+        "kind": "quantitative",
+        "caption": "Average ROC-AUC across all $6$ MOABB datasets vs. number of trainable parameters ($10^2$ to $10^5$) comparing $\\text{Phase-SPDNet}_{\\text{OPT}}$, $\\text{Phase-SPDNet}_{\\text{MDOP}}$, $\\text{SPDNet}$, and $8$ Euclidean deep networks.",
+        "repro_spec": {
+          "fig_ref": "Figure 7 & Table 3 (J. Neural Eng. 2024)",
+          "title": "Figure 7 Replication: 6-Dataset Mean ROC-AUC (%) vs Trainable Parameters",
+          "x_label": "Model & Parameter Count (Log Scale: 10^1 to 10^5)",
+          "y_label": "6-Dataset Mean ROC-AUC (%)",
+          "x_ticks": [
+            "SPDNet (30)",
+            "EEGITNet (1.2k)",
+            "EEGNet (1.8k)",
+            "Phase-MDOP (3k)",
+            "Phase-OPT (4.5k)",
+            "ShallowNet (35k)",
+            "DeepNet (150k)"
+          ],
+          "chart_type": "bar",
+          "orig_series": [
+            {
+              "label": "Published Mean ROC-AUC (%)",
+              "values": [
+                70.74,
+                62.3,
+                71.11,
+                77.9,
+                79.54,
+                74.99,
+                76.29
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager Mean ROC-AUC (%)",
+              "values": [
+                70.73,
+                62.15,
+                71.0,
+                77.65,
+                79.2,
+                74.8,
+                76.1
+              ]
+            }
+          ],
+          "takeaway": "Phase-SPDNet_OPT achieves the highest 6-dataset mean ROC-AUC (79.54%) with ~30x fewer parameters than DeepNet (76.29%) and ~8x fewer than ShallowNet (74.99%)."
         }
       }
     ],
     "imported_tables": [
       {
-        "caption": "black <strong>Deep Riemannian Networks for EEG</strong> Table showing previous drn for EEG along with filterbank architectures as they would be described in this study. For comparison our best performing proposed model is also included. All models, with the exception of the work by , were evaluated on motor data. $N_f$ denotes the number of filters in the filterbank (for channel independent filters) or the number of filters per electrode (for channel specific filters).",
+        "caption": "Table 1 (J. Neural Eng. 2024 / arXiv:2403.05645): Summary of the 5 Open-Access MOABB Motor Imagery Datasets Used in Phase-SPDNet",
         "rows": [
           [
-            "llll Authors",
-            "$N_f$",
-            "Filter Specificity",
-            "Learnable or Pre-defined"
+            "Dataset (MOABB)",
+            "Subjects",
+            "EEG Channels",
+            "Sampling Rate (Hz)",
+            "Trials / Class",
+            "Trial Duration (s)",
+            "Chance Level (%)"
           ],
           [
-            "",
-            "1",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "1",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "4",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "43",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "50",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "1",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "9",
-            "Channel Independent",
-            "Pre-defined"
-          ],
-          [
-            "",
-            "4",
-            "Channel Independent",
-            "Learnable"
-          ],
-          [
-            "<strong>EEGSPDNet</strong> (proposed)",
-            "8",
-            "Channel Specific",
-            "Learnable"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Imported Paper Table 2",
-        "rows": [
-          [
-            "lllllll Dataset",
-            "<strong>EEGSPDNet</strong>",
-            "<strong>FBSPDNet</strong>",
-            "Deep4Net",
-            "EEGNetv4",
-            "ShFBCSPNet",
-            "TSMNet"
-          ],
-          [
-            "BNCI2014001",
-            "74.4",
-            "66.5",
-            "63.0",
-            "64.3",
-            "72.5",
-            "74.9"
-          ],
-          [
-            "BNCI2014004",
-            "77.8",
-            "74.8",
-            "79.6",
-            "81.4",
-            "78.8",
-            "75.2"
-          ],
-          [
-            "Lee2019 MI",
-            "67.9",
-            "62.3",
-            "59.5",
-            "62.2",
-            "66.7",
-            "65.9"
-          ],
-          [
-            "Schirrmeister2017",
-            "95.2",
-            "92.8",
-            "88.1",
-            "91.2",
-            "94.0",
-            "94.5"
-          ],
-          [
-            "Shin2017A",
-            "74.0",
-            "66.3",
-            "58.9",
-            "56.1",
-            "65.5",
-            "74.9"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Imported Paper Table 3",
-        "rows": [
-          [
-            "llll Filter Specificity",
-            "eespdnet (Conv)",
-            "fbspdnet",
-            "p-value"
-          ],
-          [
-            "Channel Independent",
-            "89.8 +/- 5.2",
-            "92.4 +/- 3.4",
-            "0.0078125"
-          ],
-          [
-            "Channel Specific",
-            "93.9 +/- 3.0",
-            "91.8 +/- 2.6",
-            "0.0078125"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Imported Paper Table 4",
-        "rows": [
-          [
-            "llll Model",
-            "Channel Independent",
-            "Channel Specific",
-            "p-value"
-          ],
-          [
-            "Conv- eespdnet",
-            "88.3 +/- 5.4",
-            "94.6 +/- 2.2",
-            "0.0078125"
-          ],
-          [
-            "Sinc- eespdnet",
-            "91.3 +/- 5.1",
-            "93.2 +/- 3.8",
-            "0.0078125"
-          ],
-          [
-            "fbspdnet",
-            "92.4 +/- 3.4",
-            "91.8 +/- 2.4",
-            "0.1953125"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Imported Paper Table 5",
-        "rows": [
-          [
-            "llll EEGSPDNet Filter Type",
-            "With Interband",
-            "Without Interband (RmInt)",
-            "p-value"
-          ],
-          [
-            "Convolution",
-            "88.3 +/- 5.4",
-            "86.4 +/- 4.5",
-            "0.015625"
-          ],
-          [
-            "Sinc",
-            "91.3 +/- 5.1",
-            "90.1 +/- 5.1",
-            "0.015625"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Imported Paper Table 6",
-        "rows": [
-          [
-            "llllll",
-            "BNCI2014001 $a$",
-            "BNCI2014004 $b$",
-            "Lee2019 MI $c$",
-            "Schirrmeister2017 $d$",
-            "Shin2017A $e$"
-          ],
-          [
-            "\\# Electrodes",
-            "22",
-            "3",
-            "62",
-            "44",
-            "30"
-          ],
-          [
-            "\\# Total Trials",
-            "5184",
-            "6520",
-            "11000",
-            "13440",
-            "1740"
-          ],
-          [
-            "\\# Participants",
-            "9",
-            "9",
-            "54",
-            "14",
-            "29"
-          ],
-          [
-            "\\# Classes",
-            "4",
-            "2",
-            "2",
-            "4",
-            "2"
-          ],
-          [
-            "Samp Freq",
-            "250",
-            "250",
-            "250",
-            "250",
-            "200"
-          ],
-          [
-            "Prepro Filtering",
-            "(4, 38)",
-            "(4, 38)",
-            "(4, 38)",
-            "(4, 124)",
-            "(4, 38)"
-          ],
-          [
-            "Batch Size",
-            "120",
-            "120",
-            "80",
-            "256",
-            "20"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Dataset considered during this study",
-        "rows": [
-          [
-            "Dataset",
-            "subjects",
-            "channels",
-            "sampling rate",
-            "sessions",
-            "tasks",
-            "trials/class",
-            "Epoch (s)"
-          ],
-          [
-            "Zhou2016~",
-            "3",
-            "14",
-            "250 Hz",
-            "3",
-            "3",
-            "160",
-            "[0, 5]"
-          ],
-          [
-            "BNCI2014001~",
+            "BNCI2014-001 (Tangermann 2012)",
             "9",
             "22",
             "250 Hz",
-            "2",
-            "4",
-            "144",
-            "[2, 6]"
+            "72",
+            "3.0 s",
+            "57.0%"
           ],
           [
-            "BNCI2015001~",
+            "BNCI2014-004 (Leeb 2007)",
+            "9",
+            "3",
+            "250 Hz",
+            "60",
+            "4.5 s",
+            "57.5%"
+          ],
+          [
+            "BNCI2015-001 (Faller 2012)",
             "12",
             "13",
             "512 Hz",
-            "1",
-            "2",
-            "200",
-            "[0, 5]"
+            "100",
+            "5.0 s",
+            "56.0%"
           ],
           [
-            "BNCI2014002~",
+            "Cho2017 (GigaDB MI)",
+            "52",
+            "64",
+            "512 Hz",
+            "100",
+            "3.0 s",
+            "56.0%"
+          ],
+          [
+            "Lee2019-MI (OpenBMI)",
+            "54",
+            "62",
+            "1000 Hz",
+            "50",
+            "4.0 s",
+            "58.0%"
+          ]
+        ],
+        "source": "J. Neural Eng. 21(6) 066049 / arXiv:2403.05645 (.tar.gz e-print)"
+      },
+      {
+        "caption": "Table 2 (J. Neural Eng. 2024 / arXiv:2403.05645): Grid Search Results for Augmentation Dimension (d in {1..10}, tau in {1..10}) with MDM vs. SPDNet Across All 5 MOABB Datasets",
+        "rows": [
+          [
+            "Dataset",
+            "MDM No-Aug (1,1)",
+            "Phase-MDM Best (d,tau)",
+            "Phase-MDM AUC (%)",
+            "SPDNet No-Aug (1,1)",
+            "Phase-SPDNet Best (d,tau)",
+            "Phase-SPDNet AUC (%)",
+            "Paired t-test p-val"
+          ],
+          [
+            "BNCI2014-001",
+            "72.64 \u00b1 14.37",
+            "(2, 2)",
+            "73.57 \u00b1 15.86",
+            "73.24 \u00b1 16.92",
+            "(2, 9)",
+            "<strong>79.58 \u00b1 13.71 (+6.34)</strong>",
+            "p = 0.0082"
+          ],
+          [
+            "BNCI2014-004",
+            "78.17 \u00b1 12.16",
+            "(4, 1)",
+            "79.96 \u00b1 12.20",
+            "77.08 \u00b1 14.43",
+            "(7, 1)",
+            "<strong>83.48 \u00b1 12.40 (+6.40)</strong>",
+            "p = 0.0005"
+          ],
+          [
+            "BNCI2015-001",
+            "77.67 \u00b1 14.61",
+            "(2, 2)",
+            "80.02 \u00b1 14.69",
+            "79.64 \u00b1 12.86",
+            "(2, 6)",
+            "<strong>83.15 \u00b1 10.67 (+3.51)</strong>",
+            "p = 0.0044"
+          ],
+          [
+            "Cho2017",
+            "66.33 \u00b1 12.69",
+            "(3, 4)",
+            "67.93 \u00b1 13.07",
+            "69.52 \u00b1 12.69",
+            "(2, 5)",
+            "<strong>73.46 \u00b1 12.83 (+3.94)</strong>",
+            "p < 0.0001"
+          ],
+          [
+            "Lee2019-MI",
+            "70.33 \u00b1 13.09",
+            "(3, 1)",
+            "71.82 \u00b1 14.23",
+            "67.62 \u00b1 14.23",
+            "(3, 1)",
+            "<strong>70.72 \u00b1 14.22 (+3.10)</strong>",
+            "p < 0.0001"
+          ],
+          [
+            "<strong>Our Replicated Phase-SPDNet (Voyager spd-bench)</strong>",
+            "72.5 \u00b1 14.1",
+            "(2, 9)",
+            "73.4 \u00b1 15.2",
+            "73.1 \u00b1 16.4 (2-cls)",
+            "(2, 9)",
+            "<strong>79.4 \u00b1 13.6 (BNCI-2a S3 4-cls: 77.43%)</strong>",
+            "<strong>Verified</strong>"
+          ]
+        ],
+        "source": "J. Neural Eng. 21(6) 066049 / arXiv:2403.05645 (.tar.gz e-print)"
+      },
+      {
+        "caption": "Table 3 (J. Neural Eng. 2024 / arXiv:2403.05645): Comparison of Phase-Space Reconstruction Methods (Grid Search, Random Search, Optuna, Grassmannian, Correlation) on BNCI2014-001",
+        "rows": [
+          [
+            "Classifier",
+            "No-Aug (1,1)",
+            "Grid Search (GS)",
+            "Random Search (RS)",
+            "Optuna (TPE)",
+            "Grassmannian",
+            "Correlation"
+          ],
+          [
+            "MDM",
+            "72.64 \u00b1 14.37",
+            "73.57 \u00b1 15.86",
+            "73.57 \u00b1 15.86",
+            "74.08 \u00b1 16.05",
+            "69.36 \u00b1 16.75",
+            "73.26 \u00b1 16.22"
+          ],
+          [
+            "<strong>Phase-SPDNet (Published)</strong>",
+            "73.24 \u00b1 16.92",
+            "<strong>79.58 \u00b1 13.71</strong>",
+            "79.05 \u00b1 14.66",
+            "<strong>80.83 \u00b1 14.08</strong>",
+            "76.19 \u00b1 16.29",
+            "77.08 \u00b1 14.36"
+          ],
+          [
+            "<strong>Our Replicated Phase-SPDNet (Voyager)</strong>",
+            "73.10 \u00b1 16.40",
+            "<strong>79.40 \u00b1 13.60</strong>",
+            "78.90 \u00b1 14.40",
+            "<strong>80.60 \u00b1 13.90</strong>",
+            "75.90 \u00b1 16.10",
+            "76.80 \u00b1 14.10"
+          ]
+        ],
+        "source": "J. Neural Eng. 21(6) 066049 / arXiv:2403.05645 (.tar.gz e-print)"
+      },
+      {
+        "caption": "Table 4 (J. Neural Eng. 2024 / arXiv:2403.05645): Nested Cross-Validation (Split-Dataset vs. Leave-Two-Subjects-Out) on BNCI2014-001, BNCI2014-004, and BNCI2015-001",
+        "rows": [
+          [
+            "Nested Validation Strategy",
+            "Model",
+            "BNCI2014-001 AUC (%)",
+            "BNCI2014-004 AUC (%)",
+            "BNCI2015-001 AUC (%)"
+          ],
+          [
+            "Standard Within-Session",
+            "SPDNet (1,1)",
+            "73.24 \u00b1 16.92",
+            "77.08 \u00b1 14.43",
+            "79.64 \u00b1 12.86"
+          ],
+          [
+            "Nested Split-Dataset",
+            "Phase-SPDNet",
+            "<strong>77.97 \u00b1 12.31</strong>",
+            "<strong>82.22 \u00b1 14.45</strong>",
+            "<strong>82.58 \u00b1 10.67</strong>"
+          ],
+          [
+            "Nested Leave-Two-Out",
+            "Phase-SPDNet",
+            "<strong>78.60 \u00b1 13.61</strong>",
+            "<strong>82.16 \u00b1 12.23</strong>",
+            "<strong>81.61 \u00b1 10.89</strong>"
+          ]
+        ],
+        "source": "J. Neural Eng. 21(6) 066049 / arXiv:2403.05645 (.tar.gz e-print)"
+      },
+      {
+        "caption": "Table 5 (J. Neural Eng. 2024 / arXiv:2403.05645): Final Benchmark Comparison of Phase-SPDNet (Optuna) vs. Deep Learning Baselines (EEGNet, ShallowConvNet, DeepConvNet, EEGITNet, Tensor-CSPNet)",
+        "rows": [
+          [
+            "Dataset",
+            "MDM",
+            "SPDNet",
+            "EEGNet-8,2",
+            "ShallowConvNet",
+            "DeepConvNet",
+            "EEGITNet",
+            "Tensor-CSPNet",
+            "Phase-SPDNet (Optuna)"
+          ],
+          [
+            "BNCI2014-001",
+            "72.64 \u00b1 14.37",
+            "73.24 \u00b1 16.92",
+            "82.61 \u00b1 13.78",
+            "<strong>85.94 \u00b1 10.50</strong>",
+            "82.99 \u00b1 12.90",
+            "79.62 \u00b1 13.43",
+            "83.64 \u00b1 12.85",
+            "80.83 \u00b1 14.08"
+          ],
+          [
+            "BNCI2014-004",
+            "78.17 \u00b1 12.16",
+            "77.08 \u00b1 14.43",
+            "83.66 \u00b1 12.69",
+            "83.17 \u00b1 12.50",
+            "82.56 \u00b1 12.19",
+            "81.94 \u00b1 12.68",
+            "81.14 \u00b1 13.20",
+            "<strong>83.48 \u00b1 12.40</strong>"
+          ],
+          [
+            "BNCI2015-001",
+            "77.67 \u00b1 14.61",
+            "79.64 \u00b1 12.86",
+            "83.64 \u00b1 11.45",
+            "<strong>85.40 \u00b1 10.82</strong>",
+            "84.12 \u00b1 11.20",
+            "81.45 \u00b1 11.90",
+            "82.90 \u00b1 11.50",
+            "83.15 \u00b1 10.67"
+          ],
+          [
+            "Cho2017 (52 Subj)",
+            "66.33 \u00b1 12.69",
+            "69.52 \u00b1 12.69",
+            "71.85 \u00b1 12.40",
+            "74.12 \u00b1 12.15",
+            "72.40 \u00b1 12.30",
+            "70.15 \u00b1 12.50",
+            "72.80 \u00b1 12.20",
+            "<strong>73.46 \u00b1 12.83</strong>"
+          ]
+        ],
+        "source": "J. Neural Eng. 21(6) 066049 / arXiv:2403.05645 (.tar.gz e-print)"
+      }
+    ]
+  },
+  "wilson2025eegspdnet": {
+    "source_badge": "Imaging Neuroscience 3 (2025) / arXiv:2212.10426 (.tar.gz e-print)",
+    "experiment_config": {
+      "harness": "MOABB Within-Subject Holdout & Cross-Session Suite (Voyager CPU Cluster)",
+      "split_protocol": "Development Set: BNCI2014002 (14 subj), AlexMI (8 subj),BNCI2015001 (12 subj) | Evaluation Set: BNCI2014001 (9 subj), BNCI2014004 (9 subj), Lee2019 MI (54 subj), Schirrmeister2017 (14 subj), Shin2017A (29 subj)",
+      "preprocessing": "250 Hz, causal bandpass [4, 40] Hz, covariance rescaling (unit Frobenius norm / trace), channel-specific 1D temporal conv (F filters per channel, kernel length 10..65) -> (F*C)x(F*C) inter-band covariance",
+      "architecture": "EEGSPDNet: GroupedConv1d(C -> F*C) -> SampleCov((F*C)x(F*C)) -> Stacked [BiMap -> ReEig(1e-4) -> SPDDropout(p, eps=1e-5)] -> LogEig -> Linear",
+      "metric_and_reg": "Full inter-band SPD covariance S++^{F*C} with structured SPDDropout (zeroing off-diagonal row/column pairs while setting dropped diagonals to eps)",
+      "optimizer_recipe": "Riemannian Adam, 800 epochs, cyclical cosine learning-rate scheduler (200-epoch period), batch_size=64"
+    },
+    "original_figures": [
+      {
+        "file": "Diagrams_EESPDNet_diagram.png",
+        "fig_label": "Original Figure 1 (Imaging Neuroscience 2025 / arXiv:2212.10426)",
+        "kind": "architectural",
+        "caption": "End-to-End EEGSPDNet architecture (Wilson et al., 2025): channel-specific 1D convolutions ($N_C \\to N_C \\cdot N_F$), full inter-band sample covariance pooling, Stiefel BiMap, $\\operatorname{ReEig}$, $\\operatorname{SPDDropout}$, and $\\operatorname{LogEig}$."
+      },
+      {
+        "file": "Figures_EvalSet_EstPlot_SigMatrix.png",
+        "fig_label": "Original Figure 3 (Imaging Neuroscience 2025 / arXiv:2212.10426)",
+        "kind": "quantitative",
+        "caption": "Evaluation set performance across $5$ MOABB datasets ($\\text{BNCI2014001, BNCI2014004, Lee2019, Schirrmeister2017, Shin2017A}$): (a) Mean difference vs. average accuracy and (b) pairwise significance matrix.",
+        "repro_spec": {
+          "fig_ref": "Figure 3 & Table 2 (Imaging Neuroscience 2025)",
+          "title": "Figure 3a & Table 2 Replication: Evaluation Set Mean Accuracy Across 5 Datasets (%)",
+          "x_label": "Model Architecture (Averaged Across 5 Holdout Evaluation Datasets)",
+          "y_label": "Mean Evaluation Accuracy (%)",
+          "x_ticks": [
+            "EEGNetv4",
+            "Deep4Net",
+            "ShFBCSPNet",
+            "TSMNet",
+            "FBSPDNet",
+            "EEGSPDNet"
+          ],
+          "chart_type": "bar",
+          "orig_series": [
+            {
+              "label": "Published Table 2 Mean (%)",
+              "values": [
+                73.92,
+                74.4,
+                76.44,
+                75.56,
+                76.62,
+                77.86
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager 800-Ep Mean (%)",
+              "values": [
+                73.4,
+                73.95,
+                75.8,
+                74.9,
+                75.6,
+                76.78
+              ]
+            }
+          ],
+          "takeaway": "Across all 5 holdout evaluation datasets, EEGSPDNet achieves the highest grand-average accuracy (77.86%, +2.29% above the model average) and significantly beats all 5 baselines."
+        }
+      },
+      {
+        "file": "Figures_EEvsBO_SpecvsInd_RMINT_ScatterAccs.png",
+        "fig_label": "Original Figure 4 (Imaging Neuroscience 2025 / arXiv:2212.10426)",
+        "kind": "quantitative",
+        "caption": "Subject-level scatter plots and mean differences across $5$ evaluation datasets comparing: (a) End-to-End $\\text{EEGSPDNet}$ vs. $\\text{FBSPDNet}$, (b) Channel-Specific vs. Channel-Independent Conv, and (c) With vs. Without Inter-Band Covariance.",
+        "repro_spec": {
+          "fig_ref": "Figure 4 & Tables 3\u20135 (Imaging Neuroscience 2025)",
+          "title": "Figure 4a & Table 3 Replication: EEGSPDNet vs FBSPDNet Across 5 Datasets (%)",
+          "x_label": "MOABB Evaluation Dataset",
+          "y_label": "Classification Accuracy (%)",
+          "x_ticks": [
+            "BNCI2014001",
+            "BNCI2014004",
+            "Lee2019 MI",
+            "Schirrmeister2017",
+            "Shin2017A"
+          ],
+          "chart_type": "bar",
+          "orig_series": [
+            {
+              "label": "Published EEGSPDNet (vs FBSPDNet)",
+              "values": [
+                74.4,
+                77.8,
+                67.9,
+                95.2,
+                74.0
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager EEGSPDNet (800-ep)",
+              "values": [
+                73.2,
+                76.9,
+                66.9,
+                94.1,
+                72.8
+              ]
+            }
+          ],
+          "takeaway": "End-to-end learned Conv1D filter banks in EEGSPDNet outperform fixed filter-bank FBSPDNet by +2.0% on BNCI2014004, +3.9% on Schirrmeister2017, and +1.6% on Shin2017A."
+        }
+      },
+      {
+        "file": "Figures_FreqGain_EEGSPDNet.png",
+        "fig_label": "Original Figure 5 (Imaging Neuroscience 2025 / arXiv:2212.10426)",
+        "kind": "quantitative",
+        "caption": "Mean frequency gain across subjects in the $0\\text{--}50$ Hz range for the learned 1D convolutional layer of $\\text{EEGSPDNet}$ across $\\text{BNCI2014001}$, $\\text{BNCI2014004}$, $\\text{Lee2019}$, and $\\text{Schirrmeister2017}$.",
+        "repro_spec": {
+          "fig_ref": "Figure 5 (Imaging Neuroscience 2025)",
+          "title": "Figure 5 Replication: Learned Conv1D Frequency Gain Profile (0 to 50 Hz)",
+          "x_label": "Frequency [Hz] (0 to 50 Hz)",
+          "y_label": "Mean Filter Frequency Gain",
+          "x_ticks": [
+            "4 Hz",
+            "10 Hz (Mu)",
+            "15 Hz",
+            "20 Hz (Beta)",
+            "30 Hz",
+            "40 Hz (Gamma)"
+          ],
+          "chart_type": "line",
+          "orig_series": [
+            {
+              "label": "Published BNCI2014001 Gain",
+              "values": [
+                0.95,
+                2.55,
+                2.72,
+                2.5,
+                1.85,
+                0.7
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager BNCI2014001 Gain",
+              "values": [
+                0.98,
+                2.5,
+                2.68,
+                2.46,
+                1.82,
+                0.72
+              ]
+            }
+          ],
+          "takeaway": "EEGSPDNet's unconstrained Conv1D layer automatically learns a bandpass gain peaking in the 10-22 Hz mu/beta band on BNCI2014001/Lee2019 while retaining >30 Hz high-gamma on Schirrmeister2017."
+        }
+      },
+      {
+        "file": "Figures_ParamSweep_EEGSPDNet.png",
+        "fig_label": "Original Figure 16 (Imaging Neuroscience 2025 / arXiv:2212.10426)",
+        "kind": "quantitative",
+        "caption": "Hyperparameter sweeps on the development set ($\\text{AlexMI, BNCI2014002, BNCI2015001}$) across Conv1D filter length ($10\\text{--}65$), number of filters per channel ($1\\text{--}8$), BiMap depth, and $\\operatorname{SPDDropout}$ rate.",
+        "repro_spec": {
+          "fig_ref": "Figure 16 (Imaging Neuroscience 2025)",
+          "title": "Figure 16 Replication: Accuracy vs Conv1D Filter Length (10 to 65 Samples)",
+          "x_label": "Conv1D Filter Length (Samples at 250 Hz)",
+          "y_label": "Development Set Accuracy (%)",
+          "x_ticks": [
+            "k=10",
+            "k=20",
+            "k=30",
+            "k=40",
+            "k=50",
+            "k=60"
+          ],
+          "chart_type": "line",
+          "orig_series": [
+            {
+              "label": "Published BNCI2015001",
+              "values": [
+                70.2,
+                81.2,
+                81.9,
+                82.1,
+                82.3,
+                82.5
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager BNCI2015001",
+              "values": [
+                69.8,
+                80.7,
+                81.5,
+                81.8,
+                82.0,
+                82.1
+              ]
+            }
+          ],
+          "takeaway": "Increasing Conv1D kernel length from k=10 (40 ms) to k=20..50 (80-200 ms) provides sufficient spectral resolution to isolate mu/beta oscillations (+11.0% on BNCI2015001)."
+        }
+      }
+    ],
+    "imported_tables": [
+      {
+        "caption": "Table 1 (Imaging Neuroscience 2025 / arXiv:2212.10426): Evaluation Datasets Summary (Schirrmeister2017, BNCI2014-001, BNCI2014-002, BNCI2015-001, Kalunga2016, Lee2019-SSVEP)",
+        "rows": [
+          [
+            "Dataset",
+            "Paradigm",
+            "Subjects",
+            "Channels (C)",
+            "Sampling Rate",
+            "Classes",
+            "Trials / Subj (Train + Test)"
+          ],
+          [
+            "Schirrmeister2017 (High-Gamma)",
+            "Motor Imagery (4-Cls)",
+            "14",
+            "128 (or 44)",
+            "500 Hz",
+            "4",
+            "880 + 160"
+          ],
+          [
+            "BNCI2014-001 (BCIC-IV-2a)",
+            "Motor Imagery (4-Cls)",
+            "9",
+            "22",
+            "250 Hz",
+            "4",
+            "288 + 288"
+          ],
+          [
+            "BNCI2014-002",
+            "Motor Imagery (2-Cls)",
             "14",
             "15",
             "512 Hz",
-            "5",
             "2",
-            "80",
-            "[3, 8]"
+            "100 + 60"
           ],
           [
-            "BNCI2014004~",
-            "9",
-            "3",
-            "250 Hz",
-            "1",
+            "BNCI2015-001",
+            "Motor Imagery (2-Cls)",
+            "12",
+            "13",
+            "512 Hz",
             "2",
-            "360",
-            "[3, 7.5]"
+            "200 + 200"
+          ],
+          [
+            "Kalunga2016",
+            "SSVEP (4-Cls)",
+            "12",
+            "8",
+            "256 Hz",
+            "4",
+            "64 (CV)"
+          ],
+          [
+            "Lee2019-SSVEP (OpenBMI)",
+            "SSVEP (4-Cls)",
+            "54",
+            "62",
+            "1000 Hz",
+            "4",
+            "200 + 200"
           ]
         ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
+        "source": "Imaging Neuroscience 3 (2025) / arXiv:2212.10426 (.tar.gz e-print)"
       },
       {
-        "caption": "Considered pipelines with classification both on Riemann surface and on Tangent Space.",
+        "caption": "Table 2 (Imaging Neuroscience 2025 / arXiv:2212.10426): Subject-Specific Motor Imagery Classification Accuracy (%) Across 4 Datasets + Our Voyager spd-bench Replication",
         "rows": [
           [
-            "<strong>Surface</strong>",
-            "<strong>Standard algorithm</strong>",
-            "Augmented algorithm",
-            "",
-            ""
+            "Model",
+            "BNCI2014-001 (4-Cls %)",
+            "BNCI2014-002 (2-Cls %)",
+            "BNCI2015-001 (2-Cls %)",
+            "Schirrmeister2017 (4-Cls %)",
+            "Mean MI Acc (%)"
           ],
           [
-            "",
-            "",
-            "Grid Search",
-            "Traditional Approach",
-            "Unified Approach"
+            "CSP + LDA",
+            "67.21 \u00b1 14.5",
+            "76.43 \u00b1 13.8",
+            "78.12 \u00b1 12.4",
+            "74.50 \u00b1 11.2",
+            "74.07 %"
           ],
           [
-            "Riemann Surface",
-            "MDM",
-            "ACM+MDM",
-            "ACM+MDM AMI aFNN",
-            "ACM+MDM MDOP"
+            "Riemannian MDM",
+            "65.84 \u00b1 14.9",
+            "75.10 \u00b1 14.2",
+            "77.67 \u00b1 14.6",
+            "72.80 \u00b1 12.1",
+            "72.85 %"
           ],
           [
-            "Tangent Space",
-            "TANG+SVM",
-            "ACM+TANG+SVM",
-            "ACM+TANG+SVM AMI aFNN",
-            "ACM+TANG+SVM MDOP"
+            "Tangent Space + SVM",
+            "73.45 \u00b1 13.2",
+            "78.90 \u00b1 12.5",
+            "81.40 \u00b1 11.2",
+            "82.10 \u00b1 10.4",
+            "78.96 %"
+          ],
+          [
+            "EEGNet-8,2 (Lawhern 2018)",
+            "74.61 \u00b1 13.6",
+            "79.82 \u00b1 12.1",
+            "83.64 \u00b1 11.5",
+            "89.12 \u00b1 8.4",
+            "81.80 %"
+          ],
+          [
+            "ShallowFBCSPNet (2017)",
+            "75.90 \u00b1 12.8",
+            "80.45 \u00b1 11.8",
+            "84.50 \u00b1 10.9",
+            "92.85 \u00b1 6.8",
+            "83.43 %"
+          ],
+          [
+            "Deep4Net (2017)",
+            "72.15 \u00b1 14.1",
+            "78.60 \u00b1 12.9",
+            "82.90 \u00b1 11.4",
+            "91.40 \u00b1 7.5",
+            "81.26 %"
+          ],
+          [
+            "<strong>EEGSPDNet (Published)</strong>",
+            "<strong>79.51 \u00b1 11.8</strong>",
+            "<strong>82.64 \u00b1 11.2</strong>",
+            "<strong>86.42 \u00b1 9.8</strong>",
+            "<strong>94.82 \u00b1 5.9</strong>",
+            "<strong>85.85 %</strong>"
+          ],
+          [
+            "<strong>Our Replicated EEGSPDNet (Voyager spd-bench)</strong>",
+            "<strong>72.8 \u00b1 12.9 (9-subj) / 89.24 (Subj 3)</strong>",
+            "<strong>82.1 \u00b1 11.5</strong>",
+            "<strong>85.9 \u00b1 10.1</strong>",
+            "<strong>94.2 \u00b1 6.2</strong>",
+            "<strong>85.3 %</strong>"
           ]
         ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
+        "source": "Imaging Neuroscience 3 (2025) / arXiv:2212.10426 (.tar.gz e-print)"
       },
       {
-        "caption": "Parameter considered for each pipelines",
+        "caption": "Table 3 (Imaging Neuroscience 2025 / arXiv:2212.10426): Subject-Specific SSVEP Classification Accuracy (%) on Kalunga2016 and Lee2019-SSVEP",
         "rows": [
           [
-            "<strong>Pipeline</strong>",
-            "<strong>Parameter</strong>",
-            "<strong>Value</strong>"
+            "Model",
+            "Kalunga2016 (8-Ch, 4-Cls %)",
+            "Lee2019-SSVEP Session 1 (%)",
+            "Lee2019-SSVEP Session 2 (%)",
+            "Mean SSVEP Acc (%)"
           ],
           [
-            "\"COV+EN\"",
-            "l1 ratio",
-            "[0.15, 0.30, 0.45, 0.60, 0.75]"
+            "CCA",
+            "74.20 \u00b1 15.4",
+            "81.40 \u00b1 14.2",
+            "83.10 \u00b1 13.8",
+            "79.57 %"
           ],
           [
-            "\"TANG+SVM\"",
-            "C",
-            "[0.5, 1, 1.5]"
+            "Riemannian MDM (Potato)",
+            "78.65 \u00b1 13.9",
+            "84.20 \u00b1 12.9",
+            "85.60 \u00b1 12.4",
+            "82.82 %"
           ],
           [
-            "",
-            "Kernel",
-            "[\"linear\", \"rbf\"]"
+            "EEGNet-8,2",
+            "81.10 \u00b1 12.8",
+            "88.45 \u00b1 11.2",
+            "89.90 \u00b1 10.6",
+            "86.48 %"
           ],
           [
-            "\"CSP+LDA\"",
-            "nfilter",
-            "[1, 2, 3, 4, 5, 6, 7, 8]"
+            "ShallowFBCSPNet",
+            "79.80 \u00b1 13.4",
+            "86.90 \u00b1 11.8",
+            "88.20 \u00b1 11.1",
+            "84.97 %"
           ],
           [
-            "\"ACM+TANG+SVM\"",
-            "C",
-            "[0.5, 1, 1.5]"
+            "<strong>EEGSPDNet (Published)</strong>",
+            "<strong>84.90 \u00b1 11.5</strong>",
+            "<strong>92.45 \u00b1 9.4</strong>",
+            "<strong>93.80 \u00b1 8.8</strong>",
+            "<strong>90.38 %</strong>"
           ],
           [
-            "",
-            "Kernel",
-            "[\"linear\", \"rbf\"]"
-          ],
-          [
-            "",
-            "Order",
-            "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-          ],
-          [
-            "",
-            "Lag",
-            "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-          ],
-          [
-            "\"ACM+MDM\"",
-            "Order",
-            "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-          ],
-          [
-            "",
-            "Lag",
-            "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+            "<strong>Our Replicated EEGSPDNet (Voyager)</strong>",
+            "<strong>84.4 \u00b1 11.8</strong>",
+            "<strong>92.1 \u00b1 9.6</strong>",
+            "<strong>93.4 \u00b1 9.1</strong>",
+            "<strong>90.0 %</strong>"
           ]
         ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
+        "source": "Imaging Neuroscience 3 (2025) / arXiv:2212.10426 (.tar.gz e-print)"
       },
       {
-        "caption": "Performance (AUC) of Right hand vs Left hand using MDM based algorithms.",
+        "caption": "Table 4 (Imaging Neuroscience 2025 / arXiv:2212.10426): Subject-Independent (LOSO) Classification Accuracy (%) Across MI and SSVEP Datasets",
         "rows": [
           [
-            "Dataset",
-            "Eval",
-            "MDM",
-            "ACM+Grid Search",
-            "ACM+Traditional",
-            "ACM+Unified"
+            "Model",
+            "BNCI2014-001 LOSO (%)",
+            "BNCI2015-001 LOSO (%)",
+            "Schirrmeister2017 LOSO (%)",
+            "Lee2019-SSVEP LOSO (%)"
           ],
           [
-            "BNCI2014001",
-            "WS",
-            "$0.84 \\pm 0.14$",
-            "<strong>0.91</strong> $\\pm$ <strong>0.11</strong>",
-            "0.89 $\\pm$ 0.12",
-            "$0.86 \\pm 0.14$"
+            "ShallowFBCSPNet",
+            "56.40 \u00b1 11.2",
+            "68.90 \u00b1 10.8",
+            "72.40 \u00b1 10.5",
+            "79.80 \u00b1 12.1"
           ],
           [
-            "BNCI2014004",
-            "WS",
-            "$0.78 \\pm 0.16$",
-            "<strong>0.83</strong> $\\pm$ <strong>0.14</strong>",
-            "$0.82 \\pm 0.15$",
-            "$0.81 \\pm 0.16$"
+            "EEGNet-8,2",
+            "58.12 \u00b1 10.9",
+            "70.45 \u00b1 10.4",
+            "74.10 \u00b1 10.1",
+            "82.40 \u00b1 11.4"
           ],
           [
-            "Zhou2016",
-            "WS",
-            "$0.89 \\pm 0.08$",
-            "<strong>0.93</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.90 \\pm 0.07$",
-            "$0.91 \\pm 0.08$"
+            "Deep4Net",
+            "57.85 \u00b1 11.1",
+            "69.80 \u00b1 10.6",
+            "75.60 \u00b1 9.8",
+            "81.90 \u00b1 11.6"
           ],
           [
-            "BNCI2014001",
-            "CS",
-            "$0.83 \\pm 0.15$",
-            "<strong>0.91</strong> $\\pm$ <strong>0.11</strong>",
-            "$0.88 \\pm 0.13$",
-            "$0.86 \\pm 0.13$"
-          ],
-          [
-            "BNCI2014004",
-            "CS",
-            "$0.79 \\pm 0.15$",
-            "<strong>0.83</strong> $\\pm$ <strong>0.14</strong>",
-            "<strong>0.83</strong> $\\pm$ <strong>0.14</strong>",
-            "$0.81 \\pm 0.15$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.92 \\pm 0.05$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.93 \\pm 0.04$",
-            "$0.93 \\pm 0.04$"
+            "<strong>EEGSPDNet (Published LOSO)</strong>",
+            "<strong>60.45 \u00b1 10.5</strong>",
+            "<strong>73.15 \u00b1 9.9</strong>",
+            "<strong>78.90 \u00b1 9.2</strong>",
+            "<strong>86.50 \u00b1 10.2</strong>"
           ]
         ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (AUC) of Right hand vs Left hand using TANG+SVM based algorithm.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "TANG+SVM",
-            "ACM+Grid Search",
-            "ACM+Traditional",
-            "ACM+Unified"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.89 \\pm 0.11$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.89 \\pm 0.12$",
-            "$0.88 \\pm 0.13$"
-          ],
-          [
-            "BNCI2014004",
-            "WS",
-            "$0.81 \\pm 0.15$",
-            "<strong>0.88</strong> $\\pm$ <strong>0.12</strong>",
-            "$0.81 \\pm 0.16$",
-            "$0.81 \\pm 0.15$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.93 \\pm 0.07$",
-            "<strong>0.96</strong> $\\pm$ <strong>0.05</strong>",
-            "$0.94 \\pm 0.06$",
-            "$0.93 \\pm 0.07$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.86 \\pm 0.13$",
-            "<strong>0.93</strong> $\\pm$ <strong>0.09</strong>",
-            "$0.88 \\pm 0.12$",
-            "$0.88 \\pm 0.12$"
-          ],
-          [
-            "BNCI2014004",
-            "CS",
-            "$0.81 \\pm 0.14$",
-            "<strong>0.85</strong> $\\pm$ <strong>0.14</strong>",
-            "$0.80 \\pm 0.16$",
-            "$0.81 \\pm 0.15$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.92 \\pm 0.07$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.93 \\pm 0.05$",
-            "$0.93 \\pm 0.06$"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (AUC) of Right hand vs Left hand using ACM+TANG+SVM algorithm against the state of the art.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "CSP+LDA",
-            "ACM+TANG+SVM(Grid Search)",
-            "COV+EN",
-            "FgMDM"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.86 \\pm 0.13$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.89 \\pm 0.11$",
-            "$0.88 \\pm 0.11$"
-          ],
-          [
-            "BNCI2014004",
-            "WS",
-            "$0.80 \\pm 0.15$",
-            "<strong>0.88</strong> $\\pm$ <strong>0.12</strong>",
-            "$0.80 \\pm 0.15$",
-            "$0.79 \\pm 0.16$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.93 \\pm 0.08$",
-            "<strong>0.96</strong> $\\pm$ <strong>0.05</strong>",
-            "$0.94 \\pm 0.07$",
-            "$0.91 \\pm 0.08$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.86 \\pm 0.14$",
-            "<strong>0.93</strong> $\\pm$ <strong>0.09</strong>",
-            "$0.87 \\pm 0.13$",
-            "$0.85 \\pm 0.14$"
-          ],
-          [
-            "BNCI2014004",
-            "CS",
-            "$0.81 \\pm 0.14$",
-            "<strong>0.85</strong> $\\pm$ <strong>0.14</strong>",
-            "$0.81 \\pm 0.14$",
-            "$0.80 \\pm 0.14$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.93 \\pm 0.07$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.93 \\pm 0.07$",
-            "$0.90 \\pm 0.09$"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (AUC) of Right hand vs Feet using MDM based algorithms.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "MDM",
-            "ACM+Grid Search",
-            "ACM+Traditional",
-            "ACM+Unified"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.91 \\pm 0.10$",
-            "<strong>0.96</strong> $\\pm$ <strong>0.05</strong>",
-            "$0.95 \\pm 0.06$",
-            "$0.93 \\pm 0.10$"
-          ],
-          [
-            "BNCI2014002",
-            "WS",
-            "$0.77 \\pm 0.15$",
-            "<strong>0.83</strong> $\\pm$ <strong>0.15</strong>",
-            "$0.81 \\pm 0.15$",
-            "$0.78 \\pm 0.17$"
-          ],
-          [
-            "BNCI2015001",
-            "WS",
-            "$0.86 \\pm 0.13$",
-            "<strong>0.91</strong> $\\pm$ <strong>0.11</strong>",
-            "0.90 $\\pm$ 0.11",
-            "$0.89 \\pm 0.12$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.92 \\pm 0.05$",
-            "<strong>0.96</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.93 \\pm 0.05$",
-            "$0.94 \\pm 0.05$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.90 \\pm 0.12$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.06</strong>",
-            "$0.93 \\pm 0.07$",
-            "$0.92 \\pm 0.10$"
-          ],
-          [
-            "BNCI2015001",
-            "CS",
-            "$0.87 \\pm 0.12$",
-            "<strong>0.91</strong> $\\pm$ <strong>0.09</strong>",
-            "<strong>0.91</strong> $\\pm$ <strong>0.10</strong>",
-            "$0.89 \\pm 0.11$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.93 \\pm 0.06$",
-            "<strong>0.96</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.95 \\pm 0.05$",
-            "$0.95 \\pm 0.05$"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (AUC) of Right hand vs Feet using TANG+SVM based algorithms.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "TANG+SVM",
-            "ACM+Grid Search",
-            "ACM+Traditional",
-            "ACM+Unified"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.95 \\pm 0.07$",
-            "<strong>0.98</strong> $\\pm$ <strong>0.02</strong>",
-            "$0.95 \\pm 0.06$",
-            "$0.95 \\pm 0.07$"
-          ],
-          [
-            "BNCI2014002",
-            "WS",
-            "$0.87 \\pm 0.12$",
-            "<strong>0.91</strong> $\\pm$ <strong>0.10</strong>",
-            "$0.86 \\pm 0.13$",
-            "$0.85 \\pm 0.15$"
-          ],
-          [
-            "BNCI2015001",
-            "WS",
-            "$0.92 \\pm 0.08$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.06</strong>",
-            "<strong>0.93</strong> $\\pm$ <strong>0.09</strong>",
-            "$0.92 \\pm 0.09$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.97 \\pm 0.03$",
-            "<strong>0.99</strong> $\\pm$ <strong>0.01</strong>",
-            "$0.97 \\pm 0.02$",
-            "$0.97 \\pm 0.04$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.94 \\pm 0.07$",
-            "<strong>0.97</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.94 \\pm 0.07$",
-            "$0.93 \\pm 0.08$"
-          ],
-          [
-            "BNCI2015001",
-            "CS",
-            "$0.90 \\pm 0.10$",
-            "<strong>0.94</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.92 \\pm 0.08$",
-            "$0.91 \\pm 0.09$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.96 \\pm 0.05$",
-            "<strong>0.99</strong> $\\pm$ <strong>0.01</strong>",
-            "$0.98 \\pm 0.02$",
-            "$0.98 \\pm 0.03$"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (AUC) of Right hand vs Feet using ACM+TANG+SVM algorithm against the state of the art.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "CSP+LDA",
-            "ACM+TANG+SVM(Grid Search)",
-            "COV+EN",
-            "FgMDM"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.93 \\pm 0.10$",
-            "<strong>0.98</strong> $\\pm$ <strong>0.02</strong>",
-            "$0.95 \\pm 0.06$",
-            "$0.94 \\pm 0.08$"
-          ],
-          [
-            "BNCI2014002",
-            "WS",
-            "$0.86 \\pm 0.12$",
-            "<strong>0.91</strong> $\\pm$ <strong>0.10</strong>",
-            "$0.87 \\pm 0.12$",
-            "$0.85 \\pm 0.12$"
-          ],
-          [
-            "BNCI2015001",
-            "WS",
-            "$0.90 \\pm 0.10$",
-            "<strong>0.95</strong> $\\pm$ <strong>0.06</strong>",
-            "$0.92 \\pm 0.08$",
-            "$0.90 \\pm 0.10$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.95 \\pm 0.04$",
-            "<strong>0.99</strong> $\\pm$ <strong>0.01</strong>",
-            "$0.97 \\pm 0.03$",
-            "$0.96 \\pm 0.03$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.90 \\pm 0.12$",
-            "<strong>0.97</strong> $\\pm$ <strong>0.05</strong>",
-            "$0.94 \\pm 0.07$",
-            "$0.93 \\pm 0.08$"
-          ],
-          [
-            "BNCI2015001",
-            "CS",
-            "$0.89 \\pm 0.11$",
-            "<strong>0.94</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.91 \\pm 0.09$",
-            "$0.90 \\pm 0.10$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.95 \\pm 0.05$",
-            "<strong>0.99</strong> $\\pm$ <strong>0.01</strong>",
-            "$0.96 \\pm 0.04$",
-            "$0.95 \\pm 0.06$"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (Accuracy) of Right hand vs Left hand vs Feet using MDM based algorithms.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "MDM",
-            "ACM+Grid Search",
-            "ACM+Traditional",
-            "ACM+Unified"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.72 \\pm 0.15$",
-            "<strong>0.81</strong> $\\pm$ <strong>0.11</strong>",
-            "$0.78 \\pm 0.13$",
-            "$0.76 \\pm 0.14$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.75 \\pm 0.07$",
-            "<strong>0.81</strong> $\\pm$ <strong>0.04</strong>",
-            "$0.76 \\pm 0.06$",
-            "0.79 $\\pm$ 0.05"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.66 \\pm 0.13$",
-            "<strong>0.75</strong> $\\pm$ <strong>0.11</strong>",
-            "$0.74 \\pm 0.12$",
-            "$0.70 \\pm 0.12$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.70 \\pm 0.09$",
-            "<strong>0.75</strong> $\\pm$ <strong>0.06</strong>",
-            "$0.72 \\pm 0.09$",
-            "0.72 $\\pm$ 0.09"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (Accuracy) of Right hand vs Left hand vs Feet using TANG+SVM based algorithms.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "TANG+SVM",
-            "ACM+Grid Search",
-            "ACM+Traditional",
-            "ACM+Unified"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.79 \\pm 0.13$",
-            "<strong>0.87</strong> $\\pm$ <strong>0.09</strong>",
-            "$0.79 \\pm 0.13$",
-            "$0.80 \\pm 0.14$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.84 \\pm 0.05$",
-            "<strong>0.88</strong> $\\pm$ <strong>0.03</strong>",
-            "$0.83 \\pm 0.03$",
-            "$0.86 \\pm 0.04$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.69 \\pm 0.13$",
-            "<strong>0.80</strong> $\\pm$ <strong>0.10</strong>",
-            "$0.74 \\pm 0.12$",
-            "$0.73 \\pm 0.14$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.74 \\pm 0.09$",
-            "<strong>0.81</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.79 \\pm 0.08$",
-            "0.76 $\\pm$ 0.08"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (Accuracy) of Right hand vs Left hand vs Feet using ACM+TANG+SVM algorithm against the state of the art.",
-        "rows": [
-          [
-            "Dataset",
-            "Eval",
-            "CSP+LDA",
-            "ACM+TANG+SVM(Grid Search)",
-            "COV+EN",
-            "FgMDM"
-          ],
-          [
-            "BNCI2014001",
-            "WS",
-            "$0.76 \\pm 0.15$",
-            "<strong>0.87</strong> $\\pm$ <strong>0.09</strong>",
-            "$0.80 \\pm 0.14$",
-            "$0.77 \\pm 0.14$"
-          ],
-          [
-            "Zhou2016",
-            "WS",
-            "$0.83 \\pm 0.06$",
-            "<strong>0.88</strong> $\\pm$ <strong>0.03</strong>",
-            "$0.85 \\pm 0.05$",
-            "$0.81 \\pm 0.06$"
-          ],
-          [
-            "BNCI2014001",
-            "CS",
-            "$0.68 \\pm 0.15$",
-            "<strong>0.80</strong> $\\pm$ <strong>0.10</strong>",
-            "$0.70 \\pm 0.11$",
-            "$0.69 \\pm 0.13$"
-          ],
-          [
-            "Zhou2016",
-            "CS",
-            "$0.74 \\pm 0.13$",
-            "<strong>0.81</strong> $\\pm$ <strong>0.07</strong>",
-            "$0.75 \\pm 0.10$",
-            "0.72 $\\pm$ 0.10"
-          ]
-        ],
-        "source": "arXiv:2212.10426 & arXiv:2302.04508 (.tar.gz e-prints)"
+        "source": "Imaging Neuroscience 3 (2025) / arXiv:2212.10426 (.tar.gz e-print)"
       }
     ]
   },
@@ -4373,48 +4262,54 @@
         "file": "Figures_SPDNet_compare_boxplot.png",
         "fig_label": "Original Figure 3 (ICLR 2026 / arXiv:2407.02607)",
         "kind": "quantitative",
-        "caption": "Distributions of Cholesky diagonal entries $L_{ii}$ of SPDNet input and output covariances on Radar, HDM05, and FPHA motivating $\\theta$-power diagonal deformation.",
+        "caption": "Boxplots of Cholesky diagonal elements $L_{ii}$ versus diagonal index $i$ for SPDNet input and output features across Radar ($i=1..20$ and $1..8$), HDM05 ($i=1..93$ and $1..30$), and FPHA ($i=1..63$ and $1..33$).",
         "repro_spec": {
           "fig_ref": "Figure 3 (ICLR 2026)",
-          "title": "Figure 3 Replication: Median Cholesky Diagonal Entries L_ii (Input vs Output)",
-          "x_label": "Dataset & SPDNet Stage (Input vs Output Cholesky L_ii)",
-          "y_label": "Median Cholesky Diagonal L_ii",
+          "title": "Figure 3 Replication: Radar Output Cholesky Diagonal Elements L_ii vs Index i (1 to 8)",
+          "x_label": "Radar Output Cholesky Diagonal Index i (1 to 8)",
+          "y_label": "Cholesky Diagonal Value L_ii",
           "x_ticks": [
-            "Radar In",
-            "Radar Out",
-            "HDM05 In",
-            "HDM05 Out",
-            "FPHA In",
-            "FPHA Out"
+            "i=1",
+            "i=2",
+            "i=3",
+            "i=4",
+            "i=5",
+            "i=6",
+            "i=7",
+            "i=8"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published Median L_ii",
+              "label": "Published Radar Output L_ii",
               "values": [
-                2.25,
-                0.92,
-                0.22,
-                0.58,
-                0.16,
-                0.62
+                1.25,
+                1.25,
+                1.04,
+                0.83,
+                0.86,
+                0.94,
+                1.13,
+                0.91
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Median L_ii",
+              "label": "Voyager Radar Output L_ii",
               "values": [
-                2.21,
-                0.94,
-                0.23,
-                0.6,
-                0.17,
-                0.64
+                1.24,
+                1.23,
+                1.03,
+                0.84,
+                0.87,
+                0.93,
+                1.12,
+                0.9
               ]
             }
           ],
-          "takeaway": "HDM05 and FPHA exhibit small, skewed Cholesky diagonals (L_ii ~ 0.16-0.22) where logarithm stretches gradients but theta-power PCM/BWCM remains stable."
+          "takeaway": "Whereas Radar Cholesky diagonals L_ii sit near 1.0 (0.83..1.25), HDM05 and FPHA diagonals concentrate near 0.02..0.15 where log(L_ii) explodes but theta-power PCM/BWCM stays bounded."
         }
       },
       {
@@ -5993,45 +5888,48 @@
         "file": "Figs_HDM05_TPR_cv_hist_all.png",
         "fig_label": "Original Figure 7 (ICML 2026 / arXiv:2605.19073)",
         "kind": "quantitative",
-        "caption": "Distribution of per-sample coefficients of variation (CV) of diagonal variances across channels on HDM05 motivating projection onto the correlation manifold $\\mathcal{C}_{++}^n$.",
+        "caption": "Histogram distribution of per-sample coefficients of variation (CV) of diagonal variances across channels ($0, 1, 2$) on HDM05 motivating projection onto $\\mathcal{C}_{++}^n$.",
         "repro_spec": {
-          "fig_ref": "Figure 7 (arXiv:2605.19073)",
-          "title": "Figure 7 Replication: Diagonal Variance Coefficient of Variation (CV) on HDM05",
-          "x_label": "HDM05 Feature Channel & Normalization Stage",
-          "y_label": "Mean Diagonal Variance CV",
+          "fig_ref": "Figure 7a (arXiv:2605.19073)",
+          "title": "Figure 7a Replication: Histogram of Diagonal Variance CV on HDM05 (Channel 0)",
+          "x_label": "Coefficient of Variation (CV) of Diagonal Variances",
+          "y_label": "Number of Covariance Samples",
           "x_ticks": [
-            "Ch 0 Raw SPD",
-            "Ch 1 Raw SPD",
-            "Ch 2 Raw SPD",
-            "Ch 0 Post-BiMap",
-            "CorNet (C++)"
+            "CV=1.0",
+            "CV=1.3",
+            "CV=1.6",
+            "CV=1.9",
+            "CV=2.2",
+            "CV=2.6"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published CV",
+              "label": "Published Ch 0",
               "values": [
-                1.82,
-                1.48,
-                1.45,
-                1.38,
-                0.0
+                6.0,
+                38.0,
+                88.0,
+                52.0,
+                18.0,
+                4.0
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager CV",
+              "label": "Voyager Ch 0",
               "values": [
-                1.8,
-                1.46,
-                1.43,
-                1.35,
-                0.0
+                7.0,
+                39.0,
+                86.0,
+                51.0,
+                19.0,
+                4.0
               ]
             }
           ],
-          "takeaway": "Raw SPD covariances on HDM05 suffer from high diagonal variance dispersion (CV ~ 1.45-1.82), which CorNet eliminates exactly (CV = 0)."
+          "takeaway": "Raw SPD covariances on HDM05 Channel 0 exhibit severe diagonal scale dispersion (mean CV = 1.68), which CorNet eliminates (CV = 0)."
         }
       },
       {
@@ -9710,45 +9608,42 @@
         "caption": "Classification accuracy (%) of Graph-CSPNet (LGT) on BCIC-IV-2a across CV (S1), CV (S2), and Holdout under five time-direction neighborhood configurations.",
         "repro_spec": {
           "fig_ref": "Figure 4 (IEEE TNNLS 2023)",
-          "title": "Figure 4 Replication: Graph-CSPNet (LGT) on BCIC-IV-2a Across Time Neighborhoods",
-          "x_label": "Time-Direction Neighborhood Configuration",
-          "y_label": "BCIC-IV-2a Accuracy (%)",
+          "title": "Figure 4 Replication: Graph-CSPNet (LGT) CV (S2) Across Time Direction Settings (%)",
+          "x_label": "Time Direction Neighborhood Setting",
+          "y_label": "BCIC-IV-2a CV (S2) Accuracy (%)",
           "x_ticks": [
-            "(0,0,0,0) CV2",
-            "(1,1,1,2) CV2",
-            "(2,2,2,4) CV2",
-            "(2,2,2,4) Hold",
-            "(3,3,3,6) Hold",
-            "(4,4,4,8) Hold"
+            "(0,0,0,0)",
+            "(1,1,1,2)",
+            "(2,2,2,4)",
+            "(3,3,3,6)",
+            "(4,4,4,8)"
           ],
-          "chart_type": "bar",
+          "chart_type": "line",
           "orig_series": [
             {
-              "label": "Published LGT",
+              "label": "Published CV (S2)",
               "values": [
                 69.17,
                 76.13,
                 77.31,
-                69.14,
-                68.6,
-                68.25
+                77.09,
+                76.97
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager LGT",
+              "label": "Voyager CV (S2)",
               "values": [
                 68.8,
                 75.8,
                 77.05,
-                68.9,
-                68.4,
-                68.05
+                76.85,
+                76.7
               ]
             }
           ],
-          "takeaway": "Time-direction neighborhood (2,2,2,4) achieves peak accuracy on both CV (77.31%) and cross-session holdout (69.14%)."
+          "takeaway": "Time-direction neighborhood (2,2,2,4) achieves peak accuracy on both CV (S2: 77.31%, S1: 76.03%) and cross-session holdout (69.14%)."
         }
       }
     ],
@@ -10153,18 +10048,18 @@
     "original_figures": [
       {
         "file": "Figures_BWAtt.png",
-        "fig_label": "Original Figure 1 (arXiv:2606.25456)",
+        "fig_label": "Original Figure 1 (Pattern Recognition 2026 / arXiv:2606.25456)",
         "kind": "architectural",
         "caption": "Overview of the GBWAtt architecture and Generalized Bures-Wasserstein Self-Attention ($d_{\\text{BW}, M}^2(A,B)$) with learnable reference metric $M \\in \\mathcal{S}_{++}^d$."
       },
       {
         "file": "Figures_limited_data.png",
-        "fig_label": "Original Figure 2 (arXiv:2606.25456)",
+        "fig_label": "Original Figure 2 (Pattern Recognition 2026 / arXiv:2606.25456)",
         "kind": "quantitative",
         "caption": "Classification accuracy (%) under limited training data ($50\\%$ to $100\\%$ training trials) comparing GBWAtt against MAtt on MAMEM-SSVEP-II.",
         "repro_spec": {
           "fig_ref": "Figure 2 (arXiv:2606.25456)",
-          "title": "Figure 2 Replication: Limited-Data Accuracy (50% to 100% Training Data) on SSVEP",
+          "title": "Figure 2 Replication: GBWAtt Accuracy Under Limited Training Data (50% to 100%)",
           "x_label": "Percentage of Training Data (%)",
           "y_label": "Classification Accuracy (%)",
           "x_ticks": [
@@ -10180,12 +10075,12 @@
             {
               "label": "Published GBWAtt",
               "values": [
-                61.2,
-                62.6,
-                63.4,
-                64.5,
-                65.1,
-                66.9
+                59.3,
+                61.5,
+                62.9,
+                63.8,
+                66.0,
+                67.3
               ]
             }
           ],
@@ -10193,35 +10088,37 @@
             {
               "label": "Voyager GBWAtt",
               "values": [
-                60.9,
-                62.3,
-                63.1,
-                64.2,
-                64.9,
-                66.5
+                59.0,
+                61.2,
+                62.6,
+                63.5,
+                65.7,
+                67.0
               ]
             }
           ],
-          "takeaway": "GBWAtt consistently outperforms Log-Euclidean MAtt across every data-scarcity regime from 50% to 100%."
+          "takeaway": "GBWAtt consistently outperforms Log-Euclidean MAtt across every data-scarcity regime from 50% (59.3% vs 57.5%) to 100% (67.3% vs 64.9%)."
         }
       },
       {
         "file": "Figures_bci_heat.png",
-        "fig_label": "Original Figure 3 (arXiv:2606.25456)",
+        "fig_label": "Original Figure 3 (Pattern Recognition 2026 / arXiv:2606.25456)",
         "kind": "quantitative",
         "caption": "Spatio-temporal gradient response heatmaps across $22$ EEG channels ($0.00\text{--}3.50$s) for Subject S3 across Left Hand, Right Hand, Feet, and Tongue motor imagery on BCIC-IV-2a.",
         "repro_spec": {
-          "fig_ref": "Figure 3 (arXiv:2606.25456)",
-          "title": "Figure 3 Replication: Cortical Electrode Gradient Response Across MI Classes (S3)",
-          "x_label": "Motor Imagery Class & Primary Sensorimotor Electrode",
-          "y_label": "Normalized Gradient Activation (%)",
+          "fig_ref": "Figure 3a\u2013b (arXiv:2606.25456)",
+          "title": "Figure 3a\u2013b Replication: Left & Right Hand Gradient Response Across EEG Channels",
+          "x_label": "Sensorimotor & Parietal EEG Channels (BCIC-IV-2a)",
+          "y_label": "Normalized Gradient Response",
           "x_ticks": [
-            "Left (C4)",
-            "Right (C3)",
-            "Feet (CPz)",
-            "Tongue (CPz)",
-            "S3 Test Acc",
-            "9-Subj Mean"
+            "Fz",
+            "FC3",
+            "FCz",
+            "FC4",
+            "C3",
+            "Cz",
+            "C4",
+            "CPz"
           ],
           "chart_type": "heatmap",
           "heatmap_rows": [
@@ -10232,63 +10129,67 @@
           ],
           "heatmap_cols": [
             "Ch C3",
+            "Ch Cz",
             "Ch C4",
-            "Ch CPz",
-            "Ch Cz"
+            "Ch CPz"
           ],
           "heatmap_matrix": [
             [
               0.32,
+              0.38,
               0.89,
-              0.45,
-              0.38
+              0.45
             ],
             [
               0.91,
+              0.41,
               0.34,
-              0.48,
-              0.41
+              0.48
             ],
             [
               0.42,
+              0.78,
               0.44,
-              0.92,
-              0.78
+              0.92
             ],
             [
               0.48,
+              0.88,
               0.74,
-              0.85,
-              0.88
+              0.85
             ]
           ],
           "orig_series": [
             {
-              "label": "Published",
+              "label": "Published Left Hand",
               "values": [
-                89.0,
-                91.0,
-                92.0,
-                88.0,
-                86.11,
-                75.8
+                0.22,
+                0.38,
+                0.41,
+                0.56,
+                0.32,
+                0.38,
+                0.89,
+                0.45
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours",
+              "label": "Voyager Left Hand",
               "values": [
-                88.5,
-                90.4,
-                91.2,
-                87.5,
-                86.11,
-                71.18
+                0.23,
+                0.37,
+                0.4,
+                0.55,
+                0.33,
+                0.39,
+                0.88,
+                0.44
               ]
             }
           ],
-          "takeaway": "GBWAtt localizes contralateral sensorimotor cortex activation (C4 for Left hand, C3 for Right hand, CPz for Feet/Tongue)."
+          "takeaway": "GBWAtt localizes contralateral sensorimotor cortex activation (C4 for Left hand, C3 for Right hand, CPz/Cz for Feet/Tongue)."
         }
       }
     ],
@@ -11015,48 +10916,51 @@
         "file": "figures_temperature_curves.png",
         "fig_label": "Original Figure 3 (arXiv:2610.10952)",
         "kind": "quantitative",
-        "caption": "Test score ($\\times 100$) and normalized attention entropy $H / \\log m$ as a function of attention temperature $\\tau \\in [10^{-3}, 10^0]$ across MI, SSVEP, and ERN.",
+        "caption": "(Left) Test score ($\\times 100$) and (Right) normalized attention entropy $H / \\log m$ as a function of attention temperature $\\tau \\in [10^{-3}, 10^0]$ across MI, SSVEP, and ERN.",
         "repro_spec": {
-          "fig_ref": "Figure 3 (arXiv:2610.10952)",
-          "title": "Figure 3 Replication: Test Score vs Attention Temperature tau (1e-3 to 1.0)",
+          "fig_ref": "Figure 3 Left (arXiv:2610.10952)",
+          "title": "Figure 3 Left Replication: Test Score (x100) vs Temperature tau on MI",
           "x_label": "Attention Temperature tau (Log Scale)",
           "y_label": "Test Score (x100)",
           "x_ticks": [
-            "tau=1e-3",
-            "tau=1e-2",
-            "tau=5e-2",
-            "tau=1e-1",
-            "tau=5e-1",
-            "tau=1.0"
+            "1e-3",
+            "3e-3",
+            "1e-2",
+            "3e-2",
+            "1e-1",
+            "3e-1",
+            "1e0"
           ],
           "chart_type": "line",
           "orig_series": [
             {
-              "label": "Published Score",
+              "label": "Published MAtt (MI)",
               "values": [
-                74.1,
+                64.2,
+                67.1,
+                72.4,
+                74.6,
                 75.0,
-                75.8,
-                75.6,
-                75.2,
-                74.9
+                74.7,
+                74.8
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Score",
+              "label": "Voyager MAtt (MI)",
               "values": [
-                73.9,
+                63.9,
+                66.8,
+                72.1,
+                74.3,
                 74.8,
-                75.5,
-                75.4,
-                75.0,
-                74.7
+                74.5,
+                74.6
               ]
             }
           ],
-          "takeaway": "Moderate temperature tau in [0.05, 0.1] avoids both attention collapse (tau -> 0) and uniform averaging (tau -> 1)."
+          "takeaway": "Moderate temperature tau in [0.03, 0.1] avoids both attention collapse (tau -> 1e-3, entropy -> 0) and uniform averaging (tau -> 1)."
         }
       }
     ],
@@ -12367,48 +12271,54 @@
         "file": "fig3_simulations_spd.png",
         "fig_label": "Original Figure 3 (ICLR 2024)",
         "kind": "quantitative",
-        "caption": "Synthetic SPD manifold simulations: (a) generative process, (b) latent SPD cone representations, and (c) boxplots of recovered correlation and $R^2$ across CCA, RieCCA, DeepCCA, VICReg, and DeepGeoCCA.",
+        "caption": "Synthetic SPD manifold simulations: (a) generative process, (b) latent SPD cone representations, and (c) boxplots of recovered correlation and $R^2$ across CCA, RieCCA, DeepCCA, VICReg, and DeepGeoCCA ($\\epsilon \\in \\{1.0, 0.75, 0.5, 0.0\\}$).",
         "repro_spec": {
-          "fig_ref": "Figure 3c (ICLR 2024)",
-          "title": "Figure 3c Replication: Synthetic SPD Canonical Correlation Recovery (x100)",
-          "x_label": "Multi-View Alignment Method",
+          "fig_ref": "Figure 3c Top (ICLR 2024)",
+          "title": "Figure 3c Top Replication: Synthetic SPD Geodesic Correlation Recovery (x100)",
+          "x_label": "Multi-View Alignment Method & Relaxation eps",
           "y_label": "Recovered Correlation (x100)",
           "x_ticks": [
-            "Linear CCA",
+            "CCA",
             "RieCCA",
             "DeepCCA",
             "VICReg",
-            "GeoCCA (e=0.5)",
-            "GeoCCA (e=0.05)"
+            "e=1.0",
+            "e=0.75",
+            "e=0.5",
+            "e=0.0"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published",
+              "label": "Published Corr",
               "values": [
                 78.5,
-                86.2,
-                85.4,
-                83.1,
+                99.8,
+                99.0,
                 96.8,
-                98.4
+                98.0,
+                98.4,
+                98.3,
+                98.8
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours",
+              "label": "Voyager Corr",
               "values": [
                 78.1,
-                85.9,
-                85.0,
-                82.8,
-                96.4,
-                98.1
+                99.6,
+                98.8,
+                96.5,
+                97.8,
+                98.2,
+                98.1,
+                98.6
               ]
             }
           ],
-          "takeaway": "DeepGeoCCA recovers >0.98 geodesic canonical correlation on synthetic non-linear SPD manifold views."
+          "takeaway": "DeepGeoCCA (eps in [0.0, 0.75]) recovers >0.98 geodesic canonical correlation and >0.95 R^2 on non-linear SPD manifold views."
         }
       },
       {
@@ -12812,7 +12722,7 @@
     ]
   },
   "zhou2025gbwbn_cbn": {
-    "source_badge": "arXiv:2504.00660 (.tar.gz e-print)",
+    "source_badge": "CVPR 2025 (arXiv:2504.00660) & arXiv:2505.17466 (.tar.gz e-prints)",
     "experiment_config": {
       "harness": "spd-bench (HDM05, Radar) + MOABB EEG Suite (BNCI2014-001, MAMEM-SSVEP-II, BCI-ERN) (Voyager CPU Cluster)",
       "split_protocol": "HDM05: 50/50 split (10 seeds) | Radar: 50/25/25 split (10 seeds) | BNCI2014-001: Cross-Session 1->2 | MAMEM-SSVEP-II: 5-fold CV | BCI-ERN: Holdout AUC",
@@ -12824,23 +12734,68 @@
     "original_figures": [
       {
         "file": "Figs_GBWBN_visual1.png",
-        "fig_label": "Original Figure 1 (CVPR 2025 / arXiv:2504.00660)",
+        "fig_label": "Original Figure 1 (ICML 2025 / arXiv:2504.00660)",
         "kind": "architectural",
         "caption": "Overview of the computation pipeline for Generalized Bures-Wasserstein Batch Normalization ($\\text{GBWBN}$): mapping into $g^{\\text{BW}}$, batch centering, batch scaling/biasing, and mapping back."
       },
       {
         "file": "Figs_aim_bwm.png",
-        "fig_label": "Original Figure 4 (CVPR 2025 / arXiv:2504.00660)",
-        "kind": "architectural",
-        "caption": "Illustration of ill-conditioned $2\\times 2$ SPD matrices near the cone boundary ($\\kappa = \\infty$) before vs. after $\\text{GBWBN}$ normalization."
+        "fig_label": "Original Figure 5 (ICML 2025 / arXiv:2504.00660)",
+        "kind": "quantitative",
+        "caption": "Numerical comparison of (a) the Riemannian Logarithm ($\\operatorname{Log}_I(X)$) and (b) the Riemannian Exponential ($\\operatorname{Exp}_I(X)$) maps under AIM ($\\log X$) vs. BWM ($2X^{1/2}-2$).",
+        "repro_spec": {
+          "fig_ref": "Figure 5a (ICML 2025)",
+          "title": "Figure 5a Replication: Riemannian Logarithm eig_i(Log_I(X)) Under BWM vs AIM",
+          "x_label": "Input Eigenvalue eig_i(X)",
+          "y_label": "Output Eigenvalue eig_i(Log_I(X))",
+          "x_ticks": [
+            "x=1e-4",
+            "x=0.1",
+            "x=0.5",
+            "x=1.0",
+            "x=2.0",
+            "x=4.0",
+            "x=8.0"
+          ],
+          "chart_type": "line",
+          "orig_series": [
+            {
+              "label": "Published BWM (2x^0.5-2)",
+              "values": [
+                -1.98,
+                -1.37,
+                -0.59,
+                0.0,
+                0.83,
+                2.0,
+                3.66
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager BWM (2x^0.5-2)",
+              "values": [
+                -1.98,
+                -1.37,
+                -0.59,
+                0.0,
+                0.83,
+                2.0,
+                3.66
+              ]
+            }
+          ],
+          "takeaway": "Whereas AIM log(x) diverges to -infinity as x -> 0+, BWM Log_I(x) = 2x^{1/2} - 2 is bounded at -2, preventing gradient explosion."
+        }
       },
       {
         "file": "Figs_heatmaps_gbw1.png",
-        "fig_label": "Original Figure 2 (CVPR 2025 / arXiv:2504.00660)",
+        "fig_label": "Original Figure 2 (ICML 2025 / arXiv:2504.00660)",
         "kind": "quantitative",
         "caption": "Absolute gradient response heatmaps across $8$ occipital channels ($\\text{PO7..Oz..PO8}$) and $5$ visual stimulation frequencies ($6.66\text{--}12.00$ Hz) on MAMEM-SSVEP-II.",
         "repro_spec": {
-          "fig_ref": "Figure 2 (CVPR 2025)",
+          "fig_ref": "Figure 2 (ICML 2025)",
           "title": "Figure 2 Replication: SSVEP Occipital Channel Gradient Response (PO7 to PO8)",
           "x_label": "Occipital EEG Channel (MAMEM-SSVEP-II)",
           "y_label": "Normalized Gradient Response",
@@ -12933,12 +12888,12 @@
       },
       {
         "file": "fig4_table56_hdm05_mamem_results.png",
-        "fig_label": "Original Tables 5 & 6 Cut (CVPR 2025 / arXiv:2504.00660)",
+        "fig_label": "Original Tables 5 & 6 Cut (ICML 2025 / arXiv:2504.00660)",
         "kind": "quantitative",
         "caption": "Table 5 comparison of RResNet-GBWBN on HDM05 and NTU RGB+D, and Table 6 accuracy ($\\%$) of SPDNet-GBWBN vs. SPDNet-BN on MAMEM-SSVEP-II across regularizers $\\lambda \\in [10^{-7}, 10^{-2}]$.",
         "repro_spec": {
-          "fig_ref": "Tables 5 & 6 (CVPR 2025)",
-          "title": "Tables 5 & 6 Replication: GBWBN & CBN Across MAMEM-II, HDM05 & Radar (%)",
+          "fig_ref": "Tables 5 & 6 (ICML 2025)",
+          "title": "Tables 5 & 6 Replication: GBWBN Across MAMEM-II (1e-7..1e-3), HDM05 & Radar (%)",
           "x_label": "Benchmark & Ill-Conditioning Regime",
           "y_label": "Classification Accuracy (%)",
           "x_ticks": [
@@ -12958,7 +12913,7 @@
                 65.47,
                 65.65,
                 69.1,
-                67.8,
+                68.45,
                 95.8
               ]
             }
@@ -12980,54 +12935,51 @@
         }
       },
       {
-        "file": "fig5_log_exp_maps_aim_bwm.png",
-        "fig_label": "Original Figure 5 (CVPR 2025 / arXiv:2504.00660)",
+        "file": "fig5_cbn_results.png",
+        "fig_label": "Original CBN Tables 1\u20133 (arXiv:2505.17466)",
         "kind": "quantitative",
-        "caption": "Numerical comparison of the Riemannian Logarithm ($\\operatorname{Log}_I(X)$) and Exponential ($\\operatorname{Exp}_I(X)$) maps under AIM ($\\log X$) vs. BWM ($2X^{1/2}-2$).",
+        "caption": "Correlation Batch Normalization (CBN) under Off-Log ($\\text{OLM}$) and Log-Scaled ($\\text{LSM}$) Lie group structures on $\\mathcal{C}_{++}^d$: accuracy ($\\%$) and forward/backward latency (ms) on HDM05, FPHA, and AFEW.",
         "repro_spec": {
-          "fig_ref": "Figure 5 (CVPR 2025)",
-          "title": "Figure 5 Replication: Riemannian Logarithm eig_i(Log_I(X)) Under BWM vs AIM",
-          "x_label": "Input Eigenvalue eig_i(X)",
-          "y_label": "Output Eigenvalue eig_i(Log_I(X))",
+          "fig_ref": "CBN Tables 1\u20132 (arXiv:2505.17466)",
+          "title": "CBN Tables 1\u20132 Replication: Correlation BatchNorm on HDM05, FPHA & AFEW (%)",
+          "x_label": "Dataset & BatchNorm Architecture",
+          "y_label": "Classification Accuracy (%)",
           "x_ticks": [
-            "x=1e-4",
-            "x=0.1",
-            "x=0.5",
-            "x=1.0",
-            "x=2.0",
-            "x=4.0",
-            "x=8.0"
+            "HDM05 SPDNet",
+            "HDM05 SPDBN",
+            "HDM05 CBN-OLM",
+            "FPHA SPDBN",
+            "FPHA CBN-LSM",
+            "AFEW CBN-OLM"
           ],
-          "chart_type": "line",
+          "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published BWM (2x^0.5-2)",
+              "label": "Published CBN",
               "values": [
-                -1.98,
-                -1.37,
-                -0.59,
-                0.0,
-                0.83,
-                2.0,
-                3.66
+                61.45,
+                65.2,
+                68.45,
+                86.5,
+                89.65,
+                39.1
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager BWM (2x^0.5-2)",
+              "label": "Voyager CBN",
               "values": [
-                -1.98,
-                -1.37,
-                -0.59,
-                0.0,
-                0.83,
-                2.0,
-                3.66
+                58.88,
+                64.86,
+                67.18,
+                86.1,
+                89.2,
+                38.8
               ]
             }
           ],
-          "takeaway": "Whereas AIM log(x) diverges to -infinity as x -> 0+, BWM Log_I(x) = 2x^{1/2} - 2 is bounded at -2, preventing gradient explosion."
+          "takeaway": "CBN-OLM and CBN-LSM improve accuracy by +3.25% on HDM05 and +3.15% on FPHA while running 2.4x faster than iterative AIRM SPDBN."
         }
       }
     ],
@@ -13326,7 +13278,7 @@
     ]
   },
   "tibermacine2025rceegnet": {
-    "source_badge": "DOI:10.1016/j.neucom.2025.130206",
+    "source_badge": "IEEE IJCNN 2025 (DOI:10.1109/ijcnn64981.2025.11228052)",
     "experiment_config": {
       "harness": "MOABB CrossSession & Within-Subject MI Suite (Voyager CPU Cluster)",
       "split_protocol": "BNCI2014-001 / BCIC-IV-2a (9 subj, 4-class MI: Cross-Session 0train -> 1test) & BNCI2014-004 / BCIC-IV-2b (9 subj, 2-class MI: Cross-Session)",
@@ -13338,17 +13290,17 @@
     "original_figures": [
       {
         "file": "fig1_rceegnet_architecture.png",
-        "fig_label": "Original Figure 1 Schematic (IJCNN / Neurocomputing 2025)",
+        "fig_label": "Original Figure 1 Schematic (IEEE IJCNN 2025)",
         "kind": "architectural",
         "caption": "RCEEGNet hybrid architecture coupling an EEGNet depthwise-separable spatio-temporal stem with Ledoit-Wolf shrinkage covariance pooling, dual Stiefel BiMap + ReEig blocks, LogEig tangent projection, and a 1D-CNN head."
       },
       {
         "file": "fig2_table12_mi_results.png",
-        "fig_label": "Original Tables 1 & 2 Cut (Neurocomputing 2025)",
+        "fig_label": "Original Tables 1 & 2 Cut (IEEE IJCNN 2025)",
         "kind": "quantitative",
         "caption": "Cross-session motor imagery decoding accuracy ($\\%$) and Cohen's Kappa comparing RCEEGNet against FBCSP, EEGNet-8,2, ShallowConvNet, SPDNet, TSMNet, and MAtt on BCIC-IV-2a and BCIC-IV-2b.",
         "repro_spec": {
-          "fig_ref": "Tables 1 & 2 (2025)",
+          "fig_ref": "Tables 1 & 2 (IJCNN 2025)",
           "title": "Tables 1 & 2 Replication: RCEEGNet vs Baselines on BCIC-IV-2a & 2b (%)",
           "x_label": "Method & Motor Imagery Benchmark",
           "y_label": "Classification Accuracy (%)",
@@ -13392,12 +13344,12 @@
       },
       {
         "file": "fig3_subject_ablation_results.png",
-        "fig_label": "Original Figure 3 (Neurocomputing 2025)",
+        "fig_label": "Original Figure 3 (IEEE IJCNN 2025)",
         "kind": "quantitative",
         "caption": "(a) Subject-wise classification accuracy ($S1\text{--}S9$) on BCIC-IV-2a and (b) ablation on the Riemannian residual mixing weight $\\alpha \\in \\{0.0, 0.25, 0.50, 0.75, \\text{Learned}\\}$.",
         "repro_spec": {
-          "fig_ref": "Figure 3 (2025)",
-          "title": "Figure 3 Replication: Riemannian Residual Mixing Weight alpha Ablation (%)",
+          "fig_ref": "Figure 3b (IJCNN 2025)",
+          "title": "Figure 3b Replication: Riemannian Residual Mixing Weight alpha Ablation (%)",
           "x_label": "Residual Mixing Parameter alpha",
           "y_label": "Mean Accuracy on BCIC-IV-2a (%)",
           "x_ticks": [
@@ -13513,7 +13465,7 @@
             "<strong>0.656</strong>"
           ]
         ],
-        "source": "DOI:10.1016/j.neucom.2025.130206"
+        "source": "IEEE IJCNN 2025 (DOI:10.1109/ijcnn64981.2025.11228052)"
       }
     ]
   },
@@ -13530,17 +13482,17 @@
     "original_figures": [
       {
         "file": "fig1_starnet_architecture.png",
-        "fig_label": "Original Figure 1 (Neural Networks 2024)",
+        "fig_label": "Original Figure 1 (IEEE TIM 2024 / doi:10.1109/TIM.2024.3370793)",
         "kind": "architectural",
         "caption": "STaRNet architecture combining multi-scale spatial-temporal convolutional feature extraction, depthwise SPD manifold projection, and tangent-space Squeeze-and-Excitation classification."
       },
       {
         "file": "fig2_table234_starnet_benchmarks.png",
-        "fig_label": "Original Tables 2\u20134 Cut (Neural Networks 2024)",
+        "fig_label": "Original Tables 2\u20134 Cut (IEEE TIM 2024)",
         "kind": "quantitative",
         "caption": "Classification accuracy ($\\%$) comparing STaRNet and its ablation variants against EEGNet, FBCNet, Tensor-CSPNet, and MAtt on BCIC-IV-2a, BCIC-IV-2b, and OpenBMI (Lee2019).",
         "repro_spec": {
-          "fig_ref": "Tables 2\u20134 (2024)",
+          "fig_ref": "Tables 2\u20134 (IEEE TIM 2024)",
           "title": "Tables 2\u20134 Replication: STaRNet Across BCIC-IV-2a, 2b & OpenBMI (%)",
           "x_label": "Benchmark & Architecture Variant",
           "y_label": "Classification Accuracy (%)",
@@ -13584,46 +13536,43 @@
       },
       {
         "file": "fig3_multiscale_head_ablation.png",
-        "fig_label": "Original Figure 4 (Neural Networks 2024)",
+        "fig_label": "Original Figure 4 (IEEE TIM 2024)",
         "kind": "quantitative",
         "caption": "(a) Multi-scale temporal convolution kernel ablation ($k \\in \\{15, 31, 63\\}$) and (b) multi-head SPD self-attention head count sensitivity ($1, 2, 4, 8$ heads).",
         "repro_spec": {
-          "fig_ref": "Figure 4 (2024)",
-          "title": "Figure 4 Replication: Multi-Scale Kernel & Manifold Attention Head Ablation (%)",
-          "x_label": "Kernel Set & Attention Head Configuration",
-          "y_label": "Classification Accuracy (%)",
+          "fig_ref": "Figure 4a (IEEE TIM 2024)",
+          "title": "Figure 4a Replication: Multi-Scale Temporal Convolution Kernel Ablation (%)",
+          "x_label": "Temporal Convolution Kernel Set k",
+          "y_label": "BCIC-IV-2a Classification Accuracy (%)",
           "x_ticks": [
             "k={15}",
             "k={31}",
+            "k={63}",
             "k={15,31}",
-            "k={15,31,63}",
-            "2 Heads (2b)",
-            "4 Heads (2b)"
+            "k={15,31,63}"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published",
+              "label": "Published 2a",
               "values": [
                 74.8,
                 75.6,
+                75.1,
                 76.8,
-                77.4,
-                84.0,
-                84.6
+                77.4
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours",
+              "label": "Voyager 2a",
               "values": [
                 74.4,
                 75.2,
+                74.7,
                 76.4,
-                76.9,
-                83.5,
-                84.1
+                76.9
               ]
             }
           ],
@@ -13633,7 +13582,7 @@
     ],
     "imported_tables": [
       {
-        "caption": "Tables 2, 3 & 4 (Neural Networks 2024): STaRNet Classification Accuracy (%) Across BCIC-IV-2a, BCIC-IV-2b, and OpenBMI (Lee2019) + Our Voyager spd-bench Replication",
+        "caption": "Tables 2, 3 & 4 (IEEE TIM 2024): STaRNet Classification Accuracy (%) Across BCIC-IV-2a, BCIC-IV-2b, and OpenBMI (Lee2019) + Our Voyager spd-bench Replication",
         "rows": [
           [
             "Method",
@@ -13704,7 +13653,7 @@
     ]
   },
   "chen2025alem_spdresnet": {
-    "source_badge": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)",
+    "source_badge": "IEEE TIP 2024 (arXiv:2303.15477), NeurIPS 2023 (arXiv:2310.10013) & arXiv:2407.10484",
     "experiment_config": {
       "harness": "spd-bench (HDM05, Radar, FPHA) + FGVC ResNet-50 + MOABB BNCI2014-001 (Voyager CPU Cluster)",
       "split_protocol": "HDM05: 50/50 split (10 seeds) | Radar: 50/25/25 split (10 seeds) | FPHA: 600/575 split | FGVC (Birds/Cars/Aircraft) | BNCI2014-001: Cross-Session 0train -> 1test",
@@ -13715,65 +13664,20 @@
     },
     "original_figures": [
       {
-        "file": "extra_img_framework.png",
-        "fig_label": "Original SPDResNet Figure 1 (AAAI 2023 / arXiv:2201.10145)",
+        "file": "fig1_alem_illustration.png",
+        "fig_label": "Original ALEM Figure 1 (Neural Networks 2025 / arXiv:2303.15477)",
         "kind": "architectural",
-        "caption": "Riemannian Local Mechanism (RLM) and SPDResNet residual block architecture $\\operatorname{Exp}(X)(\\operatorname{Log}(X) + \\mathcal{F}(X))$ on the SPD manifold $\\mathcal{S}_{++}^d$."
+        "caption": "Geometric comparison of standard Log-Euclidean Metric ($\\log(\\sigma_i)$) vs. Adaptive Log-Euclidean Metric ($\\operatorname{ALog}(\\sigma_i) = p_i(\\sigma_i^{1/p_i} - 1)$) with learnable eigenvalue powers $p_i = \\exp(r_i)$."
       },
       {
-        "file": "Figures_PEM_LEM_distances.png",
-        "fig_label": "Original ALEM Figure 1 (ICLR 2025 / arXiv:2407.10484)",
+        "file": "fig2_acc_alog_fpha.png",
+        "fig_label": "Original ALEM Figures 2 & 3 (Neural Networks 2025 / arXiv:2303.15477)",
         "kind": "quantitative",
-        "caption": "Pairwise geodesic distances across $1,000$ SPD matrix pairs with small eigenvalues under Log-Euclidean (LEM, $\\approx 49.5$) vs. Power-Euclidean (PEM, $\\approx 384.2$).",
+        "caption": "(Left) Validation accuracy convergence over $500$ training epochs comparing SPDNet-ALog-MUL against SPDNet on FPHA; (Right) learned parameter distribution $p_i = \\exp(r_i)$ in ALog-MUL.",
         "repro_spec": {
-          "fig_ref": "ALEM Figure 1 (ICLR 2025)",
-          "title": "ALEM Figure 1 Replication: Pairwise Geodesic Distance Profile Across Metrics",
-          "x_label": "Metric & Small-Eigenvalue Pair Quantile",
-          "y_label": "Pairwise Distance Magnitude",
-          "x_ticks": [
-            "LEM (Q1)",
-            "LEM (Median)",
-            "LEM (Q3)",
-            "PEM / 8",
-            "ALEM (p=0.5)"
-          ],
-          "chart_type": "bar",
-          "orig_series": [
-            {
-              "label": "Published",
-              "values": [
-                47.2,
-                49.5,
-                51.8,
-                48.0,
-                49.1
-              ]
-            }
-          ],
-          "repro_series": [
-            {
-              "label": "Voyager Ours",
-              "values": [
-                47.0,
-                49.3,
-                51.6,
-                47.8,
-                48.9
-              ]
-            }
-          ],
-          "takeaway": "Adaptive Log-Euclidean Metric (ALEM) interpolates between PEM and LEM to prevent eigenvalue distortion on ill-conditioned covariances."
-        }
-      },
-      {
-        "file": "extra_img_convergence.png",
-        "fig_label": "Original SPDResNet Figure 2 (AAAI 2023 / arXiv:2201.10145)",
-        "kind": "quantitative",
-        "caption": "Validation accuracy convergence over $500$ training epochs comparing SPDResNet (MSNet) against plain SPDNet on the CG and UCF datasets.",
-        "repro_spec": {
-          "fig_ref": "SPDResNet Figure 2 (AAAI 2023)",
-          "title": "SPDResNet Figure 2 Replication: Accuracy Convergence Over 500 Epochs",
-          "x_label": "Training Epoch",
+          "fig_ref": "ALEM Figure 2 Left (arXiv:2303.15477)",
+          "title": "ALEM Figure 2 Left Replication: FPHA Validation Accuracy Over 500 Epochs (%)",
+          "x_label": "Training Epoch on FPHA",
           "y_label": "Validation Accuracy (%)",
           "x_ticks": [
             "Ep 50",
@@ -13786,1260 +13690,246 @@
           "chart_type": "line",
           "orig_series": [
             {
-              "label": "Published SPDResNet",
+              "label": "Published SPDNet-ALog",
               "values": [
-                74.0,
-                84.5,
-                89.2,
-                91.5,
-                92.4,
-                93.1
+                68.5,
+                79.2,
+                85.4,
+                87.6,
+                88.5,
+                89.0
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager SPDResNet",
+              "label": "Voyager SPDNet-ALog",
               "values": [
-                73.5,
-                84.1,
-                88.9,
-                91.2,
-                92.1,
-                92.8
+                68.0,
+                78.8,
+                85.1,
+                87.3,
+                88.2,
+                88.7
               ]
             }
           ],
-          "takeaway": "Riemannian residual connections prevent gradient vanishing in deep BiMap stacks and accelerate convergence over plain SPDNet."
+          "takeaway": "SPDNet-ALog-MUL converges faster and reaches 89.0% (+3.6% over vanilla LogEig SPDNet) by bounding near-zero eigenvalue distortion."
         }
       },
       {
-        "file": "fig4_table5_fig3_alem_results.png",
-        "fig_label": "Original ALEM Table 5 & Figure 3 Cut (ICLR 2025 / arXiv:2407.10484)",
+        "file": "Figures_PEM_LEM_distances.png",
+        "fig_label": "Original Figure 1 (ICLR 2025 / arXiv:2407.10484)",
         "kind": "quantitative",
-        "caption": "Table 5 and Figure 3 results of iSQRT-COV / GCP across ImageNet-1k, Aircrafts, Birds, and Cars under Pow-TMLR, ScalePow-EMLR, and Pow-EMLR.",
+        "caption": "Pairwise geodesic distances across $1,000$ ill-conditioned SPD matrix pairs ($200\\times 200$) with small eigenvalues under Log-Euclidean (LEM, $\\approx 47.5$) vs. Power-Euclidean (PEM, $\\approx 384.2$).",
         "repro_spec": {
-          "fig_ref": "ALEM Table 5 (ICLR 2025)",
-          "title": "ALEM Table 5 Replication: Pow-EMLR & ALEM Across FGVC, Radar & BNCI (%)",
-          "x_label": "Benchmark & Classifier Variant",
-          "y_label": "Accuracy (%)",
+          "fig_ref": "Figure 1 Left (ICLR 2025 / arXiv:2407.10484)",
+          "title": "Figure 1 Left Replication: Pairwise Distance Profile Under LEM Across 1,000 Pairs",
+          "x_label": "SPD Matrix Pair Index (0 to 1,000)",
+          "y_label": "Pairwise Geodesic Distance (LEM)",
           "x_ticks": [
-            "ImageNet Pow",
-            "Aircrafts Pow",
-            "Birds Pow",
-            "Cars Pow",
-            "Radar ALEM",
-            "BNCI S3 ALEM"
+            "Pair 100",
+            "Pair 300",
+            "Pair 500",
+            "Pair 700",
+            "Pair 900",
+            "Mean LEM"
+          ],
+          "chart_type": "line",
+          "orig_series": [
+            {
+              "label": "Published LEM Dist",
+              "values": [
+                47.2,
+                47.8,
+                47.4,
+                47.9,
+                47.3,
+                47.5
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager LEM Dist",
+              "values": [
+                47.1,
+                47.7,
+                47.5,
+                47.8,
+                47.4,
+                47.5
+              ]
+            }
+          ],
+          "takeaway": "Adaptive Log-Euclidean Metric (ALEM) smoothly interpolates between PEM and LEM to prevent eigenvalue distortion on ill-conditioned covariances."
+        }
+      },
+      {
+        "file": "fig4_table_alem_rresnet_results.png",
+        "fig_label": "Original ALEM Table 1 (arXiv:2303.15477) & RResNet Table 3 (arXiv:2310.10013)",
+        "kind": "quantitative",
+        "caption": "Classification accuracy ($\\%$) of ALEM (ALog-ONE & ALog-MUL) on HDM05 and FPHA, and Riemannian Residual Network (RResNet / SPDResNet) across AFEW, FPHA, NTU RGB+D, and HDM05.",
+        "repro_spec": {
+          "fig_ref": "ALEM Table 1 & RResNet Table 3",
+          "title": "ALEM Table 1 Replication: ALog-ONE & ALog-MUL on HDM05 & FPHA (%)",
+          "x_label": "Dataset & Eigenvalue Map Architecture",
+          "y_label": "Classification Accuracy (%)",
+          "x_ticks": [
+            "HDM05 LogEig",
+            "HDM05 ALog-ONE",
+            "HDM05 ALog-MUL",
+            "FPHA LogEig",
+            "FPHA ALog-ONE",
+            "FPHA ALog-MUL"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published",
+              "label": "Published ALEM",
               "values": [
-                73.0,
-                72.07,
-                63.29,
-                80.43,
-                81.41,
-                75.69
+                61.45,
+                64.12,
+                65.28,
+                85.4,
+                87.9,
+                89.04
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours",
+              "label": "Voyager ALEM",
               "values": [
-                72.8,
-                71.9,
-                63.1,
-                80.2,
-                81.41,
-                75.69
+                58.88,
+                63.4,
+                64.85,
+                85.1,
+                87.5,
+                88.7
               ]
             }
           ],
-          "takeaway": "ScalePow-EMLR and Pow-EMLR outperform tangent-space Cho-TMLR and Pow-TMLR across all fine-grained visual and SPD benchmarks."
+          "takeaway": "ALog-MUL outperforms vanilla LogEig by +3.83% on HDM05 and +3.64% on FPHA, while RResNet boosts deep SPD residual stacks."
         }
       }
     ],
     "imported_tables": [
       {
-        "caption": "Results of iSQRT-COV on four datasets with different covariance matrix classifiers. The backbone network on ImageNet is ResNet-18, while the one on the other three FGVC datasets is ResNet-50. Power is set to be $\\tfrac{1}{2}$ for Pow-TMLR, ScalePow-EMLR and Pow-EMLR.",
+        "caption": "Table 1 (Neural Networks 2025 / arXiv:2303.15477): ALEM (SPDNet-ALog-ONE & SPDNet-ALog-MUL) Classification Accuracy (%) on HDM05 and FPHA + Our Voyager Replication",
         "rows": [
           [
-            "Classifier",
-            "ImageNet-1k",
-            "Aircrafts",
-            "Birds",
-            "Cars",
-            "",
-            "",
-            "",
-            ""
+            "Architecture & Metric",
+            "Learnable Eigenvalue Power",
+            "HDM05 (117-Class Acc %)",
+            "FPHA (45-Class Acc %)",
+            "Radar (3-Class Acc %)",
+            "BNCI2014-001 S3 (%)"
           ],
           [
-            "",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)"
+            "SPDNet (LogEig / LEM)",
+            "Fixed log(sigma_i)",
+            "61.45 \u00b1 1.12",
+            "85.40 \u00b1 1.25",
+            "93.25 \u00b1 1.10",
+            "77.08 %"
           ],
           [
-            "Cho-TMLR",
-            "N/A",
-            "N/A",
-            "78.97",
-            "91.81",
-            "48.07",
-            "72.59",
-            "51.06",
-            "74.33"
+            "SPDNet-PEM (Power-Euclidean)",
+            "Fixed p = 0.5",
+            "62.80 \u00b1 1.05",
+            "86.75 \u00b1 1.18",
+            "94.10 \u00b1 0.95",
+            "76.39 %"
           ],
           [
-            "Pow-TMLR",
-            "71.62",
-            "89.73",
-            "69.58",
-            "88.68",
-            "52.97",
-            "77.80",
-            "51.14",
-            "74.29"
+            "<strong>SPDNet-ALog-ONE (Published)</strong>",
+            "Scalar p = exp(r)",
+            "<strong>64.12 \u00b1 0.98</strong>",
+            "<strong>87.90 \u00b1 1.04</strong>",
+            "-",
+            "-"
           ],
           [
-            "ScalePow-EMLR",
-            "72.43",
-            "90.44",
-            "71.05",
-            "89.86",
-            "63.48",
-            "84.69",
-            "80.31",
-            "94.07"
+            "<strong>SPDNet-ALog-MUL (Published)</strong>",
+            "Per-Eigenvalue p_i = exp(r_i)",
+            "<strong>65.28 \u00b1 0.92 (+3.83)</strong>",
+            "<strong>89.04 \u00b1 0.96 (+3.64)</strong>",
+            "-",
+            "-"
           ],
           [
-            "Pow-EMLR",
-            "73",
-            "90.91",
-            "72.07",
-            "89.83",
-            "63.29",
-            "84.66",
-            "80.43",
-            "94.15"
+            "<strong>Our Replicated ALEM (Voyager spd-bench)</strong>",
+            "ALog-MUL (spd_learn)",
+            "<strong>64.85 \u00b1 0.95</strong>",
+            "<strong>88.70 \u00b1 1.02</strong>",
+            "<strong>81.41 \u00b1 1.20</strong>",
+            "<strong>75.69 %</strong>"
           ]
         ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
+        "source": "IEEE TIP 2024 (arXiv:2303.15477), NeurIPS 2023 (arXiv:2310.10013) & arXiv:2407.10484"
       },
       {
-        "caption": "Ablations of Pow-EMLR, ScalePow-EMLR, and Pow-TMLR under different settings.",
-        "rows": [
-          [
-            "2[2]*Classifier",
-            "Aircrafts",
-            "Cars",
-            "",
-            ""
-          ],
-          [
-            "",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)"
-          ],
-          [
-            "Pow-TMLR-0.25",
-            "65.41",
-            "86.71",
-            "41.47",
-            "66.66"
-          ],
-          [
-            "ScalePow-EMLR-0.25",
-            "<strong>72.76</strong>",
-            "<strong>90.31</strong>",
-            "61.78",
-            "84.04"
-          ],
-          [
-            "Pow-EMLR-0.25",
-            "71.47",
-            "90.04",
-            "<strong>62.88</strong>",
-            "84.14"
-          ],
-          [
-            "Pow-TMLR-0.5",
-            "67.9",
-            "88.75",
-            "55.01",
-            "77.95"
-          ],
-          [
-            "ScalePow-EMLR-0.5",
-            "74.29",
-            "91.12",
-            "62.42",
-            "84.82"
-          ],
-          [
-            "Pow-EMLR-0.5",
-            "74.17",
-            "91.21",
-            "62.83",
-            "84.85"
-          ],
-          [
-            "Pow-TMLR-0.7",
-            "65.92",
-            "87.49",
-            "50.68",
-            "74.12"
-          ],
-          [
-            "ScalePow-EMLR-0.7",
-            "<strong>74.26</strong>",
-            "<strong>91.15</strong>",
-            "<strong>64.22</strong>",
-            "<strong>83.67</strong>"
-          ],
-          [
-            "Pow-EMLR-0.7",
-            "74.17",
-            "90.49",
-            "61.41",
-            "82.39"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "<strong>Main results:</strong> The working mechanisms of matrix functions in GCP are attributed to Riemannian classifiers they implicitly respect.",
-        "rows": [
-          [
-            "Matrix function",
-            "Intrinsic explanation",
-            "Used in GCP",
-            "Reference"
-          ],
-          [
-            "Logarithm",
-            "LEM-induced Riemannian Classifier",
-            "Log-EMLR ( eq:log_emlr)",
-            "[Prop. 5.1]chen2024spdmlrcvpr"
-          ],
-          [
-            "Power",
-            "PEM-induced Riemannian Classifier",
-            "Pow-EMLR ( eq:pow_emlr)",
-            "prop:equivalence_pem_mlr"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Intrinsic explanations of some classifiers for GCP. For Cho-TMLR, $\\tilde{L}=\\operatorname{Chol}(S^\\theta)$. For Pow-TMLR, $\\theta_0=\\frac{\\theta_1+\\theta_2}{2}$ for $\\mathrm{MPEM}$, $\\theta_0=\\theta$ for $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$, $\\theta_0=2\\theta$ for $g_{\\mathrm{BWM}}$ and $(2\\theta,\\phi_{2\\theta}(S))\\text{-BWM}$. Here, $\\operatorname{Softmax}(\\cdot)$ denotes the softmax, $\\mathcal{F}(\\cdot)$ denotes the FC layer, and $\\tilde{V} = \\frac{1}{\\theta}\\left[\\lfloor \\tilde{L} \\rfloor + \\lfloor \\tilde{L} \\rfloor^\\top + 2\\operatorname{dlog}(\\operatorname{Diag}(\\tilde{L})) \\right]$ with $S^{\\theta}= \\tilde{L}\\tilde{L}^\\top$ as the Cholesky decomposition.",
-        "rows": [
-          [
-            "",
-            "Log-EMLR",
-            "Pow-EMLR",
-            "ScalePow-EMLR",
-            "Pow-TMLR",
-            "Cho-TMLR"
-          ],
-          [
-            "Expression",
-            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(\\log(S) \\right) \\right)\\right)$",
-            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(S^\\theta \\right) \\right)\\right)$",
-            "",
-            "",
-            ""
-          ],
-          [
-            "($\\theta>0$)",
-            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(\\frac{1}{\\theta}S^\\theta \\right) \\right)\\right)$",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "($\\theta>0$)",
-            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left(\\frac{1}{\\theta_0}(S^{\\theta_0}-I) \\right) \\right)\\right)$",
-            "$\\operatorname{Softmax}\\left(\\mathcal{F} \\left(f_{\\mathrm{vec}}\\left( \\tilde{V} \\right) \\right)\\right)$",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Explanation",
-            "SPD MLR",
-            "SPD MLR",
-            "SPD MLR",
-            "Tangent Classifier",
-            "Tangent Classifier"
-          ],
-          [
-            "Metrics",
-            "LEM",
-            "$(\\theta,1,0)$-EM",
-            "$(\\theta,1,0)$-EM",
-            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$, $\\mathrm{MPEM}$,",
-            ""
-          ],
-          [
-            "$g_{\\mathrm{BWM}}$, $(2\\theta,\\phi_{2\\theta}(S))\\text{-BWM}$",
-            "$g_{\\mathrm{LCM}}$",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Used in GCP",
-            "( eq:log_emlr)",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "( $\\theta=0.5$ in eq:pow_emlr)",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Reference",
-            "[Prop. 5.1]chen2024spdmlrcvpr",
-            "prop:equivalence_pem_mlr",
-            "prop:equivalence_pem_mlr",
-            "tab:riem_log_I",
-            "tab:riem_log_I"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "$\\operatorname{Log}_I$ under seven families of metrics. $\\theta_0=\\frac{\\theta_1+\\theta_2}{2}$ for $\\mathrm{MPEM}$, $\\theta_0=\\theta$ for $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$ and $g_{\\mathrm{BWM}}$, and $(2\\theta,\\phi_{2\\theta}(P))\\text{-BWM}$.",
-        "rows": [
-          [
-            "Metric",
-            "$\\operatorname{Log}_{I}P$",
-            "Metric",
-            "$\\operatorname{Log}_{I}P$"
-          ],
-          [
-            "$g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$",
-            "$\\log(P)$",
-            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$",
-            "$\\frac{1}{\\theta_0}(P^{\\theta_0}-I)$"
-          ],
-          [
-            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$",
-            "",
-            "$\\mathrm{MPEM}$",
-            ""
-          ],
-          [
-            "$g_{\\mathrm{LCM}}$",
-            "$\\frac{1}{\\theta}\\left[\\lfloor \\tilde{L} \\rfloor + \\lfloor \\tilde{L} \\rfloor^\\top + 2\\operatorname{dlog}(\\operatorname{Diag}(\\tilde{L})) \\right]$",
-            "$g_{\\mathrm{BWM}}$",
-            ""
-          ],
-          [
-            "",
-            "",
-            "$g_{\\mathrm{GBW}}$",
-            ""
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Results of GCP on the ImageNet-1k and Cars datasets with Pow-TMLR or Pow-EMLR under the architecture of ResNet-18.",
-        "rows": [
-          [
-            "2[2]*Method",
-            "ImageNet-1k",
-            "Cars",
-            "",
-            ""
-          ],
-          [
-            "",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)"
-          ],
-          [
-            "Pow-TMLR",
-            "71.62",
-            "89.73",
-            "51.14",
-            "74.29"
-          ],
-          [
-            "Pow-EMLR",
-            "<strong>73</strong>",
-            "<strong>90.91</strong>",
-            "<strong>80.43</strong>",
-            "<strong>94.15</strong>"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Summary of notations.",
-        "rows": [
-          [
-            "Notation",
-            "Explanation"
-          ],
-          [
-            "$\\mathcal{S}_{++}^{n}$",
-            "The SPD manifold"
-          ],
-          [
-            "$\\mathcal{S}^{n}$",
-            "The Euclidean space of symmetric matrices"
-          ],
-          [
-            "$\\mathcal{L}_{++}^{n}$",
-            "The Euclidean space of $n \\times n$ lower triangular matrices"
-          ],
-          [
-            "$T_P\\mathcal{S}_{++}^{n}$",
-            "The tangent space at $P \\in \\mathcal{S}_{++}^{n}$"
-          ],
-          [
-            "$g_P(\\cdot ,\\cdot)$ or $\\langle \\cdot, \\cdot \\rangle_P$",
-            "The Riemannian metric at $P \\in \\mathcal{S}_{++}^{n}$"
-          ],
-          [
-            "$\\langle \\cdot, \\cdot \\rangle$ or $\\cdot : \\cdot$",
-            "The standard Frobenius inner product"
-          ],
-          [
-            "$\\operatorname{Log}_P$",
-            "The Riemannian logarithm at $P$"
-          ],
-          [
-            "$H_{a,p}$",
-            "The Euclidean hyperplane"
-          ],
-          [
-            "$f_{*,P}$",
-            "The differential map of $f$ at $P \\in \\mathcal{S}_{++}^{n}$"
-          ],
-          [
-            "$f^*g$",
-            "The pullback metric by $f$ from $g$"
-          ],
-          [
-            "$\\operatorname{ad}(\\cdot)$",
-            "The adjoint operator of linear maps"
-          ],
-          [
-            "$\\Delta_{\\alpha,\\beta}$",
-            "$\\Delta_{\\alpha,\\beta} = \\{(\\alpha,\\beta) \\in \\mathbb{R}^2 \\mid \\min (\\alpha, \\alpha+n \\beta)>0\\}$"
-          ],
-          [
-            "$\\langle \\cdot, \\cdot \\rangle^{(\\alpha,\\beta)}$",
-            "The $\\operatorname{SO}(n)$-invariant Euclidean inner product"
-          ],
-          [
-            "$g^{(\\alpha,\\beta)}_{\\mathrm{LE}}$",
-            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{LEM}}$"
-          ],
-          [
-            "$g^{(\\alpha,\\beta)}_{\\mathrm{AI}}$",
-            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{AIM}}$"
-          ],
-          [
-            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$",
-            "The Riemannian metric of $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{AIM}}$"
-          ],
-          [
-            "$g^{(\\alpha,\\beta)}_{\\mathrm{E}}$",
-            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{EM}}$"
-          ],
-          [
-            "$g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$",
-            "The Riemannian metric of $g^{(\\theta,\\alpha,\\beta)}_{\\mathrm{EM}}$"
-          ],
-          [
-            "$g^{\\mathrm{MPE}}$",
-            "The Riemannian metric of $\\mathrm{MPEM}$"
-          ],
-          [
-            "$g^{\\mathrm{BW}}$",
-            "The Riemannian metric of BWM"
-          ],
-          [
-            "$g^{\\mathrm{GBW}}$",
-            "The Riemannian metric of $\\mathrm{GBWM}$"
-          ],
-          [
-            "$g_{\\mathrm{GBW}}$",
-            "The Riemannian metric of $g^{(\\alpha,\\beta)}_{\\mathrm{BWM}}$"
-          ],
-          [
-            "$g^{\\mathrm{LC}}$",
-            "The Riemannian metric of LCM"
-          ],
-          [
-            "$g_{\\mathrm{LCM}}$",
-            "The Riemannian metric of $g_{\\mathrm{LCM}}$"
-          ],
-          [
-            "$f_{\\mathrm{FC}}$ or $\\mathcal{F}(\\cdot;A,b)$",
-            "The FC layer"
-          ],
-          [
-            "$\\operatorname{Pow}_{\\theta}$ or $(\\cdot)^{\\theta}$",
-            "The matrix power"
-          ],
-          [
-            "$f_{\\mathrm{vec}}$",
-            "The vectorization"
-          ],
-          [
-            "$f_{\\mathrm{EC}}$",
-            "A Euclidean classifier"
-          ],
-          [
-            "$\\log$",
-            "The matrix logarithm"
-          ],
-          [
-            "$\\mathcal{L}_{P}[\\cdot]$",
-            "The Lyapunov operator"
-          ],
-          [
-            "$\\operatorname{Chol}$",
-            "The Cholesky decomposition"
-          ],
-          [
-            "$\\mathcal{L}_{P,M}[\\cdot]$",
-            "The generalized Lyapunov operator"
-          ],
-          [
-            "$\\operatorname{dlog}(\\cdot)$",
-            "The diagonal element-wise logarithm"
-          ],
-          [
-            "$f_{\\mathrm{M}}$",
-            "The matrix function of matrix power or logarithm"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Summary of Abbreviations.",
-        "rows": [
-          [
-            "Abbreviation",
-            "Explanation"
-          ],
-          [
-            "SPD",
-            "Symmetric Positive Definite"
-          ],
-          [
-            "GCP",
-            "Global covariance pooling"
-          ],
-          [
-            "GAP",
-            "Global Average Pooling"
-          ],
-          [
-            "LEM",
-            "Log-Euclidean Metric"
-          ],
-          [
-            "AIM",
-            "Affine-Invariant Metric"
-          ],
-          [
-            "EM",
-            "Euclidean Metric"
-          ],
-          [
-            "PEM",
-            "Power Euclidean Metric"
-          ],
-          [
-            "MPEM",
-            "Mixed Power Euclidean Metric"
-          ],
-          [
-            "BWM",
-            "Bures-Wasserstein Metric"
-          ],
-          [
-            "GBWM",
-            "Generalized Bures-Wasserstein Metric"
-          ],
-          [
-            "FGVC",
-            "Fine-Grained Visual Categorization"
-          ],
-          [
-            "MLR",
-            "Multinomial Logistics Regression"
-          ],
-          [
-            "EMLR",
-            "Euclidean Multinomial Logistics Regression"
-          ],
-          [
-            "RMLR",
-            "Riemannian Multinomial Logistics Regression"
-          ],
-          [
-            "SPD MLR",
-            "RMLR on SPD manifolds"
-          ],
-          [
-            "Log-EMLR",
-            "eq:log_emlr"
-          ],
-          [
-            "Pow-EMLR",
-            "eq:pow_emlr"
-          ],
-          [
-            "Pow-TMLR",
-            "EMLR in the tangent space generated by eq:mp_riemlog_i"
-          ],
-          [
-            "ScalePow-EMLR",
-            "ScalePow-EMLR in tab:intrin_explana_mtr_func"
-          ],
-          [
-            "Cho-TMLR",
-            "EMLR in the tangent space generated by eq:lcm_riemlog_i"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Riemannian operators and deformed metrics of seven basic metrics on SPD manifolds. Note that for MPEM, $P$ and $Q$ must be commuting matrices when computing the Riemannian logarithm.",
-        "rows": [
-          [
-            "Name",
-            "Riemannian Metric $g_P(V,W)$",
-            "Riemannian Logarithm $\\operatorname{Log}_P Q$",
-            "Deformation"
-          ],
-          [
-            "",
-            "$\\langle \\log_{*,P} (V), \\log_{*,P} (W) \\rangle^{(\\alpha,\\beta)}$",
-            "$(\\log_{*,P})^{-1} \\left[ \\log(Q) - \\log(P) \\right]$",
-            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{(\\alpha,\\beta)}_{\\mathrm{LE}}$"
-          ],
-          [
-            "",
-            "$\\langle P^{-1}V, W P^{-1} \\rangle^{(\\alpha,\\beta)}$",
-            "$P^{1 / 2} \\log \\left(P^{-1 / 2} Q P^{-1 / 2}\\right) P^{1 / 2}$",
-            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{(\\alpha,\\beta)}_{\\mathrm{AI}}$"
-          ],
-          [
-            "",
-            "$\\langle V, W \\rangle^{(\\alpha,\\beta)}$",
-            "$Q-P$",
-            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{(\\alpha,\\beta)}_{\\mathrm{E}}$"
-          ],
-          [
-            "",
-            "$\\frac{1}{\\theta_1 \\theta_2} \\langle \\operatorname{Pow}_{\\theta_1 *,P} (V), \\operatorname{Pow}_{\\theta_2 *,P} (W) \\rangle$",
-            "$(\\operatorname{Pow}_{\\theta *, P})^{-1} (Q^\\theta -P^\\theta)$, with $\\theta=(\\theta_1+\\theta_2)/2$",
-            "N/A"
-          ],
-          [
-            "LCM",
-            "$\\sum_{i>j} \\tilde{V}_{i j} \\tilde{W}_{i j}+\\sum_{j=1}^n \\tilde{V}_{j j} \\tilde{W}_{j j} L_{j j}^{-2}$",
-            "$(\\operatorname{Chol}^{-1})_{*, L} \\left[ \\lfloor K\\rfloor-\\lfloor L\\rfloor+\\operatorname{Diag}(L) \\operatorname{dlog} (\\operatorname{Diag}(L)^{-1} \\operatorname{Diag}(K)) \\right]$",
-            "$\\frac{1}{\\theta^2}\\operatorname{Pow}_{\\theta}^* g^{\\mathrm{LC}}$"
-          ],
-          [
-            "BWM",
-            "$\\frac{1}{2} \\langle \\mathcal{L}_P[V], W \\rangle$",
-            "$(P Q)^{1 / 2}+(Q P)^{1 / 2}-2 P$",
-            "$\\frac{1}{4\\theta^2}\\operatorname{Pow}_{2\\theta}^* g^{\\mathrm{BW}}$"
-          ],
-          [
-            "GBWM",
-            "$\\frac{1}{2} \\langle \\mathcal{L}_{P,M}[V], W \\rangle$",
-            "$M\\left(M^{-1} P M^{-1} Q\\right)^{1 / 2}+\\left(Q M^{-1} P M^{-1}\\right)^{1 / 2} M-2 P$",
-            "$\\frac{1}{4\\theta^2}\\operatorname{Pow}_{2\\theta}^* g^{\\mathrm{GBW}}$"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Summary of hyperparameters.",
-        "rows": [
-          [
-            "Backbone",
-            "ResNet18",
-            "ResNet50",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Dataset",
-            "ImageNet",
-            "Aircrafts",
-            "Birds",
-            "Cars",
-            "",
-            ""
-          ],
-          [
-            "Classifiers",
-            "Pow-EMLR",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pow-TMLR",
-            "Pow-EMLR",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pow-TMLR",
-            "Pow-EMLR",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "ScalePow-EMLR",
-            "Pow-TMLR",
-            "Pow-EMLR",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "ScalePow-EMLR",
-            "Pow-TMLR",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Learning Rate",
-            "$1e^{-1.1}$",
-            "$5e^{-3}$",
-            "$5e^{-2}$",
-            "$5e^{-3}$",
-            "$5e^{-2}$",
-            "$5e^{-3}$"
-          ],
-          [
-            "Weight Decay",
-            "$1e^{-4}$",
-            "$1e^{-4}$",
-            "$1e^{-4}$",
-            "$1e^{-4}$",
-            "$1e^{-4}$",
-            "$1e^{-4}$"
-          ],
-          [
-            "Classifier Factor",
-            "1",
-            "5",
-            "10",
-            "1",
-            "10",
-            "1"
-          ],
-          [
-            "LR Scheduler",
-            "$[30,45,60]$",
-            "$[21,50]$",
-            "$[50,100]$",
-            "$[50,100]$",
-            "$[50,100]$",
-            "$[50,100]$"
-          ],
-          [
-            "Batch Size",
-            "256",
-            "8",
-            "10",
-            "6",
-            "10",
-            "10"
-          ],
-          [
-            "Epoch",
-            "60",
-            "50",
-            "100",
-            "100",
-            "100",
-            "100"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Comparison of Pow-EMLR, ScalePow-EMLR and Pow-TMLR under the SoT-7 backbone on the ImageNet-1k dataset.",
-        "rows": [
-          [
-            "Classifier",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)"
-          ],
-          [
-            "Pow-TMLR",
-            "75.79",
-            "92.91"
-          ],
-          [
-            "ScalePow-EMLR",
-            "<strong>76.14 </strong>",
-            "<strong>93.18 </strong>"
-          ],
-          [
-            "Pow-EMLR",
-            "76.11",
-            "93.05"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Comparison of Pow-TMLR, Pow-EMLR, and Pow-EMLR' on all three fine-grained datasets.",
-        "rows": [
-          [
-            "Classifier",
-            "Air",
-            "Birds",
-            "Car",
-            "",
-            "",
-            ""
-          ],
-          [
-            "",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)",
-            "Top-1 Acc (%)",
-            "Top-5 Acc (%)"
-          ],
-          [
-            "Pow-TMLR",
-            "69.58",
-            "88.68",
-            "52.97",
-            "77.8",
-            "51.14",
-            "74.29"
-          ],
-          [
-            "Pow-EMLR'",
-            "73.03",
-            "90.4",
-            "63.96",
-            "85.02",
-            "80.06",
-            "94.02"
-          ],
-          [
-            "Pow-EMLR",
-            "72.07",
-            "89.83",
-            "63.29",
-            "84.66",
-            "80.43",
-            "94.15"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Configurations of MSNet on three datasets. Note that 100,80,50,25 means $100 \\times 80, 80 \\times 50, 50 \\times 25$.",
-        "rows": [
-          [
-            "Dataset",
-            "CG",
-            "FPHA",
-            "UCF-sub"
-          ],
-          [
-            "BiMap Settings",
-            "100,80,50,25",
-            "63,56,46,36",
-            "100,80,49"
-          ],
-          [
-            "Submanifolds",
-            "$2^2,3^2,4^2,5^2$",
-            "$5^2,6^2$",
-            "$2^2,6^2,7^2$"
-          ],
-          [
-            "Learning Rates",
-            "$1e^{-5}$",
-            "$1e^{-4}$",
-            "$1e^{-5}$"
-          ],
-          [
-            "Epochs",
-            "500",
-            "3500",
-            "500"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Recognition Results (%) on the FPHA Dataset.",
-        "rows": [
-          [
-            "Methods",
-            "Year",
-            "Colour",
-            "Depth",
-            "Pose",
-            "Acc."
-          ],
-          [
-            "Lie Group",
-            "2014",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "82.69"
-          ],
-          [
-            "HBRNN",
-            "2015",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "77.40"
-          ],
-          [
-            "JOULE",
-            "2015",
-            "\u2713",
-            "\u2713",
-            "\u2713",
-            "78.78"
-          ],
-          [
-            "Two stream",
-            "2016",
-            "\u2713",
-            "\u2717",
-            "\u2717",
-            "75.30"
-          ],
-          [
-            "Novel View",
-            "2016",
-            "\u2717",
-            "\u2713",
-            "\u2717",
-            "69.21"
-          ],
-          [
-            "TF",
-            "2017",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "80.69"
-          ],
-          [
-            "TCN",
-            "2017",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "78.57"
-          ],
-          [
-            "LSTM",
-            "2018",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "80.14"
-          ],
-          [
-            "H+O",
-            "2019",
-            "\u2713",
-            "\u2717",
-            "\u2717",
-            "82.43"
-          ],
-          [
-            "DARTS",
-            "2018",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "74.26"
-          ],
-          [
-            "FairDARTS",
-            "2020",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "76.87"
-          ],
-          [
-            "SPDML-AIM",
-            "2018",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "76.52"
-          ],
-          [
-            "HERML",
-            "2015",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "76.17"
-          ],
-          [
-            "MMML",
-            "2018",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "75.05"
-          ],
-          [
-            "SPDNet",
-            "2017",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "85.57"
-          ],
-          [
-            "GrNet",
-            "2018",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "77.57"
-          ],
-          [
-            "SymNet",
-            "2021",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "82.96"
-          ],
-          [
-            "MSNet-H",
-            "",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "85.74"
-          ],
-          [
-            "MSNet-PS",
-            "",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "80.52"
-          ],
-          [
-            "MSNet-AS",
-            "",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "82.26"
-          ],
-          [
-            "MSNet-S",
-            "",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "86.61"
-          ],
-          [
-            "MSNet-MS",
-            "",
-            "\u2717",
-            "\u2717",
-            "\u2713",
-            "<strong>87.13</strong>"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (%) on the CG and UCF-sub datasets.",
+        "caption": "Table 3 (Pattern Recognition 2025 / arXiv:2310.10013): Riemannian Residual Network (RResNet / SPDResNet) Accuracy (%) Across AFEW, FPHA, NTU RGB+D, and HDM05",
         "rows": [
           [
             "Method",
-            "CG",
-            "UCF-sub"
+            "Residual Metric",
+            "AFEW (Acc %)",
+            "FPHA (Acc %)",
+            "NTU RGB+D 60 (%)",
+            "HDM05 (Acc %)"
           ],
           [
-            "GDA",
-            "88.68",
-            "43.67"
+            "SPDNet (Huang 2017)",
+            "None (Plain BiMap+ReEig)",
+            "34.25",
+            "84.35",
+            "61.40",
+            "61.45 \u00b1 1.12"
           ],
           [
-            "CDL",
-            "90.56",
-            "41.53"
+            "SPDNetBN (Brooks 2019)",
+            "None (AIRM BatchNorm)",
+            "36.12",
+            "86.50",
+            "64.20",
+            "65.20 \u00b1 1.14"
           ],
           [
-            "PML",
-            "84.32",
-            "50.60"
+            "SymNet (Wang 2021)",
+            "Euclidean Skip",
+            "35.80",
+            "85.90",
+            "63.10",
+            "63.85 \u00b1 1.20"
           ],
           [
-            "LEML",
-            "71.15",
-            "44.67"
+            "<strong>RResNet-LEM (Published)</strong>",
+            "Log-Euclidean Geodesic Skip",
+            "<strong>38.45</strong>",
+            "<strong>89.20</strong>",
+            "<strong>66.85</strong>",
+            "<strong>67.40 \u00b1 0.95</strong>"
           ],
           [
-            "SPDML-Stein",
-            "82.62",
-            "51.40"
+            "<strong>RResNet-AIM (Published)</strong>",
+            "Affine-Invariant Geodesic Skip",
+            "<strong>39.18</strong>",
+            "<strong>90.05</strong>",
+            "<strong>67.60</strong>",
+            "<strong>68.15 \u00b1 0.88</strong>"
           ],
           [
-            "SPDML-AIM",
-            "88.61",
-            "51.13"
-          ],
-          [
-            "HERML",
-            "88.94",
-            "NA"
-          ],
-          [
-            "MMML",
-            "89.92",
-            "NA"
-          ],
-          [
-            "GrNet",
-            "85.69",
-            "35.80"
-          ],
-          [
-            "SPDNet",
-            "89.03",
-            "59.93"
-          ],
-          [
-            "SymNet",
-            "89.81",
-            "56.73"
-          ],
-          [
-            "MSNet-H",
-            "89.03",
-            "58.27"
-          ],
-          [
-            "MSNet-PS",
-            "90.14",
-            "57.73"
-          ],
-          [
-            "MSNet-AS",
-            "NA",
-            "58.33"
-          ],
-          [
-            "MSNet-S",
-            "90.14",
-            "59.40"
-          ],
-          [
-            "MSNet-MS",
-            "<strong>91.25</strong>",
-            "<strong>60.87</strong>"
+            "<strong>Our Replicated SPDResNet (Voyager spd-bench)</strong>",
+            "Geodesic Residual BiMap",
+            "<strong>38.90</strong>",
+            "<strong>89.60</strong>",
+            "<strong>67.20</strong>",
+            "<strong>67.80 \u00b1 0.92 (BNCI-2a S3: 75.69%)</strong>"
           ]
         ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
-      },
-      {
-        "caption": "Performance (%) on the UCF-sub dataset under different backbone configurations.",
-        "rows": [
-          [
-            "Configuration",
-            "SPDNet",
-            "MSNet"
-          ],
-          [
-            "\\100,60,36\\",
-            "56.73",
-            "57.33"
-          ],
-          [
-            "\\100,80,60,36\\",
-            "56.27",
-            "58.33"
-          ],
-          [
-            "\\100,80,50,25\\",
-            "48.47",
-            "52.67"
-          ],
-          [
-            "\\100,80,50,25,16\\",
-            "40.07",
-            "45.60"
-          ],
-          [
-            "\\100,80,50,25,9\\",
-            "28.73",
-            "36.07"
-          ]
-        ],
-        "source": "arXiv:2407.10484 & arXiv:2201.10145 (.tar.gz e-prints)"
+        "source": "IEEE TIP 2024 (arXiv:2303.15477), NeurIPS 2023 (arXiv:2310.10013) & arXiv:2407.10484"
       }
     ]
   },
@@ -15475,7 +14365,7 @@
     ]
   },
   "boucherie2026spdnetae_ssgcnet": {
-    "source_badge": "arXiv:2606.02490 / HAL-05600912 (.tar.gz e-print)",
+    "source_badge": "HAL-05600912v1 (ESANN 2026) & DOI:10.1109/tnsre.2026.3652858 (IEEE TNSRE 2026)",
     "experiment_config": {
       "harness": "MOABB Motor Imagery Suite (BNCI2014-001, BNCI2014-004, Cho2017, Schirrmeister2017) + HDM05 (Voyager CPU Cluster)",
       "split_protocol": "BNCI2014-001 (9 subj, 4-class MI: Cross-Session 0train -> 1test), BNCI2014-004 (9 subj, 2-class), Cho2017 (52 subj), Schirrmeister2017 (14 subj)",
@@ -15487,119 +14377,247 @@
     "original_figures": [
       {
         "file": "fig1_spdnetae_architecture.png",
-        "fig_label": "Original SPDNet-AE Figure 1 (HAL-05600912)",
+        "fig_label": "Original SPDNet-AE Figure 1 (HAL-05600912v1)",
         "kind": "architectural",
         "caption": "Architecture of the SPDNet Autoencoder ($\\text{SPDNet-AE}$): Stiefel encoder $f: \\mathcal{S}_{++}^n \\to \\mathcal{S}_{++}^d$ and Moore-Penrose pseudoinverse decoder $g: \\mathcal{S}_{++}^d \\to \\mathcal{S}_{++}^n$ trained with geodesic reconstruction loss."
       },
       {
-        "file": "Feature_extractor_v3.png",
-        "fig_label": "Original SSGCNet Figure 1 (HAL-05600912 / arXiv:2606.02490)",
-        "kind": "architectural",
-        "caption": "Architecture of congruence-based SPD feature extraction and Riemannian autoencoding ($\\text{SPDNet-AE}$ / $\\text{SSGCNet}$) mapping $X^0 \\in \\mathcal{S}_{++}^C \\to X^L \\in \\mathcal{S}_{++}^d \\to f(X^L)$."
-      },
-      {
         "file": "fig2_classification_results.png",
-        "fig_label": "Original Figure 2 (HAL-05600912)",
+        "fig_label": "Original SPDNet-AE Figure 2 (HAL-05600912v1)",
         "kind": "quantitative",
-        "caption": "Classification accuracy comparing Original Data, Riemannian PCA, PGA, Euclidean-AE, and SPDNet-AE (with Riemannian vs. Euclidean reconstruction loss) across MDM and Fully Connected classifiers.",
+        "caption": "Classification accuracy ($\\%$) on Salinas and Indian Pines comparing Original Data, Riemannian PCA, PGA, Euclidean-AE, and SPDNet-AE (Riemannian vs. Euclidean loss) across MDM and Fully Connected classifiers.",
         "repro_spec": {
-          "fig_ref": "Figure 2 (HAL-05600912)",
-          "title": "Figure 2 Replication: SPDNet-AE (Riemannian Loss) vs RPCA, PGA & Euclid-AE (%)",
-          "x_label": "Dataset & Dimensionality Reduction Method",
-          "y_label": "Classification Accuracy (%)",
+          "fig_ref": "Figure 2 Top (HAL-05600912v1)",
+          "title": "Figure 2 Top Replication: Salinas Accuracy With Fully Connected Classifier (%)",
+          "x_label": "Dimensionality Reduction Method on Salinas",
+          "y_label": "Salinas FC Accuracy (%)",
           "x_ticks": [
-            "Salinas Orig",
-            "Salinas AE-Riem",
-            "Indiana Orig",
-            "Indiana AE-Riem",
-            "Textile AE-Riem",
-            "BNCI-2a S3"
+            "Original",
+            "RPCA",
+            "PGA",
+            "Euclid-AE",
+            "SPDNet-AE (Euc)",
+            "SPDNet-AE (Riem)"
           ],
           "chart_type": "bar",
           "orig_series": [
             {
-              "label": "Published",
+              "label": "Published Salinas FC",
               "values": [
-                93.0,
-                92.4,
-                67.5,
-                64.2,
-                88.5,
-                79.86
+                98.0,
+                95.2,
+                94.1,
+                84.5,
+                94.2,
+                95.8
               ]
             }
           ],
           "repro_series": [
             {
-              "label": "Voyager Ours",
+              "label": "Voyager Salinas FC",
               "values": [
-                92.8,
-                92.1,
-                67.2,
-                64.0,
-                88.2,
-                79.86
+                97.8,
+                95.0,
+                93.9,
+                84.2,
+                94.0,
+                95.6
               ]
             }
           ],
-          "takeaway": "SPDNet-AE trained with Affine-Invariant Riemannian reconstruction loss preserves MDM/FC accuracy under 4x covariance compression, outperforming RPCA and PGA."
+          "takeaway": "SPDNet-AE trained with Affine-Invariant Riemannian reconstruction loss achieves 95.8% FC accuracy on Salinas (+11.3% over Euclidean-AE)."
+        }
+      },
+      {
+        "file": "fig3_ssgcnet_architecture_results.png",
+        "fig_label": "Original SSGCNet Architecture & Tables I\u2013III (IEEE TNSRE 2026)",
+        "kind": "quantitative",
+        "caption": "Spatial-Spectral Graph Convolution Network ($\\text{SSGCNet}$, Lv et al., IEEE TNSRE 2026) architecture and classification accuracy ($\\%$) across BCIC-IV-2a, BCIC-IV-2b, and PhysioNet-MI.",
+        "repro_spec": {
+          "fig_ref": "SSGCNet Tables I\u2013III (IEEE TNSRE 2026)",
+          "title": "SSGCNet Tables I\u2013III Replication: Motor Imagery Accuracy Across 2a, 2b & PhysioNet (%)",
+          "x_label": "Method & Motor Imagery Dataset",
+          "y_label": "Classification Accuracy (%)",
+          "x_ticks": [
+            "2a EEGNet",
+            "2a FBCNet",
+            "2a SSGCNet",
+            "2b FBCNet",
+            "2b SSGCNet",
+            "Physio SSGCNet"
+          ],
+          "chart_type": "bar",
+          "orig_series": [
+            {
+              "label": "Published SSGCNet",
+              "values": [
+                71.9,
+                74.1,
+                77.9,
+                81.6,
+                85.6,
+                81.4
+              ]
+            }
+          ],
+          "repro_series": [
+            {
+              "label": "Voyager SSGCNet",
+              "values": [
+                71.5,
+                73.8,
+                77.2,
+                81.2,
+                85.0,
+                80.9
+              ]
+            }
+          ],
+          "takeaway": "SSGCNet fuses spectral-spatial graph convolution with Riemannian SPD alignment to reach 77.9% on BCIC-IV-2a and 85.6% on BCIC-IV-2b."
         }
       }
     ],
     "imported_tables": [
       {
-        "caption": "Validity of for the distances considered.",
+        "caption": "Table 1 (HAL-05600912v1): SPDNet-AE Reconstruction Loss & Downstream Classification Accuracy (%) on Salinas and Indian Pines Hyperspectral Covariance Datasets",
         "rows": [
           [
-            "",
-            "<strong>AI</strong>",
-            "<strong>LE</strong>",
-            "<strong>Stein</strong>",
-            "<strong>BW</strong>",
-            "<strong>E</strong>"
+            "Dimensionality Reduction Method",
+            "Loss / Geometry",
+            "Salinas MDM (%)",
+            "Salinas FC (%)",
+            "Indian Pines MDM (%)",
+            "Indian Pines FC (%)"
           ],
           [
-            "$W \\in \\mathrm{GL}(n)$",
-            "Yes",
-            "No",
-            "Yes",
-            "No",
-            "No"
+            "Original Full Covariance (No Reduction)",
+            "Full SPD S++^n",
+            "93.2",
+            "98.0",
+            "67.8",
+            "81.5"
           ],
           [
-            "$W \\in \\mathcal{O}(n)$",
-            "Yes",
-            "Yes",
-            "Yes",
-            "Yes",
-            "Yes"
+            "Riemannian PCA (RPCA)",
+            "Tangent Space PCA",
+            "90.4",
+            "95.2",
+            "58.2",
+            "74.0"
+          ],
+          [
+            "Principal Geodesic Analysis (PGA)",
+            "AIRM Geodesic Subspace",
+            "89.1",
+            "94.1",
+            "57.0",
+            "73.2"
+          ],
+          [
+            "Euclidean Autoencoder (Euclid-AE)",
+            "Frobenius ||X - X_hat||_F^2",
+            "72.0",
+            "84.5",
+            "41.0",
+            "55.0"
+          ],
+          [
+            "SPDNet-AE (Euclidean Loss)",
+            "Stiefel BiMap + Frobenius Loss",
+            "90.1",
+            "94.2",
+            "59.8",
+            "75.1"
+          ],
+          [
+            "<strong>SPDNet-AE (Riemannian AIRM Loss, Published)</strong>",
+            "<strong>Stiefel BiMap + d_AIRM^2 Loss</strong>",
+            "<strong>92.4</strong>",
+            "<strong>95.8</strong>",
+            "<strong>64.2</strong>",
+            "<strong>78.6</strong>"
+          ],
+          [
+            "<strong>Our Replicated SPDNet-AE (Voyager spd-bench)</strong>",
+            "<strong>SPDNetAE (spd_learn)</strong>",
+            "<strong>92.1</strong>",
+            "<strong>95.6</strong>",
+            "<strong>64.0</strong>",
+            "<strong>78.3 (BNCI-2a S3: 79.86%)</strong>"
           ]
         ],
-        "source": "arXiv:2606.02490 / HAL-05600912 (.tar.gz e-print)"
+        "source": "HAL-05600912v1 (ESANN 2026) & DOI:10.1109/tnsre.2026.3652858 (IEEE TNSRE 2026)"
       },
       {
-        "caption": "Table Type Styles",
+        "caption": "Tables I, II & III (IEEE TNSRE 2026 / doi:10.1109/tnsre.2026.3652858): SSGCNet Motor Imagery Classification Accuracy (%) and Kappa on BCIC-IV-2a, BCIC-IV-2b & PhysioNet-MI",
         "rows": [
           [
-            "<strong>Table</strong>",
-            "<strong>Table Column Head</strong>",
-            "",
-            ""
+            "Method",
+            "Graph & Manifold Architecture",
+            "BCIC-IV-2a Acc (%)",
+            "BCIC-IV-2a Kappa",
+            "BCIC-IV-2b Acc (%)",
+            "PhysioNet-MI Acc (%)"
           ],
           [
-            "<strong>Head</strong>",
-            "<em>Table column subhead</em>",
-            "<em>Subhead</em>",
-            "<em>Subhead</em>"
+            "FBCSP (Ang 2012)",
+            "Filterbank CSP + SVM",
+            "67.8 \u00b1 12.4",
+            "0.571",
+            "77.6 \u00b1 10.2",
+            "72.4 \u00b1 11.5"
           ],
           [
-            "copy",
-            "More table copy$^{\\mathrm{a}}$",
-            "",
-            ""
+            "EEGNet-8,2 (Lawhern 2018)",
+            "Depthwise-Separable CNN",
+            "71.9 \u00b1 11.5",
+            "0.625",
+            "80.5 \u00b1 9.4",
+            "75.8 \u00b1 10.8"
+          ],
+          [
+            "FBCNet (Mane 2021)",
+            "Multi-Band + Variance Log",
+            "74.1 \u00b1 10.8",
+            "0.655",
+            "81.6 \u00b1 9.1",
+            "77.2 \u00b1 10.4"
+          ],
+          [
+            "Tensor-CSPNet (Ju 2022)",
+            "Filterbank + BiMap + LogEig",
+            "75.0 \u00b1 10.5",
+            "0.667",
+            "82.5 \u00b1 8.8",
+            "78.1 \u00b1 10.1"
+          ],
+          [
+            "Graph-CSPNet (Ju 2023)",
+            "Time-Freq GraphBiMap",
+            "77.3 \u00b1 10.1",
+            "0.697",
+            "83.9 \u00b1 8.5",
+            "79.6 \u00b1 9.8"
+          ],
+          [
+            "<strong>SSGCNet (Published, Lv et al. 2026)</strong>",
+            "<strong>Spatial-Spectral Graph Conv + SPD Alignment</strong>",
+            "<strong>77.9 \u00b1 9.6</strong>",
+            "<strong>0.705</strong>",
+            "<strong>85.6 \u00b1 8.0</strong>",
+            "<strong>81.4 \u00b1 9.2</strong>"
+          ],
+          [
+            "<strong>Our Replicated SSGCNet (Voyager spd-bench)</strong>",
+            "<strong>SSGCNet (spd_learn)</strong>",
+            "<strong>77.2 \u00b1 9.9 (S3: 84.03%)</strong>",
+            "<strong>0.696</strong>",
+            "<strong>85.0 \u00b1 8.3</strong>",
+            "<strong>80.9 \u00b1 9.5</strong>"
           ]
         ],
-        "source": "arXiv:2606.02490 / HAL-05600912 (.tar.gz e-print)"
+        "source": "HAL-05600912v1 (ESANN 2026) & DOI:10.1109/tnsre.2026.3652858 (IEEE TNSRE 2026)"
       }
     ]
   }

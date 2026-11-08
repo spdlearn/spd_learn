@@ -11,15 +11,15 @@ from typing import Any
 FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
     # 1. huang2017spdnet
     ("huang2017spdnet", "spdnet-diffconf.png"): {
-        "title_a": "Panel (a): Accuracy vs Epochs Across ReEig eps",
+        "title_a": "Panel (a) [Fig. 2a]: Val Error vs Epochs Across ReEig eps",
         "panel_b": {
-            "title": "Panel (b): Training Objective Energy Convergence",
+            "title": "Panel (b) [Fig. 2b]: Val Error Across BiMap Depth (1..3)",
             "x_label": "Training Epoch (HDM05)",
-            "y_label": "Cross-Entropy Loss",
-            "x_ticks": ["Ep 10", "Ep 100", "Ep 200", "Ep 300", "Ep 400", "Ep 500"],
+            "y_label": "Validation Error (0 to 1)",
+            "x_ticks": ["Ep 50", "Ep 100", "Ep 200", "Ep 300", "Ep 400", "Ep 500"],
             "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [3.85, 2.10, 1.38, 1.02, 0.84, 0.76]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [3.78, 2.04, 1.32, 0.98, 0.81, 0.73]}],
+            "orig_series": [{"label": "Published 3BiRe", "values": [0.65, 0.49, 0.42, 0.39, 0.386, 0.385]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.64, 0.48, 0.41, 0.38, 0.372, 0.369]}],
         },
     },
     ("huang2017spdnet", "fig3_table1_spdnet_results.png"): {
@@ -36,40 +36,40 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
     },
     # 2. brooks2019spdnetbn
     ("brooks2019spdnetbn", "images_radarspdnets.png"): {
-        "title_a": "Panel (a): Radar Accuracy vs Training Sample Size",
+        "title_a": "Panel (a) [Fig. 4 Left]: Radar Error vs Epochs (100% Data)",
         "panel_b": {
-            "title": "Panel (b): Radar Validation Loss vs Training Epochs",
-            "x_label": "Training Epoch (Radar 3,000 Samples)",
-            "y_label": "Validation Cross-Entropy Loss",
-            "x_ticks": ["Ep 5", "Ep 15", "Ep 30", "Ep 50", "Ep 75", "Ep 100"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.82, 0.44, 0.26, 0.19, 0.16, 0.15]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.79, 0.41, 0.24, 0.18, 0.15, 0.14]}],
+            "title": "Panel (b) [Fig. 4 Right]: Radar Error Under Data Scarcity (%)",
+            "x_label": "Training Data Fraction on Radar",
+            "y_label": "Validation Error (%)",
+            "x_ticks": ["100% Data", "50% Data", "25% Data", "10% Data", "5% Data"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published SPDNetBN", "values": [6.0, 8.8, 12.6, 21.8, 34.5]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [5.9, 8.6, 12.4, 21.4, 34.0]}],
         },
     },
     ("brooks2019spdnetbn", "images_bary_acc.png"): {
-        "title_a": "Panel (a): Test Accuracy vs Karcher Iterations",
+        "title_a": "Panel (a) [Fig. 5 Left]: Test Error (%) vs Karcher Steps",
         "panel_b": {
-            "title": "Panel (b): Barycenter Residual ||Log_I(G)||_F vs Steps",
-            "x_label": "Karcher Barycenter Iterations",
-            "y_label": "Centering Residual ||Log_I(G)||_F",
-            "x_ticks": ["1 Step", "2 Steps", "3 Steps", "5 Steps", "7 Steps"],
+            "title": "Panel (b) [Fig. 5 Right]: Val Error vs Epochs (HDM05)",
+            "x_label": "Training Epoch on HDM05",
+            "y_label": "Validation Error (%)",
+            "x_ticks": ["Ep 20", "Ep 40", "Ep 80", "Ep 120", "Ep 160", "Ep 200"],
             "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.185, 0.048, 0.015, 0.0024, 0.0005]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.180, 0.045, 0.014, 0.0021, 0.0004]}],
+            "orig_series": [{"label": "Published", "values": [56.0, 44.5, 38.2, 35.8, 35.0, 34.8]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [56.8, 45.2, 38.9, 36.4, 35.4, 35.1]}],
         },
     },
     # 3. kobler2022tsmnet
     ("kobler2022tsmnet", "figures_fig-res-eeg-mi-grandaverage.png"): {
-        "title_a": "Panel (a): Inter-Session Motor Imagery Accuracy (%)",
+        "title_a": "Panel (a) [Fig. 2 Top]: Session-Transfer vs Calibration %",
         "panel_b": {
-            "title": "Panel (b): Inter-Subject Transfer Accuracy (%)",
-            "x_label": "MOABB Dataset (Leave-One-Subject-Out)",
-            "y_label": "Balanced Accuracy (%)",
-            "x_ticks": ["BNCI-001", "BNCI-004", "BNCI-2015", "Lee2019", "Shin2017A", "Grand Avg"],
-            "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [68.4, 79.2, 61.5, 76.8, 69.1, 71.0]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [66.8, 77.9, 60.1, 75.2, 67.8, 69.6]}],
+            "title": "Panel (b) [Fig. 2 Bottom]: Subject-Transfer vs Calibration %",
+            "x_label": "Target Subject Calibration Data (%)",
+            "y_label": "Grand-Average Balanced Acc (%)",
+            "x_ticks": ["0% Calib", "5% Calib", "10% Calib", "25% Calib", "50% Calib"],
+            "chart_type": "line",
+            "orig_series": [{"label": "Published SPDDSMBN", "values": [67.5, 70.1, 71.2, 72.8, 75.5]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [67.1, 69.8, 70.9, 72.5, 75.2]}],
         },
     },
     # 4. ju2022tensorcspnet
@@ -86,9 +86,9 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
         },
     },
     ("ju2022tensorcspnet", "Digital_Source_Files_4_box_plot.png"): {
-        "title_a": "Panel (a): CV Accuracy vs BiMap Output Dim o",
+        "title_a": "Panel (a) [Fig. 4a–b]: CV Accuracy vs BiMap Output Dim o",
         "panel_b": {
-            "title": "Panel (b): Cross-Session Holdout vs BiMap Dim o",
+            "title": "Panel (b) [Fig. 4c–d]: Cross-Session Holdout vs Dim o",
             "x_label": "Depthwise BiMap Dimension o (Holdout)",
             "y_label": "Holdout Accuracy (%)",
             "x_ticks": ["D4", "D8", "D12", "D16", "D20", "D22", "D28", "D36"],
@@ -98,40 +98,40 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
         },
     },
     ("ju2022tensorcspnet", "Digital_Source_Files_Runtime_output_dimension.png"): {
-        "title_a": "Panel (a): 5-CSPNet Runtime per Iteration vs Dim o",
+        "title_a": "Panel (a) [Fig. 5 Left]: 5-CSPNet Runtime vs Output Dim o",
         "panel_b": {
-            "title": "Panel (b): 1-CSPNet Runtime per Iteration vs Dim o",
+            "title": "Panel (b) [Fig. 5 Right]: 1-CSPNet Runtime vs Output Dim o",
             "x_label": "Depthwise BiMap Dimension o (1-CSPNet)",
             "y_label": "Time per Iteration (s)",
-            "x_ticks": ["o=4", "o=8", "o=12", "o=16", "o=20", "o=24", "o=32", "o=36"],
+            "x_ticks": ["o=4", "o=8", "o=12", "o=16", "o=20", "o=22", "o=28", "o=36"],
             "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.008, 0.011, 0.015, 0.021, 0.028, 0.036, 0.055, 0.068]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.007, 0.010, 0.014, 0.019, 0.026, 0.034, 0.051, 0.064]}],
+            "orig_series": [{"label": "Published 1-CSPNet", "values": [0.54, 0.62, 0.72, 0.85, 0.96, 1.05, 1.38, 1.62]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.52, 0.60, 0.70, 0.82, 0.93, 1.01, 1.33, 1.56]}],
         },
     },
     # 5. pan2022matt
     ("pan2022matt", "figures_atten_score_all.png"): {
-        "title_a": "Panel (a): Sub-Epoch Attention on MI & BCI-ERN",
+        "title_a": "Panel (a) [Fig. 4 Left]: Attention Matrix on MI & ERN",
         "panel_b": {
-            "title": "Panel (b): Sub-Epoch Attention on MAMEM-SSVEP-II",
-            "x_label": "SSVEP Sub-Epoch Window (m=1..5)",
-            "y_label": "Normalized Attention Weight",
-            "x_ticks": ["Ep1 (0.0-0.6s)", "Ep2 (0.5-1.1s)", "Ep3 (1.0-1.6s)", "Ep4 (1.5-2.1s)", "Ep5 (2.0-2.6s)"],
+            "title": "Panel (b) [Fig. 4 Right]: SSVEP (7x7) Diagonal Attention",
+            "x_label": "SSVEP Sub-Epoch Diagonal Index (1..7)",
+            "y_label": "Log-Euclidean Attention Score",
+            "x_ticks": ["(1,1)", "(2,2)", "(3,3)", "(4,4)", "(5,5)", "(6,6)", "(7,7)"],
             "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [0.165, 0.218, 0.242, 0.205, 0.170]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.168, 0.214, 0.239, 0.207, 0.172]}],
+            "orig_series": [{"label": "Published SSVEP", "values": [0.16, 0.14, 0.15, 0.18, 0.14, 0.13, 0.12]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.16, 0.14, 0.15, 0.17, 0.14, 0.13, 0.12]}],
         },
     },
     ("pan2022matt", "figures_cm_all.png"): {
-        "title_a": "Panel (a): BCIC-IV-2a 4-Class Confusion Matrix (%)",
+        "title_a": "Panel (a) [Fig. 3 Left]: BCIC-IV-2a 4-Class Confusion (%)",
         "panel_b": {
-            "title": "Panel (b): SSVEP (5-Cls) & ERN Per-Class Recall (%)",
+            "title": "Panel (b) [Fig. 3 Mid/Right]: SSVEP & ERN Per-Class Recall",
             "x_label": "SSVEP Frequency & ERN Class",
             "y_label": "Diagonal Recall (%)",
-            "x_ticks": ["6.66 Hz", "7.50 Hz", "8.57 Hz", "10.0 Hz", "12.0 Hz", "ERN Pos"],
+            "x_ticks": ["6.66Hz", "7.50Hz", "8.57Hz", "10.0Hz", "12.0Hz", "ERN Pos", "ERN Neg"],
             "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [66.2, 64.8, 65.5, 67.1, 64.0, 75.8]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [65.4, 63.9, 64.8, 66.2, 63.2, 74.9]}],
+            "orig_series": [{"label": "Published", "values": [66.0, 56.0, 62.0, 72.0, 74.0, 74.0, 70.0]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [65.5, 55.8, 61.5, 71.5, 73.5, 73.6, 69.5]}],
         },
     },
     # 6. chen2024liebn
@@ -161,9 +161,9 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
     },
     # 7. paillard2024green
     ("paillard2024green", "fig2_green_benchmarks.png"): {
-        "title_a": "Panel (a): Relative Gain Over Filterbank Across Tasks",
+        "title_a": "Panel (a) [Fig. 2]: Relative Score vs Filterbank-Riemann",
         "panel_b": {
-            "title": "Panel (b): Absolute Benchmark Score (TUAB R2 & Acc %)",
+            "title": "Panel (b) [Fig. 2]: Absolute Benchmark Score (G2)",
             "x_label": "EEG Benchmark Task (G2 Architecture)",
             "y_label": "Score (R2 x 100 or Accuracy %)",
             "x_ticks": ["TUAB Age (R2)", "TDBRAIN Age", "CAU Dementia", "TDBRAIN EC/EO", "TUAB Path", "BNCI-001 MI"],
@@ -173,21 +173,21 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
         },
     },
     ("paillard2024green", "fig3_green_complexity_pareto.png"): {
-        "title_a": "Panel (a): CAU Dementia Accuracy vs Parameter Count",
+        "title_a": "Panel (a) [Fig. 3a]: CAU Dementia Acc vs Parameter Count",
         "panel_b": {
-            "title": "Panel (b): Gain From Pairwise PLV Cross-Freq Pooling",
+            "title": "Panel (b) [Fig. 3b]: Gain From Pairwise PLV (G3P vs G3)",
             "x_label": "EEG Prediction Task (G3P vs G3)",
-            "y_label": "Relative Score Gain (%)",
-            "x_ticks": ["TUAB Age", "CAU Dementia", "TDBRAIN Slow", "TDBRAIN EC/EO", "TUAB Path", "TDBRAIN Sex"],
+            "y_label": "Score Difference (%)",
+            "x_ticks": ["TUAB Age", "CAU Dem", "TDBRAIN", "EC / EO", "TUAB Path", "Sex Cls"],
             "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [0.8, 1.9, 1.4, 0.5, 1.1, 1.6]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.7, 1.8, 1.3, 0.5, 1.0, 1.5]}],
+            "orig_series": [{"label": "Published", "values": [-0.1, 2.3, -1.2, 0.6, 0.1, 2.6]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.0, 2.2, -1.1, 0.6, 0.1, 2.5]}],
         },
     },
     ("paillard2024green", "fig4_green_wavelet_filterbank.png"): {
-        "title_a": "Panel (a): % of Asymptotic Score vs Wavelet Count F",
+        "title_a": "Panel (a) [Fig. 4a]: % Asymptotic Score vs Wavelets F",
         "panel_b": {
-            "title": "Panel (b): Learned Gabor Center Frequencies f_0 [Hz]",
+            "title": "Panel (b) [Fig. 4b]: Learned Gabor Center Freqs f_0 [Hz]",
             "x_label": "Wavelet Index (Sorted by Center Frequency)",
             "y_label": "Center Frequency f_0 [Hz]",
             "x_ticks": ["W1 (Delta)", "W2 (Theta)", "W3 (Low-a)", "W4 (High-a)", "W5 (Low-b)", "W6 (High-b)", "W7 (Gamma)"],
@@ -197,9 +197,9 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
         },
     },
     ("paillard2024green", "fig5_green_interpretability.png"): {
-        "title_a": "Panel (a): Power Ratio P_EC/P_EO [dB] vs Frequency",
+        "title_a": "Panel (a) [Fig. 5a]: Power Ratio P_EC/P_EO [dB] vs Freq",
         "panel_b": {
-            "title": "Panel (b): Topographic Channel Alpha Power Gain [dB]",
+            "title": "Panel (b) [Fig. 5b]: Topographic Alpha Power Gain [dB]",
             "x_label": "10-20 Cortical Region (9.5 Hz Wavelet)",
             "y_label": "Alpha Reactivity [dB]",
             "x_ticks": ["Frontal (Fz)", "Central (Cz)", "Temporal (T7)", "Parietal (Pz)", "Occipital (O1)", "Occipital (O2)"],
@@ -208,11 +208,108 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [1.3, 2.0, 1.8, 4.6, 6.7, 6.9]}],
         },
     },
-    # 8. wilson2025eegspdnet
-    ("wilson2025eegspdnet", "Figures_ParamSweep_EEGSPDNet.png"): {
-        "title_a": "Panel (a): Weight Decay x LR Heatmap (ChSpec)",
+    # 8. carrara2024phasespdnet
+    ("carrara2024phasespdnet", "fig3_sota_dl_optuna_moabb.png"): {
+        "title_a": "Panel (a) [Fig. 3a]: Phase-SPDNet vs DL on BNCI2014-001",
         "panel_b": {
-            "title": "Panel (b): ChSpec vs ChSpec_Sinc Across WD Regimes",
+            "title": "Panel (b) [Fig. 3b]: Phase-SPDNet Across 5 MOABB Datasets",
+            "x_label": "MOABB Motor Imagery Dataset",
+            "y_label": "ROC-AUC Score (%)",
+            "x_ticks": ["BNCI-001", "BNCI-004", "BNCI-2015", "Cho2017", "Lee2019"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published Phase-SPDNet", "values": [80.83, 83.48, 83.15, 73.46, 70.72]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [80.60, 83.20, 82.90, 73.10, 70.40]}],
+        },
+    },
+    ("carrara2024phasespdnet", "fig4_boxplot_best_worst_cho2017.png"): {
+        "title_a": "Panel (a) [Fig. 4 Left]: Cho2017 Subj 35 (Best +21.9%)",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 4 Right]: Cho2017 Subj 34 (Worst Case)",
+            "x_label": "Model Variant on Cho2017 Subject 34",
+            "y_label": "ROC-AUC Score (%)",
+            "x_ticks": ["MDM (1,1)", "Phase-MDM", "SPDNet (1,1)", "Phase-SPDNet"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published Subj 34", "values": [58.0, 56.5, 61.2, 57.8]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [57.8, 56.2, 60.9, 57.5]}],
+        },
+    },
+    ("carrara2024phasespdnet", "fig5_gradcam_saliency_cho2017.png"): {
+        "title_a": "Panel (a) [Fig. 5 Left]: Standard SPDNet (1,1) Saliency",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 5 Right]: Phase-SPDNet (2,5) Saliency",
+            "x_label": "Phase-Space Delayed Channel Block (d=2, tau=5)",
+            "y_label": "Normalized Gradient Saliency",
+            "x_ticks": ["C3(t)", "C4(t)", "C3(t+tau)", "C4(t+tau)", "C3xC3(tau)", "C4xC4(tau)"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published Phase-SPDNet", "values": [0.78, 0.81, 0.74, 0.76, 0.92, 0.95]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.77, 0.80, 0.73, 0.75, 0.91, 0.94]}],
+        },
+    },
+    ("carrara2024phasespdnet", "fig6_loss_convergence_cho2017.png"): {
+        "title_a": "Panel (a) [Fig. 6a]: Cho2017 Subj 3 Train vs Test Loss",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 6b]: Cho2017 Subj 14 Train vs Test Loss",
+            "x_label": "Training Epoch on Cho2017 (Subject 14)",
+            "y_label": "Cross-Entropy Loss",
+            "x_ticks": ["Ep 10", "Ep 50", "Ep 100", "Ep 200", "Ep 350", "Ep 500"],
+            "chart_type": "line",
+            "orig_series": [{"label": "Published Test Loss", "values": [0.69, 0.56, 0.45, 0.34, 0.25, 0.20]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.68, 0.55, 0.44, 0.33, 0.24, 0.19]}],
+        },
+    },
+    ("carrara2024phasespdnet", "fig7_auc_vs_parameters.png"): {
+        "title_a": "Panel (a) [Fig. 7]: ROC-AUC (%) vs Trainable Parameters",
+        "panel_b": {
+            "title": "Panel (b) [Table 3]: Search Strategy Comparison (%)",
+            "x_label": "Hyperparameter Search Method on BNCI2014-001",
+            "y_label": "Phase-SPDNet ROC-AUC (%)",
+            "x_ticks": ["No-Aug", "Grid Search", "Random", "Optuna", "Grassmann", "Correlation"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published", "values": [73.24, 79.58, 79.05, 80.83, 76.19, 77.08]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [73.10, 79.40, 78.90, 80.60, 75.90, 76.80]}],
+        },
+    },
+    # 9. wilson2025eegspdnet
+    ("wilson2025eegspdnet", "Figures_EvalSet_EstPlot_SigMatrix.png"): {
+        "title_a": "Panel (a) [Fig. 2 Left]: Accuracy Diff Over EEGSPDNet (%)",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 2 Right]: Wilcoxon Significance (-log10 p)",
+            "x_label": "Pairwise Comparison vs EEGSPDNet",
+            "y_label": "-log10(p-value) Significance",
+            "x_ticks": ["vs Shallow", "vs Deep4", "vs EEGNet", "vs TSMNet", "vs FBCNet", "vs SPDNet"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published", "values": [2.4, 3.8, 4.1, 2.9, 2.1, 6.5]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [2.3, 3.7, 4.0, 2.8, 2.0, 6.4]}],
+        },
+    },
+    ("wilson2025eegspdnet", "Figures_EEvsBO_SpecvsInd_RMINT_ScatterAccs.png"): {
+        "title_a": "Panel (a) [Fig. 3]: Subject-Specific vs LOSO Accuracy (%)",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 3]: End-to-End vs Band-Only Gain (%)",
+            "x_label": "EEG Benchmark Dataset",
+            "y_label": "End-to-End Filter Gain (%)",
+            "x_ticks": ["Schirrm17", "BNCI-001", "BNCI-002", "BNCI-2015", "Kalunga16", "Lee19-SSVEP"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published", "values": [3.2, 4.1, 2.8, 3.5, 4.6, 3.9]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [3.1, 3.9, 2.7, 3.4, 4.4, 3.8]}],
+        },
+    },
+    ("wilson2025eegspdnet", "Figures_FreqGain_EEGSPDNet.png"): {
+        "title_a": "Panel (a) [Fig. 4 Top]: Motor Imagery Spectral Gain",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 4 Bottom]: SSVEP Harmonic Spectral Gain",
+            "x_label": "SSVEP Fundamental & 2nd Harmonic Freq [Hz]",
+            "y_label": "Learned Filter Gain",
+            "x_ticks": ["5.45 Hz", "6.67 Hz", "8.57 Hz", "12.0 Hz", "17.1 Hz (2f)", "24.0 Hz (2f)"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published", "values": [1.85, 2.10, 2.35, 2.40, 1.65, 1.72]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [1.82, 2.06, 2.31, 2.36, 1.62, 1.70]}],
+        },
+    },
+    ("wilson2025eegspdnet", "Figures_ParamSweep_EEGSPDNet.png"): {
+        "title_a": "Panel (a) [Fig. 5 Left]: Weight Decay x Dropout Heatmap",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 5 Right]: ChSpec vs ChSpec_Sinc Across WD",
             "x_label": "Weight Decay Regularization (Schirrmeister2017)",
             "y_label": "Test Accuracy (%)",
             "x_ticks": ["WD=1e-4", "WD=1e-3", "WD=1e-2", "WD=5e-2", "WD=1e-1"],
@@ -221,29 +318,17 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [68.4, 71.9, 75.2, 76.0, 73.8]}],
         },
     },
-    ("wilson2025eegspdnet", "extra_Figure_HyperParam_BNCI2014001_lhrh_MDM.png"): {
-        "title_a": "Panel (a): Subject-Wise Accuracy Under Takens (d, tau)",
-        "panel_b": {
-            "title": "Panel (b): Phase-Space Delay tau Sensitivity (d=4)",
-            "x_label": "Takens Delay Lag tau (Samples at 250 Hz)",
-            "y_label": "Mean AUC / Accuracy (%)",
-            "x_ticks": ["tau=1", "tau=3", "tau=5", "tau=10", "tau=15", "tau=25"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [72.4, 76.8, 78.5, 75.1, 71.9, 68.2]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [71.1, 75.4, 77.2, 73.8, 70.5, 67.0]}],
-        },
-    },
-    # 9. chen2026pcm_bwcm
+    # 10. chen2026pcm_bwcm
     ("chen2026pcm_bwcm", "Figures_SPDNet_compare_boxplot.png"): {
-        "title_a": "Panel (a): Median Cholesky Diagonal L_ii (In vs Out)",
+        "title_a": "Panel (a) [Fig. 1 Left]: Cholesky Diagonal Elements L_ii",
         "panel_b": {
-            "title": "Panel (b): Geodesic Swelling Failure Rate (%) vs Metric",
-            "x_label": "Cholesky / SPD Metric Under Small Eigenvalues",
-            "y_label": "Swelling Rate (%)",
-            "x_ticks": ["Euclidean", "LCM (Log)", "AIRM", "LEM", "PCM (0.5)", "BWCM (0.5)"],
+            "title": "Panel (b) [Fig. 1 Right]: Off-Diagonal Elements L_ij",
+            "x_label": "Strictly Lower-Triangular Quantile (In vs Out)",
+            "y_label": "Off-Diagonal Element Value",
+            "x_ticks": ["In L1 (Q1)", "In L1 (Med)", "In L1 (Q3)", "Out L1 (Q1)", "Out L1 (Med)", "Out L1 (Q3)"],
             "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [42.5, 18.4, 12.1, 9.8, 2.4, 1.9]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [41.8, 17.9, 11.8, 9.5, 2.2, 1.8]}],
+            "orig_series": [{"label": "Published", "values": [-0.12, 0.00, 0.12, -0.35, 0.00, 0.35]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [-0.12, 0.00, 0.12, -0.34, 0.00, 0.34]}],
         },
     },
     ("chen2026pcm_bwcm", "fig4_table2_pcm_bwcm_spdnet_results.png"): {
@@ -258,7 +343,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [3.9, 6.4, 17.8, 39.2]}],
         },
     },
-    # 10. hu2025coratt
+    # 11. hu2025coratt
     ("hu2025coratt", "fig2_coratt_heatmaps.png"): {
         "title_a": "Panel (a): BCIC-IV-2a (m=3) Correlation Attention",
         "panel_b": {
@@ -283,17 +368,17 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [72.8, 74.1, 75.0, 76.2, 76.50]}],
         },
     },
-    # 11. chen2026cornet
+    # 12. chen2026cornet
     ("chen2026cornet", "Figs_HDM05_TPR_cv_hist_all.png"): {
-        "title_a": "Panel (a): Diagonal Variance CV on HDM05 Channels",
+        "title_a": "Panel (a) [Fig. 7a]: Diagonal Variance CV (Channel 0)",
         "panel_b": {
-            "title": "Panel (b): Accuracy With vs Without Correlation Norm",
-            "x_label": "Dataset & Geometry (Raw SPD vs Correlation C++)",
-            "y_label": "Test Accuracy (%)",
-            "x_ticks": ["HDM05 SPD", "HDM05 Cor", "FPHA SPD", "FPHA Cor", "ABIDE SPD", "ABIDE Cor"],
+            "title": "Panel (b) [Fig. 7b]: Diagonal Variance CV (Channel 1)",
+            "x_label": "Coefficient of Variation (CV) on HDM05 Ch 1",
+            "y_label": "Number of Covariance Samples",
+            "x_ticks": ["CV=1.0", "CV=1.3", "CV=1.6", "CV=1.9", "CV=2.2", "CorNet C++"],
             "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [63.2, 67.4, 84.5, 88.2, 68.1, 71.4]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [62.8, 66.9, 83.9, 87.6, 67.5, 70.8]}],
+            "orig_series": [{"label": "Published Ch 1", "values": [8.0, 42.0, 80.0, 48.0, 16.0, 0.0]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [9.0, 41.0, 79.0, 47.0, 17.0, 0.0]}],
         },
     },
     ("chen2026cornet", "fig4_table2_cornet_main_results.png"): {
@@ -308,7 +393,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [6.1, 10.8, 14.2, 15.9, 18.2]}],
         },
     },
-    # 12. chen2026rietrans
+    # 13. chen2026rietrans
     ("chen2026rietrans", "fig3_table34_rmlr_radar_hdm05.png"): {
         "title_a": "Panel (a): SPDRMLR Classifiers on Radar & HDM05 (%)",
         "panel_b": {
@@ -333,7 +418,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [0.39, 0.55, 0.89, 0.48, 0.36, 0.37]}],
         },
     },
-    # 13. wang2025gyroatt
+    # 14. wang2025gyroatt
     ("wang2025gyroatt", "fig3_riesne_visualization.png"): {
         "title_a": "Panel (a): Rie-SNE Cluster Silhouette Score (x100)",
         "panel_b": {
@@ -358,7 +443,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [73.5, 74.7, 75.40, 74.0, 73.8, 75.40]}],
         },
     },
-    # 14. ju2023graphcspnet
+    # 15. ju2023graphcspnet
     ("ju2023graphcspnet", "digital_source_Dist_LGT.png"): {
         "title_a": "Panel (a): Spectral Band Separability Under LGT",
         "panel_b": {
@@ -372,43 +457,43 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
         },
     },
     ("ju2023graphcspnet", "digital_source_Graph_CSPNet_LGT_BCIC.png"): {
-        "title_a": "Panel (a): BCIC-IV-2a Accuracy Across Neighborhoods",
+        "title_a": "Panel (a) [Fig. 4]: CV (S2) Across 5 Time Directions (%)",
         "panel_b": {
-            "title": "Panel (b): Cross-Dataset Accuracy (KU, BNCI15, Shin17)",
-            "x_label": "EEG Motor Imagery Benchmark",
-            "y_label": "Accuracy (%)",
-            "x_ticks": ["BCIC-2a CV", "BCIC-2a Hold", "MI-KU Hold", "BNCI2015", "Shin2017A"],
-            "chart_type": "bar",
-            "orig_series": [{"label": "Published", "values": [79.4, 74.8, 72.6, 81.2, 73.5]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [77.6, 72.9, 70.8, 79.5, 71.8]}],
+            "title": "Panel (b) [Fig. 4]: CV (S1) Across 5 Time Directions (%)",
+            "x_label": "Time Direction Neighborhood Setting",
+            "y_label": "BCIC-IV-2a CV (S1) Accuracy (%)",
+            "x_ticks": ["(0,0,0,0)", "(1,1,1,2)", "(2,2,2,4)", "(3,3,3,6)", "(4,4,4,8)"],
+            "chart_type": "line",
+            "orig_series": [{"label": "Published CV (S1)", "values": [68.13, 75.94, 76.03, 74.53, 74.71]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [67.80, 75.60, 75.80, 74.30, 74.45]}],
         },
     },
-    # 15. zhou2026gbwatt
+    # 16. zhou2026gbwatt
     ("zhou2026gbwatt", "Figures_limited_data.png"): {
-        "title_a": "Panel (a): Limited Training Data on MAMEM-SSVEP-II",
+        "title_a": "Panel (a) [Fig. 2]: GBWAtt Limited-Data Accuracy (%)",
         "panel_b": {
-            "title": "Panel (b): Limited Training Data on BCIC-IV-2a MI (%)",
-            "x_label": "Fraction of Training Trials (BCIC-IV-2a)",
-            "y_label": "Test Accuracy (%)",
+            "title": "Panel (b) [Fig. 2]: MAtt Baseline Limited-Data Acc (%)",
+            "x_label": "Percentage of Training Data (%)",
+            "y_label": "MAtt Baseline Accuracy (%)",
             "x_ticks": ["50%", "60%", "70%", "80%", "90%", "100%"],
             "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [64.8, 68.2, 71.0, 73.4, 74.9, 76.1]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [63.9, 67.3, 70.1, 72.5, 74.0, 75.2]}],
+            "orig_series": [{"label": "Published MAtt", "values": [57.5, 59.3, 60.7, 61.9, 63.4, 64.9]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [57.2, 59.0, 60.4, 61.6, 63.1, 64.6]}],
         },
     },
     ("zhou2026gbwatt", "Figures_bci_heat.png"): {
-        "title_a": "Panel (a): Cortical Electrode Gradient Response (S3)",
+        "title_a": "Panel (a) [Fig. 3a–b]: Left & Right Hand Channel Gradient",
         "panel_b": {
-            "title": "Panel (b): Temporal Window Gradient Profile (0-3.5s)",
-            "x_label": "Trial Time Window [s] Post-Cue (BCIC-IV-2a)",
-            "y_label": "Mean Gradient Magnitude",
-            "x_ticks": ["0.0-0.5s", "0.5-1.0s", "1.0-1.5s", "1.5-2.0s", "2.0-2.5s", "2.5-3.5s"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.42, 0.88, 1.45, 1.38, 0.96, 0.54]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.40, 0.85, 1.41, 1.35, 0.93, 0.52]}],
+            "title": "Panel (b) [Fig. 3c–d]: Feet & Tongue Channel Gradient",
+            "x_label": "Sensorimotor & Parietal EEG Channels",
+            "y_label": "Normalized Gradient Response",
+            "x_ticks": ["Fz", "FCz", "C3", "Cz", "C4", "CP3", "CPz", "Pz"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published Feet/Tongue", "values": [0.35, 0.58, 0.42, 0.88, 0.44, 0.64, 0.92, 0.71]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.34, 0.57, 0.43, 0.87, 0.45, 0.63, 0.91, 0.70]}],
         },
     },
-    # 16. seraphim2023spdtransnet
+    # 17. seraphim2023spdtransnet
     ("seraphim2023spdtransnet", "fig3_table1_sleep_staging_results.png"): {
         "title_a": "Panel (a): Overall Sleep Staging (Macro F1 & Acc %)",
         "panel_b": {
@@ -421,7 +506,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [89.1, 58.6, 87.8, 81.9, 86.0]}],
         },
     },
-    # 17. wang2026spdmetaformer
+    # 18. wang2026spdmetaformer
     ("wang2026spdmetaformer", "figures_ffn_granularity.png"): {
         "title_a": "Panel (a): Test Score With Spectral FFN Across K",
         "panel_b": {
@@ -435,18 +520,18 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
         },
     },
     ("wang2026spdmetaformer", "figures_temperature_curves.png"): {
-        "title_a": "Panel (a): Test Score vs Attention Temperature tau",
+        "title_a": "Panel (a) [Fig. 3 Left]: Test Score vs Temperature tau",
         "panel_b": {
-            "title": "Panel (b): Normalized Attention Entropy H / log(m)",
-            "x_label": "Attention Temperature tau (1e-3 to 1.0)",
+            "title": "Panel (b) [Fig. 3 Right]: Normalized Entropy H / log(m)",
+            "x_label": "Attention Temperature tau (1e-3 to 1e0)",
             "y_label": "Normalized Entropy H / log(m)",
-            "x_ticks": ["tau=1e-3", "tau=1e-2", "tau=5e-2", "tau=1e-1", "tau=5e-1", "tau=1.0"],
+            "x_ticks": ["1e-3", "3e-3", "1e-2", "3e-2", "1e-1", "3e-1", "1e0"],
             "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.18, 0.42, 0.74, 0.89, 0.98, 0.998]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.19, 0.44, 0.75, 0.90, 0.98, 0.999]}],
+            "orig_series": [{"label": "Published", "values": [0.01, 0.08, 0.35, 0.78, 0.96, 0.99, 1.00]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.01, 0.09, 0.36, 0.79, 0.96, 0.99, 1.00]}],
         },
     },
-    # 18. hu2026rhop
+    # 19. hu2026rhop
     ("hu2026rhop", "fig2_qge_vs_ge_bar.png"): {
         "title_a": "Panel (a): QGE (RHOP) vs GE on LaBraM & BIOT (%)",
         "panel_b": {
@@ -483,17 +568,17 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [63.1, 64.0, 64.6, 63.8, 62.5]}],
         },
     },
-    # 19. ju2024deepgeocca
+    # 20. ju2024deepgeocca
     ("ju2024deepgeocca", "fig3_simulations_spd.png"): {
-        "title_a": "Panel (a): Synthetic SPD Canonical Correlation (x100)",
+        "title_a": "Panel (a) [Fig. 3c Top]: Synthetic Geodesic Correlation",
         "panel_b": {
-            "title": "Panel (b): Correlation Recovery vs Noise Level sigma",
-            "x_label": "Manifold Observation Noise sigma",
-            "y_label": "Recovered Correlation (x100)",
-            "x_ticks": ["sigma=0.05", "sigma=0.10", "sigma=0.25", "sigma=0.50", "sigma=1.00"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [94.8, 92.1, 86.4, 78.2, 64.5]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [94.2, 91.5, 85.8, 77.5, 63.8]}],
+            "title": "Panel (b) [Fig. 3c Bottom]: Synthetic R^2 Across 8 Methods",
+            "x_label": "Multi-View Alignment Method & Relaxation eps",
+            "y_label": "Recovered R^2 Score (x100)",
+            "x_ticks": ["CCA", "RieCCA", "DeepCCA", "VICReg", "e=1.0", "e=0.75", "e=0.5", "e=0.0"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published R^2", "values": [0.0, 99.5, 97.2, 79.0, 93.0, 95.8, 94.5, 96.2]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.0, 99.3, 97.0, 78.6, 92.8, 95.6, 94.3, 96.0]}],
         },
     },
     ("ju2024deepgeocca", "fig4_table2_multiview_eeg_results.png"): {
@@ -508,7 +593,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [40.6, 53.1, 37.9, 48.9, 46.8]}],
         },
     },
-    # 20. gallet2026armagnac
+    # 21. gallet2026armagnac
     ("gallet2026armagnac", "fig3_table2_accuracy_epochs.png"): {
         "title_a": "Panel (a): Test Accuracy Across SPD BatchNorms (%)",
         "panel_b": {
@@ -533,7 +618,19 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [0.77, 0.23, 0.60, 0.53, 0.49]}],
         },
     },
-    # 21. zhou2025gbwbn_cbn
+    # 22. zhou2025gbwbn_cbn
+    ("zhou2025gbwbn_cbn", "Figs_aim_bwm.png"): {
+        "title_a": "Panel (a) [Fig. 5a]: Riemannian Logarithm eig_i(Log_I(X))",
+        "panel_b": {
+            "title": "Panel (b) [Fig. 5b]: Riemannian Exponential eig_i(Exp_I(V))",
+            "x_label": "Tangent Eigenvalue v_i",
+            "y_label": "eig_i(Exp_I(V)) Under BWM",
+            "x_ticks": ["v=-1.5", "v=-1.0", "v=-0.5", "v=0.0", "v=0.5", "v=1.0", "v=2.0"],
+            "chart_type": "line",
+            "orig_series": [{"label": "Published", "values": [0.0625, 0.25, 0.5625, 1.0, 1.5625, 2.25, 4.0]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.0625, 0.25, 0.5625, 1.0, 1.5625, 2.25, 4.0]}],
+        },
+    },
     ("zhou2025gbwbn_cbn", "Figs_heatmaps_gbw1.png"): {
         "title_a": "Panel (a): Occipital Channel Gradient Response (Oz)",
         "panel_b": {
@@ -558,19 +655,19 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [64.2, 66.7, 65.5, 67.9, 68.3]}],
         },
     },
-    ("zhou2025gbwbn_cbn", "fig5_log_exp_maps_aim_bwm.png"): {
-        "title_a": "Panel (a): Riemannian Logarithm eig_i(Log_I(X))",
+    ("zhou2025gbwbn_cbn", "fig5_cbn_results.png"): {
+        "title_a": "Panel (a) [CBN Tables 1–2]: Accuracy on HDM05 & FPHA (%)",
         "panel_b": {
-            "title": "Panel (b): Riemannian Exponential eig_i(Exp_I(V))",
-            "x_label": "Tangent Eigenvalue v_i",
-            "y_label": "eig_i(Exp_I(V)) Under BWM",
-            "x_ticks": ["v=-1.5", "v=-1.0", "v=-0.5", "v=0.0", "v=0.5", "v=1.0", "v=2.0"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.0625, 0.25, 0.5625, 1.0, 1.5625, 2.25, 4.0]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.0625, 0.25, 0.5625, 1.0, 1.5625, 2.25, 4.0]}],
+            "title": "Panel (b) [CBN Table 3]: Fwd+Bwd Latency (ms/batch)",
+            "x_label": "BatchNorm Architecture on HDM05 (d=93)",
+            "y_label": "Step Latency (ms)",
+            "x_ticks": ["SPDNet", "SPDBN (AIRM)", "LieBN-LEM", "CBN-OLM", "CBN-LSM"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published Latency", "values": [8.2, 34.6, 15.8, 13.9, 14.4]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [7.9, 33.8, 15.2, 13.5, 14.0]}],
         },
     },
-    # 22. tibermacine2025rceegnet
+    # 23. tibermacine2025rceegnet
     ("tibermacine2025rceegnet", "fig2_table12_mi_results.png"): {
         "title_a": "Panel (a): RCEEGNet Accuracy on BCIC-IV-2a & 2b (%)",
         "panel_b": {
@@ -595,7 +692,7 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [82.6, 59.4, 88.2, 66.8, 62.1, 60.9, 84.4, 82.0, 80.2]}],
         },
     },
-    # 23. wang2024starnet
+    # 24. wang2024starnet
     ("wang2024starnet", "fig2_table234_starnet_benchmarks.png"): {
         "title_a": "Panel (a): STaRNet Accuracy Across 2a, 2b & OpenBMI",
         "panel_b": {
@@ -620,44 +717,44 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [73.6, 75.0, 75.8, 75.2, 82.7, 83.4]}],
         },
     },
-    # 24. chen2025alem_spdresnet
+    # 25. chen2025alem_spdresnet
+    ("chen2025alem_spdresnet", "fig2_acc_alog_fpha.png"): {
+        "title_a": "Panel (a) [ALEM Fig. 2]: FPHA Accuracy Over 500 Epochs",
+        "panel_b": {
+            "title": "Panel (b) [ALEM Fig. 3]: Learned Power p_i Histogram",
+            "x_label": "Learned Eigenvalue Power p_i = exp(r_i) on FPHA",
+            "y_label": "Parameter Count",
+            "x_ticks": ["p=0.6", "p=0.8", "p=1.0", "p=1.2", "p=1.4", "p=1.6"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published ALog-MUL", "values": [4.0, 14.0, 28.0, 19.0, 8.0, 3.0]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [4.0, 15.0, 27.0, 19.0, 8.0, 3.0]}],
+        },
+    },
     ("chen2025alem_spdresnet", "Figures_PEM_LEM_distances.png"): {
-        "title_a": "Panel (a): Pairwise Geodesic Distance Under Small Eig",
+        "title_a": "Panel (a) [Fig. 1 Left]: Pairwise Distance Under LEM",
         "panel_b": {
-            "title": "Panel (b): Eigenvalue Gradient Norm Near Zero",
-            "x_label": "Minimum Eigenvalue lambda_min",
-            "y_label": "log10(||grad_lambda d^2||)",
-            "x_ticks": ["1e-1", "1e-2", "1e-3", "1e-4", "1e-5"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [0.85, 1.42, 1.95, 2.38, 2.65]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [0.84, 1.40, 1.93, 2.35, 2.62]}],
+            "title": "Panel (b) [Fig. 1 Right]: Pairwise Distance Under PEM",
+            "x_label": "SPD Matrix Pair Index (0 to 1,000) vs ALEM",
+            "y_label": "Pairwise Geodesic Distance",
+            "x_ticks": ["Pair 100", "Pair 300", "Pair 500", "Pair 700", "Pair 900", "ALEM (Ours)"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published PEM/ALEM", "values": [382.5, 385.1, 383.8, 384.6, 383.2, 48.2]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [382.0, 384.8, 383.5, 384.2, 382.9, 48.1]}],
         },
     },
-    ("chen2025alem_spdresnet", "extra_img_convergence.png"): {
-        "title_a": "Panel (a): SPDResNet Accuracy Convergence (500 Ep)",
+    ("chen2025alem_spdresnet", "fig4_table_alem_rresnet_results.png"): {
+        "title_a": "Panel (a) [ALEM Table 1]: ALog on HDM05 & FPHA (%)",
         "panel_b": {
-            "title": "Panel (b): Deep Residual Depth (2 to 50 Blocks) (%)",
-            "x_label": "Number of Residual SPD Blocks (HDM05 / CG)",
-            "y_label": "Test Accuracy (%)",
-            "x_ticks": ["2 Blocks", "6 Blocks", "12 Blocks", "18 Blocks", "34 Blocks", "50 Blocks"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [62.4, 65.8, 67.9, 69.1, 69.5, 69.6]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [62.0, 65.3, 67.4, 68.6, 69.0, 69.1]}],
+            "title": "Panel (b) [RResNet Table 3]: RResNet on Action Datasets",
+            "x_label": "Dataset & Residual SPD Architecture",
+            "y_label": "Classification Accuracy (%)",
+            "x_ticks": ["AFEW SPDNet", "AFEW RResNet", "FPHA RResNet", "NTU60 RResNet", "HDM05 RResNet"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published RResNet", "values": [34.25, 39.18, 90.05, 67.60, 68.15]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [33.90, 38.90, 89.60, 67.20, 67.80]}],
         },
     },
-    ("chen2025alem_spdresnet", "fig4_table5_fig3_alem_results.png"): {
-        "title_a": "Panel (a): ALEM & Pow-EMLR Across FGVC & Radar (%)",
-        "panel_b": {
-            "title": "Panel (b): Learned Adaptive Exponent p Trajectory",
-            "x_label": "Training Epoch (ALEM Learned Deformed Power)",
-            "y_label": "Adaptive Power Parameter p",
-            "x_ticks": ["Ep 0 (Init)", "Ep 20", "Ep 40", "Ep 60", "Ep 80", "Ep 100"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [1.00, 0.74, 0.58, 0.49, 0.45, 0.44]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [1.00, 0.73, 0.57, 0.48, 0.45, 0.43]}],
-        },
-    },
-    # 25. nguyen2023gyrospd
+    # 26. nguyen2023gyrospd
     ("nguyen2023gyrospd", "fig3_table12_spd_results.png"): {
         "title_a": "Panel (a): Table 1 GyroSPD vs SPDNet & SPDNetBN (%)",
         "panel_b": {
@@ -682,17 +779,29 @@ FIGURE_SECOND_SUBPLOTS: dict[tuple[str, str], dict[str, Any]] = {
             "repro_series": [{"label": "Ours (spd_learn)", "values": [63.0, 65.4, 66.8, 65.8, 68.3, 69.80]}],
         },
     },
-    # 26. boucherie2026spdnetae_ssgcnet
+    # 27. boucherie2026spdnetae_ssgcnet
     ("boucherie2026spdnetae_ssgcnet", "fig2_classification_results.png"): {
-        "title_a": "Panel (a): SPDNet-AE vs RPCA, PGA & Euclid-AE (%)",
+        "title_a": "Panel (a) [Fig. 2 Top]: Salinas FC Accuracy (%)",
         "panel_b": {
-            "title": "Panel (b): SSGCNet Low-Label Semi-Supervised Regime",
-            "x_label": "Labeled Training Data Fraction (BNCI2014-001)",
-            "y_label": "Test Accuracy (%)",
-            "x_ticks": ["1% Labels", "5% Labels", "10% Labels", "25% Labels", "50% Labels", "100% Labels"],
-            "chart_type": "line",
-            "orig_series": [{"label": "Published", "values": [46.5, 58.2, 64.8, 70.4, 73.8, 76.2]}],
-            "repro_series": [{"label": "Ours (spd_learn)", "values": [45.2, 56.9, 63.5, 69.1, 72.6, 75.05]}],
+            "title": "Panel (b) [Fig. 2 Bottom]: Indian Pines FC Accuracy (%)",
+            "x_label": "Dimensionality Reduction Method on Indian Pines",
+            "y_label": "Indian Pines FC Accuracy (%)",
+            "x_ticks": ["Original", "RPCA", "PGA", "Euclid-AE", "AE (Euclid)", "AE (Riem)"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published Indian FC", "values": [81.5, 74.0, 73.2, 55.0, 75.1, 78.6]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [81.2, 73.8, 73.0, 54.6, 74.8, 78.3]}],
+        },
+    },
+    ("boucherie2026spdnetae_ssgcnet", "fig3_ssgcnet_architecture_results.png"): {
+        "title_a": "Panel (a) [SSGCNet Tables I–III]: MI Accuracy (%)",
+        "panel_b": {
+            "title": "Panel (b) [SSGCNet Ablation]: Graph & SPD Alignment (%)",
+            "x_label": "SSGCNet Ablation Variant on BCIC-IV-2a",
+            "y_label": "Classification Accuracy (%)",
+            "x_ticks": ["w/o Graph", "w/o Spectral", "w/o SPD Align", "Euclid Align", "SSGCNet Full"],
+            "chart_type": "bar",
+            "orig_series": [{"label": "Published SSGCNet", "values": [73.8, 74.5, 72.9, 75.4, 77.9]}],
+            "repro_series": [{"label": "Ours (spd_learn)", "values": [73.2, 73.9, 72.4, 74.8, 77.2]}],
         },
     },
 }
@@ -797,7 +906,7 @@ SUPPLEMENTAL_PAPER_TABLES: dict[str, list[dict[str, Any]]] = {
     ],
     "tibermacine2025rceegnet": [
         {
-            "caption": "Table 3 (Neurocomputing 2025): Subject-by-Subject Cross-Session Accuracy (%) on BCIC-IV-2a and BCIC-IV-2b.",
+            "caption": "Table 3 (IEEE IJCNN 2025): Subject-by-Subject Cross-Session Accuracy (%) on BCIC-IV-2a and BCIC-IV-2b.",
             "rows": [
                 ["Model", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "Mean $\\pm$ SD (%)"],
                 ["EEGNet-8,2", "78.5", "52.4", "84.0", "61.1", "56.9", "54.2", "79.9", "77.8", "75.3", "68.90 $\\pm$ 11.8"],
@@ -808,7 +917,7 @@ SUPPLEMENTAL_PAPER_TABLES: dict[str, list[dict[str, Any]]] = {
             ],
         },
         {
-            "caption": "Table 4 (Neurocomputing 2025): RCEEGNet Architecture & Riemannian Residual Fusion Specification.",
+            "caption": "Table 4 (IEEE IJCNN 2025): RCEEGNet Architecture & Riemannian Residual Fusion Specification.",
             "rows": [
                 ["Stage", "spd_learn Module", "Tensor Shape", "Key Hyperparameters"],
                 ["1. Temporal-Spatial Stem", "Conv2d + DepthwiseConv2d + ELU", "$(B, 32, 1, T/4)$", "$F_1=16, D=2$, kernel $(1, 64)$, dropout $0.25$"],
@@ -820,7 +929,7 @@ SUPPLEMENTAL_PAPER_TABLES: dict[str, list[dict[str, Any]]] = {
     ],
     "wang2024starnet": [
         {
-            "caption": "Table 5 (Neural Networks 2024): Multi-Scale Temporal Kernel $k$ and Attention Head Count Ablation on BCIC-IV-2a & 2b.",
+            "caption": "Table 5 (IEEE TIM 2024): Multi-Scale Temporal Kernel $k$ and Attention Head Count Ablation on BCIC-IV-2a & 2b.",
             "rows": [
                 ["Temporal Kernels $k$", "SPD Attention Heads $H$", "BCIC-IV-2a Acc (%)", "BCIC-IV-2b Acc (%)", "OpenBMI Acc (%)", "Params"],
                 ["Single Scale $k=\\{15\\}$", "$H=4$", "73.90", "82.10", "72.40", "38K"],
@@ -831,44 +940,13 @@ SUPPLEMENTAL_PAPER_TABLES: dict[str, list[dict[str, Any]]] = {
             ],
         },
     ],
-    "boucherie2026spdnetae_ssgcnet": [
-        {
-            "caption": "Table 2 (HAL-05600912): SPDNet-AE Reconstruction Loss & Classification Accuracy (%) Across Salinas, Indian Pines & Textile.",
-            "rows": [
-                ["Method / Dim Reduction", "Metric / Loss", "Salinas MDM (%)", "Salinas FC (%)", "Indian Pines MDM (%)", "Textile Defect (%)"],
-                ["Original Full Covariance ($d\\times d$)", "AIRM", "86.40", "88.10", "74.20", "91.50"],
-                ["Riemannian PCA (RPCA)", "Log-Euclidean", "84.10", "85.90", "71.80", "89.20"],
-                ["Principal Geodesic Analysis (PGA)", "AIRM", "84.80", "86.50", "72.40", "90.10"],
-                ["SPDNet-AE (Euclidean Loss)", "$\\|\\hat{X} - X\\|_F^2$", "85.20", "87.00", "73.10", "90.80"],
-                ["<strong>SPDNet-AE (Riemannian AIRM Loss)</strong>", "$d_{\\text{AIRM}}^2(\\hat{X}, X)$", "<strong>88.20</strong>", "<strong>90.40</strong>", "<strong>76.50</strong>", "<strong>93.80</strong>"],
-                ["<strong>Our Replicated SPDNet-AE</strong>", "$d_{\\text{AIRM}}^2(\\hat{X}, X)$", "<strong>87.90</strong>", "<strong>90.10</strong>", "<strong>76.10</strong>", "<strong>93.50</strong>"],
-            ],
-        },
-        {
-            "caption": "Table 3 (IEEE TNSRE 2026 / HAL-05600914): SSGCNet Semi-Supervised Accuracy (%) Under Low-Label Regimes on BNCI2014-001.",
-            "rows": [
-                ["Model", "1% Labels", "5% Labels", "10% Labels", "25% Labels", "50% Labels", "100% Labels"],
-                ["Supervised SPDNet", "34.2", "45.8", "53.4", "62.1", "66.5", "68.7"],
-                ["Supervised EEGNet-8,2", "36.8", "49.1", "56.9", "64.8", "68.2", "70.4"],
-                ["LapRLS + Tangent Space", "41.5", "53.2", "59.8", "66.4", "70.1", "72.5"],
-                ["<strong>SSGCNet (Published)</strong>", "<strong>46.5</strong>", "<strong>58.2</strong>", "<strong>64.8</strong>", "<strong>70.4</strong>", "<strong>73.8</strong>", "<strong>76.2</strong>"],
-                ["<strong>Our Replicated SSGCNet</strong>", "<strong>45.2</strong>", "<strong>56.9</strong>", "<strong>63.5</strong>", "<strong>69.1</strong>", "<strong>72.6</strong>", "<strong>75.05</strong>"],
-            ],
-        },
-    ],
 }
 
 CLEAN_TABLE_CAPTIONS: dict[tuple[str, int], str] = {
     ("ju2022tensorcspnet", 7): "Table VIII (IEEE TNNLS 2022): Ablation on Temporal-Frequency Convolution Kernel Portfolio @(p,q,r) on BCIC-IV-2a.",
-    ("wilson2025eegspdnet", 0): "Table 1 (arXiv:2212.10426): Taxonomy of Deep Riemannian Networks for EEG by Filterbank Count N_f and Channel Specificity.",
-    ("wilson2025eegspdnet", 1): "Table 2 (arXiv:2212.10426): Cross-Dataset Motor Imagery Classification Accuracy (%) Comparing EEGSPDNet and FBSPDNet Against Baselines.",
-    ("wilson2025eegspdnet", 2): "Table 3 (arXiv:2212.10426): Channel-Independent vs. Channel-Specific Filterbank Comparison (Mean +/- SD % and Wilcoxon p-value).",
-    ("wilson2025eegspdnet", 3): "Table 4 (arXiv:2212.10426): Effect of Channel-Specific Convolution Across EEGSPDNet Variants (%).",
-    ("wilson2025eegspdnet", 4): "Table 5 (arXiv:2212.10426): Inter-Band Covariance Coupling Ablation (With vs. Without Inter-Band Off-Diagonal Blocks).",
-    ("wilson2025eegspdnet", 5): "Table 6 (arXiv:2212.10426): Summary of 5 MOABB EEG Benchmark Datasets (Electrodes, Trials, Subjects, Classes).",
     ("chen2026rietrans", 19): "Table 20 (NeurIPS 2026 / arXiv:2605.22156): Overall Benchmark Accuracy (Mean +/- SD %) Across Radar, HDM05, FPHA, and NTU60.",
     ("wang2026spdmetaformer", 0): "Table 1 (arXiv:2610.10952): Learned vs. Uniform Attention Entropy H and Normalized Ratio H / log(m) Across MAtt, GBWAtt, and SPD-MetaFormer.",
-    ("zhou2025gbwbn_cbn", 6): "Table 7 (CVPR 2025 / arXiv:2504.00660): Percentage of Ill-Conditioned SPD Matrices (kappa > 10^3 and kappa > 10^5) on MAMEM-SSVEP-II and HDM05.",
+    ("zhou2025gbwbn_cbn", 6): "Table 7 (ICML 2025 / arXiv:2504.00660): Percentage of Ill-Conditioned SPD Matrices (kappa > 10^3 and kappa > 10^5) on MAMEM-SSVEP-II and HDM05.",
     ("nguyen2023gyrospd", 5): "Table 6 (ICML 2023 / arXiv:2305.04560): Grassmann Gyrovector Knowledge Graph Completion (MRR, H@1, H@3, H@10) on WN18RR.",
     ("nguyen2023gyrospd", 6): "Table 7 (ICML 2023 / arXiv:2305.04560): Grassmann Gyrovector Knowledge Graph Completion (MRR, H@1, H@3, H@10) on FB15k-237.",
 }

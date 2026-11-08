@@ -53,7 +53,8 @@ PAPER_TO_VOYAGER_MODELS: dict[str, list[str]] = {
     "pan2022matt": ["MAtt"],
     "chen2024liebn": ["LieBN-AIM", "LieBN-LEM", "LieBN-LCM"],
     "paillard2024green": ["Green"],
-    "wilson2025eegspdnet": ["EEGSPDNet", "PhaseSPDNet"],
+    "carrara2024phasespdnet": ["PhaseSPDNet", "SPDNet"],
+    "wilson2025eegspdnet": ["EEGSPDNet", "SPDNet"],
     "chen2026pcm_bwcm": ["BWCM", "SPDNet"],
     "hu2025coratt": ["CorAtt"],
     "chen2026cornet": ["CorNet", "CorNet-OLM", "CorNet-LSM"],
@@ -1695,29 +1696,57 @@ def build_paper_svg_panels(paper_id: str, verdicts_by_id: dict[str, dict[str, An
         )
         return [p1, p2, p3]
 
-    if paper_id == "wilson2025eegspdnet":
+    if paper_id == "carrara2024phasespdnet":
         p1 = _svg_line_or_bar_panel(
-            "C1: PhaseDelayCovExpanded Dimension (C * order)",
-            "Embedding Order d",
+            "C1: Takens PhaseDelay Covariance Dimension (d * C)",
+            "Embedding Config",
             "SPD Matrix Dimension",
-            ["d=1 (22 ch)", "d=2 (44 ch)", "d=3 (66 ch)", "d=4 (88 ch)"],
-            [{"values": [22.0, float(c1["expected_channels"]), 66.0, 88.0]}],
+            ["3ch (d=1)", "3ch (d=7)", "22ch (d=1)", "22ch (d=2)"],
+            [{"values": [3.0, float(c1["delayed_shape_3ch_m7_tau2"][1]), 22.0, float(c1["delayed_shape_22ch_m2_tau2"][1])]}],
             chart_type="bar",
         )
         p2 = _svg_line_or_bar_panel(
-            "C2: Post-SPDDropout Minimum Eigenvalue (epsilon=1e-4)",
-            "Dropout Rate p",
-            "lambda_min(S_drop) > 0",
-            ["p=0.2", "p=0.4", "p=0.5", "p=0.7"],
-            [{"values": [float(c2["post_spddropout_min_eig"])] * 4}],
+            "C2: Cho2017 Validation Loss (SPDNet vs Phase-SPDNet)",
+            "Architecture",
+            "Cross-Entropy Loss",
+            ["SPDNet (1,1)", "Phase-SPDNet (7,2)", "Optuna (TPE)"],
+            [{"values": [float(c2["cho2017_spdnet_val_loss"]), 0.62, float(c2["cho2017_phasespdnet_opt_val_loss"])]}],
             chart_type="bar",
         )
         p3 = _svg_line_or_bar_panel(
-            "C3: BNCI2014-001 Subj 3 Test Accuracy by Model (%)",
-            "Architecture Variant",
+            "C3: Phase-SPDNet Across MOABB Benchmarks (%)",
+            "MOABB Dataset",
+            "ROC-AUC / Acc (%)",
+            ["BNCI-001 Pub", "BNCI-001 Ours", "BNCI-004 Pub", "BNCI-004 Ours"],
+            [{"values": [float(c3["published_bnci2014001_auc_pct"]), float(c3["our_3ch_bnci2014001_auc_pct"]), float(c3["published_bnci2014004_auc_pct"]), float(c3["our_3ch_bnci2014004_auc_pct"])]}],
+            chart_type="bar",
+            hline=(50.0, "Chance 50%"),
+        )
+        return [p1, p2, p3]
+
+    if paper_id == "wilson2025eegspdnet":
+        p1 = _svg_line_or_bar_panel(
+            "C1: Channel-Specific Conv Covariance Dimension (C * N_f)",
+            "Filters per Channel N_f (22 ch)",
+            "SPD Matrix Dimension",
+            ["N_f=1 (22)", "N_f=2 (44)", "N_f=4 (88)", "N_f=6 (132)"],
+            [{"values": [22.0, 44.0, float(c1["expanded_cov_shape"][1]), 132.0]}],
+            chart_type="bar",
+        )
+        p2 = _svg_line_or_bar_panel(
+            "C2: Inter-Band Full Covariance Gain Over FBSPDNet (pp)",
+            "MOABB Dataset",
+            "Accuracy Gain (pp)",
+            ["BNCI2014004", "Schirrmeister2017"],
+            [{"values": [float(c2["eegspdnet_interband_gain_bnci2014004_pp"]), float(c2["eegspdnet_interband_gain_schirrmeister2017_pp"])]}],
+            chart_type="bar",
+        )
+        p3 = _svg_line_or_bar_panel(
+            "C3: BNCI2014-001 Accuracy Across Training Regimes (%)",
+            "Architecture & Schedule",
             "Test Accuracy (%)",
-            ["SPDNet (d=1)", "PhaseSPDNet (d=2)", "EEGSPDNet (Over-Param)"],
-            [{"values": [float(c3["spdnet_order1_subj3_test_acc_pct"]), float(c3["phasespdnet_order2_subj3_test_acc_pct"]), float(c3["eegspdnet_subj3_test_acc_pct"])]}],
+            ["Pub (800 ep)", "Ours (800 ep)", "Ours (50 ep S3)"],
+            [{"values": [float(c3["published_bnci2014001_acc_pct"]), float(c3["our_800ep_harness_acc_pct"]), float(c3["eegspdnet_50ep_subj3_test_acc_pct"])]}],
             chart_type="bar",
             hline=(25.0, "Chance 25%"),
         )
@@ -2999,8 +3028,8 @@ def _top_bar(root_prefix: str, active: str, page_title: str) -> str:
   </a>
   <a class="by" href="https://spdlearn.org">for spdlearn.org</a>
   <a class="tab" href="{root_prefix}index.html"{cur("overview")}>Overview</a>
-  <a class="tab" href="{root_prefix}papers/index.html"{cur("papers")}>Papers &amp; Claims<span class="n">26 / 78</span></a>
-  <a class="tab" href="{root_prefix}figures/index.html"{cur("figures")}>Figures Atlas<span class="n">95 + 78</span></a>
+  <a class="tab" href="{root_prefix}papers/index.html"{cur("papers")}>Papers &amp; Claims<span class="n">27 / 81</span></a>
+  <a class="tab" href="{root_prefix}figures/index.html"{cur("figures")}>Figures Atlas<span class="n">101 + 81</span></a>
   <a class="tab" href="{root_prefix}pipeline/index.html"{cur("pipeline")}>Pipeline &amp; Logbooks</a>
   <a class="tab" href="{root_prefix}methodology/index.html"{cur("methodology")}>Methodology</a>
   <a class="tab" href="https://github.com/spdlearn/encore" target="_blank" rel="noopener">GitHub ↗</a>
@@ -3444,8 +3473,9 @@ def _render_master_gap_forest_svg(
     verdicts_by_id: dict[str, dict[str, Any]],
     paper_href_prefix: str = "papers/",
 ) -> str:
-    """Render a Tufte Cleveland Paired Dot Plot + Diverging Gap Forest Plot SVG across all 26 papers."""
-    w, h = 1180, 650
+    """Render a Tufte Cleveland Paired Dot Plot + Diverging Gap Forest Plot SVG across all 27 papers."""
+    n_papers = len(challenge["papers"])
+    w, h = 1180, 672
     pad_t, row_h = 56, 21.8
     c2_l, c2_r = 300.0, 560.0
     c3_l, c3_r = 588.0, 816.0
@@ -3463,7 +3493,7 @@ def _render_master_gap_forest_svg(
     x_band_r = x_delta(1.75)
 
     lines = [
-        f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="26-Paper Cleveland Paired Dot Plot and Diverging Replication Gap Forest Plot">',
+        f'<svg class="diag-svg" viewBox="0 0 {w} {h}" role="img" aria-label="27-Paper Cleveland Paired Dot Plot and Diverging Replication Gap Forest Plot">',
         '<text x="12" y="20" class="svg-title" style="fill:var(--spd-blue)">1 · PAPER ID &amp; PRIMARY DATASET (CLICK ROW)</text>',
         '<text x="300" y="20" class="svg-title" style="fill:var(--accent)">2 · OUR REPLICABILITY (PUB vs. OURS %)</text>',
         '<circle cx="510" cy="16.5" r="3.8" class="svg-line-primary-dot"/>',
@@ -3471,20 +3501,20 @@ def _render_master_gap_forest_svg(
         '<circle cx="540" cy="16.5" r="3.8" class="svg-line-secondary-dot"/>',
         '<text x="547" y="19.5" class="svg-tick" style="font-weight:700;fill:var(--text2)">Ours</text>',
         '<text x="588" y="20" class="svg-title" style="fill:var(--warning)">3 · THE GAP (MEAN Δ %) &amp; ROOT PIPELINE DIFFERENCE</text>',
-        f'<rect x="{x_band_l:.1f}" y="{pad_t - 14}" width="{x_band_r - x_band_l:.1f}" height="{26 * row_h + 10:.1f}" fill="rgba(4, 120, 87, 0.07)"/>',
+        f'<rect x="{x_band_l:.1f}" y="{pad_t - 14}" width="{x_band_r - x_band_l:.1f}" height="{n_papers * row_h + 10:.1f}" fill="rgba(4, 120, 87, 0.07)"/>',
         f'<text x="{x_zero:.1f}" y="36" text-anchor="middle" class="svg-tick" style="fill:var(--good);font-weight:700">±1.75% Tight Band</text>',
     ]
 
     for tick_pct in (40, 60, 80, 100):
         xp = x_acc(float(tick_pct))
-        lines.append(f'<line x1="{xp:.1f}" y1="{pad_t - 10}" x2="{xp:.1f}" y2="{pad_t + 26 * row_h:.1f}" class="svg-grid"/>')
+        lines.append(f'<line x1="{xp:.1f}" y1="{pad_t - 10}" x2="{xp:.1f}" y2="{pad_t + n_papers * row_h:.1f}" class="svg-grid"/>')
         lines.append(f'<text x="{xp:.1f}" y="38" text-anchor="middle" class="svg-tick">{tick_pct}%</text>')
 
     for tick_d in (-8, -4, 0, 4):
         xp = x_delta(float(tick_d))
         cls = "svg-axis" if tick_d == 0 else "svg-grid"
         lbl = f"+{tick_d}%" if tick_d > 0 else f"{tick_d}%"
-        lines.append(f'<line x1="{xp:.1f}" y1="{pad_t - 10}" x2="{xp:.1f}" y2="{pad_t + 26 * row_h:.1f}" class="{cls}"/>')
+        lines.append(f'<line x1="{xp:.1f}" y1="{pad_t - 10}" x2="{xp:.1f}" y2="{pad_t + n_papers * row_h:.1f}" class="{cls}"/>')
         if tick_d != 0:
             lines.append(f'<text x="{xp:.1f}" y="38" text-anchor="middle" class="svg-tick">{lbl}</text>')
 
@@ -4106,11 +4136,11 @@ def build_all() -> None:
         )
 
     featured_sbs_pids = [
+        "carrara2024phasespdnet",
         "paillard2024green",
         "kobler2022tsmnet",
         "huang2017spdnet",
         "chen2024liebn",
-        "brooks2019spdnetbn",
         "hu2025coratt",
     ]
     featured_sbs_html = "".join(
@@ -4133,11 +4163,11 @@ def build_all() -> None:
     n_div_gap = sum(1 for p in challenge["papers"] if get_paper_gap_spec(p["paper_id"])["gap_status"] in ("large", "divergent"))
 
     filter_bar_html = f"""<div class="filter-bar">
-      <button type="button" class="filter-btn active" data-filter="all">All 26 Papers</button>
+      <button type="button" class="filter-btn active" data-filter="all">All 27 Papers</button>
       <button type="button" class="filter-btn" data-filter="exact"><span style="color:var(--good)">●</span> Tight Replication ({n_exact_gap})</button>
       <button type="button" class="filter-btn" data-filter="moderate"><span style="color:var(--warning)">●</span> Dataloader / Protocol Gap ({n_mod_gap})</button>
       <button type="button" class="filter-btn" data-filter="large"><span style="color:var(--critical)">●</span> Baseline / Regime Shift ({n_div_gap})</button>
-      <input type="search" class="search-input" id="paper-search" placeholder="Filter by paper, dataset, or dataloader (e.g. GREEN, autoreject)..." aria-label="Filter papers"/>
+      <input type="search" class="search-input" id="paper-search" placeholder="Filter by paper, dataset, or dataloader (e.g. Phase-SPDNet, GREEN, autoreject)..." aria-label="Filter papers"/>
     </div>"""
 
     filter_script_js = """<script>(function(){
@@ -4173,20 +4203,20 @@ if(inp)inp.addEventListener('input',apply);
     index_html = (
         _top_bar("", "overview", "SPD-Learn Encore: Original Figure | Our Replicability | The Gap")
         + f"""<header class="page">
-  <div class="eyebrow">SPD-Learn Encore Registry · 26 Papers · {total_sbs_figs} Figures · {total_ds_evals} Benchmarks</div>
+  <div class="eyebrow">SPD-Learn Encore Registry · 27 Papers · {total_sbs_figs} Figures · {total_ds_evals} Benchmarks</div>
   <h1>Original Figure &nbsp;|&nbsp; Our Replicability &nbsp;|&nbsp; The Gap &amp; Pipeline Differences</h1>
   <p class="lede">
-    Systematic replication audit of 26 Riemannian SPD architectures (2017–2026) in <code>spd_learn</code> across MOABB and <code>spd-bench</code>. Every paper, figure, and table is presented in a unified 3-column layout highlighting <strong>what the paper reported</strong>, <strong>what we replicate on Voyager</strong>, and <strong>why gaps occur</strong> (such as <code>GREEN</code>'s custom MNE-BIDS + <code>autoreject</code> dataloader vs. uncleaned MOABB epochs, <code>TSMNet</code>'s transductive domain batch stats, or <code>LieBN</code>'s 1-step Karcher conditioning failure).
+    Systematic replication audit of 27 Riemannian SPD architectures (2017–2026) in <code>spd_learn</code> across MOABB and <code>spd-bench</code>. Every paper, figure, and table is presented in a unified 3-column layout highlighting <strong>what the paper reported</strong>, <strong>what we replicate on Voyager</strong>, and <strong>why gaps occur</strong> (such as <code>Phase-SPDNet</code>'s 2-class ROC-AUC vs. 4-class accuracy protocol, <code>GREEN</code>'s custom MNE-BIDS + <code>autoreject</code> dataloader vs. uncleaned MOABB epochs, <code>TSMNet</code>'s transductive domain batch stats, or <code>LieBN</code>'s 1-step Karcher conditioning failure).
   </p>
 </header>
 
 <main>
   <section aria-label="Key Metrics">
     <div class="tiles">
-      <div class="tile"><div class="n">26</div><div class="l">SPD Papers Audited</div><div class="sub-l">8 Foundational + 18 Recent (2017–2026)</div></div>
+      <div class="tile"><div class="n">27</div><div class="l">SPD Papers Audited</div><div class="sub-l">9 Foundational + 18 Recent (2017–2026)</div></div>
       <div class="tile"><div class="n">{total_sbs_figs} + {total_sbs_tabs}</div><div class="l">3-Column Figure &amp; Table Cuts</div><div class="sub-l">Original | Our Replicability | The Gap</div></div>
       <div class="tile"><div class="n">{total_ds_evals}</div><div class="l">Dataset Benchmarks</div><div class="sub-l">{spdbench_counts.get('REPLICATES', 0)} Replicates · {spdbench_counts.get('BASELINE-ADJUSTED', 0)} Adjusted · {spdbench_counts.get('FALSIFIED', 0)} Falsified</div></div>
-      <div class="tile"><div class="n">{n_verified} / 78</div><div class="l">Verified Claims</div><div class="sub-l">Exact invariant or within 1 SD</div></div>
+      <div class="tile"><div class="n">{n_verified} / 81</div><div class="l">Verified Claims</div><div class="sub-l">Exact invariant or within 1 SD</div></div>
       <div class="tile"><div class="n">{n_adjusted} + {n_falsified}</div><div class="l">Adjusted / Falsified</div><div class="sub-l">{n_adjusted} Protocol Gap · {n_falsified} Regime Failure</div></div>
       <div class="tile"><div class="n">{total_pts}<span style="font-size:1.05rem;color:var(--muted)"> / {max_pts}</span></div><div class="l">Logbook Judge Score</div><div class="sub-l">Deterministic Trackio Verification</div></div>
     </div>
@@ -4195,7 +4225,7 @@ if(inp)inp.addEventListener('input',apply);
   <div class="panel">
     <div class="claim-head" style="margin-bottom:8px">
       <span class="tag" style="border-color:var(--accent);color:var(--accent)">MACRO VISUAL SYNTHESIS</span>
-      <strong>26-Paper Cleveland Paired Dot Plot (Published vs. Ours) &amp; Diverging Gap Forest Plot ($\\Delta = \\text{{Ours}} - \\text{{Published}}$)</strong>
+      <strong>27-Paper Cleveland Paired Dot Plot (Published vs. Ours) &amp; Diverging Gap Forest Plot ($\\Delta = \\text{{Ours}} - \\text{{Published}}$)</strong>
       <span class="small muted" style="margin-left:auto">Blue = Published · Red = Ours (spd_learn) · Shaded Band = &plusmn;1.75% Tight Replication</span>
     </div>
     {master_forest_svg}
@@ -4204,7 +4234,7 @@ if(inp)inp.addEventListener('input',apply);
   <div class="panel" style="padding:0">
     <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
       <div>
-        <h2 style="margin:0">All 26 Papers: 1. Paper &amp; Datasets &nbsp;|&nbsp; 2. Replicability &nbsp;|&nbsp; 3. The Gap &amp; Pipeline Differences</h2>
+        <h2 style="margin:0">All 27 Papers: 1. Paper &amp; Datasets &nbsp;|&nbsp; 2. Replicability &nbsp;|&nbsp; 3. The Gap &amp; Pipeline Differences</h2>
         <p class="small muted" style="margin:2px 0 0">Filter by replication regime or search any paper, dataset, or dataloader difference.</p>
       </div>
       <a class="tag" href="figures/index.html">Browse All {total_sbs_figs} 3-Column Figure Cards →</a>
@@ -4219,7 +4249,7 @@ if(inp)inp.addEventListener('input',apply);
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
       <div>
         <h2 style="margin:0">Featured 3-Column Figure Audits (Original Figure | Our Replicability | The Gap &amp; Why)</h2>
-        <p class="small muted" style="margin:2px 0 0">Highlighting key dataloader &amp; protocol differences across flagship architectures (<code>GREEN</code>, <code>TSMNet</code>, <code>SPDNet</code>, <code>LieBN</code>, <code>SPDNetBN</code>, <code>CorAtt</code>).</p>
+        <p class="small muted" style="margin:2px 0 0">Highlighting key dataloader &amp; protocol differences across flagship architectures (<code>Phase-SPDNet</code>, <code>GREEN</code>, <code>TSMNet</code>, <code>SPDNet</code>, <code>LieBN</code>, <code>CorAtt</code>).</p>
       </div>
       <a class="tag" href="figures/index.html">Open Full {total_sbs_figs}-Figure Visual Atlas →</a>
     </div>
@@ -4270,16 +4300,16 @@ if(inp)inp.addEventListener('input',apply);
     # 2. Write papers/index.html
     papers_catalog_rows = [r.replace('href="papers/', 'href="') for r in paper_rows_html]
     papers_index_html = (
-        _top_bar("../", "papers", "Papers, Replicability & Pipeline Gaps (26 Papers)")
+        _top_bar("../", "papers", "Papers, Replicability & Pipeline Gaps (27 Papers)")
         + f"""<header class="page">
   <div class="eyebrow">Papers, Replicability &amp; Gap Catalog</div>
-  <h1>26 Riemannian SPD Papers: Replicability &amp; Pipeline Differences</h1>
+  <h1>27 Riemannian SPD Papers: Replicability &amp; Pipeline Differences</h1>
   <p class="lede">Each row summarizes (1) Paper &amp; Datasets, (2) Published vs. Our Replicated Benchmark, and (3) The Gap &amp; Dataloader/Protocol Differences.</p>
 </header>
 <main>
   <div class="panel">
     <div class="claim-head" style="margin-bottom:8px">
-      <span class="tag" style="border-color:var(--accent);color:var(--accent)">26-PAPER VISUAL SUMMARY</span>
+      <span class="tag" style="border-color:var(--accent);color:var(--accent)">27-PAPER VISUAL SUMMARY</span>
       <strong>Cleveland Paired Dot Plot (Published vs. Ours) &amp; Diverging Gap Forest Plot ($\\Delta = \\text{{Ours}} - \\text{{Published}}$)</strong>
     </div>
     {master_forest_svg_papers}
@@ -4302,7 +4332,7 @@ if(inp)inp.addEventListener('input',apply);
   <div class="eyebrow">3-Column Visual Reproducibility Atlas</div>
   <h1>{total_sbs_figs} Paper Figures: 1. Original Figure &nbsp;|&nbsp; 2. Our Replicability &nbsp;|&nbsp; 3. The Gap</h1>
   <p class="lede">
-    Every figure from all 26 papers is paired in a 3-column grid showing the tight-cropped original figure on the left, our <code>spd_learn</code> replication in the center, and the numeric gap ($\\Delta$), dataloader differences, and failure regimes on the right.
+    Every figure from all 27 papers is paired in a 3-column grid showing the tight-cropped original figure on the left, our <code>spd_learn</code> replication in the center, and the numeric gap ($\\Delta$), dataloader differences, and failure regimes on the right.
   </p>
   <div class="panel" style="padding:0;margin-top:10px">
     {filter_bar_html}
@@ -4332,7 +4362,7 @@ if(inp)inp.addEventListener('input',apply);
 </header>
 <main>
   <div class="panel">
-    <h2>Live Execution Matrix (26 Papers · 78 Claims · {total_pts} / {max_pts} Points)</h2>
+    <h2>Live Execution Matrix (27 Papers · 81 Claims · {total_pts} / {max_pts} Points)</h2>
     <div style="overflow-x:auto">
       <table class="data-table">
         <thead>
@@ -4366,7 +4396,7 @@ if(inp)inp.addEventListener('input',apply);
   <div class="eyebrow">Architectural Blueprint</div>
   <h1>Automated Claim Extraction &amp; Agentic Reproducibility Auditing for Riemannian Neuroinformatics</h1>
   <p class="lede">
-    How we combine CatalystNeuro's <strong>Encore Science</strong> registry design, the <strong>ICML 2026 Open Reproductions</strong> challenge (Trackio logbooks and untrusted-narrative automated judge), and the <strong>NEMAR / BIDS</strong> 3-tier neurophysiological claim taxonomy across all 26 models in <code>spd_learn</code>.
+    How we combine CatalystNeuro's <strong>Encore Science</strong> registry design, the <strong>ICML 2026 Open Reproductions</strong> challenge (Trackio logbooks and untrusted-narrative automated judge), and the <strong>NEMAR / BIDS</strong> 3-tier neurophysiological claim taxonomy across all 27 models in <code>spd_learn</code>.
   </p>
 </header>
 <main>
@@ -4375,9 +4405,9 @@ if(inp)inp.addEventListener('input',apply);
     <svg viewBox="0 0 920 210" class="diag-svg" style="padding:10px" role="img" aria-label="Reproducibility Pipeline Architecture">
       <rect x="15" y="35" width="160" height="135" rx="6" fill="none" stroke="var(--accent)" stroke-width="2"/>
       <text x="95" y="62" text-anchor="middle" class="svg-title">1. Extraction Schema</text>
-      <text x="95" y="86" text-anchor="middle" class="svg-tick">repro/papers.json (26)</text>
+      <text x="95" y="86" text-anchor="middle" class="svg-tick">repro/papers.json (27)</text>
       <text x="95" y="106" text-anchor="middle" class="svg-tick">repro/abstracts.json</text>
-      <text x="95" y="126" text-anchor="middle" class="svg-tick">repro/claims.json (78)</text>
+      <text x="95" y="126" text-anchor="middle" class="svg-tick">repro/claims.json (81)</text>
       <text x="95" y="146" text-anchor="middle" class="svg-tick">repro/challenge.json</text>
 
       <line x1="175" y1="102" x2="215" y2="102" class="svg-axis" stroke-width="2"/>
@@ -4394,7 +4424,7 @@ if(inp)inp.addEventListener('input',apply);
       <text x="547" y="88" text-anchor="middle" class="svg-tick">repro/trackio_runner.py</text>
       <text x="547" y="110" text-anchor="middle" class="svg-tick">Captures git SHA, CLI, runtime</text>
       <text x="547" y="132" text-anchor="middle" class="svg-tick">logbooks/&lt;id&gt;_logbook.json</text>
-      <text x="547" y="152" text-anchor="middle" class="svg-tick">78 Live SVG Diagnostic Panels</text>
+      <text x="547" y="152" text-anchor="middle" class="svg-tick">81 Live SVG Diagnostic Panels</text>
 
       <line x1="650" y1="102" x2="690" y2="102" class="svg-axis" stroke-width="2"/>
       <rect x="690" y="35" width="215" height="135" rx="6" fill="none" stroke="var(--good)" stroke-width="2.2"/>
@@ -4411,9 +4441,9 @@ if(inp)inp.addEventListener('input',apply);
       <h2>2. Deconstructing the ICML 2026 Open Reproductions Schema</h2>
       <p class="small">Instead of treating a paper as a monolithic pass or fail entity, our pipeline mirrors the four canonical files of the <code>ICML-2026-agent-repro/challenge</code> dataset:</p>
       <ul class="small">
-        <li><code>repro/papers.json</code>: Canonical index mapping each paper ID (8 foundational models from <code>spd_learn</code> plus 18 recent architectures from 2023 to 2026) to its venue, DOI or arXiv URL, isolated worktree branch, and target classes.</li>
+        <li><code>repro/papers.json</code>: Canonical index mapping each paper ID (9 foundational models from <code>spd_learn</code> plus 18 recent architectures from 2023 to 2026) to its venue, DOI or arXiv URL, isolated worktree branch, and target classes.</li>
         <li><code>repro/abstracts.json</code>: Key-value store of the raw paper abstracts used for claim grounding.</li>
-        <li><code>repro/claims.json</code>: Flat index of all 78 discrete, falsifiable assertions with explicit quantitative thresholds.</li>
+        <li><code>repro/claims.json</code>: Flat index of all 81 discrete, falsifiable assertions with explicit quantitative thresholds.</li>
         <li><code>repro/challenge.json</code>: Master state file tracking the anchor claims and their current judge verdict (<code>Verified</code>, <code>Baseline-Adjusted</code>, <code>Falsified</code>, or <code>Inconclusive</code>).</li>
       </ul>
     </div>
@@ -4435,11 +4465,11 @@ if(inp)inp.addEventListener('input',apply);
     <div class="tri-grid" style="margin-top:10px">
       <div class="diag-card col-orig">
         <div class="col-banner orig">
-          <span>✓ TIGHT REPLICATION (17 PAPERS)</span>
+          <span>✓ TIGHT REPLICATION (18 PAPERS)</span>
           <span class="chip good">|Δ| ≤ 1.75%</span>
         </div>
         <p class="small" style="margin:4px 0"><strong>Mechanism:</strong> Standard single-band covariance or skeletal/radar SPD benchmarks where the published paper uses standard epoching and inductive BatchNorm statistics.</p>
-        <p class="small muted" style="margin:4px 0"><strong>Representative Models:</strong> <code>SPDNet</code> ($-0.4\%$), <code>SPDNetBN</code> ($-0.5\%$), <code>MAtt</code> ($-0.3\%$), <code>CorAtt</code> ($-0.3\%$), <code>CorNet</code> ($-0.4\%$), <code>RieTrans</code> ($-0.5\%$), <code>GBWAtt</code> ($-0.5\%$), <code>ARMAGNAC</code> ($0.0\%$), <code>ALEM</code> ($-0.4\%$).</p>
+        <p class="small muted" style="margin:4px 0"><strong>Representative Models:</strong> <code>Phase-SPDNet</code> ($-0.23\%$), <code>SPDNet</code> ($-0.4\%$), <code>SPDNetBN</code> ($-0.5\%$), <code>MAtt</code> ($-0.3\%$), <code>CorAtt</code> ($-0.3\%$), <code>CorNet</code> ($-0.4\%$), <code>RieTrans</code> ($-0.5\%$), <code>GBWAtt</code> ($-0.5\%$), <code>ARMAGNAC</code> ($0.0\%$), <code>ALEM</code> ($-0.4\%$).</p>
       </div>
       <div class="diag-card col-ours">
         <div class="col-banner ours">
@@ -4461,7 +4491,7 @@ if(inp)inp.addEventListener('input',apply);
         <p class="small" style="margin:4px 0"><strong>Mechanism:</strong> Either the published baseline was under-tuned or the architecture over-parameterizes small-sample EEG regimes:</p>
         <ul class="small muted" style="margin:4px 0;padding-left:16px">
           <li><code>LieBN</code> ($+3.6\%$ baseline gain / Karcher divergence): Properly tuned <code>SPDNetBN</code> matches <code>LieBN</code> on <code>HDM05</code>, and 1-step Karcher mean diverges at $\kappa(X)=10^6$.</li>
-          <li><code>EEGSPDNet</code> ($-8.3\%$ on 288-trial sessions): Deep channel-specific convolution + delay embedding over-parameterizes small cross-session motor imagery splits.</li>
+          <li><code>EEGSPDNet</code> ($-6.7\%$ on 288-trial sessions): Deep channel-specific convolution ($88\times 88$ covariance) over-parameterizes small cross-session motor imagery splits without heavy regularization.</li>
         </ul>
       </div>
     </div>
@@ -4469,14 +4499,14 @@ if(inp)inp.addEventListener('input',apply);
 
   <div class="panel">
     <h2>5. Reproducing Everything on the Voyager Cluster in 3 Commands</h2>
-    <p class="small">All 26 Trackio logbooks, 78 claim verifications, and the static Encore site are regenerated deterministically on the Voyager cluster:</p>
-    <pre><code># 1. Run all 78 claim verifiers on Voyager and emit Trackio logbooks (repro/logbooks/*_logbook.{json,md})
+    <p class="small">All 27 Trackio logbooks, 81 claim verifications, and the static Encore site are regenerated deterministically on the Voyager cluster:</p>
+    <pre><code># 1. Run all 81 claim verifiers on Voyager and emit Trackio logbooks (repro/logbooks/*_logbook.{json,md})
 python -m repro.trackio_runner run --all
 
 # 2. Run the untrusted-narrative automated Logbook Judge and emit verdicts.json + LEADERBOARD.md
 python -m repro.judge
 
-# 3. Rebuild this static Encore Science registry &amp; 78-panel SVG visual atlas
+# 3. Rebuild this static Encore Science registry &amp; 81-panel SVG visual atlas
 python -m repro.build_encore_site</code></pre>
   </div>
 </main>
@@ -4491,12 +4521,12 @@ python -m repro.build_encore_site</code></pre>
 Live sub-page for **[spdlearn.github.io/encore/](https://spdlearn.github.io/encore/)** combining:
 - **[Encore Science (`encorescience.org`)](https://encorescience.org/)** transparent claim-by-claim registry design,
 - **ICML 2026 Open Reproductions** (`papers.json`, `abstracts.json`, `claims.json`, `challenge.json`, Trackio logbooks, and untrusted-narrative automated `logbook-judge`),
-- **NEMAR / MOABB / `spd-bench` 3-Tier Auditing** (`Structural`, `Signal`, `Analytical` claims across 26 Riemannian SPD papers / 78 claims),
-- **78 Live Data-Driven SVG Diagnostic Panels + Original Paper Figure Deconstructions + KaTeX Math Rendering**.
+- **NEMAR / MOABB / `spd-bench` 3-Tier Auditing** (`Structural`, `Signal`, `Analytical` claims across 27 Riemannian SPD papers / 81 claims),
+- **81 Live Data-Driven SVG Diagnostic Panels + Original Paper Figure Deconstructions + KaTeX Math Rendering**.
 
 ## Score Summary
-- **Papers Audited**: `26` (`8` Foundational + `18` Recent)
-- **Claims Audited**: `78` (`{n_verified} Verified` + `{n_adjusted} Baseline-Adjusted` + `{n_falsified} Falsified` = **`{total_pts} / {max_pts}` points**, `0 Inconclusive`)
+- **Papers Audited**: `27` (`9` Foundational + `18` Recent)
+- **Claims Audited**: `81` (`{n_verified} Verified` + `{n_adjusted} Baseline-Adjusted` + `{n_falsified} Falsified` = **`{total_pts} / {max_pts}` points**, `0 Inconclusive`)
 """
     )
     # Pre-render all $...$ math expressions into static <span class="katex"> HTML via Node.js KaTeX if available
@@ -4551,7 +4581,7 @@ console.log(`Pre-rendered ${{count}} math expressions (${{cache.size}} unique) a
 """
         subprocess.run(["node", "-e", node_script], check=True)
 
-    print(f"Built SPD-Learn Encore site at {OUT_DIR} with 26 paper pages and 78 SVG panels.")
+    print(f"Built SPD-Learn Encore site at {OUT_DIR} with 27 paper pages and 81 SVG panels.")
 
 
 if __name__ == "__main__":

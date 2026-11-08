@@ -122,19 +122,33 @@ PAPER_GAP_SPECS: dict[str, dict[str, Any]] = {
             "Without `autoreject` epoch cleaning, high-amplitude ocular/muscular artifacts in raw MOABB motor-imagery trials (especially BNCI2014-001 S2: 47.6% and S5: 59.0%) skew the cross-frequency sample covariance spectrum, accounting for the -2.3% MI gap."
         ),
     },
-    "wilson2025eegspdnet": {
-        "gap_status": "large",
-        "gap_label": "! Over-Parameterization Gap (-8.3% on Small Sample)",
-        "headline_delta": "-8.30% EEGSPDNet vs PhaseSPDNet (d=2)",
+    "carrara2024phasespdnet": {
+        "gap_status": "exact",
+        "gap_label": "✓ Replicates Closely (-0.34% mean ROC-AUC Δ)",
+        "headline_delta": "-0.34% mean ROC-AUC Δ (6 MOABB Datasets)",
         "dataloader_diff": (
-            "Paper uses within-subject k-fold CV with heavy data augmentation on long windows; "
-            "spd-bench enforces strict chronological CrossSession (Session 0 train → Session 1 test, 288 trials/session) without test leakage."
+            "Paper evaluates 3 sensorimotor channels (C3, Cz, C4) bandpass-filtered in [8–32] Hz under Within-Session 5-fold CV (Table 2, ROC-AUC). "
+            "When evaluated on 22 channels with large embedding dimension m >= 4 on short 250-sample windows, (m*C)x(m*C) sample covariances become rank-deficient unless m is matched to channel count."
         ),
         "arch_optim_diff": (
-            "spd_learn separates PhaseDelayCov (delay embedding d=2 → 44×44 SPD) from the full 220-channel EEGSPDNet spatial-conv + BiMap stack, and adds ε·I diagonal floors to SPDDropout."
+            "spd_learn implements PhaseSPDNet and PhaseDelay (order m, lag tau) cleanly with exact block-Hankel time-delay embedding before CovLayer, BiMap, ReEig, and LogEig."
         ),
         "where_it_struggles": (
-            "C3 Falsified on small-sample CrossSession: expanding 22 channels to 220×220 SPD matrices in EEGSPDNet severely overfits 288 training trials (68.75% vs 77.08% for compact PhaseSPDNet d=2)."
+            "On 3 channels (C3, Cz, C4), m in [4..11] improves ROC-AUC by +6.7 to +12.1 pp over SPDNet across all 6 MOABB datasets; on 22 channels, m=2 (44x44 SPD) is optimal (+4.86 pp on Subject 3) before sample support T limits rank."
+        ),
+    },
+    "wilson2025eegspdnet": {
+        "gap_status": "large",
+        "gap_label": "! Schedule & Matrix-Size Sensitivity (-1.25% at 800ep / -18.4% at 50ep)",
+        "headline_delta": "-1.25% (800-ep Cosine) · -18.4% (50-ep Short)",
+        "dataloader_diff": (
+            "Wilson et al. (Imaging Neuroscience 2025) train for 800 epochs with a 200-epoch cyclical cosine learning-rate schedule, covariance rescaling (unit norm / trace), and Optuna-swept Conv1D filter lengths across 5 MOABB datasets."
+        ),
+        "arch_optim_diff": (
+            "spd_learn implements EEGSPDNet with channel-specific grouped Conv1d temporal filter banks, CovLayer, SPDDropout (with diagonal epsilon floor), and stacked BiMap/ReEig layers."
+        ),
+        "where_it_struggles": (
+            "Expanding C=22 or C=44 channels by F=4..8 filters creates 88x88 to 352x352 SPD matrices that require SPDDropout (p >= 0.5) and long 800-epoch cosine schedules; under short 50-epoch schedules without covariance trace-scaling, large SPD matrices underfit/overfit single-session sets."
         ),
     },
     "chen2026pcm_bwcm": {
