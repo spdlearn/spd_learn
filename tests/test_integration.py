@@ -26,6 +26,7 @@ oct_max = 3.0
 mandatory_parameters_per_module = {
     "BiMap": dict(in_features=10, out_features=5),
     "BiMapDepthWise": dict(in_features=10, out_features=5, depthwise=2),
+    "GraphBiMap": dict(n_nodes=4, in_features=10, out_features=5),
     "SPDBatchNormMean": dict(num_features=10),
     "BatchReNorm": dict(num_features=10),
     "SPDBatchNormMeanVar": dict(num_features=10),
@@ -70,6 +71,9 @@ def test_integration(model_name):
         x = torch.randn(2, 22, 1000)
 
     model = model_class(n_chans=22, n_outputs=2, **params)
+
+    if model_name == "GraphCSPNet":
+        model.fit_graph(x)
 
     with torch.no_grad():
         out = model(x)
@@ -186,6 +190,11 @@ def test_module_dtype(module_name, dtype, device):
         x = torch.randn(2, 10, 1000, dtype=dtype)
         with torch.no_grad():
             out = module(x)
+    elif module_name == "GraphBiMap":
+        x = torch.randn(2, 4, 10, 100, dtype=dtype)
+        x = CovLayer(device=device, dtype=dtype)(x)
+        with torch.no_grad():
+            out = module(x)
     elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
         x = torch.randn(2, 6, 15, dtype=dtype, device=device)
         with torch.no_grad():
@@ -238,6 +247,9 @@ def test_module_output_device(module_name, device):
 
     if module_name in ("CovLayer", "WaveletConv"):
         x = torch.randn(2, 10, 1000, device=device, dtype=dtype)
+    elif module_name == "GraphBiMap":
+        raw = torch.randn(2, 4, 10, 100, device=device, dtype=dtype)
+        x = CovLayer(device=device, dtype=dtype)(raw)
     elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
         x = torch.randn(2, 6, 15, device=device, dtype=dtype)
     elif module_name in ("GaussianSPD", "RHOP"):
@@ -276,6 +288,9 @@ def test_integration_on_device(model_name, device):
     model = getattr(spd_learn.models, model_name)(n_chans=22, n_outputs=2, **params)
     model.to(device)
 
+    if model_name == "GraphCSPNet":
+        model.fit_graph(x)
+
     with torch.no_grad():
         out = model(x)
 
@@ -300,6 +315,7 @@ def test_module_broadcast_compatible(module_name, extra_dim):
     if module_name in [
         "PatchEmbeddingLayer",
         "BiMapDepthWise",
+        "GraphBiMap",
         "SPMultiheadAttention",
         "SPDTransformerEncoderLayer",
         "GaussianSPD",

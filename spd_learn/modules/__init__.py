@@ -12,6 +12,11 @@ from .bilinear import BiMap, BiMapIncreaseDim
 from .covariance import CovLayer
 from .dropout import SPDDropout
 from .gbw import GBWAttention, GBWGeometry, GBWPatchCovariance  # noqa: F401
+from .graph import (  # noqa: F401
+    GraphBiMap,
+    TimeFrequencyCovariances,
+    TimeFrequencyGraph,
+)
 from .liebn import SPDBatchNormLie
 from .manifold import (
     PositiveDefiniteScalar,

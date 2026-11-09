@@ -151,6 +151,7 @@ from .correlation import (
 from .covariance import covariance, cross_covariance, real_covariance, sample_covariance
 from .dropout import dropout_spd
 from .frechet import frechet_derivative_exp, frechet_derivative_log
+from .graph import normalize_spd_adjacency, spd_graph_aggregate
 from .metrics import (
     # AIRM metric
     airm_distance,
@@ -408,6 +409,8 @@ __all__ = [
     "ajd_pham",
     "rjd",
     "uwedge",
+    "normalize_spd_adjacency",
+    "spd_graph_aggregate",
     "gbw_chart",
     "gbw_inverse_chart",
     "gbw_distance",
