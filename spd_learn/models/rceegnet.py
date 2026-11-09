@@ -95,9 +95,11 @@ class RCEEGNet(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Initialize weights according to Section H.a of Tibermacine et al. (2025)."""
-        nn.init.kaiming_uniform_(self.conv_spatial[0].weight, nonlinearity="relu")
-        nn.init.kaiming_uniform_(self.conv_temporal[0].weight, nonlinearity="relu")
-        self.spd_features[0].reset_parameters()
+        for block in (self.conv_spatial, self.conv_temporal):
+            if isinstance(block[0], nn.Conv2d):
+                nn.init.kaiming_uniform_(block[0].weight, nonlinearity="relu")
+        if isinstance(self.spd_features[0], BiMap):
+            self.spd_features[0].reset_parameters()
 
         bound = (6.0 / self.classifier.in_features) ** 0.5
         nn.init.uniform_(self.classifier.weight, -bound, bound)

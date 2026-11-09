@@ -278,8 +278,9 @@ class SPDResBlock(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Initialize residual spectral CNN near the identity map."""
-        nn.init.normal_(self.cnn[2].weight, mean=0.0, std=0.01)
-        nn.init.zeros_(self.cnn[2].bias)
+        if isinstance(self.cnn[2], nn.Conv1d) and self.cnn[2].bias is not None:
+            nn.init.normal_(self.cnn[2].weight, mean=0.0, std=0.01)
+            nn.init.zeros_(self.cnn[2].bias)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass computing the Riemannian residual transformation.
