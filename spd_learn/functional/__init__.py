@@ -138,9 +138,20 @@ from .core import (
     sym_to_upper,
     vec_to_sym,
 )
+from .correlation import (
+    cov_to_corr,
+    exp_map_lsm,
+    exp_map_olm,
+    log_map_lsm,
+    log_map_olm,
+    off_diag,
+    tril_embed,
+    untril_embed,
+)
 from .covariance import covariance, cross_covariance, real_covariance, sample_covariance
 from .dropout import dropout_spd
 from .frechet import frechet_derivative_exp, frechet_derivative_log
+from .graph import normalize_spd_adjacency, spd_graph_aggregate
 from .metrics import (
     # AIRM metric
     airm_distance,
@@ -150,12 +161,22 @@ from .metrics import (
     bures_wasserstein_geodesic,
     bures_wasserstein_mean,
     bures_wasserstein_transport,
+    bw_attention_mean,
+    bwcm_distance,
+    bwcm_geodesic,
+    bwcm_mean,
     # Log-Cholesky metric
     cholesky_exp,
     cholesky_log,
     exp_map_airm,
+    exp_map_bwcm,
     # Log-Euclidean metric
     exp_map_lem,
+    exp_map_pcm,
+    gbw_chart,
+    gbw_distance,
+    gbw_inverse_chart,
+    gbw_mean,
     log_cholesky_distance,
     log_cholesky_geodesic,
     log_cholesky_mean,
@@ -165,7 +186,14 @@ from .metrics import (
     log_euclidean_multiply,
     log_euclidean_scalar_multiply,
     log_map_airm,
+    log_map_bwcm,
     log_map_lem,
+    log_map_pcm,
+    pcm_coords,
+    pcm_distance,
+    pcm_geodesic,
+    pcm_inv_coords,
+    pcm_mean,
     spd_egrad2rgrad,
 )
 from .numerical import (
@@ -190,6 +218,11 @@ from .parallel_transport import (
 )
 from .regularize import ledoit_wolf, shrinkage_covariance, trace_normalization
 from .riemannian_pgd import spd_rpgd_attack
+from .spdtransnet import (
+    log_tokens_to_spd,
+    spd_to_log_tokens,
+    triangular_dimension,
+)
 from .utils import ensure_sym, unvec_batch, vec_batch
 from .wavelet import compute_gabor_wavelet
 
@@ -376,4 +409,34 @@ __all__ = [
     "ajd_pham",
     "rjd",
     "uwedge",
+    "normalize_spd_adjacency",
+    "spd_graph_aggregate",
+    "gbw_chart",
+    "gbw_inverse_chart",
+    "gbw_distance",
+    "gbw_mean",
+    "bw_attention_mean",
+    "spd_to_log_tokens",
+    "log_tokens_to_spd",
+    "triangular_dimension",
+    "cov_to_corr",
+    "off_diag",
+    "log_map_lsm",
+    "exp_map_lsm",
+    "log_map_olm",
+    "exp_map_olm",
+    "tril_embed",
+    "untril_embed",
+    "pcm_coords",
+    "pcm_inv_coords",
+    "log_map_pcm",
+    "exp_map_pcm",
+    "pcm_distance",
+    "pcm_geodesic",
+    "pcm_mean",
+    "log_map_bwcm",
+    "exp_map_bwcm",
+    "bwcm_distance",
+    "bwcm_geodesic",
+    "bwcm_mean",
 ]

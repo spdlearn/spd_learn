@@ -152,12 +152,23 @@ def test_correctness_spd_learn(epoch_data, filterbank_data, model_name):
         # dims should reduce from n_chans (64) to a smaller dimension
         kwargs = dict(n_patches=2, dims=(64, 32, 32, 16))
         lr = 1e-3
+    elif model_name == "GraphCSPNet":
+        kwargs = dict(n_patches=2, bimap_dims=(32, 16))
+        lr = 1e-3
+    elif model_name == "SPNN":
+        kwargs = dict(bimap_dims=(64,))
+        lr = 0.01
     elif model_name in (
         "EEGSPDNet",
         "RCEEGNet",
         "STaRNet",
         "SPDResNet",
         "GyroSPD",
+        "SPDNetAE",
+        "SSGCNet",
+        "SPDMetaFormer",
+        "GyroAtt",
+        "GBWAtt",
     ):
         lr = 1e-3
     elif model_name == "Green":
@@ -176,6 +187,9 @@ def test_correctness_spd_learn(epoch_data, filterbank_data, model_name):
 
     X_valid = X[60:90, ..., :n_times]
     y_valid = y[60:90]
+
+    if model_name == "GraphCSPNet":
+        model.fit_graph(X_train)
 
     train_set = TensorDataset(X_train, y_train)
     valid_set = TensorDataset(X_valid, y_valid)
