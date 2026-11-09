@@ -261,9 +261,7 @@ class SPDMetaFormer(MAtt):
 
         x = self.patch_cov_layer(x)
         x = self.shrinkage(x)
-
-        for block in self.blocks:
-            x = block(x)
+        x = self.manifold_attention(x)
 
         log_tokens = matrix_log.apply(x)
 

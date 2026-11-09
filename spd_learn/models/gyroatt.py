@@ -158,9 +158,9 @@ class GyroSPDAttention(nn.Module):
             dtype=dtype,
         )
 
-        self.bias = nn.Parameter(torch.empty(dim, dim, device=device, dtype=dtype))
+        self.bias = nn.Parameter(torch.eye(dim, device=device, dtype=dtype))
+        register_parametrization(self, "bias", SymmetricPositiveDefinite())
         self.reset_parameters()
-        self._parametrize()
 
     @torch.no_grad()
     def reset_parameters(self) -> None:
@@ -168,16 +168,12 @@ class GyroSPDAttention(nn.Module):
         self.q_proj.reset_parameters()
         self.k_proj.reset_parameters()
         self.v_proj.reset_parameters()
-        device = self.bias.device if hasattr(self, "bias") else None
-        dtype = self.bias.dtype if hasattr(self, "bias") else None
-        identity = torch.eye(self.dim, device=device, dtype=dtype)
         if is_parametrized(self, "bias"):
-            setattr(self, "bias", identity)
-        elif hasattr(self, "bias"):
-            self.bias.copy_(identity)
-
-    def _parametrize(self) -> None:
-        register_parametrization(self, "bias", SymmetricPositiveDefinite())
+            setattr(
+                self,
+                "bias",
+                torch.eye(self.dim, device=self.bias.device, dtype=self.bias.dtype),
+            )
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of GyroSPDAttention.
@@ -192,28 +188,22 @@ class GyroSPDAttention(nn.Module):
         torch.Tensor
             Attended SPD tokens of shape `(..., n_patches, dim, dim)`.
         """
-        Q = self.q_proj(X)
-        K = self.k_proj(X)
-        V = self.v_proj(X)
+        Q, K, V = self.q_proj(X), self.k_proj(X), self.v_proj(X)
+        dist_fn = (
+            log_euclidean_distance if self.metric == "LEM" else log_cholesky_distance
+        )
+        D = dist_fn(Q.unsqueeze(-3), K.unsqueeze(-4))
+        A = F.softmax(1.0 / (1.0 + torch.log1p(D)), dim=-1)
 
         if self.metric == "LEM":
-            D = log_euclidean_distance(Q.unsqueeze(-3), K.unsqueeze(-4))
-            scores = 1.0 / (1.0 + torch.log1p(D))
-            A = F.softmax(scores, dim=-1)
             bar_V = ensure_sym(log_euclidean_mean(A, V))
-        elif self.metric == "LCM":
-            D = log_cholesky_distance(Q.unsqueeze(-3), K.unsqueeze(-4))
-            scores = 1.0 / (1.0 + torch.log1p(D))
-            A = F.softmax(scores, dim=-1)
-
-            chol_V = cholesky_log.apply(V)
-            mean_chol_V = torch.einsum("...ij, ...jkl -> ...ikl", A, chol_V)
-            bar_V = ensure_sym(cholesky_exp.apply(mean_chol_V))
         else:
-            raise ValueError(f"Unsupported metric: {self.metric}")
+            chol_V = cholesky_log.apply(V)
+            bar_V = ensure_sym(
+                cholesky_exp.apply(torch.einsum("...ij, ...jkl -> ...ikl", A, chol_V))
+            )
 
-        B_sqrt = matrix_sqrt.apply(self.bias)
-        return spd_rebiasing(bar_V, B_sqrt)
+        return spd_rebiasing(bar_V, matrix_sqrt.apply(self.bias))
 
     def extra_repr(self) -> str:
         return f"dim={self.dim}, metric='{self.metric}', power={self.power}"
@@ -470,16 +460,12 @@ class GyroAtt(MAtt):
         self.proj: nn.Module
         self.attention: nn.Module
         if attention_type == "gyro":
-            if temporal_out_channels != attention_out_features:
-                self.proj = BiMap(temporal_out_channels, attention_out_features)
-                self.attention = GyroSPDAttention(
-                    dim=attention_out_features, metric=metric
-                )
-            else:
-                self.proj = nn.Identity()
-                self.attention = GyroSPDAttention(
-                    dim=temporal_out_channels, metric=metric
-                )
+            self.proj = (
+                BiMap(temporal_out_channels, attention_out_features)
+                if temporal_out_channels != attention_out_features
+                else nn.Identity()
+            )
+            self.attention = GyroSPDAttention(dim=attention_out_features, metric=metric)
             self.manifold_attention = nn.Sequential(  # type: ignore[assignment]
                 self.proj, self.attention
             )
@@ -509,23 +495,17 @@ class GyroAtt(MAtt):
         torch.Tensor
             Logits of shape `(batch, n_outputs)`.
         """
-        if x.ndim == 3:
-            x = self.add_extra_dim(x)
-            x = self.spatial_filter(x)
-            x = self.spatial_batch_norm(x)
-            x = self.temporal_feature_extractor(x)
-            x = self.temporal_batch_norm(x)
-            x = self.squeeze_channel(x)
-            x = self.patch_cov_layer(x)
-        elif x.ndim == 4 and x.shape[1] == 1 and x.shape[-1] != x.shape[-2]:
-            x = self.spatial_filter(x)
-            x = self.spatial_batch_norm(x)
-            x = self.temporal_feature_extractor(x)
-            x = self.temporal_batch_norm(x)
-            x = self.squeeze_channel(x)
-            x = self.patch_cov_layer(x)
-        elif x.ndim >= 4 and x.shape[-1] == x.shape[-2]:
+        if x.ndim >= 4 and x.shape[-1] == x.shape[-2]:
             x = self.patch_cov_layer[2](x)
+        else:
+            if x.ndim == 3:
+                x = self.add_extra_dim(x)
+            x = self.spatial_filter(x)
+            x = self.spatial_batch_norm(x)
+            x = self.temporal_feature_extractor(x)
+            x = self.temporal_batch_norm(x)
+            x = self.squeeze_channel(x)
+            x = self.patch_cov_layer(x)
 
         x = self.manifold_attention(x)
         x = self.re_eig(x)

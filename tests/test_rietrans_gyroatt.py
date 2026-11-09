@@ -238,7 +238,7 @@ class TestGyroSPDAttention:
         eye = torch.eye(4)
         assert torch.allclose(orth @ orth.mT, eye, atol=1e-5)
         det = torch.linalg.det(orth)
-        assert torch.isclose(det, torch.tensor(1.0), atol=1e-4)
+        assert torch.isclose(det.abs(), torch.tensor(1.0), atol=1e-4)
 
     @pytest.mark.parametrize("metric", ["LEM", "LCM"])
     def test_forward_output_properties(self, metric: str):

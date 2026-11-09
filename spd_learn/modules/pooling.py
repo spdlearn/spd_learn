@@ -157,23 +157,13 @@ class GaussianSPD(nn.Module):
             ) + self.eps * eye
 
         # Quotient / Lovric embedding blocks
-        top_left = Sigma + self.beta * (mu @ mu.conj().transpose(-2, -1))
-        top_right = self.alpha * mu
-        bottom_left = self.alpha * mu.conj().transpose(-2, -1)
-        bottom_right = torch.full(
-            (*X.shape[:-2], 1, 1),
-            (self.alpha**2) / self.beta,
-            device=X.device,
-            dtype=X.dtype,
-        )
+        G = torch.empty((*X.shape[:-2], D + 1, D + 1), device=X.device, dtype=X.dtype)
+        G[..., :D, :D] = Sigma + self.beta * (mu @ mu.conj().transpose(-2, -1))
+        G[..., :D, D:] = self.alpha * mu
+        G[..., D:, :D] = self.alpha * mu.conj().transpose(-2, -1)
+        G[..., D, D] = (self.alpha**2) / self.beta
 
-        top = torch.cat([top_left, top_right], dim=-1)
-        bottom = torch.cat([bottom_left, bottom_right], dim=-1)
-        G = torch.cat([top, bottom], dim=-2)
-
-        # Guarantee exact Hermitian symmetry
-        G = 0.5 * (G + G.conj().transpose(-2, -1))
-        return G
+        return 0.5 * (G + G.conj().transpose(-2, -1))
 
 
 class RHOP(nn.Module):

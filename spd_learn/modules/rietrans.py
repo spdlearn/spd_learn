@@ -125,49 +125,41 @@ class SPDRMLR(nn.Module):
         self.vec_dim = n_features * (n_features + 1) // 2
 
         self.reference = nn.Parameter(
-            torch.empty(n_features, n_features, device=device, dtype=dtype)
+            torch.eye(n_features, device=device, dtype=dtype)
         )
+        register_parametrization(self, "reference", SymmetricPositiveDefinite())
         self.linear = nn.Linear(
             self.vec_dim, n_outputs, bias=True, device=device, dtype=dtype
         )
 
-        self.reset_parameters()
-        self._parametrize()
-
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Reset layer parameters to initial state."""
-        identity = torch.eye(
-            self.n_features,
-            device=self.linear.weight.device,
-            dtype=self.linear.weight.dtype,
-        )
         if is_parametrized(self, "reference"):
-            setattr(self, "reference", identity)
-        else:
-            self.reference.copy_(identity)
+            setattr(
+                self,
+                "reference",
+                torch.eye(
+                    self.n_features,
+                    device=self.linear.weight.device,
+                    dtype=self.linear.weight.dtype,
+                ),
+            )
         self.linear.reset_parameters()
-
-    def _parametrize(self) -> None:
-        register_parametrization(self, "reference", SymmetricPositiveDefinite())
 
     def _to_tangent(self, X: torch.Tensor) -> torch.Tensor:
         """Map SPD matrices to tangent space at the reference point."""
         P = self.reference
-        if self.metric == "LEM":
+        if self.metric == "LEM" or (self.metric == "PEM" and self.theta == 0.0):
             return matrix_log.apply(X) - matrix_log.apply(P)
-        elif self.metric == "PEM":
-            if self.theta == 0.0:
-                return matrix_log.apply(X) - matrix_log.apply(P)
+        if self.metric == "PEM":
             return (
                 matrix_power.apply(X, self.theta) - matrix_power.apply(P, self.theta)
             ) / self.theta
-        elif self.metric == "AIM":
+        if self.metric == "AIM":
             P_inv_sqrt = matrix_inv_sqrt.apply(P)
             return matrix_log.apply(P_inv_sqrt @ X @ P_inv_sqrt)
-        elif self.metric == "LCM":
-            return cholesky_log.apply(X) - cholesky_log.apply(P)
-        raise ValueError(f"Unsupported metric: {self.metric}")
+        return cholesky_log.apply(X) - cholesky_log.apply(P)
 
     def _vectorize(self, V: torch.Tensor) -> torch.Tensor:
         """Vectorize tangent matrix."""
