@@ -387,6 +387,3 @@ def test_threshold_skips_small_travel_and_recenters_large_travel():
     step_dynamic_trivialization(model, threshold=0.1)
     assert float(w_orig.tril(-1).norm().item()) == pytest.approx(0.01)
     assert float(b_orig.norm().item()) == pytest.approx(0.0)
-
-
-
