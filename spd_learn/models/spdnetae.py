@@ -78,8 +78,8 @@ class SPDNetAE(nn.Module):
     intrinsic Riemannian geometry of Symmetric Positive Definite matrices
     throughout both the encoding and decoding pathways.
 
-    Architecture Overview
-    ---------------------
+    **Architecture Overview**
+
     1. **Covariance Frontend**: When raw signal data is provided, it is
        mapped to an SPD covariance matrix via `CovLayer()`, followed by
        scale normalization `TraceNorm()` and shrinkage regularization
@@ -139,7 +139,7 @@ class SPDNetAE(nn.Module):
     References
     ----------
     .. bibliography::
-       :filter: docname in %user
+       :filter: docname in docnames
 
     Examples
     --------

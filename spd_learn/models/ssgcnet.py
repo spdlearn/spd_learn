@@ -129,29 +129,38 @@ class SSGCNet(nn.Module):
     temporal-spatial convolutions, Stiefel manifold projections, and tangent-space
     :math:`k`-NN graph attention.
 
-    Architecture Stages
-    -------------------
+    **Architecture Stages**
+
     1. **Temporal & Spatial Convolutions**:
+
        - 2D Temporal Conv: `Conv2d(1, temporal_filters, (1, 15), padding=(0, 7))`
        - Depthwise Spatial Conv:
          `Conv2d(temporal_filters, temporal_filters, (n_chans, 1), groups=...)`
+
     2. **Patch Covariance Embedding**:
+
        - :class:`~spd_learn.modules.PatchEmbeddingLayer`: splits temporal features
          into `n_nodes` patches.
        - :class:`~spd_learn.modules.CovLayer`: computes sample covariance per patch.
        - :class:`~spd_learn.modules.TraceNorm`: normalizes covariance scale.
        - :class:`~spd_learn.modules.Shrinkage`: regularizes conditioning.
+
     3. **Stiefel Projection**:
+
        - :class:`~spd_learn.modules.BiMap`: learnable orthonormal projection on
          :math:`\text{St}(\text{temporal\_filters}, \text{stiefel\_dim})`.
        - :class:`~spd_learn.modules.ReEig`: eigenvalue floor enforcement.
+
     4. **Tangent-Space :math:`k`-NN Graph-SPD Aggregation**:
+
        - Maps node covariances to Log-Euclidean tangent space.
        - Computes pairwise tangent distances and dynamically selects top-:math:`k`
          nearest neighbors.
        - Aggregates neighbor tangent representations via attention and retracts
          back to the SPD manifold via :func:`~spd_learn.functional.matrix_exp`.
+
     5. **Classification**:
+
        - :class:`~spd_learn.modules.LogEig`: vectorizes upper triangular elements.
        - Flattening, dropout, and a linear classifier.
 
@@ -177,7 +186,7 @@ class SSGCNet(nn.Module):
     References
     ----------
     .. bibliography::
-       :filter: docname in %user
+       :filter: docname in docnames
 
     Examples
     --------

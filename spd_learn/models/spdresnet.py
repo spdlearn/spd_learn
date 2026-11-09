@@ -28,6 +28,7 @@ class SPDResNet(nn.Module):
     Metric (ALEM) deformation.
 
     The architecture consists of:
+
     1. **Preprocessing**: Covariance estimation via
        :class:`~spd_learn.modules.CovLayer`,
        trace normalization via :class:`~spd_learn.modules.TraceNorm`, and learnable

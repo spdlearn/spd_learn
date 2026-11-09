@@ -91,7 +91,7 @@ Functional regularization utilities for covariance matrices.
 Riemannian Metrics
 ------------------
 
-SPD Learn implements four Riemannian metrics for SPD manifolds. Each metric
+SPD Learn implements Riemannian metrics for SPD and correlation manifolds. Each metric
 provides distance computation, geodesic interpolation, and exponential/logarithmic
 maps. Choose based on your application's needs:
 
@@ -114,6 +114,15 @@ maps. Choose based on your application's needs:
    * - **Bures-Wasserstein**
      - Optimal transport connection
      - Covariance interpolation, statistics
+   * - **PCM & BWCM**
+     - Closed-form Cholesky product metrics
+     - Fast GPU training without eigendecomposition
+   * - **Generalized BW (GBW)**
+     - Reference-parameterized transport metric
+     - Riemannian self-attention (:class:`~spd_learn.models.GBWAtt`)
+   * - **Correlation (OLM & LSM)**
+     - Scale-invariant correlation geometry
+     - Functional connectivity (:class:`~spd_learn.models.CorAtt`, :class:`~spd_learn.models.CorNet`)
 
 
 AIRM (Affine-Invariant Riemannian Metric)
@@ -177,6 +186,73 @@ theory and is particularly useful for covariance interpolation.
    bures_wasserstein_geodesic
    bures_wasserstein_mean
    bures_wasserstein_transport
+
+
+Cholesky Product Metrics (PCM & BWCM)
+'''''''''''''''''''''''''''''''''''''
+Closed-form Cholesky product metrics pulling back Power-Euclidean and Bures-Wasserstein
+geometries via the Cholesky factor.
+
+.. autosummary::
+   :toctree: generated/cholesky_product
+
+   pcm_coords
+   pcm_inv_coords
+   log_map_pcm
+   exp_map_pcm
+   pcm_distance
+   pcm_geodesic
+   pcm_mean
+   log_map_bwcm
+   exp_map_bwcm
+   bwcm_distance
+   bwcm_geodesic
+   bwcm_mean
+
+
+Generalized Bures-Wasserstein Metric
+''''''''''''''''''''''''''''''''''''
+Generalized Bures-Wasserstein geometry parameterized by a reference SPD matrix.
+
+.. autosummary::
+   :toctree: generated/gbw_metric
+
+   gbw_chart
+   gbw_inverse_chart
+   gbw_distance
+   gbw_mean
+   bw_attention_mean
+
+
+Correlation Manifold Operations
+'''''''''''''''''''''''''''''''
+Operations on the full-rank correlation manifold :math:`\mathcal{C}_{++}^d`.
+
+.. autosummary::
+   :toctree: generated/correlation_functional
+
+   cov_to_corr
+   off_diag
+   log_map_lsm
+   exp_map_lsm
+   log_map_olm
+   exp_map_olm
+   tril_embed
+   untril_embed
+
+
+Graph & Sequence Operations
+---------------------------
+Functional helpers for SPD graph aggregation and tangent-space sequence tokenization.
+
+.. autosummary::
+   :toctree: generated/graph_sequence_functional
+
+   normalize_spd_adjacency
+   spd_graph_aggregate
+   spd_to_log_tokens
+   log_tokens_to_spd
+   triangular_dimension
 
 
 Parallel Transport
@@ -517,6 +593,7 @@ acting as analogous operations to linear layers in Euclidean space.
 
    BiMap
    BiMapIncreaseDim
+   GraphBiMap
 
 
 Batch Normalization
@@ -530,7 +607,45 @@ or related representations.
    SPDBatchNormMean
    SPDBatchNormMeanVar
    SPDBatchNormLie
+   SPDBatchNormHarmonic
+   SPDBatchNormBW
+   SPDBatchNormCholesky
    BatchReNorm
+
+
+Manifold Attention, Transformers & Pooling
+------------------------------------------
+Self-attention, transformer encoder, high-order pooling, and intrinsic
+Riemannian linear / MLR layers.
+
+.. autosummary::
+   :toctree: generated/attention_pooling
+
+   SPMultiheadAttention
+   SPDTransformerEncoderLayer
+   SPDLogTokenizer
+   LearnedSinusoidalPosition
+   SPDTemporalEncoder
+   SPDIntraEpochEncoder
+   SPDInterEpochEncoder
+   GBWAttention
+   GBWGeometry
+   GBWPatchCovariance
+   GaussianSPD
+   RHOP
+   SPDRMLR
+   SPDLinear
+
+
+Graph Layers
+------------
+Modules for time-frequency covariance graph construction and graph learning on SPD manifolds.
+
+.. autosummary::
+   :toctree: generated/graph_modules
+
+   TimeFrequencyCovariances
+   TimeFrequencyGraph
 
 
 Regularization
@@ -607,11 +722,26 @@ building blocks from :py:mod:`spd_learn.modules`.
 .. autosummary::
    :toctree: generated/
 
+    CorAtt
+    CorNet
+    DeepGeoCCA
     EEGSPDNet
+    GBWAtt
+    GraphCSPNet
     Green
+    GyroAtt
+    GyroSPD
     MAtt
     PhaseSPDNet
+    RCEEGNet
+    SPDMetaFormer
     SPDNet
+    SPDNetAE
+    SPDResNet
+    SPDTransNet
+    SPNN
+    SSGCNet
+    STaRNet
     TensorCSPNet
     TSMNet
 
@@ -623,8 +753,18 @@ Sub-modules used inside the models above, exposed for reuse and customization.
 .. autosummary::
    :toctree: generated/
 
+   AdaptiveLogEuclidean
    AttentionManifold
+   CorrAttention
+   GeodesicCCALoss
+   GyroSPDAttention
+   GyroSPDLayer
    PhaseDelay
+   SPDDecoderBlock
+   SPDMetaFormerBlock
+   SPDResBlock
+   SymSPDAttention
+   TangentGraphSPDAggregation
 
 
 Model Selection Guide
@@ -675,6 +815,81 @@ Use this table to choose the right model for your application:
      - Nonlinear dynamics
      - Raw EEG
      - Phase-space embedding
+     - Low
+   * - :class:`CorAtt`
+     - Correlation attention
+     - Raw EEG
+     - OLM/LSM manifold attention
+     - Medium
+   * - :class:`CorNet`
+     - Scale-invariant connectivity
+     - Raw EEG or covariances
+     - Full-rank correlation blocks
+     - Low
+   * - :class:`GBWAtt`
+     - Robust attention
+     - Raw EEG
+     - Generalized Bures-Wasserstein attention
+     - Medium
+   * - :class:`GyroAtt`
+     - Gyrovector attention
+     - Raw EEG
+     - Gyro-automorphism / tangent attention
+     - Medium
+   * - :class:`SPDMetaFormer`
+     - Small-data EEG decoding
+     - Raw EEG
+     - MetaFormer token mixers on SPD patches
+     - Medium
+   * - :class:`SPDTransNet`
+     - Multi-epoch sequences (sleep staging)
+     - Sequence of raw EEG epochs
+     - Intra/inter-epoch structure-preserving MHA
+     - High
+   * - :class:`SPNN`
+     - Structure-preserving transformations
+     - Raw EEG or covariances
+     - Intrinsic :class:`~spd_learn.modules.SPDLinear` & :class:`~spd_learn.modules.SPDRMLR`
+     - Low
+   * - :class:`GraphCSPNet`
+     - Time-frequency graph EEG
+     - Filter bank data
+     - :class:`~spd_learn.modules.GraphBiMap` over TF graph
+     - Medium
+   * - :class:`DeepGeoCCA`
+     - Multi-view / multimodal alignment
+     - Raw EEG or multi-view covariances
+     - Geodesic canonical correlation analysis
+     - Medium
+   * - :class:`SPDNetAE`
+     - Compact representation learning
+     - Raw EEG or covariances
+     - Riemannian autoencoder + reconstruction loss
+     - Low
+   * - :class:`SSGCNet`
+     - End-to-end graph EEG
+     - Raw EEG
+     - Stiefel projection + tangent :math:`k`-NN graph
+     - Medium
+   * - :class:`RCEEGNet`
+     - Spatio-temporal conv + SPD
+     - Raw EEG
+     - Depthwise conv + residual SPD blocks
+     - Medium
+   * - :class:`STaRNet`
+     - Motor imagery decoding
+     - Raw EEG
+     - Multi-scale temporal conv + Riemannian head
+     - Medium
+   * - :class:`SPDResNet`
+     - Deep SPD networks
+     - Raw EEG or covariances
+     - Spectral 1D-CNN residuals + ALEM
+     - Medium
+   * - :class:`GyroSPD`
+     - Gyrovector neural network
+     - Raw EEG or covariances
+     - Left gyro-translations on SPD manifold
      - Low
 
 

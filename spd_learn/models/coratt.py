@@ -39,6 +39,7 @@ class CorrAttention(nn.Module):
     Given a sequence of correlation matrices
     :math:`X \in \mathbb{R}^{B \times P \times d \times d}`,
     the attention mechanism:
+
     1. Converts inputs to correlation matrices via :func:`cov_to_corr`.
     2. Maps to the hollow symmetric tangent space :math:`\text{Hol}(\mathcal{S}^d)` via
        :func:`log_map_olm` (for ``metric in ("OLM", "mix")``) or :func:`log_map_lsm`
@@ -178,6 +179,7 @@ class CorAtt(MAtt):
     self-attention network for EEG decoding operating on the correlation manifold.
 
     The model consists of:
+
     1. Spatial and temporal 2D convolution feature frontend (inherited from MAtt).
     2. Segmenting features into temporal patches and computing patch covariance.
     3. Normalizing to full-rank correlation matrices and applying

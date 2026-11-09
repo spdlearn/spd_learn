@@ -341,6 +341,7 @@ class GyroAtt(MAtt):
     GyroAtt :cite:p:`wang2025towards`.
 
     The architecture comprises:
+
     1. **Spatiotemporal Frontend**: Spatial and temporal 2D convolutions
        (inherited from MAtt).
     2. **Patch Covariance Embedding**: Signal segmentation into patches via

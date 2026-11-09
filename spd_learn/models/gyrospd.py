@@ -33,6 +33,7 @@ class GyroSPD(nn.Module):
     (SPD) manifold using gyrovector space calculus and left gyro-translations.
 
     The model consists of:
+
     1. **Preprocessing**: Covariance estimation via
        :class:`~spd_learn.modules.CovLayer`,
        trace normalization via :class:`~spd_learn.modules.TraceNorm`, and learnable

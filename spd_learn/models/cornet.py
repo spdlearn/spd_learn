@@ -30,6 +30,7 @@ class CorNet(nn.Module):
     :math:`\mathcal{C}_{++}^n`.
 
     The model consists of:
+
     1. Sample covariance estimation (:class:`~spd_learn.modules.CovLayer`) and
        shrinkage regularization (:class:`~spd_learn.modules.Shrinkage`).
     2. Conversion to correlation matrices via :func:`~spd_learn.functional.cov_to_corr`.

@@ -113,7 +113,7 @@ def cov_to_corr(S: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
 
 
 def log_map_olm(C: torch.Tensor) -> torch.Tensor:
-    r"""Off-Log Metric (OLM) logarithmic map.
+    r"""Off-Log Metric (OLM) logarithmic map :cite:p:`hu2025riemannian`.
 
     Maps a correlation matrix :math:`C \in \mathcal{C}_{++}^n` to the hollow
     symmetric tangent space :math:`\text{Hol}(\mathcal{S}^n)`:
@@ -131,11 +131,6 @@ def log_map_olm(C: torch.Tensor) -> torch.Tensor:
     -------
     torch.Tensor
         Hollow symmetric tangent matrix of shape `(..., n, n)`.
-
-    References
-    ----------
-    .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
-       Decoding," IJCAI 2025.
     """
     return off_diag(matrix_log.apply(ensure_sym(C)))
 
@@ -145,7 +140,7 @@ def exp_map_olm(
     max_iter: int = 15,
     tol: float = 1e-6,
 ) -> torch.Tensor:
-    r"""Off-Log Metric (OLM) exponential map.
+    r"""Off-Log Metric (OLM) exponential map :cite:p:`hu2025riemannian`.
 
     Maps a hollow symmetric matrix :math:`X \in \text{Hol}(\mathcal{S}^n)` to
     the correlation manifold :math:`\mathcal{C}_{++}^n` by finding a diagonal
@@ -168,11 +163,6 @@ def exp_map_olm(
     -------
     torch.Tensor
         Correlation matrix with unit diagonal, shape `(..., n, n)`.
-
-    References
-    ----------
-    .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
-       Decoding," IJCAI 2025.
     """
     X_hollow = off_diag(ensure_sym(X))
 
@@ -196,7 +186,7 @@ def log_map_lsm(
     max_iter: int = 10,
     tol: float = 1e-6,
 ) -> torch.Tensor:
-    r"""Log-Scaled Metric (LSM) logarithmic map.
+    r"""Log-Scaled Metric (LSM) logarithmic map :cite:p:`hu2025riemannian`.
 
     Scales correlation matrix :math:`C \in \mathcal{C}_{++}^n` via diagonal
     :math:`D = \text{diag}(d)` such that :math:`\text{diag}(\log(D C D)) = 0`.
@@ -214,11 +204,6 @@ def log_map_lsm(
     -------
     torch.Tensor
         Hollow symmetric tangent matrix of shape `(..., n, n)`.
-
-    References
-    ----------
-    .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
-       Decoding," IJCAI 2025.
     """
     C_sym = ensure_sym(C)
     with torch.no_grad():
@@ -236,7 +221,7 @@ def log_map_lsm(
 
 
 def exp_map_lsm(X: torch.Tensor) -> torch.Tensor:
-    r"""Log-Scaled Metric (LSM) exponential map.
+    r"""Log-Scaled Metric (LSM) exponential map :cite:p:`hu2025riemannian`.
 
     Maps a hollow symmetric matrix :math:`X \in \text{Hol}(\mathcal{S}^n)`
     to the correlation manifold :math:`\mathcal{C}_{++}^n`:
@@ -254,11 +239,6 @@ def exp_map_lsm(X: torch.Tensor) -> torch.Tensor:
     -------
     torch.Tensor
         Correlation matrix with unit diagonal, shape `(..., n, n)`.
-
-    References
-    ----------
-    .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
-       Decoding," IJCAI 2025.
     """
     X_hollow = off_diag(ensure_sym(X))
     return cov_to_corr(matrix_exp.apply(X_hollow))
