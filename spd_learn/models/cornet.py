@@ -94,13 +94,13 @@ class CorNet(nn.Module):
         self.shrinkage = Shrinkage(n_chans=n_chans, device=device, dtype=dtype)
 
         dims = (n_chans, *bimap_dims)
-        self.blocks = nn.ModuleList()
-        for in_d, out_d in zip(dims[:-1], dims[1:]):
-            bimap = BiMap(
-                in_features=in_d, out_features=out_d, device=device, dtype=dtype
-            )
-            reeig = ReEig(threshold=threshold)
-            self.blocks.append(nn.ModuleDict({"bimap": bimap, "reeig": reeig}))
+        self.bimaps = nn.ModuleList(
+            [
+                BiMap(in_d, out_d, device=device, dtype=dtype)
+                for in_d, out_d in zip(dims[:-1], dims[1:])
+            ]
+        )
+        self.reeig = ReEig(threshold=threshold)
 
         final_dim = dims[-1]
         tangent_dim = final_dim * (final_dim - 1) // 2
@@ -133,12 +133,8 @@ class CorNet(nn.Module):
 
         x = cov_to_corr(x)
 
-        for block in self.blocks:
-            assert isinstance(block, nn.ModuleDict)
-            x = block["bimap"](x)
-            x = cov_to_corr(x)
-            x = block["reeig"](x)
-            x = cov_to_corr(x)
+        for bimap in self.bimaps:
+            x = cov_to_corr(self.reeig(cov_to_corr(bimap(x))))
 
         if self.metric == "OLM":
             x = log_map_olm(x)

@@ -28,6 +28,7 @@ import math
 import torch
 
 from .core import matrix_exp, matrix_log
+from .utils import ensure_sym
 
 
 def off_diag(X: torch.Tensor) -> torch.Tensor:
@@ -105,13 +106,10 @@ def cov_to_corr(S: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
             [0.1667, 1.0000]])
     """
     n = S.shape[-1]
-    S_sym = 0.5 * (S + S.transpose(-1, -2))
-    diag = torch.diagonal(S_sym, dim1=-2, dim2=-1).clamp(min=eps)
-    d = diag.rsqrt()
-    C = d.unsqueeze(-1) * S_sym * d.unsqueeze(-2)
-    C_sym = 0.5 * (C + C.transpose(-1, -2))
-    eye = torch.eye(n, dtype=S.dtype, device=S.device)
-    return off_diag(C_sym) + eye
+    S_sym = ensure_sym(S)
+    d = torch.diagonal(S_sym, dim1=-2, dim2=-1).clamp(min=eps).rsqrt()
+    C_sym = ensure_sym(d.unsqueeze(-1) * S_sym * d.unsqueeze(-2))
+    return off_diag(C_sym) + torch.eye(n, dtype=S.dtype, device=S.device)
 
 
 def log_map_olm(C: torch.Tensor) -> torch.Tensor:
@@ -139,8 +137,7 @@ def log_map_olm(C: torch.Tensor) -> torch.Tensor:
     .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
        Decoding," IJCAI 2025.
     """
-    C_sym = 0.5 * (C + C.transpose(-1, -2))
-    return off_diag(matrix_log.apply(C_sym))
+    return off_diag(matrix_log.apply(ensure_sym(C)))
 
 
 def exp_map_olm(
@@ -177,7 +174,7 @@ def exp_map_olm(
     .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
        Decoding," IJCAI 2025.
     """
-    X_hollow = off_diag(0.5 * (X + X.transpose(-1, -2)))
+    X_hollow = off_diag(ensure_sym(X))
 
     with torch.no_grad():
         d = torch.zeros(
@@ -223,7 +220,7 @@ def log_map_lsm(
     .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
        Decoding," IJCAI 2025.
     """
-    C_sym = 0.5 * (C + C.transpose(-1, -2))
+    C_sym = ensure_sym(C)
     with torch.no_grad():
         d = torch.ones(C_sym.shape[:-1], dtype=C_sym.dtype, device=C_sym.device)
         for _ in range(max_iter):
@@ -263,7 +260,7 @@ def exp_map_lsm(X: torch.Tensor) -> torch.Tensor:
     .. [1] C. Hu et al., "A Correlation Manifold Self-Attention Network for EEG
        Decoding," IJCAI 2025.
     """
-    X_hollow = off_diag(0.5 * (X + X.transpose(-1, -2)))
+    X_hollow = off_diag(ensure_sym(X))
     return cov_to_corr(matrix_exp.apply(X_hollow))
 
 
