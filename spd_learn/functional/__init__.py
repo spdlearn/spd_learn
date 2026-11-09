@@ -160,6 +160,7 @@ from .metrics import (
     bures_wasserstein_geodesic,
     bures_wasserstein_mean,
     bures_wasserstein_transport,
+    bw_attention_mean,
     bwcm_distance,
     bwcm_geodesic,
     bwcm_mean,
@@ -171,6 +172,10 @@ from .metrics import (
     # Log-Euclidean metric
     exp_map_lem,
     exp_map_pcm,
+    gbw_chart,
+    gbw_distance,
+    gbw_inverse_chart,
+    gbw_mean,
     log_cholesky_distance,
     log_cholesky_geodesic,
     log_cholesky_mean,
@@ -212,6 +217,11 @@ from .parallel_transport import (
 )
 from .regularize import ledoit_wolf, shrinkage_covariance, trace_normalization
 from .riemannian_pgd import spd_rpgd_attack
+from .spdtransnet import (
+    log_tokens_to_spd,
+    spd_to_log_tokens,
+    triangular_dimension,
+)
 from .utils import ensure_sym, unvec_batch, vec_batch
 from .wavelet import compute_gabor_wavelet
 
@@ -398,6 +408,14 @@ __all__ = [
     "ajd_pham",
     "rjd",
     "uwedge",
+    "gbw_chart",
+    "gbw_inverse_chart",
+    "gbw_distance",
+    "gbw_mean",
+    "bw_attention_mean",
+    "spd_to_log_tokens",
+    "log_tokens_to_spd",
+    "triangular_dimension",
     "cov_to_corr",
     "off_diag",
     "log_map_lsm",

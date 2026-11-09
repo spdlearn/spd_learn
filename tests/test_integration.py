@@ -30,6 +30,12 @@ mandatory_parameters_per_module = {
     "BatchReNorm": dict(num_features=10),
     "SPDBatchNormMeanVar": dict(num_features=10),
     "SPDBatchNormLie": dict(num_features=10),
+    "SPMultiheadAttention": dict(embed_dim=15, num_heads=3),
+    "SPDTransformerEncoderLayer": dict(embed_dim=15, num_heads=3),
+    "GaussianSPD": dict(),
+    "RHOP": dict(in_features=10, reduced_dim=5),
+    "SPDRMLR": dict(n_features=10, n_outputs=4),
+    "SPDLinear": dict(in_features=10, out_features=5),
     "SPDBatchNormHarmonic": dict(num_features=10),
     "SPDBatchNormBW": dict(num_features=10),
     "SPDBatchNormCholesky": dict(num_features=10),
@@ -58,7 +64,7 @@ def test_integration(model_name):
     model_class = getattr(spd_learn.models, model_name)
 
     params = {"sfreq": 125} if model_name == "Green" else {}
-    if model_name == "TensorCSPNet":
+    if model_name in spd_learn.models.__filter_bank_models__:
         x = torch.randn(2, 9, 22, 1000)
     else:
         x = torch.randn(2, 22, 1000)
@@ -157,6 +163,12 @@ def test_module_dtype(module_name, dtype, device):
         module_name
         in (
             "SPDBatchNormLie",
+            "SPMultiheadAttention",
+            "SPDTransformerEncoderLayer",
+            "GaussianSPD",
+            "RHOP",
+            "SPDRMLR",
+            "SPDLinear",
             "SPDBatchNormHarmonic",
             "SPDBatchNormBW",
             "SPDBatchNormCholesky",
@@ -172,6 +184,14 @@ def test_module_dtype(module_name, dtype, device):
 
     if module_name == "CovLayer":
         x = torch.randn(2, 10, 1000, dtype=dtype)
+        with torch.no_grad():
+            out = module(x)
+    elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
+        x = torch.randn(2, 6, 15, dtype=dtype, device=device)
+        with torch.no_grad():
+            out = module(x)
+    elif module_name in ("GaussianSPD", "RHOP"):
+        x = torch.randn(2, 16, 10, dtype=dtype, device=device)
         with torch.no_grad():
             out = module(x)
     elif module_name == "LogEuclideanResidual":
@@ -218,6 +238,10 @@ def test_module_output_device(module_name, device):
 
     if module_name in ("CovLayer", "WaveletConv"):
         x = torch.randn(2, 10, 1000, device=device, dtype=dtype)
+    elif module_name in ("SPMultiheadAttention", "SPDTransformerEncoderLayer"):
+        x = torch.randn(2, 6, 15, device=device, dtype=dtype)
+    elif module_name in ("GaussianSPD", "RHOP"):
+        x = torch.randn(2, 16, 10, device=device, dtype=dtype)
     elif module_name == "LogEuclideanResidual":
         raw = torch.randn(2, 10, 1000, device=device, dtype=dtype)
         cov = CovLayer(device=device, dtype=dtype)
@@ -244,7 +268,7 @@ def test_module_output_device(module_name, device):
 def test_integration_on_device(model_name, device):
     """Create a model, move it to the target device, and verify output shape and device."""
     params = {"sfreq": 125} if model_name == "Green" else {}
-    if model_name == "TensorCSPNet":
+    if model_name in spd_learn.models.__filter_bank_models__:
         x = torch.randn(2, 9, 22, 1000, device=device)
     else:
         x = torch.randn(2, 22, 1000, device=device)
@@ -276,6 +300,10 @@ def test_module_broadcast_compatible(module_name, extra_dim):
     if module_name in [
         "PatchEmbeddingLayer",
         "BiMapDepthWise",
+        "SPMultiheadAttention",
+        "SPDTransformerEncoderLayer",
+        "GaussianSPD",
+        "RHOP",
         "WaveletConv",
         "LogEuclideanResidual",
         "PositiveDefiniteScalar",

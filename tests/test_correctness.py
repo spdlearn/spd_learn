@@ -152,7 +152,15 @@ def test_correctness_spd_learn(epoch_data, filterbank_data, model_name):
         # dims should reduce from n_chans (64) to a smaller dimension
         kwargs = dict(n_patches=2, dims=(64, 32, 32, 16))
         lr = 1e-3
-    elif model_name == "EEGSPDNet":
+    elif model_name == "SPNN":
+        kwargs = dict(bimap_dims=(64,))
+        lr = 0.01
+    elif model_name in (
+        "EEGSPDNet",
+        "SPDMetaFormer",
+        "GyroAtt",
+        "GBWAtt",
+    ):
         lr = 1e-3
     elif model_name == "Green":
         kwargs = dict(bi_out=[16])
