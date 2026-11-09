@@ -160,6 +160,10 @@ def test_correctness_spd_learn(epoch_data, filterbank_data, model_name):
         lr = 0.01
     elif model_name in (
         "EEGSPDNet",
+        "RCEEGNet",
+        "STaRNet",
+        "SPDResNet",
+        "GyroSPD",
         "SPDNetAE",
         "SSGCNet",
         "SPDMetaFormer",
