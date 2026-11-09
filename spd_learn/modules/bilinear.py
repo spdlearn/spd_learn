@@ -72,6 +72,10 @@ class BiMap(nn.Module):
         coordinates can destroy orthogonality in PyTorch.
     init_method : {"kaiming_uniform", "orthogonal", "stiefel"}, default="kaiming_uniform"
         The initialization method for the weight matrix.
+    use_trivialization : bool, default=True
+        If ``True``, uses the dynamic trivialization framework (storing a moving
+        base matrix ``base``) when ``parametrized=True``. If ``False``, uses a
+        static trivialization centered at the identity.
 
     Notes
     -----
@@ -167,6 +171,7 @@ class BiMap(nn.Module):
         ] = "kaiming_uniform",
         device=None,
         dtype=None,
+        use_trivialization: bool = True,
     ):
         super().__init__()
 
@@ -186,6 +191,7 @@ class BiMap(nn.Module):
         self.increase_dim = None
         self.orthogonal_map = orthogonal_map
         self.init_method = init_method
+        self.use_trivialization = use_trivialization
 
         if out_features > in_features:
             self.increase_dim = BiMapIncreaseDim(
@@ -214,6 +220,7 @@ class BiMap(nn.Module):
                 orthogonal_map=(
                     "cayley" if self.orthogonal_map is None else self.orthogonal_map
                 ),
+                use_trivialization=self.use_trivialization,
             )
 
     @torch.no_grad()
@@ -238,10 +245,15 @@ class BiMap(nn.Module):
                 f"Internal error: Invalid init_method '{self.init_method}'"
             )
         if is_parametrized:
-            # Assign through the parametrization to update its stored state.
-            self.weight = weight
-        else:
-            reference.copy_(weight)
+            orth_param = getattr(self.parametrizations, "weight")[0]
+            if (
+                hasattr(orth_param, "base")
+                or orth_param.orthogonal_map.name == "householder"
+            ):
+                # Assign through the parametrization to update its stored state.
+                self.weight = weight
+                return
+        reference.copy_(weight)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Apply bilinear transformation to input SPD matrices.
