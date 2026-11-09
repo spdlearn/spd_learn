@@ -181,10 +181,7 @@ class SPDResNet(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        if self.input_type == "raw":
-            if x.ndim == 3 and x.shape[-1] != x.shape[-2]:
-                x = self.cov(x)
-        else:
+        if self.input_type != "raw" or (x.ndim == 3 and x.shape[-1] != x.shape[-2]):
             x = self.cov(x)
         x = self.trace_norm(x)
         x = self.shrinkage(x)
@@ -281,11 +278,8 @@ class SPDResBlock(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Initialize residual spectral CNN near the identity map."""
-        last_conv = self.cnn[2]
-        if isinstance(last_conv, nn.Conv1d):
-            nn.init.normal_(last_conv.weight, mean=0.0, std=0.01)
-            if last_conv.bias is not None:
-                nn.init.zeros_(last_conv.bias)
+        nn.init.normal_(self.cnn[2].weight, mean=0.0, std=0.01)
+        nn.init.zeros_(self.cnn[2].bias)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass computing the Riemannian residual transformation.

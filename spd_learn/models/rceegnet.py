@@ -95,22 +95,13 @@ class RCEEGNet(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Initialize weights according to Section H.a of Tibermacine et al. (2025)."""
-        conv_s = self.conv_spatial[0]
-        if isinstance(conv_s, nn.Conv2d):
-            nn.init.kaiming_uniform_(conv_s.weight, nonlinearity="relu")
-        conv_t = self.conv_temporal[0]
-        if isinstance(conv_t, nn.Conv2d):
-            nn.init.kaiming_uniform_(conv_t.weight, nonlinearity="relu")
+        nn.init.kaiming_uniform_(self.conv_spatial[0].weight, nonlinearity="relu")
+        nn.init.kaiming_uniform_(self.conv_temporal[0].weight, nonlinearity="relu")
+        self.spd_features[0].reset_parameters()
 
-        bimap = self.spd_features[0]
-        if isinstance(bimap, BiMap):
-            bimap.reset_parameters()
-
-        m = self.classifier.in_features
-        bound = (6.0 / m) ** 0.5
+        bound = (6.0 / self.classifier.in_features) ** 0.5
         nn.init.uniform_(self.classifier.weight, -bound, bound)
-        if self.classifier.bias is not None:
-            nn.init.zeros_(self.classifier.bias)
+        nn.init.zeros_(self.classifier.bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of the RCEEGNet model.

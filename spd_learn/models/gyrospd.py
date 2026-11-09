@@ -165,10 +165,7 @@ class GyroSPD(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        if self.input_type == "raw":
-            if x.ndim == 3 and x.shape[-1] != x.shape[-2]:
-                x = self.cov(x)
-        else:
+        if self.input_type != "raw" or (x.ndim == 3 and x.shape[-1] != x.shape[-2]):
             x = self.cov(x)
         x = self.trace_norm(x)
         x = self.shrinkage(x)
