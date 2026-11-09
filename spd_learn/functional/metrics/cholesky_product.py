@@ -8,6 +8,7 @@ Decomposes the Cholesky factor :math:`X = LL^\top` into strictly lower
 triangular part :math:`\lfloor L \rfloor` and diagonal :math:`d = \text{diag}(L)`.
 """
 
+from functools import partial
 from typing import Optional, Union
 
 import torch
@@ -196,18 +197,11 @@ def pcm_mean(
             Z_bar = Z_bar.unsqueeze(dim)
         return pcm_inv_coords(Z_bar, theta=theta)
 
-    N = X.shape[dim]
-    weights = weights.to(device=X.device, dtype=X.dtype)
-    if weights.ndim == 1 and weights.shape[0] == N:
-        w_shape = [1] * X.ndim
-        w_shape[dim] = N
-        w = weights.view(w_shape)
-    elif weights.ndim == X.ndim - 2:
-        w = weights.unsqueeze(-1).unsqueeze(-1)
-    elif weights.ndim == X.ndim - 1:
-        w = weights.unsqueeze(-1)
+    w = weights.to(device=X.device, dtype=X.dtype)
+    if w.ndim == 1:
+        w = w.view(*[X.shape[dim] if i == dim else 1 for i in range(X.ndim)])
     else:
-        w = weights
+        w = w.view(*w.shape, *(1,) * (X.ndim - w.ndim))
     w = w / w.sum(dim=dim, keepdim=True)
     Z_bar = (w * Z).sum(dim=dim, keepdim=keepdim)
     return pcm_inv_coords(Z_bar, theta=theta)
@@ -234,26 +228,15 @@ def log_map_pcm(
     torch.Tensor
         Deformed Cholesky coordinates of shape `(..., n, n)`.
     """
-    if theta == 0:
-        raise ValueError("theta must be non-zero for Power-Cholesky metric.")
-
-    X = ensure_sym(X)
-    L_X = torch.linalg.cholesky(X)
-    tril_X = L_X.tril(-1)
-    d_X = torch.diagonal(L_X, dim1=-2, dim2=-1)
-
+    Z_X = pcm_coords(X, theta=theta)
     if P is None:
-        v_diag = (d_X.pow(theta) - 1.0) / theta
-        return tril_X + torch.diag_embed(v_diag)
+        return Z_X - torch.eye(X.shape[-1], device=X.device, dtype=X.dtype) / theta
 
-    P = ensure_sym(P)
-    L_P = torch.linalg.cholesky(P)
-    tril_P = L_P.tril(-1)
+    L_P = torch.linalg.cholesky(ensure_sym(P))
     d_P = torch.diagonal(L_P, dim1=-2, dim2=-1)
-
-    v_tril = tril_X - tril_P
-    v_diag = (1.0 / theta) * d_P.pow(1.0 - theta) * (d_X.pow(theta) - d_P.pow(theta))
-    return v_tril + torch.diag_embed(v_diag)
+    diff = Z_X - (L_P.tril(-1) + torch.diag_embed(d_P.pow(theta) / theta))
+    v_diag = d_P.pow(1.0 - theta) * torch.diagonal(diff, dim1=-2, dim2=-1)
+    return diff.tril(-1) + torch.diag_embed(v_diag)
 
 
 def exp_map_pcm(
@@ -280,67 +263,24 @@ def exp_map_pcm(
     torch.Tensor
         Reconstructed SPD matrix of shape `(..., n, n)`.
     """
-    if theta == 0:
-        raise ValueError("theta must be non-zero for Power-Cholesky metric.")
-
-    v_tril = V.tril(-1)
-    v_diag = torch.diagonal(V, dim1=-2, dim2=-1)
-
     if P is None:
-        inner = (1.0 + theta * v_diag).clamp(min=eps)
-        d_X = inner.pow(1.0 / theta)
-        L = v_tril + torch.diag_embed(d_X)
-        return L @ L.transpose(-1, -2)
+        eye = torch.eye(V.shape[-1], device=V.device, dtype=V.dtype)
+        return pcm_inv_coords(V + eye / theta, theta=theta, eps=eps)
 
-    P = ensure_sym(P)
-    L_P = torch.linalg.cholesky(P)
-    tril_P = L_P.tril(-1)
+    L_P = torch.linalg.cholesky(ensure_sym(P))
     d_P = torch.diagonal(L_P, dim1=-2, dim2=-1)
-
-    inner = (d_P.pow(theta) + theta * d_P.pow(theta - 1.0) * v_diag).clamp(min=eps)
-    d_X = inner.pow(1.0 / theta)
-    L = (tril_P + v_tril) + torch.diag_embed(d_X)
-    return L @ L.transpose(-1, -2)
-
-
-def bwcm_distance(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
-    r"""Compute Riemannian distance under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return pcm_distance(A, B, theta=0.5, diagonal_weight=0.25)
+    z_diag = d_P.pow(theta) / theta + d_P.pow(theta - 1.0) * torch.diagonal(
+        V, dim1=-2, dim2=-1
+    )
+    Z = (L_P + V).tril(-1) + torch.diag_embed(z_diag)
+    return pcm_inv_coords(Z, theta=theta, eps=eps)
 
 
-def bwcm_geodesic(
-    A: torch.Tensor,
-    B: torch.Tensor,
-    t: Union[float, torch.Tensor],
-) -> torch.Tensor:
-    r"""Compute geodesic interpolation under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return pcm_geodesic(A, B, t, theta=0.5)
-
-
-def bwcm_mean(
-    X: torch.Tensor,
-    weights: Optional[torch.Tensor] = None,
-    dim: int = 0,
-    keepdim: bool = False,
-) -> torch.Tensor:
-    r"""Compute closed-form Fréchet mean under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return pcm_mean(X, weights=weights, theta=0.5, dim=dim, keepdim=keepdim)
-
-
-def log_map_bwcm(
-    X: torch.Tensor,
-    P: Optional[torch.Tensor] = None,
-) -> torch.Tensor:
-    r"""Compute Riemannian logarithmic map under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return log_map_pcm(X, P=P, theta=0.5)
-
-
-def exp_map_bwcm(
-    V: torch.Tensor,
-    P: Optional[torch.Tensor] = None,
-) -> torch.Tensor:
-    r"""Compute Riemannian exponential map under the Bures-Wasserstein-Cholesky Metric (BWCM)."""
-    return exp_map_pcm(V, P=P, theta=0.5)
+bwcm_distance = partial(pcm_distance, theta=0.5, diagonal_weight=0.25)
+bwcm_geodesic = partial(pcm_geodesic, theta=0.5)
+bwcm_mean = partial(pcm_mean, theta=0.5)
+log_map_bwcm = partial(log_map_pcm, theta=0.5)
+exp_map_bwcm = partial(exp_map_pcm, theta=0.5)
 
 
 __all__ = [

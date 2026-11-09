@@ -1,7 +1,6 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
 import math
-import warnings
 
 from typing import Optional
 
@@ -731,22 +730,18 @@ class SPDBatchNormHarmonic(SPDBatchNormMean):
         self.eps = eps
 
         logit_init = math.log(alpha / (1.0 - alpha))
-        if learnable_alpha:
-            self.alpha_logit = nn.Parameter(
-                torch.tensor(logit_init, device=device, dtype=dtype)
-            )
-        else:
-            self.register_buffer(
-                "alpha_logit",
-                torch.tensor(logit_init, device=device, dtype=dtype),
-            )
+        self.alpha_logit = nn.Parameter(
+            torch.tensor(logit_init, device=device, dtype=dtype),
+            requires_grad=learnable_alpha,
+        )
 
     @torch.no_grad()
     def reset_parameters(self) -> None:
         super().reset_parameters()
         if hasattr(self, "alpha_logit"):
-            logit_init = math.log(self.initial_alpha / (1.0 - self.initial_alpha))
-            self.alpha_logit.fill_(logit_init)
+            self.alpha_logit.fill_(
+                math.log(self.initial_alpha / (1.0 - self.initial_alpha))
+            )
 
     def _compute_batch_mean(self, input: torch.Tensor) -> torch.Tensor:
         X_flat = input.reshape(-1, self.num_features, self.num_features)
@@ -804,11 +799,7 @@ class SPDBatchNormBW(SPDBatchNormMean):
         X_flat = input.reshape(-1, self.num_features, self.num_features)
         if self.n_iter == 1:
             return ensure_sym(mean_poweuclid(X_flat, 0.5).unsqueeze(0))
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                "ignore", message="Bures-Wasserstein mean did not converge"
-            )
-            batch_mean = bures_wasserstein_mean(X_flat, max_iter=self.n_iter)
+        batch_mean = bures_wasserstein_mean(X_flat, max_iter=self.n_iter)
         return ensure_sym(batch_mean.reshape(1, self.num_features, self.num_features))
 
     def _update_running_mean(self, mean: torch.Tensor) -> None:
