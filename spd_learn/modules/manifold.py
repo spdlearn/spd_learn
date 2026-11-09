@@ -1,6 +1,6 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
-from typing import Literal, cast
+from typing import Any, Literal, cast
 
 import torch
 
@@ -128,7 +128,7 @@ class SymmetricPositiveDefinite(nn.Module):
 
 
 def _recenter_orthogonal(
-    orth: nn.Module, original: torch.Tensor
+    orth: Any, original: torch.Tensor
 ) -> tuple[bool, torch.Tensor | None]:
     """Recenter a BiMap orthogonal parametrization by horizontal group multiplication."""
     X = original
@@ -337,7 +337,7 @@ def step_dynamic_trivialization(
                     new_factor=spd_param.base_factor,
                 )
         else:
-            orth_param = chain[0]
+            orth_param: Any = chain[0]
             ok, q_rel = _recenter_orthogonal(orth_param, original)
             if not ok:
                 setattr(module, name, getattr(module, name))

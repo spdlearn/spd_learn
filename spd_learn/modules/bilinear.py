@@ -244,14 +244,16 @@ class BiMap(nn.Module):
             raise ValueError(
                 f"Internal error: Invalid init_method '{self.init_method}'"
             )
-        if is_parametrized and (
-            hasattr(self.parametrizations.weight[0], "base")
-            or self.parametrizations.weight[0].orthogonal_map.name == "householder"
-        ):
-            # Assign through the parametrization to update its stored state.
-            self.weight = weight
-        else:
-            reference.copy_(weight)
+        if is_parametrized:
+            orth_param = getattr(self.parametrizations, "weight")[0]
+            if (
+                hasattr(orth_param, "base")
+                or orth_param.orthogonal_map.name == "householder"
+            ):
+                # Assign through the parametrization to update its stored state.
+                self.weight = weight
+                return
+        reference.copy_(weight)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Apply bilinear transformation to input SPD matrices.
