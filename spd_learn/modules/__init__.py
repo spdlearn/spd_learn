@@ -1,6 +1,13 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
-from .batchnorm import BatchReNorm, SPDBatchNormMean, SPDBatchNormMeanVar
+from .batchnorm import (
+    BatchReNorm,
+    SPDBatchNormBW,
+    SPDBatchNormCholesky,
+    SPDBatchNormHarmonic,
+    SPDBatchNormMean,
+    SPDBatchNormMeanVar,
+)
 from .bilinear import BiMap, BiMapIncreaseDim
 from .covariance import CovLayer
 from .dropout import SPDDropout
@@ -65,6 +72,9 @@ __all__ = [
     "RHOP",
     "SPDRMLR",
     "SPDLinear",
+    "SPDBatchNormHarmonic",
+    "SPDBatchNormBW",
+    "SPDBatchNormCholesky",
 ]
 
 __sequence_modules__ = [

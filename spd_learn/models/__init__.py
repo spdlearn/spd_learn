@@ -1,5 +1,7 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+from .coratt import CorAtt, CorrAttention  # noqa: F401
+from .cornet import CorNet
 from .eegspdnet import EEGSPDNet
 from .gbwatt import GBWAtt
 from .green import Green
@@ -35,6 +37,8 @@ __all__ = [
     "SPNN",
     "GyroAtt",
     "SPDMetaFormer",
+    "CorAtt",
+    "CorNet",
 ]
 
 __filter_bank_models__ = ["TensorCSPNet"]

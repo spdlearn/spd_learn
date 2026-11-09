@@ -36,6 +36,9 @@ mandatory_parameters_per_module = {
     "RHOP": dict(in_features=10, reduced_dim=5),
     "SPDRMLR": dict(n_features=10, n_outputs=4),
     "SPDLinear": dict(in_features=10, out_features=5),
+    "SPDBatchNormHarmonic": dict(num_features=10),
+    "SPDBatchNormBW": dict(num_features=10),
+    "SPDBatchNormCholesky": dict(num_features=10),
     "PatchEmbeddingLayer": dict(n_chans=10, n_patches=2),
     "BiMapIncreaseDim": dict(in_features=10, out_features=20),
     "Shrinkage": dict(n_chans=10),
@@ -166,6 +169,9 @@ def test_module_dtype(module_name, dtype, device):
             "RHOP",
             "SPDRMLR",
             "SPDLinear",
+            "SPDBatchNormHarmonic",
+            "SPDBatchNormBW",
+            "SPDBatchNormCholesky",
         )
         and dtype.is_complex
     ):

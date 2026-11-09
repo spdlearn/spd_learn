@@ -11,6 +11,8 @@ from . import init
 # Models
 from .models import (
     SPNN,
+    CorAtt,
+    CorNet,
     EEGSPDNet,
     GBWAtt,
     Green,
@@ -38,6 +40,9 @@ from .modules import (
     PatchEmbeddingLayer,
     ReEig,
     Shrinkage,
+    SPDBatchNormBW,
+    SPDBatchNormCholesky,
+    SPDBatchNormHarmonic,
     SPDBatchNormLie,
     SPDBatchNormMean,
     SPDBatchNormMeanVar,
@@ -93,4 +98,9 @@ __all__ = [
     "SPDLinear",
     "SPDRMLR",
     "SPMultiheadAttention",
+    "CorAtt",
+    "CorNet",
+    "SPDBatchNormBW",
+    "SPDBatchNormCholesky",
+    "SPDBatchNormHarmonic",
 ]

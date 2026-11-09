@@ -138,6 +138,16 @@ from .core import (
     sym_to_upper,
     vec_to_sym,
 )
+from .correlation import (
+    cov_to_corr,
+    exp_map_lsm,
+    exp_map_olm,
+    log_map_lsm,
+    log_map_olm,
+    off_diag,
+    tril_embed,
+    untril_embed,
+)
 from .covariance import covariance, cross_covariance, real_covariance, sample_covariance
 from .dropout import dropout_spd
 from .frechet import frechet_derivative_exp, frechet_derivative_log
@@ -151,12 +161,17 @@ from .metrics import (
     bures_wasserstein_mean,
     bures_wasserstein_transport,
     bw_attention_mean,
+    bwcm_distance,
+    bwcm_geodesic,
+    bwcm_mean,
     # Log-Cholesky metric
     cholesky_exp,
     cholesky_log,
     exp_map_airm,
+    exp_map_bwcm,
     # Log-Euclidean metric
     exp_map_lem,
+    exp_map_pcm,
     gbw_chart,
     gbw_distance,
     gbw_inverse_chart,
@@ -170,7 +185,14 @@ from .metrics import (
     log_euclidean_multiply,
     log_euclidean_scalar_multiply,
     log_map_airm,
+    log_map_bwcm,
     log_map_lem,
+    log_map_pcm,
+    pcm_coords,
+    pcm_distance,
+    pcm_geodesic,
+    pcm_inv_coords,
+    pcm_mean,
     spd_egrad2rgrad,
 )
 from .numerical import (
@@ -394,4 +416,24 @@ __all__ = [
     "spd_to_log_tokens",
     "log_tokens_to_spd",
     "triangular_dimension",
+    "cov_to_corr",
+    "off_diag",
+    "log_map_lsm",
+    "exp_map_lsm",
+    "log_map_olm",
+    "exp_map_olm",
+    "tril_embed",
+    "untril_embed",
+    "pcm_coords",
+    "pcm_inv_coords",
+    "log_map_pcm",
+    "exp_map_pcm",
+    "pcm_distance",
+    "pcm_geodesic",
+    "pcm_mean",
+    "log_map_bwcm",
+    "exp_map_bwcm",
+    "bwcm_distance",
+    "bwcm_geodesic",
+    "bwcm_mean",
 ]
