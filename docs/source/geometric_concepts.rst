@@ -635,21 +635,60 @@ optimizer updates to recenter BiMap weights and exponential SPD biases:
 
    # After loss.backward() and optimizer.step():
    if step % K == 0:
-       step_dynamic_trivialization(model, optimizer)
+       step_dynamic_trivialization(
+           model, optimizer, threshold=0.2, optimizer_state="transport"
+       )
 
 The first call enables moving SPD charts; defaults stay unchanged until called.
-Passing the optimizer restarts only recentered parameters' adaptive/momentum
-state; their gradients are cleared. Call outside ``parametrize.cached()``.
+Calling ``step_dynamic_trivialization(model)`` recenters bases deterministically
+while preserving adaptive optimizer state (e.g., ``Adam``/``AdamW`` moments in
+the horizontally transported frame); passing ``optimizer`` additionally clears
+recentered parameters' optimizer state. Gradients of recentered parameters are
+always cleared. Call outside ``parametrize.cached()``.
 Frozen supported parameters retain their effective values. Softplus, positive
 scalars and nonparametrized BiMaps are unchanged; TensorCSPNet can opt in with
 ``parametrized=True``. Green needs ``bi_out`` to contain a BiMap.
 
-SPD bases use Cholesky factors; BiMap reuses PyTorch's orthogonal reassignment.
+SPD bases use Cholesky factors (:math:`\phi_L(A) = L \exp(A) L^\top`, inducing
+the exact AIRM metric at :math:`A=0`), while BiMap updates its orthogonal frame
+deterministically via horizontal group multiplication :math:`B_{\text{new}} = B U(A)`
+without consuming RNG state.
 Explicit Householder maps still require excluding sign coordinates from decay.
 To load a dynamic checkpoint, initialize existing normalization buffers with the
 saved input layout and call the helper before strict loading. Load static
-checkpoints before opting in; save the optimizer-step count and RNG state to
-resume the K schedule and rectangular QR randomness.
+checkpoints before opting in; save the optimizer-step count to resume the K
+schedule.
+
+When to Use Dynamic Trivialization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Dynamic trivialization matters when weights travel far on the manifold during
+training (or when SPD parameters become ill-conditioned); when weights remain
+close to initialization, a static chart at the initial base point is sufficient:
+
+- **Single-subject / cross-session EEG (short travel):** In standard within-subject
+  training, :class:`~spd_learn.modules.BiMap` weights typically move by only
+  :math:`15^\circ\text{--}25^\circ` from initialization. In this neighborhood,
+  the initial tangent chart is already nearly isometric, so static trivialization
+  (the default, :math:`K = \infty`) performs identically to dynamic updates.
+- **Cross-subject, continual adaptation, or sequential training (large travel):**
+  When adapting across multiple subjects with shifting covariance distributions
+  or training over long horizons (as in sequential RNNs :cite:p:`lezcano2019trivializations`),
+  cumulative weight drift can reach :math:`\sim 50^\circ`. Periodic recentering
+  (:math:`K \in [10, 50]` or at subject/task boundaries) prevents differential
+  shrinkage and improves adaptation on later subjects—provided optimizer state is
+  preserved (``step_dynamic_trivialization(model)`` without passing ``optimizer``).
+
+**Connection to Parallel Transport and Batch Normalization:**
+Geometrically, dynamic trivialization is the parameter-space counterpart of the
+re-centering rule in :class:`~spd_learn.modules.SPDBatchNormMeanVar`. Just as
+:class:`~spd_learn.modules.SPDBatchNormMeanVar` uses parallel transport
+(:math:`\frechet^{-1/2} X_i \frechet^{-1/2}`) to re-center data covariances back
+to the identity, each dynamic trivialization step updates the base point
+(:math:`B \leftarrow \phi_B(A), A \leftarrow 0`) and transports the parameter
+tangent space back to the identity (:math:`\Gamma_{B \to \I}`). This acts as
+**Riemannian metric preconditioning** (re-centering the reference frame) so
+gradients are not distorted when weights travel far on the manifold.
 
 
 Practical Implications
