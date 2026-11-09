@@ -305,12 +305,88 @@ def test_dynamic_checkpoint_round_trip(optimizer_class, kwargs):
         opt.zero_grad(set_to_none=True)
         net(x).square().mean().backward()
         opt.step()
-        with torch.random.fork_rng():
-            torch.manual_seed(42)
-            step_dynamic_trivialization(net, opt)
+        step_dynamic_trivialization(net, opt)
     assert_close(model(x), restored(x))
     legacy = _model()
     legacy.load_state_dict(static, strict=True)
     output = legacy(x).detach()
     step_dynamic_trivialization(legacy)
     assert_close(legacy(x), output)
+
+
+@pytest.mark.parametrize("mapping", ["cayley", "matrix_exp", "householder"])
+def test_rectangular_bimap_rebase_is_rng_free_and_horizontal(mapping):
+    layer = BiMap(6, 3, orthogonal_map=mapping, dtype=torch.float64)
+    rng_before = torch.get_rng_state()
+    step_dynamic_trivialization(layer)
+    assert torch.equal(torch.get_rng_state(), rng_before)
+    base_before = layer.parametrizations.weight[0].base.clone()
+    step_dynamic_trivialization(layer)
+    assert_close(layer.parametrizations.weight[0].base, base_before)
+
+
+@pytest.mark.parametrize("mapping", ["cayley", "matrix_exp", "householder"])
+def test_bimap_static_trivialization_opt_out(mapping):
+    layer = BiMap(
+        6, 3, orthogonal_map=mapping, use_trivialization=False, dtype=torch.float64
+    )
+    assert not hasattr(layer.parametrizations.weight[0], "base")
+    assert_close(
+        layer.weight.mT @ layer.weight,
+        torch.eye(3, dtype=torch.float64).unsqueeze(0),
+    )
+    layer.reset_parameters()
+    assert_close(
+        layer.weight.mT @ layer.weight,
+        torch.eye(3, dtype=torch.float64).unsqueeze(0),
+    )
+
+
+@pytest.mark.parametrize("optimizer_class, kwargs", OPTIMIZERS)
+def test_optimizer_state_transport_preserves_step_and_transports_moments(
+    optimizer_class, kwargs
+):
+    model = _model()
+    step_dynamic_trivialization(model)
+    optimizer = optimizer_class(model.parameters(), lr=1e-2, **kwargs)
+    x = _spd(6)
+    model(x).square().mean().backward()
+    optimizer.step()
+
+    w_orig = model[0].parametrizations.weight.original
+    b_orig = model[1].parametrizations.bias.original
+    old_b_factor = model[1].parametrizations.bias[0].base_factor.clone()
+    moment_key = (
+        "exp_avg" if "exp_avg" in optimizer.state[b_orig] else "momentum_buffer"
+    )
+    old_b_moment = optimizer.state[b_orig][moment_key].clone()
+
+    step_dynamic_trivialization(model, optimizer, optimizer_state="transport")
+    assert w_orig in optimizer.state and b_orig in optimizer.state
+    new_b_factor = model[1].parametrizations.bias[0].base_factor
+    rel = torch.linalg.solve_triangular(old_b_factor, new_b_factor, upper=False)
+    expected_b_moment = 0.5 * (
+        rel.mH @ old_b_moment @ rel + (rel.mH @ old_b_moment @ rel).mH
+    )
+    assert_close(optimizer.state[b_orig][moment_key], expected_b_moment)
+    if "step" in optimizer.state[b_orig]:
+        assert int(optimizer.state[b_orig]["step"].item()) == 1
+
+
+def test_threshold_skips_small_travel_and_recenters_large_travel():
+    model = _model()
+    step_dynamic_trivialization(model)
+    w_orig = model[0].parametrizations.weight.original
+    b_orig = model[1].parametrizations.bias.original
+    with torch.no_grad():
+        w_orig.tril_(-1).fill_(0.0)
+        w_orig[0, 1, 0] = 0.01
+        w_orig.diagonal(dim1=-2, dim2=-1).fill_(-1.0)
+        b_orig.fill_(0.3)
+
+    step_dynamic_trivialization(model, threshold=0.1)
+    assert float(w_orig.tril(-1).norm().item()) == pytest.approx(0.01)
+    assert float(b_orig.norm().item()) == pytest.approx(0.0)
+
+
+

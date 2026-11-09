@@ -62,11 +62,22 @@ Euclidean parameterization:
 
 In SPD Learn:
 
-* **Stiefel parameters** (BiMap weights) are represented in Euclidean space and
-  mapped to the Stiefel manifold through polar decomposition:
-  :math:`\phi^{-1}(\mathbf{X}) = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1/2}`
-* **SPD parameters** (e.g., batch norm bias) are represented in Euclidean space
-  and mapped to SPD using matrix exponential trivialization.
+* **Stiefel parameters** (BiMap weights) are represented in Euclidean tangent
+  coordinates around an orthogonal base point :math:`\mathbf{B}_0` and mapped to
+  the Stiefel manifold via orthogonal trivializations (Cayley transform by
+  default, or matrix exponential / Householder reflections).
+* **SPD parameters** (e.g., batch norm bias) are represented in the space of
+  symmetric matrices and mapped to the SPD manifold via the matrix exponential
+  (or matrix softplus).
+* **Dynamic trivialization** (:func:`~spd_learn.modules.step_dynamic_trivialization`):
+  when weights travel far across the manifold (such as in continual
+  cross-subject adaptation or long-horizon training), periodic re-centering
+  updates the base point (:math:`\mathbf{B} \leftarrow \phi_{\mathbf{B}}(\mathbf{A}), \mathbf{A} \leftarrow \mathbf{0}`)
+  and transports the tangent space back to the identity, acting as Riemannian
+  preconditioning analogous to the re-centering step in
+  :class:`~spd_learn.modules.SPDBatchNormMeanVar`. For short single-subject
+  training where weights stay close to initialization, the default static
+  trivialization at :math:`\mathbf{B}_0` is sufficient.
 
 This allows standard optimizers (SGD, Adam) to train models without explicit
 Riemannian solvers, while preserving manifold constraints by construction.
