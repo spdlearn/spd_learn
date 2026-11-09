@@ -1,5 +1,7 @@
 # Copyright (c) 2024-now SPD Learn Developers
 # SPDX-License-Identifier: BSD-3-Clause
+from .coratt import CorAtt, CorrAttention  # noqa: F401
+from .cornet import CorNet
 from .eegspdnet import EEGSPDNet
 from .green import Green
 from .matt import AttentionManifold, MAtt  # noqa: F401  (AttentionManifold re-exported)
@@ -26,6 +28,8 @@ __all__ = [
     "EEGSPDNet",
     "PhaseSPDNet",
     "Green",
+    "CorAtt",
+    "CorNet",
 ]
 
 __filter_bank_models__ = ["TensorCSPNet"]

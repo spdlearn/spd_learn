@@ -10,6 +10,8 @@ from . import init
 
 # Models
 from .models import (
+    CorAtt,
+    CorNet,
     EEGSPDNet,
     Green,
     MAtt,
@@ -76,6 +78,8 @@ __all__ = [
     "Vec",
     "Vech",
     "WaveletConv",
+    "CorAtt",
+    "CorNet",
     "SPDBatchNormBW",
     "SPDBatchNormCholesky",
     "SPDBatchNormHarmonic",
