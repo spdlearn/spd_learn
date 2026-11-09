@@ -124,9 +124,7 @@ class SPDRMLR(nn.Module):
         self.input_tangent = input_tangent
         self.vec_dim = n_features * (n_features + 1) // 2
 
-        self.reference = nn.Parameter(
-            torch.eye(n_features, device=device, dtype=dtype)
-        )
+        self.reference = nn.Parameter(torch.eye(n_features, device=device, dtype=dtype))
         register_parametrization(self, "reference", SymmetricPositiveDefinite())
         self.linear = nn.Linear(
             self.vec_dim, n_outputs, bias=True, device=device, dtype=dtype
