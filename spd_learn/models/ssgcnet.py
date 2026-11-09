@@ -114,9 +114,7 @@ class TangentGraphSPDAggregation(nn.Module):
         A = torch.softmax(scores, dim=-1)  # (..., V, V)
 
         # Aggregate neighbor tangent matrices: sum_v A_uv L_v
-        L_flat = L.flatten(start_dim=-2)
-        L_neighbors_flat = torch.matmul(A, L_flat)
-        L_neighbors = L_neighbors_flat.view_as(L)
+        L_neighbors = torch.einsum("...uv,...vij->...uij", A, L)
 
         L_tilde = geodesic_euclid(L, L_neighbors, alpha=0.5)
         return matrix_exp.apply(L_tilde)

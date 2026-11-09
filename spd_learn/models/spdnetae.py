@@ -249,12 +249,10 @@ class SPDNetAE(nn.Module):
             Latent SPD matrix with shape `(..., d_latent, d_latent)`
             where `d_latent = bimap_dims[-1]`.
         """
-        if self.input_type == "raw":
-            if x.ndim == 3 and (
-                x.shape[-1] != self.n_chans or not torch.allclose(x, x.mT, atol=1e-4)
-            ):
-                x = self.cov_frontend(x)
-        else:
+        if self.input_type != "raw" or (
+            x.ndim == 3
+            and (x.shape[-1] != self.n_chans or not torch.allclose(x, x.mT, atol=1e-4))
+        ):
             x = self.cov_frontend(x)
         return self.encoder(x)
 

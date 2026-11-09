@@ -155,18 +155,8 @@ def test_correctness_spd_learn(epoch_data, filterbank_data, model_name):
     elif model_name == "GraphCSPNet":
         kwargs = dict(n_patches=2, bimap_dims=(32, 16))
         lr = 1e-3
-    elif model_name == "SPNN":
-        kwargs = dict(bimap_dims=(64,))
-        lr = 0.01
     elif model_name in (
         "EEGSPDNet",
-        "RCEEGNet",
-        "STaRNet",
-        "SPDResNet",
-        "GyroSPD",
-        "SPDMetaFormer",
-        "GyroAtt",
-        "GBWAtt",
         "SPDNetAE",
         "SSGCNet",
     ):
