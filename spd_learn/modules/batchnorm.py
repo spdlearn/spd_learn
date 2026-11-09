@@ -729,11 +729,13 @@ class SPDBatchNormHarmonic(SPDBatchNormMean):
         self.learnable_alpha = learnable_alpha
         self.eps = eps
 
-        logit_init = math.log(alpha / (1.0 - alpha))
-        self.alpha_logit = nn.Parameter(
-            torch.tensor(logit_init, device=device, dtype=dtype),
-            requires_grad=learnable_alpha,
+        logit_init = torch.tensor(
+            math.log(alpha / (1.0 - alpha)), device=device, dtype=dtype
         )
+        if learnable_alpha:
+            self.alpha_logit = nn.Parameter(logit_init)
+        else:
+            self.register_buffer("alpha_logit", logit_init)
 
     @torch.no_grad()
     def reset_parameters(self) -> None:
