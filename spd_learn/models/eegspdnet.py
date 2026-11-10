@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import torch.nn as nn
 
-from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig, SPDDropout
+from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig, SPDDropout, TraceNorm
 
 
 class EEGSPDNet(nn.Module):
@@ -78,6 +78,7 @@ class EEGSPDNet(nn.Module):
         )
 
         self.cov_pool = CovLayer()
+        self.trace_norm = TraceNorm(epsilon=1e-4)
 
         bimap_sizes_ls = _parse_bimap_sizes(
             bimap_sizes, n_chans=self.n_chans, n_filters=self.n_filters
@@ -96,6 +97,7 @@ class EEGSPDNet(nn.Module):
     def forward(self, x):
         x = self.conv(x)
         x = self.cov_pool(x)
+        x = self.trace_norm(x)
         x = self.spdnet(x)
         x = self.dropout(x)
         x = self.linear(x)

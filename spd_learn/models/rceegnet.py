@@ -5,6 +5,7 @@ from collections.abc import Sequence
 import torch
 import torch.nn as nn
 
+from spd_learn.functional import trace_normalization
 from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig
 
 
@@ -77,6 +78,7 @@ class RCEEGNet(nn.Module):
             nn.ReLU(),
         )
         self.covariance = CovLayer()
+        self.identity: torch.Tensor
         self.register_buffer("identity", torch.eye(n_spatial_filters) * reg_cov)
         self.reeig_threshold = reeig_threshold
         eff_threshold = max(float(reeig_threshold), 1e-4)
@@ -123,13 +125,10 @@ class RCEEGNet(nn.Module):
         x = x.unsqueeze(1)
         x = self.conv_spatial(x)
         x = self.conv_temporal(x)
-        cov = self.covariance(x.squeeze(2))
-        d = cov.shape[-1]
-        mean_trace = (
-            cov.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
+        x = (
+            trace_normalization(self.covariance(x.squeeze(2)), epsilon=1e-3)
+            + self.identity
         )
-        eye = torch.eye(d, device=cov.device, dtype=cov.dtype)
-        x = cov / (mean_trace + 1e-8) + 1e-3 * eye + self.identity
         x = self.spd_features(x)
         x = self.classifier(x)
         return x

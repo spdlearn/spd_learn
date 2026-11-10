@@ -305,46 +305,63 @@ class SPDBatchNormLie(nn.Module):
 
     def _deform(self, X):
         """Map SPD matrices to the Lie algebra."""
+        X = ensure_sym(X)
         if self.metric == "AIM":
-            return X if self.theta == 1.0 else matrix_power.apply(X, self.theta)
+            return (
+                X
+                if self.theta == 1.0
+                else ensure_sym(matrix_power.apply(X, self.theta))
+            )
         if self.metric == "LEM":
-            return matrix_log.apply(X)
+            return ensure_sym(matrix_log.apply(X))
         # LCM
-        Xp = X if self.theta == 1.0 else matrix_power.apply(X, self.theta)
+        Xp = X if self.theta == 1.0 else ensure_sym(matrix_power.apply(X, self.theta))
         return cholesky_log.apply(Xp)
 
     def _inv_deform(self, S):
         """Map from the Lie algebra back to SPD matrices."""
         if self.metric == "AIM":
-            return S if self.theta == 1.0 else matrix_power.apply(S, 1.0 / self.theta)
+            S = ensure_sym(S)
+            return (
+                S
+                if self.theta == 1.0
+                else ensure_sym(matrix_power.apply(S, 1.0 / self.theta))
+            )
         if self.metric == "LEM":
-            return matrix_exp.apply(S)
+            return ensure_sym(matrix_exp.apply(ensure_sym(S)))
         # LCM
-        spd = ensure_sym(cholesky_exp.apply(S))
-        return spd if self.theta == 1.0 else matrix_power.apply(spd, 1.0 / self.theta)
+        S_tril = torch.tril(S)
+        diag_S = torch.diagonal(S_tril, dim1=-2, dim2=-1).clamp(min=-20.0, max=20.0)
+        S_tril = S_tril.tril(-1) + torch.diag_embed(diag_S)
+        spd = ensure_sym(cholesky_exp.apply(S_tril))
+        return (
+            spd
+            if self.theta == 1.0
+            else ensure_sym(matrix_power.apply(spd, 1.0 / self.theta))
+        )
 
     def _translate(self, X, P, inverse=False):
         """Group translation (centering / biasing) in the Lie algebra."""
         if self.metric == "AIM":
+            X, P = ensure_sym(X), ensure_sym(P)
             if self.congruence == "cholesky":
                 return spd_cholesky_congruence(X, P, inverse=inverse)
-            # Eigendecomposition path
             if inverse:
-                return spd_centering(X, matrix_inv_sqrt.apply(P))
-            return spd_rebiasing(X, matrix_sqrt.apply(P))
+                return ensure_sym(spd_centering(X, matrix_inv_sqrt.apply(P)))
+            return ensure_sym(spd_rebiasing(X, matrix_sqrt.apply(P)))
         return X - P if inverse else X + P
 
     def _frechet_mean(self, X_def):
         """Fréchet mean in the deformed space."""
         if self.metric == "AIM":
-            return frechet_mean(X_def, max_iter=self.n_iter)
+            return ensure_sym(frechet_mean(X_def, max_iter=self.n_iter))
         return X_def.detach().mean(dim=0, keepdim=True)
 
     def _scale(self, X, var):
         """Variance normalization in the Lie algebra."""
         factor = self.shift / (var + self.eps).sqrt()
         if self.metric == "AIM":
-            return log_euclidean_scalar_multiply(factor, X)
+            return ensure_sym(log_euclidean_scalar_multiply(factor, X))
         return X * factor
 
     # ------------------------------------------------------------------

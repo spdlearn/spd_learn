@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 
 from spd_learn.functional import covariance
-from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig
+from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig, TraceNorm
 
 
 class SPDNet(nn.Module):
@@ -76,8 +76,10 @@ class SPDNet(nn.Module):
 
         if input_type == "raw":
             self.cov = CovLayer(method=cov_method)
+            self.trace_norm = TraceNorm(epsilon=1e-4)
         elif input_type == "cov":
             self.cov = nn.Identity()
+            self.trace_norm = nn.Identity()
 
         self.bimap = BiMap(n_chans, subspacedim)
         self.reeig = ReEig(threshold)
@@ -103,6 +105,7 @@ class SPDNet(nn.Module):
             Output of the classifier, with shape `(batch_size, n_outputs)`.
         """
         X = self.cov(X)
+        X = self.trace_norm(X)
         X = self.bimap(X)
         X = self.reeig(X)
         X = self.logeig(X)
