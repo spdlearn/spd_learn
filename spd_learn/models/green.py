@@ -12,7 +12,14 @@ import torch
 from torch import nn
 
 from spd_learn.functional.covariance import cross_covariance, real_covariance
-from spd_learn.modules import BatchReNorm, BiMap, CovLayer, LogEig, Shrinkage
+from spd_learn.modules import (
+    BatchReNorm,
+    BiMap,
+    CovLayer,
+    LogEig,
+    Shrinkage,
+    TraceNorm,
+)
 from spd_learn.modules.wavelet import WaveletConv
 
 
@@ -126,6 +133,7 @@ class Green(nn.Module):
             n_freqs_effective = 1
 
         self.cov_layer = CovLayer(method=pool_method)
+        self.trace_norm = TraceNorm(epsilon=1e-4, dtype=dtype)
 
         spd_layers_list: List[nn.Module] = []
         if shrinkage_init is not None:
@@ -160,6 +168,7 @@ class Green(nn.Module):
                     momentum=momentum,
                     rebias=False,
                     renorm=True,
+                    dtype=dtype,
                 )
             )
 
@@ -202,7 +211,7 @@ class Green(nn.Module):
             Output tensor with shape `(batch_size, n_outputs)`.
         """
         X_conv = self.conv_layers(X)
-        X_cov = self.cov_layer(X_conv)
+        X_cov = self.trace_norm(self.cov_layer(X_conv))
         X_spd = self.spd_layers(X_cov)
         X_proj = self.proj(X_spd)
         X_flat = torch.flatten(X_proj, start_dim=1)

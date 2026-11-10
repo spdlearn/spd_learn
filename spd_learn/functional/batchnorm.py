@@ -32,7 +32,8 @@ from typing import Optional, Tuple, Union
 
 import torch
 
-from .core import matrix_exp, matrix_log, matrix_sqrt_inv
+from .core import clamp_eigvals, matrix_exp, matrix_log, matrix_sqrt_inv
+from .numerical import get_epsilon
 from .utils import ensure_sym
 
 
@@ -336,7 +337,11 @@ def spd_cholesky_congruence(
     --------
     :func:`spd_centering` : Eigendecomposition-based centering (uses :math:`M^{-1/2}`).
     """
-    L = torch.linalg.cholesky(P)
+    P_sym = ensure_sym(P)
+    L, info = torch.linalg.cholesky_ex(P_sym)
+    if bool((info != 0).any()):
+        floor = get_epsilon(P.dtype, "eigval_clamp")
+        L = torch.linalg.cholesky(clamp_eigvals.apply(P_sym, floor))
     if inverse:
         Y = torch.linalg.solve_triangular(L, X, upper=False)
         return ensure_sym(torch.linalg.solve_triangular(L, Y.mT, upper=False).mT)

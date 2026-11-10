@@ -184,10 +184,11 @@ def airm_geodesic(A, B, t):
     """
     # A 0-d tensor t broadcasts over batched inputs (pyriemann requires alpha to
     # match the batch shape); expand it so a scalar t still works on batches.
+    A, B = ensure_sym(A), ensure_sym(B)
     if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
         t = t.expand(A.shape[:-2])
     # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
-    return geodesic_riemann(A, B, alpha=t)
+    return ensure_sym(geodesic_riemann(A, B, alpha=t))
 
 
 def exp_map_airm(P, V, t=1.0):

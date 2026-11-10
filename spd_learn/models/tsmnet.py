@@ -4,7 +4,14 @@ import torch
 
 from torch import nn
 
-from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig, SPDBatchNormMeanVar
+from spd_learn.modules import (
+    BiMap,
+    CovLayer,
+    LogEig,
+    ReEig,
+    SPDBatchNormMeanVar,
+    TraceNorm,
+)
 
 
 class TSMNet(nn.Module):
@@ -81,6 +88,7 @@ class TSMNet(nn.Module):
             nn.Flatten(start_dim=2),
         )
         self.covpool = CovLayer()
+        self.trace_norm = TraceNorm(epsilon=1e-4)
         self.spdnet = nn.Sequential(
             BiMap(
                 in_features=self.n_spatiotemp_filters, out_features=self.n_bimap_filters
@@ -113,7 +121,7 @@ class TSMNet(nn.Module):
             Output tensor of shape `(batch_size, n_outputs)`.
         """
         x_filtered = self.cnn(x[:, None, ...])
-        x_cov = self.covpool(x_filtered)
+        x_cov = self.trace_norm(self.covpool(x_filtered))
         x_spd = self.spdnet(x_cov)
         x_tangent = self.logeig(self.spdbnorm(x_spd))
         return self.head(x_tangent)
