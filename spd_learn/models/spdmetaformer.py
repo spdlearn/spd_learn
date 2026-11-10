@@ -25,6 +25,7 @@ from spd_learn.modules import (
     BiMap,
     ReEig,
     Shrinkage,
+    TraceNorm,
     Vech,
 )
 
@@ -185,6 +186,7 @@ class SPDMetaFormer(MAtt):
         )
 
         param_dtype = dtype if dtype is not None else torch.float32
+        self.patch_cov_layer[2] = TraceNorm(epsilon=eps, device=device, dtype=dtype)
 
         # Regularized shrinkage for patch covariances
         self.shrinkage = Shrinkage(
@@ -249,17 +251,20 @@ class SPDMetaFormer(MAtt):
         torch.Tensor
             Output class logits of shape `(batch, n_outputs)`.
         """
-        if x.ndim == 4 and x.shape[1] == 1:
-            x = x.squeeze(1)
+        if x.ndim >= 4 and x.shape[-1] == x.shape[-2]:
+            x = self.patch_cov_layer[2](x)
+        else:
+            if x.ndim == 4 and x.shape[1] == 1:
+                x = x.squeeze(1)
 
-        x = self.add_extra_dim(x)
-        x = self.spatial_filter(x)
-        x = self.spatial_batch_norm(x)
-        x = self.temporal_feature_extractor(x)
-        x = self.temporal_batch_norm(x)
-        x = self.squeeze_channel(x)
+            x = self.add_extra_dim(x)
+            x = self.spatial_filter(x)
+            x = self.spatial_batch_norm(x)
+            x = self.temporal_feature_extractor(x)
+            x = self.temporal_batch_norm(x)
+            x = self.squeeze_channel(x)
 
-        x = self.patch_cov_layer(x)
+            x = self.patch_cov_layer(x)
         x = self.shrinkage(x)
         x = self.manifold_attention(x)
 
@@ -367,7 +372,7 @@ class SPDMetaFormerBlock(nn.Module):
 
         # Sub-block 1: Learnable geodesic mixing rate for uniform Fréchet mean
         self.mix_logit = nn.Parameter(
-            torch.tensor(0.0, device=device, dtype=param_dtype)
+            torch.tensor(-1.0, device=device, dtype=param_dtype)
         )
 
         # Sub-block 2: Shared SPD spectral feedforward network (SPD-FFN)
@@ -377,7 +382,7 @@ class SPDMetaFormerBlock(nn.Module):
 
         # Sub-block 2: Learnable geodesic residual rate for FFN
         self.ffn_logit = nn.Parameter(
-            torch.tensor(0.0, device=device, dtype=param_dtype)
+            torch.tensor(-2.0, device=device, dtype=param_dtype)
         )
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
@@ -394,13 +399,13 @@ class SPDMetaFormerBlock(nn.Module):
             Transformed SPD tokens of shape `(..., P, dim, dim)`.
         """
         # Sub-block 1 — Uniform Fréchet Token Mixer with Geodesic Residual
-        L = matrix_log.apply(X)
+        L = matrix_log.apply(self.reeig(X))
         L_bar = mean_euclid(L).unsqueeze(-3).expand_as(L)
         alpha = torch.sigmoid(self.mix_logit).expand(L.shape[:-2])
         U = matrix_exp.apply(geodesic_euclid(L, L_bar, alpha=alpha))
 
         # Sub-block 2 — Shared Spectral Feedforward Map (SPD-FFN) with Geodesic Residual
-        ffn_out = self.bimap2(self.reeig(self.bimap1(U)))
+        ffn_out = self.reeig(self.bimap2(self.reeig(self.bimap1(U))))
         beta = torch.sigmoid(self.ffn_logit).expand(U.shape[:-2])
         return matrix_exp.apply(
             geodesic_euclid(matrix_log.apply(U), matrix_log.apply(ffn_out), alpha=beta)

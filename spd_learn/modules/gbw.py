@@ -186,6 +186,8 @@ class GBWAttention(nn.Module):
         learn_power=False,
         n_iter=10,
         aggregation="fixed_point",
+        *,
+        temperature=None,
     ):
         super().__init__()
         if not 1 <= out_features <= in_features:
@@ -194,10 +196,15 @@ class GBWAttention(nn.Module):
             raise ValueError("n_iter must be a positive integer")
         if aggregation not in {"fixed_point", "root"}:
             raise ValueError("aggregation must be 'fixed_point' or 'root'")
+        if temperature is not None and (
+            not math.isfinite(temperature) or temperature <= 0
+        ):
+            raise ValueError("temperature must be positive and finite")
         self.in_features = in_features
         self.out_features = out_features
         self.n_iter = n_iter
         self.aggregation = aggregation
+        self.temperature = None if temperature is None else float(temperature)
         self.q_trans = BiMap(in_features, out_features, init_method="orthogonal")
         self.k_trans = BiMap(in_features, out_features, init_method="orthogonal")
         self.v_trans = BiMap(in_features, out_features, init_method="orthogonal")
@@ -231,6 +238,8 @@ class GBWAttention(nn.Module):
             for proj in (self.q_trans, self.k_trans, self.v_trans)
         ]
         distance = _safe_distance(_bw_squared(q.unsqueeze(2), k.unsqueeze(1))) / power
+        if self.temperature is not None:
+            distance = distance / self.temperature
         weights = (1 / (1 + torch.log1p(distance))).softmax(dim=-1)
         mean = bw_attention_mean(
             v, weights, n_iter=self.n_iter, method=self.aggregation

@@ -4,6 +4,8 @@
 # Re-implementation of GBWAtt (Jin et al., KDD, 2026).
 # Reference implementation: https://github.com/jjscc/GBWAtt
 
+import math
+
 import torch
 
 from torch import nn
@@ -118,6 +120,7 @@ class GBWAtt(MAtt):
             learn_power,
             n_iter,
             aggregation,
+            temperature=math.sqrt(attention_out_features),
         )
         self.re_eig = ReEig(threshold=reeig_threshold)
         self.tangent = nn.Sequential(

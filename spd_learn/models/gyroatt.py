@@ -8,6 +8,8 @@ Rui Wang, Chen Hu, Xiaoning Song, Xiaojun Wu, Nicu Sebe, and Ziheng Chen,
 NeurIPS 2025 (GyroAtt).
 """
 
+import math
+
 from typing import Optional
 
 import torch
@@ -32,6 +34,7 @@ from ..modules import (
     BiMap,
     SPDLinear,
     SymmetricPositiveDefinite,
+    TraceNorm,
 )
 from .matt import MAtt
 
@@ -165,15 +168,16 @@ class GyroSPDAttention(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Reset layer parameters to initial state."""
-        self.q_proj.reset_parameters()
-        self.k_proj.reset_parameters()
-        self.v_proj.reset_parameters()
+        eye = torch.eye(self.dim, device=self.bias.device, dtype=self.bias.dtype)
+        for proj in (self.q_proj, self.k_proj, self.v_proj):
+            proj.reset_parameters()
+            if is_parametrized(proj, "weight"):
+                setattr(proj, "weight", eye.unsqueeze(0))
+                nn.init.kaiming_uniform_(
+                    getattr(proj.parametrizations, "weight").original, a=0.01
+                )
         if is_parametrized(self, "bias"):
-            setattr(
-                self,
-                "bias",
-                torch.eye(self.dim, device=self.bias.device, dtype=self.bias.dtype),
-            )
+            setattr(self, "bias", eye)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of GyroSPDAttention.
@@ -192,7 +196,7 @@ class GyroSPDAttention(nn.Module):
         dist_fn = (
             log_euclidean_distance if self.metric == "LEM" else log_cholesky_distance
         )
-        D = dist_fn(Q.unsqueeze(-3), K.unsqueeze(-4))
+        D = dist_fn(Q.unsqueeze(-3), K.unsqueeze(-4)) / math.sqrt(self.dim)
         A = F.softmax(1.0 / (1.0 + torch.log1p(D)), dim=-1)
 
         if self.metric == "LEM":
@@ -320,7 +324,9 @@ class SymSPDAttention(nn.Module):
         K = self.k_proj(X)
         V = self.v_proj(X)
 
-        D = distance_euclid(Q.unsqueeze(-3), K.unsqueeze(-4))
+        D = distance_euclid(Q.unsqueeze(-3), K.unsqueeze(-4)) / math.sqrt(
+            self.out_features
+        )
         logits = -torch.exp(self.alpha) * D - self.beta
         A = F.softmax(logits, dim=-1)
 
@@ -456,6 +462,7 @@ class GyroAtt(MAtt):
         self.temporal_filters = (
             temporal_filters if temporal_filters is not None else n_chans
         )
+        self.patch_cov_layer[2] = TraceNorm(epsilon=1e-4)
 
         # Attention block
         self.proj: nn.Module

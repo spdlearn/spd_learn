@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 from __future__ import annotations
 
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -119,7 +121,7 @@ class MAtt(nn.Module):
             CovLayer(
                 method=covariance_method,
             ),
-            TraceNorm(),
+            TraceNorm(epsilon=1e-4),
         )
 
         self.manifold_attention = AttentionManifold(
@@ -211,7 +213,9 @@ class AttentionManifold(nn.Module):
         Q_expand = Q.unsqueeze(2)
         K_expand = K.unsqueeze(1)
 
-        atten_energy = log_euclidean_distance(Q_expand, K_expand)
+        atten_energy = log_euclidean_distance(Q_expand, K_expand) / math.sqrt(
+            self._out_features
+        )
         atten_weights = 1 / (1 + torch.log1p(atten_energy))
         atten_prob = F.softmax(atten_weights, dim=-2)
         atten_prob = atten_prob.permute(0, 2, 1)
