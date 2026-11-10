@@ -123,8 +123,12 @@ class CorNet(nn.Module):
 
     def _regularized_cov_to_corr(self, S: torch.Tensor) -> torch.Tensor:
         """Apply scale normalization and diagonal shrinkage before cov_to_corr."""
-        S_scaled = trace_normalization(S.abs() if S.diagonal(dim1=-2, dim2=-1).min() < 0 else S, epsilon=1e-6)
-        diag_S = torch.diag_embed(torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6))
+        S_scaled = trace_normalization(
+            S.abs() if S.diagonal(dim1=-2, dim2=-1).min() < 0 else S, epsilon=1e-6
+        )
+        diag_S = torch.diag_embed(
+            torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6)
+        )
         return cov_to_corr((1.0 - self.gamma) * S_scaled + self.gamma * diag_S)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -142,12 +146,11 @@ class CorNet(nn.Module):
         torch.Tensor
             Output class logits of shape `(batch_size, n_outputs)`.
         """
-        is_raw = self.input_type == "raw" and (
+        if self.input_type == "raw" and (
             x.ndim != 3
             or x.shape[-1] != x.shape[-2]
             or not torch.allclose(x, x.mT, atol=1e-4)
-        )
-        if is_raw:
+        ):
             x = self.shrinkage(trace_normalization(self.cov(x), epsilon=1e-3))
 
         x = self._regularized_cov_to_corr(x)

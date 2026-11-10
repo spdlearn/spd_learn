@@ -102,7 +102,7 @@ class TangentGraphSPDAggregation(nn.Module):
         d = S.shape[-1]
         L = matrix_log.apply(S)
 
-        # ponytail: O(V^2 d^2) full pairwise tangent distance matrix, switch to sub-sampled landmarks if V > 256
+        # ponytail: O(V^2 d^2) full pairwise distance, use landmarks when V > 256
         dim_scale = max(d * (d + 1) / 2.0, 1.0)
         diff = L.unsqueeze(-3) - L.unsqueeze(-4)
         dist_sq = diff.square().sum(dim=(-2, -1)) / dim_scale

@@ -237,9 +237,7 @@ class SPDNetAE(nn.Module):
         self.batch_norm = SPDBatchNormMean(d_latent, device=device, dtype=dtype)
         self.logeig = LogEig(upper=upper)
         self.feat_dim = d_latent * (d_latent + 1) // 2 if upper else d_latent**2
-        self.tangent_norm = nn.LayerNorm(
-            self.feat_dim, device=device, dtype=dtype
-        )
+        self.tangent_norm = nn.LayerNorm(self.feat_dim, device=device, dtype=dtype)
         self.dropout = nn.Dropout(p=drop_prob)
         self.classifier = nn.Linear(
             self.feat_dim, n_outputs, device=device, dtype=dtype

@@ -11,7 +11,6 @@ from spd_learn.modules import (
     BiMap,
     CovLayer,
     LogEig,
-    LogEuclideanResidual,
     ReEig,
     Shrinkage,
     TraceNorm,
@@ -188,12 +187,11 @@ class SPDResNet(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        is_raw = self.input_type == "raw" and (
+        if self.input_type == "raw" and (
             x.ndim != 3
             or x.shape[-1] != x.shape[-2]
             or not torch.allclose(x, x.mT, atol=1e-4)
-        )
-        if is_raw:
+        ):
             x = self.cov(x)
         x = self.shrinkage(self.trace_norm(x))
         x = self.stages(x)
@@ -290,7 +288,6 @@ class SPDResBlock(nn.Module):
         self.alpha_res = nn.Parameter(
             torch.tensor(float(init_res_scale), device=device, dtype=dtype)
         )
-        self.residual = LogEuclideanResidual(device=device, dtype=dtype)
         self.reset_parameters()
 
     @torch.no_grad()
@@ -325,7 +322,7 @@ class SPDResBlock(nn.Module):
         s_flat = self.cnn(log_flat)
         s = s_flat.view(*batch_shape, d)
 
-        # ponytail: shared-eigenbasis addition assumes commuting residual, switch to full Baker-Campbell-Hausdorff series if non-commuting off-diagonal residual is added
+        # ponytail: commuting shared-basis residual, use BCH if off-diagonal added
         scaled_s = torch.clamp(self.alpha_res * s, min=-20.0, max=20.0)
         combined_log = torch.clamp(log_eigvals + scaled_s, min=-30.0, max=30.0)
         return ensure_sym(

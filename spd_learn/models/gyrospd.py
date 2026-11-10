@@ -174,12 +174,11 @@ class GyroSPD(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        is_raw = self.input_type == "raw" and (
+        if self.input_type == "raw" and (
             x.ndim != 3
             or x.shape[-1] != x.shape[-2]
             or not torch.allclose(x, x.mT, atol=1e-4)
-        )
-        if is_raw:
+        ):
             x = self.cov(x)
         x = self.shrinkage(self.trace_norm(x))
         x = self.layers(x)
@@ -263,10 +262,13 @@ class GyroSPDLayer(nn.Module):
         """Reset layer parameters to their initial states."""
         self.bimap.reset_parameters()
         if is_parametrized(self, "bias"):
-            spd_param = self.parametrizations.bias[0]
-            if getattr(spd_param, "base_factor", None) is not None:
-                spd_param.base_factor = None
-            self.parametrizations.bias.original.zero_()
+            setattr(
+                self,
+                "bias",
+                torch.eye(
+                    self.out_features, device=self.bias.device, dtype=self.bias.dtype
+                ),
+            )
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass applying BiMap, ReEig, and left gyro-translation.
