@@ -132,7 +132,7 @@ class cholesky_log(Function):
 
     @staticmethod
     def forward(ctx, X):
-        # ponytail: eigendecomposition fallback only on non-PD batches, switch to adaptive diagonal shift if d > 256 throughput matters
+        # ponytail: eigh fallback on non-PD batch, use adaptive diag shift if d > 256
         L, info = torch.linalg.cholesky_ex(X)
         if bool((info != 0).any()):
             floor = get_epsilon(X.dtype, "eigval_clamp")

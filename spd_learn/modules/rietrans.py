@@ -231,9 +231,7 @@ class SPDRMLR(nn.Module):
                 eye = torch.eye(self.n_features, device=X.device, dtype=X.dtype)
                 if self.theta in (0.5, 1.0):
                     return 2.0 * (matrix_sqrt.apply(X) - eye)
-                return (matrix_power.apply(X, 2.0 * self.theta) - eye) / abs(
-                    self.theta
-                )
+                return (matrix_power.apply(X, 2.0 * self.theta) - eye) / abs(self.theta)
             return cholesky_log.apply(X)
 
         P = self.reference
@@ -544,7 +542,7 @@ class SPDLinear(nn.Module):
         if self.return_tangent:
             return Y_tan
         if self.metric == "LCM":
-            # ponytail: [-8, 8] log-Cholesky diagonal clamp caps condition number at exp(16), widen if extreme dynamic range is required
+            # ponytail: [-8, 8] log-Cholesky clamp, widen if κ > exp(16) needed
             log_diag = torch.diagonal(Y_tan, dim1=-2, dim2=-1).clamp(min=-8.0, max=8.0)
             Y_safe = Y_tan.tril(-1) + torch.diag_embed(log_diag)
             eps = get_epsilon(Y_tan.dtype, "eigval_log")

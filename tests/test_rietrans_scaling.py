@@ -4,7 +4,6 @@
 
 import pytest
 import torch
-import torch.nn as nn
 
 from spd_learn.models import SPNN
 from spd_learn.modules import SPDRMLR, SPDLinear
@@ -76,7 +75,9 @@ class TestRieTransMetricsAndChartMaps:
             dtype=torch.float64,
         )
         with torch.no_grad():
-            layer.rmlr.linear.weight.copy_(torch.eye(layer.out_vec_dim, dtype=torch.float64))
+            layer.rmlr.linear.weight.copy_(
+                torch.eye(layer.out_vec_dim, dtype=torch.float64)
+            )
             layer.rmlr.linear.bias.zero_()
         Y = layer(X)
         assert torch.allclose(Y, X, atol=1e-6), f"Roundtrip failed for {metric}"

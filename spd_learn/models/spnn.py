@@ -150,7 +150,7 @@ class SPNN(nn.Module):
         )
 
         if self.use_conv_stem:
-            # ponytail: fixed kernel_size=(1, 25) 4-band stem, replace with sfreq-scaled filterbank when sfreq >> 250 Hz
+            # ponytail: fixed k=25 4-band stem, scale with sfreq when sfreq >> 250 Hz
             n_bands = max(self.in_channels, 4)
             self.conv_stem = nn.Sequential(
                 nn.Conv2d(
@@ -178,7 +178,11 @@ class SPNN(nn.Module):
         for i in range(n_layers):
             d_in, d_out = dims[i], dims[i + 1]
             is_last = i == n_layers - 1
-            if i == 0 and self.in_channels == 1 and not (is_last and self.use_chart_bypass):
+            if (
+                i == 0
+                and self.in_channels == 1
+                and not (is_last and self.use_chart_bypass)
+            ):
                 layers.append(
                     BiMap(
                         in_features=d_in,
@@ -247,7 +251,7 @@ class SPNN(nn.Module):
         )
 
     def _extract_covariance(self, x: torch.Tensor) -> torch.Tensor:
-        """Compute regularized SPD covariance representation from time series or SPD input."""
+        """Compute regularized SPD covariance from time series or SPD input."""
         if x.shape[-1] == x.shape[-2]:
             return self.shrinkage(self.trace_norm(x))
 
