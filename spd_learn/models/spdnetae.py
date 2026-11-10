@@ -8,7 +8,15 @@ import torch
 import torch.nn as nn
 
 from ..functional import covariance, log_euclidean_distance
-from ..modules import BiMap, CovLayer, LogEig, ReEig, Shrinkage, TraceNorm
+from ..modules import (
+    BiMap,
+    CovLayer,
+    LogEig,
+    ReEig,
+    Shrinkage,
+    SPDBatchNormMean,
+    TraceNorm,
+)
 
 
 class SPDDecoderBlock(nn.Module):
@@ -195,7 +203,7 @@ class SPDNetAE(nn.Module):
         if input_type == "raw":
             self.cov_frontend = nn.Sequential(
                 CovLayer(method=cov_method, device=device, dtype=dtype),
-                TraceNorm(),
+                TraceNorm(epsilon=1e-3, device=device, dtype=dtype),
                 Shrinkage(
                     n_chans=n_chans,
                     init_shrinkage=-2.0,
@@ -226,9 +234,11 @@ class SPDNetAE(nn.Module):
 
         # Classifier Head
         d_latent = self.bimap_dims[-1]
+        self.batch_norm = SPDBatchNormMean(d_latent, device=device, dtype=dtype)
         self.logeig = LogEig(upper=upper)
-        self.dropout = nn.Dropout(p=drop_prob)
         self.feat_dim = d_latent * (d_latent + 1) // 2 if upper else d_latent**2
+        self.tangent_norm = nn.LayerNorm(self.feat_dim, device=device, dtype=dtype)
+        self.dropout = nn.Dropout(p=drop_prob)
         self.classifier = nn.Linear(
             self.feat_dim, n_outputs, device=device, dtype=dtype
         )
@@ -340,6 +350,9 @@ class SPDNetAE(nn.Module):
             Class logits with shape `(batch, n_outputs)`.
         """
         Z = self.encode(x)
+        if Z.shape[0] > 1 or not self.training:
+            Z = self.batch_norm(Z)
         feats = self.logeig(Z)
+        feats = self.tangent_norm(feats)
         feats = self.dropout(feats)
         return self.classifier(feats)

@@ -66,6 +66,7 @@ class PhaseSPDNet(nn.Module):
             subspacedim = int(n_chans * order)
 
         self.phase = PhaseDelay(order=order, lag=lag)
+        self.shrinkage_gamma = 1e-3
 
         self.spdnet = SPDNet(
             subspacedim=subspacedim,
@@ -90,9 +91,23 @@ class PhaseSPDNet(nn.Module):
             Output tensor of shape `(batch_size, n_outputs)`.
         """
         x_delay = self.phase(input)
-        out = self.spdnet(x_delay)
-
-        return out
+        C = self.spdnet.cov(x_delay)
+        d_aug = C.shape[-1]
+        mean_trace = (
+            C.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1)
+            / d_aug
+        )
+        C = C / (mean_trace + 1e-8)
+        eye = torch.eye(d_aug, device=C.device, dtype=C.dtype)
+        tr_over_d = (
+            C.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1)
+            / d_aug
+        )
+        C = (1.0 - self.shrinkage_gamma) * C + self.shrinkage_gamma * tr_over_d * eye
+        X = self.spdnet.bimap(C)
+        X = self.spdnet.reeig(X)
+        X = self.spdnet.logeig(X)
+        return self.spdnet.classifier(X)
 
 
 class PhaseDelay(nn.Module):

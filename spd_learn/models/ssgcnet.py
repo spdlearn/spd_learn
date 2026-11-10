@@ -5,7 +5,7 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from ..functional import distance_euclid, geodesic_euclid, matrix_exp, matrix_log
+from ..functional import geodesic_euclid, matrix_exp, matrix_log
 from ..modules import (
     BiMap,
     CovLayer,
@@ -99,10 +99,17 @@ class TangentGraphSPDAggregation(nn.Module):
             Aggregated node SPD matrices of shape `(..., V, d, d)`.
         """
         V = S.shape[-3]
+        d = S.shape[-1]
         L = matrix_log.apply(S)
 
-        # Compute pairwise Frobenius norm in tangent space
-        D = distance_euclid(L.unsqueeze(-3), L.unsqueeze(-4))  # (..., V, V)
+        # ponytail: O(V^2 d^2) full pairwise distance, use landmarks when V > 256
+        dim_scale = max(d * (d + 1) / 2.0, 1.0)
+        diff = L.unsqueeze(-3) - L.unsqueeze(-4)
+        dist_sq = diff.square().sum(dim=(-2, -1)) / dim_scale
+        mean_dist = (
+            dist_sq.detach().mean(dim=(-2, -1), keepdim=True).clamp(min=self.eps)
+        )
+        D = dist_sq / mean_dist  # (..., V, V)
 
         # Select top-k nearest neighbors per node (smallest distance -> largest -D)
         k = min(self.k_neighbors, V)
@@ -242,8 +249,10 @@ class SSGCNet(nn.Module):
             n_patches=n_nodes,
         )
         self.cov = CovLayer()
-        self.trace_norm = TraceNorm()
-        self.shrinkage = Shrinkage(n_chans=temporal_filters)
+        self.trace_norm = TraceNorm(epsilon=1e-3)
+        self.shrinkage = Shrinkage(
+            n_chans=temporal_filters, init_shrinkage=-2.0, learnable=True
+        )
 
         # Learnable Stiefel projection
         self.bimap = BiMap(temporal_filters, stiefel_dim)

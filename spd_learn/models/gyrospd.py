@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 from __future__ import annotations
 
+import math
+
 import torch
 import torch.nn as nn
 
@@ -126,8 +128,14 @@ class GyroSPD(nn.Module):
         else:
             self.cov = nn.Identity()
 
-        self.trace_norm = TraceNorm()
-        self.shrinkage = Shrinkage(n_chans, device=device, dtype=dtype)
+        self.trace_norm = TraceNorm(epsilon=1e-3, device=device, dtype=dtype)
+        self.shrinkage = Shrinkage(
+            n_chans,
+            init_shrinkage=-3.0,
+            learnable=True,
+            device=device,
+            dtype=dtype,
+        )
 
         layers: list[nn.Module] = []
         in_dim = n_chans
@@ -166,12 +174,16 @@ class GyroSPD(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        if self.input_type != "raw" or (x.ndim == 3 and x.shape[-1] != x.shape[-2]):
+        if self.input_type == "raw" and (
+            x.ndim != 3
+            or x.shape[-1] != x.shape[-2]
+            or not torch.allclose(x, x.mT, atol=1e-4)
+        ):
             x = self.cov(x)
-        x = self.trace_norm(x)
-        x = self.shrinkage(x)
+        x = self.shrinkage(self.trace_norm(x))
         x = self.layers(x)
-        x = self.batch_norm(x)
+        if x.shape[0] > 1 or not self.training:
+            x = self.batch_norm(x)
         x = self.logeig(x)
         x = self.dropout(x)
         return self.classifier(x)
@@ -271,6 +283,7 @@ class GyroSPDLayer(nn.Module):
         torch.Tensor
             Transformed SPD tensor of shape `(..., out_features, out_features)`.
         """
-        X = self.reeig(self.bimap(X))
+        scale = 1.0 / math.sqrt(self.in_features)
+        X = self.reeig(self.bimap(X) * scale)
         B_sqrt = matrix_sqrt.apply(self.bias)
         return ensure_sym(spd_rebiasing(X, B_sqrt))
