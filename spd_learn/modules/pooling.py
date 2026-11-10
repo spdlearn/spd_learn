@@ -17,7 +17,12 @@ import torch
 
 from torch import nn
 
-from ..functional import matrix_log, matrix_power, sample_covariance
+from ..functional import (
+    matrix_log,
+    matrix_power,
+    sample_covariance,
+    trace_normalization,
+)
 from ..functional.metrics import cholesky_log
 from .utils import Vech
 
@@ -349,7 +354,7 @@ class RHOP(nn.Module):
 
         # 3. Riemannian mapping to tangent / Euclidean representation
         is_complex = G.is_complex()
-        G_in = G.real if is_complex else G
+        G_in = trace_normalization(G.real if is_complex else G, epsilon=1e-3)
 
         if self.metric == "LEM":
             S = matrix_log.apply(G_in)

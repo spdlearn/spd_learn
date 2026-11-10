@@ -12,6 +12,7 @@ import torch
 
 from torch import Tensor, nn
 
+from spd_learn.functional import trace_normalization
 from spd_learn.modules import LogEig, ReEig, SPDBatchNormMean
 from spd_learn.modules.graph import (
     GraphBiMap,
@@ -181,8 +182,10 @@ class GraphCSPNet(nn.Module):
             self.dims = (n_chans, *tuple(bimap_dims))
         elif dims is not None:
             self.dims = tuple(dims)
-        else:
+        elif n_chans <= 36:
             self.dims = (n_chans, max(n_chans, round(36 * n_chans / 22)), n_chans)
+        else:
+            self.dims = (n_chans, 36, 22)
         if len(self.dims) < 2 or self.dims[0] != n_chans or min(self.dims) <= 0:
             raise ValueError(
                 "dims must begin with n_chans and contain positive layer sizes"
@@ -229,6 +232,12 @@ class GraphCSPNet(nn.Module):
             Covariances of shape (batch, nodes, channels, channels), in
             squared signal units.
         """
+        if (
+            input.ndim == 3
+            and input.shape[1] == self.n_chans
+            and input.shape[-1] >= 2 * max(self.window_counts)
+        ):
+            input = input.unsqueeze(1).expand(-1, self.n_freqs, -1, -1)
         if input.ndim != 4 or input.shape[1:3] != (self.n_freqs, self.n_chans):
             raise ValueError("expected (trials, n_freqs, n_chans, samples)")
         segments = self.segments
@@ -307,6 +316,24 @@ class GraphCSPNet(nn.Module):
         self.graph.fit(self.covariances(training_signals))
         return self
 
+    @staticmethod
+    def _normalize_propagation(propagation: Tensor, alpha: float = 0.5) -> Tensor:
+        r"""Compute row-normalized $(1-\alpha)I + \alpha D^{-1/2} A D^{-1/2}$."""
+        diag = propagation.diagonal(dim1=-2, dim2=-1).clamp(min=1e-12)
+        adj = propagation / diag.unsqueeze(-1)
+        adj = adj - torch.diag_embed(adj.diagonal(dim1=-2, dim2=-1))
+        adj = 0.5 * (adj + adj.mT)
+        deg = adj.sum(dim=-1)
+        deg_inv_sqrt = torch.where(
+            deg > 0, deg.clamp(min=1e-12).rsqrt(), torch.zeros_like(deg)
+        )
+        norm_adj = deg_inv_sqrt.unsqueeze(-1) * adj * deg_inv_sqrt.unsqueeze(-2)
+        eye = torch.eye(
+            propagation.shape[-1], device=propagation.device, dtype=propagation.dtype
+        )
+        prop = (1.0 - alpha) * eye + alpha * norm_adj
+        return prop / prop.sum(dim=-1, keepdim=True).clamp(min=1e-12)
+
     def forward_covariances(self, input: Tensor) -> Tensor:
         r"""Classify precomputed covariance nodes.
 
@@ -329,9 +356,10 @@ class GraphCSPNet(nn.Module):
             != (len(self.graph.coordinates), self.n_chans, self.n_chans)
         ):
             raise RuntimeError("Fit the LGT graph on training trials before forward")
-        x = input
+        x = trace_normalization(input, epsilon=1e-3)
+        prop = self._normalize_propagation(self.graph())
         for index, layer in enumerate(self.layers):
-            x = layer(x, self.graph() if index == 0 else self.identity_graph)
+            x = layer(x, prop if index == 0 else self.identity_graph)
             if index < len(self.layers) - 1:
                 x = self.rectify(x)
         shape = x.shape
@@ -353,4 +381,12 @@ class GraphCSPNet(nn.Module):
         torch.Tensor
             Unnormalized class logits of shape (batch, n_outputs).
         """
+        # ponytail: fits LGT graph on first batch, call fit_graph() on full train set
+        if (
+            input.ndim == 3
+            and input.shape[1] == self.n_chans
+            and input.shape[-1] >= 2 * max(self.window_counts)
+            and not bool(self.graph.fitted)
+        ):
+            self.fit_graph(input)
         return self.forward_covariances(self.covariances(input))

@@ -111,8 +111,8 @@ class DeepGeoCCA(nn.Module):
     ) -> nn.Sequential:
         layers: list[nn.Module] = [
             CovLayer(),
-            TraceNorm(),
-            Shrinkage(n_chans, init_shrinkage=-2.0),
+            TraceNorm(epsilon=1e-3),
+            Shrinkage(n_chans, init_shrinkage=-2.0, learnable=True),
         ]
         dims = (n_chans, *bimap_dims)
         for in_dim, out_dim in zip(dims[:-1], dims[1:]):
@@ -120,6 +120,7 @@ class DeepGeoCCA(nn.Module):
             layers.append(ReEig(threshold=eps))
         if bimap_dims:
             layers.append(SPDBatchNormMean(bimap_dims[-1]))
+            layers.append(ReEig(threshold=eps))
         return nn.Sequential(*layers)
 
     def encode_views(
@@ -198,7 +199,10 @@ class DeepGeoCCA(nn.Module):
         Y1, Y2 = self.encode_views(x, x2)
         z1 = self.logeig(Y1)
         z2 = self.logeig(Y2)
-        z = torch.cat([z1, z2], dim=-1)
+        z1_norm = z1 / z1.norm(dim=-1, keepdim=True).clamp(min=self.eps)
+        z2_norm = z2 / z2.norm(dim=-1, keepdim=True).clamp(min=self.eps)
+        corr_gate = torch.sigmoid((z1_norm * z2_norm) / 0.1)
+        z = torch.cat([z1 + corr_gate * z2, z2 + corr_gate * z1], dim=-1)
         z = self.dropout(z)
         return self.classifier(z)
 
@@ -298,15 +302,25 @@ class GeodesicCCALoss(nn.Module):
         N = max(batch_size - 1, 1)
         eye_m = torch.eye(m, device=Y1.device, dtype=Y1.dtype)
 
-        Sigma11 = ensure_sym((1.0 / N) * (H1.mT @ H1) + self.eps * eye_m)
-        Sigma22 = ensure_sym((1.0 / N) * (H2.mT @ H2) + self.eps * eye_m)
+        S11 = (1.0 / N) * (H1.mT @ H1)
+        S22 = (1.0 / N) * (H2.mT @ H2)
+        tr1 = S11.diagonal(dim1=-2, dim2=-1).mean(dim=-1, keepdim=True).unsqueeze(-1)
+        tr2 = S22.diagonal(dim1=-2, dim2=-1).mean(dim=-1, keepdim=True).unsqueeze(-1)
+        reg1 = torch.clamp(1e-3 * tr1, min=self.eps)
+        reg2 = torch.clamp(1e-3 * tr2, min=self.eps)
+
+        Sigma11 = ensure_sym(S11 + reg1 * eye_m)
+        Sigma22 = ensure_sym(S22 + reg2 * eye_m)
         Sigma12 = (1.0 / N) * (H1.mT @ H2)
 
         Sigma11_inv_sqrt = matrix_inv_sqrt.apply(Sigma11)
         Sigma22_inv_sqrt = matrix_inv_sqrt.apply(Sigma22)
         T = Sigma11_inv_sqrt @ Sigma12 @ Sigma22_inv_sqrt
 
-        TT = ensure_sym(T.transpose(-2, -1) @ T + self.eps * eye_m)
+        diag_jitter = torch.diag(
+            torch.linspace(0.5, 1.5, m, device=Y1.device, dtype=Y1.dtype) * self.eps
+        )
+        TT = ensure_sym(T.transpose(-2, -1) @ T + diag_jitter)
         eigvals = torch.linalg.eigvalsh(TT)
 
         k = min(self.outdim_size, m)
