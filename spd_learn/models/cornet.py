@@ -92,7 +92,14 @@ class CorNet(nn.Module):
         self.threshold = threshold
 
         self.cov = CovLayer(method=cov_method, device=device, dtype=dtype)
-        self.shrinkage = Shrinkage(n_chans=n_chans, device=device, dtype=dtype)
+        self.shrinkage = Shrinkage(
+            n_chans=n_chans,
+            init_shrinkage=-3.0,
+            learnable=True,
+            device=device,
+            dtype=dtype,
+        )
+        self.gamma = 1e-3
 
         dims = (n_chans, *bimap_dims)
         self.bimaps = nn.ModuleList(
@@ -113,6 +120,23 @@ class CorNet(nn.Module):
             dtype=dtype,
         )
 
+    def _regularized_cov_to_corr(self, S: torch.Tensor) -> torch.Tensor:
+        """Apply scale normalization and diagonal shrinkage before cov_to_corr."""
+        d = S.shape[-1]
+        mean_diag = (
+            S.diagonal(dim1=-2, dim2=-1)
+            .abs()
+            .sum(dim=-1, keepdim=True)
+            .unsqueeze(-1)
+            / d
+        )
+        S_scaled = S / (mean_diag + 1e-12)
+        diag_S = torch.diag_embed(
+            torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6)
+        )
+        S_reg = (1.0 - self.gamma) * S_scaled + self.gamma * diag_S
+        return cov_to_corr(S_reg)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of CorNet.
 
@@ -128,14 +152,27 @@ class CorNet(nn.Module):
         torch.Tensor
             Output class logits of shape `(batch_size, n_outputs)`.
         """
-        if self.input_type == "raw" or (x.ndim == 3 and x.shape[-1] != x.shape[-2]):
+        is_raw = self.input_type == "raw" and (
+            x.ndim != 3
+            or x.shape[-1] != x.shape[-2]
+            or not torch.allclose(x, x.mT, atol=1e-4)
+        )
+        if is_raw:
             x = self.cov(x)
+            d = x.shape[-1]
+            mean_trace = (
+                x.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
+            )
+            eye = torch.eye(d, device=x.device, dtype=x.dtype)
+            x = x / (mean_trace + 1e-8) + 1e-3 * eye
             x = self.shrinkage(x)
 
-        x = cov_to_corr(x)
+        x = self._regularized_cov_to_corr(x)
 
         for bimap in self.bimaps:
-            x = cov_to_corr(self.reeig(cov_to_corr(bimap(x))))
+            x = self._regularized_cov_to_corr(
+                self.reeig(self._regularized_cov_to_corr(bimap(x)))
+            )
 
         if self.metric == "OLM":
             x = log_map_olm(x)

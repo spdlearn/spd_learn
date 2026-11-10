@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 from __future__ import annotations
 
+import math
+
 import torch
 import torch.nn as nn
 
@@ -126,8 +128,14 @@ class GyroSPD(nn.Module):
         else:
             self.cov = nn.Identity()
 
-        self.trace_norm = TraceNorm()
-        self.shrinkage = Shrinkage(n_chans, device=device, dtype=dtype)
+        self.trace_norm = TraceNorm(epsilon=1e-3, device=device, dtype=dtype)
+        self.shrinkage = Shrinkage(
+            n_chans,
+            init_shrinkage=-3.0,
+            learnable=True,
+            device=device,
+            dtype=dtype,
+        )
 
         layers: list[nn.Module] = []
         in_dim = n_chans
@@ -166,12 +174,23 @@ class GyroSPD(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        if self.input_type != "raw" or (x.ndim == 3 and x.shape[-1] != x.shape[-2]):
+        is_raw = self.input_type == "raw" and (
+            x.ndim != 3
+            or x.shape[-1] != x.shape[-2]
+            or not torch.allclose(x, x.mT, atol=1e-4)
+        )
+        if is_raw:
             x = self.cov(x)
-        x = self.trace_norm(x)
+        d = x.shape[-1]
+        mean_trace = (
+            x.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
+        )
+        eye = torch.eye(d, device=x.device, dtype=x.dtype)
+        x = x / (mean_trace + 1e-8) + 1e-3 * eye
         x = self.shrinkage(x)
         x = self.layers(x)
-        x = self.batch_norm(x)
+        if x.shape[0] > 1 or not self.training:
+            x = self.batch_norm(x)
         x = self.logeig(x)
         x = self.dropout(x)
         return self.classifier(x)
@@ -250,13 +269,10 @@ class GyroSPDLayer(nn.Module):
         """Reset layer parameters to their initial states."""
         self.bimap.reset_parameters()
         if is_parametrized(self, "bias"):
-            setattr(
-                self,
-                "bias",
-                torch.eye(
-                    self.out_features, device=self.bias.device, dtype=self.bias.dtype
-                ),
-            )
+            spd_param = self.parametrizations.bias[0]
+            if getattr(spd_param, "base_factor", None) is not None:
+                spd_param.base_factor = None
+            self.parametrizations.bias.original.zero_()
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass applying BiMap, ReEig, and left gyro-translation.
@@ -271,6 +287,7 @@ class GyroSPDLayer(nn.Module):
         torch.Tensor
             Transformed SPD tensor of shape `(..., out_features, out_features)`.
         """
-        X = self.reeig(self.bimap(X))
+        scale = 1.0 / math.sqrt(self.in_features)
+        X = self.reeig(self.bimap(X) * scale)
         B_sqrt = matrix_sqrt.apply(self.bias)
         return ensure_sym(spd_rebiasing(X, B_sqrt))

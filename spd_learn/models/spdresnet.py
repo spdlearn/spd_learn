@@ -134,8 +134,14 @@ class SPDResNet(nn.Module):
         else:
             self.cov = nn.Identity()
 
-        self.trace_norm = TraceNorm()
-        self.shrinkage = Shrinkage(n_chans, device=device, dtype=dtype)
+        self.trace_norm = TraceNorm(epsilon=1e-3, device=device, dtype=dtype)
+        self.shrinkage = Shrinkage(
+            n_chans,
+            init_shrinkage=-3.0,
+            learnable=True,
+            device=device,
+            dtype=dtype,
+        )
 
         stages: list[nn.Module] = []
         in_dim = n_chans
@@ -182,9 +188,19 @@ class SPDResNet(nn.Module):
         torch.Tensor
             Class logits of shape `(batch_size, n_outputs)`.
         """
-        if self.input_type != "raw" or (x.ndim == 3 and x.shape[-1] != x.shape[-2]):
+        is_raw = self.input_type == "raw" and (
+            x.ndim != 3
+            or x.shape[-1] != x.shape[-2]
+            or not torch.allclose(x, x.mT, atol=1e-4)
+        )
+        if is_raw:
             x = self.cov(x)
-        x = self.trace_norm(x)
+        d = x.shape[-1]
+        mean_trace = (
+            x.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
+        )
+        eye = torch.eye(d, device=x.device, dtype=x.dtype)
+        x = x / (mean_trace + 1e-8) + 1e-3 * eye
         x = self.shrinkage(x)
         x = self.stages(x)
         if self.use_alem:
@@ -203,13 +219,13 @@ class SPDResBlock(nn.Module):
     :cite:p:`chen2024alem`. Given an SPD matrix :math:`X \in \mathcal{S}_{++}^d`,
     it computes the spectral decomposition :math:`X = U \Lambda U^\top`, extracts
     log-eigenvalues :math:`\log(\text{clamp}(\Lambda, \varepsilon))`, maps them through
-    a 1D spectral convolutional network, reconstructs the SPD residual
-    :math:`F(X) = U \text{Diag}(\exp(s)) U^\top`, and combines it with the skip
-    connection via the Log-Euclidean geodesic residual:
+    a 1D spectral convolutional network, scales by a learnable gate
+    :math:`\alpha_{\text{res}}`, and combines it with the skip connection via the
+    Log-Euclidean geodesic residual:
 
     .. math::
 
-        Z = \exp(\log(X) + \log(F(X)))
+        Z = \exp(\log(X) + \alpha_{\text{res}} \log(F(X)))
 
     Parameters
     ----------
@@ -219,6 +235,8 @@ class SPDResBlock(nn.Module):
         Number of hidden channels in the 1D spectral CNN.
     eps : float, default=1e-6
         Lower clamp threshold for eigenvalues to maintain strict positive definiteness.
+    init_res_scale : float, default=0.1
+        Initial value for the learnable residual gate :math:`\alpha_{\text{res}}`.
     device : torch.device, optional
         Device on which module parameters are allocated. Default is None.
     dtype : torch.dtype, optional
@@ -246,6 +264,7 @@ class SPDResBlock(nn.Module):
         num_features: int | None = None,
         hidden_channels: int = 16,
         eps: float = 1e-6,
+        init_res_scale: float = 0.1,
         device: torch.device | None = None,
         dtype: torch.dtype | None = None,
     ) -> None:
@@ -253,6 +272,7 @@ class SPDResBlock(nn.Module):
         self.num_features = num_features
         self.hidden_channels = hidden_channels
         self.eps = eps
+        self.init_res_scale = init_res_scale
 
         self.cnn = nn.Sequential(
             nn.Conv1d(
@@ -273,15 +293,20 @@ class SPDResBlock(nn.Module):
                 dtype=dtype,
             ),
         )
+        self.alpha_res = nn.Parameter(
+            torch.tensor(float(init_res_scale), device=device, dtype=dtype)
+        )
         self.residual = LogEuclideanResidual(device=device, dtype=dtype)
         self.reset_parameters()
 
     @torch.no_grad()
     def reset_parameters(self) -> None:
-        """Initialize residual spectral CNN near the identity map."""
+        """Initialize residual spectral CNN and residual gate near the identity map."""
         if isinstance(self.cnn[2], nn.Conv1d) and self.cnn[2].bias is not None:
             nn.init.normal_(self.cnn[2].weight, mean=0.0, std=0.01)
             nn.init.zeros_(self.cnn[2].bias)
+        if hasattr(self, "alpha_res"):
+            nn.init.constant_(self.alpha_res, self.init_res_scale)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass computing the Riemannian residual transformation.
@@ -296,7 +321,7 @@ class SPDResBlock(nn.Module):
         torch.Tensor
             Output SPD tensor of shape `(..., d, d)`.
         """
-        eigvals, eigvecs = torch.linalg.eigh(X)
+        eigvals, eigvecs = torch.linalg.eigh(ensure_sym(X))
         clamped_eigvals = torch.clamp(eigvals, min=self.eps)
         log_eigvals = torch.log(clamped_eigvals)
 
@@ -306,8 +331,11 @@ class SPDResBlock(nn.Module):
         s_flat = self.cnn(log_flat)
         s = s_flat.view(*batch_shape, d)
 
-        f_x = ensure_sym(eigvecs @ torch.diag_embed(torch.exp(s)) @ eigvecs.mT)
-        return ensure_sym(self.residual(X, f_x))
+        scaled_s = torch.clamp(self.alpha_res * s, min=-20.0, max=20.0)
+        combined_log = torch.clamp(log_eigvals + scaled_s, min=-30.0, max=30.0)
+        return ensure_sym(
+            eigvecs @ torch.diag_embed(torch.exp(combined_log)) @ eigvecs.mT
+        )
 
 
 class AdaptiveLogEuclidean(nn.Module):
@@ -407,11 +435,12 @@ class AdaptiveLogEuclidean(nn.Module):
             Deformed tensor of shape `(..., d, d)`. Symmetric tangent matrix if
             ``return_spd=False``, SPD matrix if ``return_spd=True``.
         """
-        eigvals, eigvecs = torch.linalg.eigh(X)
+        eigvals, eigvecs = torch.linalg.eigh(ensure_sym(X))
         eigvals = torch.clamp(eigvals, min=self.eps)
 
         p = F.softplus(self.p_raw) + 0.1
-        deformed = (torch.pow(eigvals, p) - torch.pow(eigvals, -p)) / (2.0 * p)
+        p_log_eigvals = torch.clamp(p * torch.log(eigvals), min=-20.0, max=20.0)
+        deformed = torch.sinh(p_log_eigvals) / p
         tilde_lambda = self.weight * deformed + self.bias
 
         if self.return_spd:
