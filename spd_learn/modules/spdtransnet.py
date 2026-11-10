@@ -300,6 +300,11 @@ class SPDTransformerEncoderLayer(nn.Module):
         self.norm1 = nn.LayerNorm(embed_dim, eps=1e-5, **factory)
         self.norm2 = nn.LayerNorm(embed_dim, eps=1e-5, **factory)
         self.dropout1, self.dropout2 = nn.Dropout(dropout), nn.Dropout(dropout)
+        with torch.no_grad():
+            self.attention.head_mix.weight.mul_(0.2)
+            self.ff[3].weight.mul_(0.1)
+            if self.ff[3].bias is not None:
+                self.ff[3].bias.zero_()
 
     def forward(self, x: torch.Tensor, *, attn_mask=None, key_padding_mask=None):
         r"""Encode an ordered log-token sequence.
@@ -361,6 +366,12 @@ class LearnedSinusoidalPosition(nn.Module):
             nn.GELU(),
             nn.Linear(embed_dim, embed_dim, **factory),
         )
+        with torch.no_grad():
+            eye = torch.eye(embed_dim, **factory) * math.sqrt(2.0)
+            self.mapping[0].weight.mul_(0.02).add_(eye)
+            self.mapping[0].bias.zero_()
+            self.mapping[2].weight.mul_(0.02).add_(eye)
+            self.mapping[2].bias.zero_()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         r"""Encode an ordered log-token sequence.
@@ -622,3 +633,6 @@ class SPDInterEpochEncoder(nn.Module):
             )
         b, epochs, features, d = x.shape
         return self.encoder(x.reshape(b, epochs * features, d)).reshape_as(x)
+
+
+SPDPositionEmbedding = LearnedSinusoidalPosition

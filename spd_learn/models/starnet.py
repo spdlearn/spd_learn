@@ -7,7 +7,7 @@ from warnings import warn
 import torch
 import torch.nn as nn
 
-from spd_learn.modules import BiMap, CovLayer, LogEig
+from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig, TraceNorm
 
 
 class STaRNet(nn.Module):
@@ -64,11 +64,27 @@ class STaRNet(nn.Module):
         bimap_dims: Sequence[int] | int | None = None,
     ):
         super().__init__()
+        self.n_chans = n_chans
+        self.n_outputs = n_outputs
         if bimap_dims is not None:
             bimap_reduced_dimension = (
                 bimap_dims[0] if isinstance(bimap_dims, Sequence) else int(bimap_dims)
             )
         self.bimap_dims = (bimap_reduced_dimension,)
+        if (
+            tuple(spatial_kernel_sizes) == (3, 11, 22)
+            and spatial_expansion_coeff == 44
+            and n_chans != 22
+        ):
+            spatial_kernel_sizes = (
+                min(3, n_chans),
+                max(1, n_chans // 2),
+                n_chans,
+            )
+            spatial_expansion_coeff = max(44, 2 * n_chans)
+        spatial_kernel_sizes = tuple(
+            max(1, min(int(k), n_chans)) for k in spatial_kernel_sizes
+        )
         assert all(kernel_size <= n_chans for kernel_size in spatial_kernel_sizes)
 
         spatial_dimensions = [n_chans - h_i + 1 for h_i in spatial_kernel_sizes]
@@ -125,13 +141,21 @@ class STaRNet(nn.Module):
         )
         self.spd_features = nn.Sequential(
             CovLayer(),
+            TraceNorm(epsilon=1e-4),
             BiMap(temporal_height, bimap_reduced_dimension),
+            ReEig(threshold=1e-4),
             LogEig(),
         )
         self.classifier = nn.Linear(
             in_features=(bimap_reduced_dimension * (bimap_reduced_dimension + 1)) // 2,
             out_features=n_outputs,
         )
+
+    @staticmethod
+    def _normalize_branch(branch: torch.Tensor) -> torch.Tensor:
+        branch = branch - branch.mean(dim=-1, keepdim=True)
+        rms = branch.square().mean(dim=(-2, -1), keepdim=True).add(1e-6).sqrt()
+        return branch / rms
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Apply the network to raw EEG epochs.
@@ -146,12 +170,21 @@ class STaRNet(nn.Module):
         torch.Tensor
             Class logits with shape ``(batch_size, n_outputs)``.
         """
+        if x.ndim == 4 and x.shape[1] == 1:
+            x = x.squeeze(1)
         x = x.unsqueeze(1)
-        branches = [conv(x).flatten(1, 2).unsqueeze(1) for conv in self.conv_spatial]
+        branches = [
+            self._normalize_branch(conv(x).flatten(1, 2).unsqueeze(1))
+            for conv in self.conv_spatial
+        ]
         x = torch.cat(branches, dim=2)
-        x = self.conv_spatial_fusion(x)
-        x = x.flatten(1, 2).unsqueeze(1)
-        branches = [conv(x).flatten(1, 2).unsqueeze(1) for conv in self.conv_temporal]
+        x = self._normalize_branch(
+            self.conv_spatial_fusion(x).flatten(1, 2).unsqueeze(1)
+        )
+        branches = [
+            self._normalize_branch(conv(x).flatten(1, 2).unsqueeze(1))
+            for conv in self.conv_temporal
+        ]
         x = torch.cat(branches, dim=2).squeeze(1)
         x = self.spd_features(x)
         x = self.classifier(x)

@@ -7,6 +7,8 @@ Implements the CorAtt model and CorrAttention building block :cite:p:`hu2025riem
 
 from __future__ import annotations
 
+import math
+
 from typing import Optional
 
 import torch
@@ -26,7 +28,7 @@ from spd_learn.functional import (
     tril_embed,
 )
 from spd_learn.models.matt import MAtt
-from spd_learn.modules import BiMap
+from spd_learn.modules import BiMap, TraceNorm
 
 
 class CorrAttention(nn.Module):
@@ -113,12 +115,27 @@ class CorrAttention(nn.Module):
             dtype=dtype,
         )
         self.bias = nn.Parameter(torch.zeros(dim, dim, device=device, dtype=dtype))
+        self.reset_parameters()
 
+    @torch.no_grad()
     def reset_parameters(self) -> None:
         """Reset layer parameters."""
-        self.q_proj.reset_parameters()
-        self.k_proj.reset_parameters()
-        self.v_proj.reset_parameters()
+        eye = torch.eye(
+            self.dim,
+            device=self.bias.device,
+            dtype=self.bias.dtype,
+        )
+        for proj in (self.q_proj, self.k_proj, self.v_proj):
+            proj.reset_parameters()
+            if hasattr(proj, "parametrizations") and hasattr(
+                proj.parametrizations, "weight"
+            ):
+                orth_param = proj.parametrizations.weight[0]
+                if hasattr(orth_param, "base"):
+                    orth_param.base.copy_(eye.unsqueeze(0))
+                nn.init.kaiming_uniform_(
+                    proj.parametrizations.weight.original, a=0.01
+                )
         nn.init.zeros_(self.bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -135,6 +152,8 @@ class CorrAttention(nn.Module):
             Attended correlation matrices of shape `(..., n_patches, dim, dim)`.
         """
         C = cov_to_corr(x)
+        eye = torch.eye(self.dim, device=C.device, dtype=C.dtype)
+        C = (1.0 - 1e-4) * C + 1e-4 * eye
 
         if self.metric in ("OLM", "mix"):
             L = log_map_olm(C)
@@ -146,8 +165,8 @@ class CorrAttention(nn.Module):
         K = off_diag(self.k_proj(L))
         V = off_diag(self.v_proj(L))
 
-        # Pairwise Frobenius distance between patches
-        D = distance_euclid(Q.unsqueeze(-3), K.unsqueeze(-4))
+        # Pairwise Frobenius distance between patches scaled by 1 / sqrt(dim)
+        D = distance_euclid(Q.unsqueeze(-3), K.unsqueeze(-4)) / math.sqrt(self.dim)
 
         # Attention weights
         energy = 1.0 / (1.0 + torch.log1p(D.clamp(min=0.0)))
@@ -269,6 +288,9 @@ class CorAtt(MAtt):
         self.temporal_filters = (
             temporal_filters if temporal_filters is not None else n_chans
         )
+        self.patch_cov_layer[2] = TraceNorm(
+            epsilon=1e-4, device=device, dtype=dtype
+        )
 
         self.manifold_attention = CorrAttention(  # type: ignore[assignment]
             dim=attention_out_features,
@@ -304,16 +326,19 @@ class CorAtt(MAtt):
         torch.Tensor
             Output class logits of shape `(batch_size, n_outputs)`.
         """
-        if x.ndim == 4 and x.shape[1] == 1:
-            x = x.squeeze(1)
+        if x.ndim >= 4 and x.shape[-1] == x.shape[-2]:
+            x = self.patch_cov_layer[2](x)
+        else:
+            if x.ndim == 4 and x.shape[1] == 1:
+                x = x.squeeze(1)
 
-        x = self.add_extra_dim(x)
-        x = self.spatial_filter(x)
-        x = self.spatial_batch_norm(x)
-        x = self.temporal_feature_extractor(x)
-        x = self.temporal_batch_norm(x)
-        x = self.squeeze_channel(x)
-        x = self.patch_cov_layer(x)
+            x = self.add_extra_dim(x)
+            x = self.spatial_filter(x)
+            x = self.spatial_batch_norm(x)
+            x = self.temporal_feature_extractor(x)
+            x = self.temporal_batch_norm(x)
+            x = self.squeeze_channel(x)
+            x = self.patch_cov_layer(x)
 
         x = self.manifold_attention(x)
 
