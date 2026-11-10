@@ -9,6 +9,7 @@ import torch.nn.functional as F
 
 from torch import nn
 
+from spd_learn.functional import trace_normalization
 from spd_learn.functional.spdtransnet import triangular_dimension
 from spd_learn.modules.spdtransnet import (
     SPDInterEpochEncoder,
@@ -229,6 +230,7 @@ class SPDTransNet(nn.Module):
             raise ValueError("Empty inputs are not supported by SPDTransNet")
         b, c, t = x.shape
         x_zm = x - x.mean(dim=-1, keepdim=True)
+        # ponytail: cascaded avg_pool1d pseudo-bands for raw 3D EEG, replace with SosFiltbank when sfreq metadata is passed
         band_list = [x_zm]
         prev = x_zm
         for b_idx in range(1, self.n_bands):
@@ -241,8 +243,7 @@ class SPDTransNet(nn.Module):
             band_list.append(band_sig - band_sig.mean(dim=-1, keepdim=True))
             prev = low
         bands = torch.stack(band_list, dim=1)
-        band_std = bands.std(dim=(-2, -1), keepdim=True).clamp(min=1e-6)
-        bands = bands / band_std
+        bands = bands / bands.std(dim=(-2, -1), keepdim=True).clamp(min=1e-6)
 
         w = t // self.n_subwindows
         sub = (
@@ -251,17 +252,8 @@ class SPDTransNet(nn.Module):
             .permute(0, 1, 3, 2, 4)
         )
         sub = sub - sub.mean(dim=-1, keepdim=True)
-        cov = (sub @ sub.mT) / max(w - 1, 1)
-        mean_diag = (
-            cov.diagonal(dim1=-2, dim2=-1)
-            .mean(dim=-1, keepdim=True)
-            .unsqueeze(-1)
-            .clamp(min=1e-6)
-        )
-        cov = cov / mean_diag
-        eye = torch.eye(c, device=x.device, dtype=x.dtype)
-        cov = 0.5 * (cov + cov.mT) + 1e-2 * eye
-        return cov.unsqueeze(1)
+        cov = trace_normalization((sub @ sub.mT) / max(w - 1, 1), epsilon=1e-2)
+        return (0.5 * (cov + cov.mT)).unsqueeze(1)
 
     def _coerce_spd_context(self, x: torch.Tensor) -> torch.Tensor:
         expected = (
