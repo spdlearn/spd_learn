@@ -81,7 +81,9 @@ import torch
 from pyriemann.geometry.geodesic import geodesic_logchol
 from torch.autograd import Function
 
+from ..core import clamp_eigvals
 from ..numerical import get_epsilon
+from ..utils import ensure_sym
 
 
 class cholesky_log(Function):
@@ -130,8 +132,11 @@ class cholesky_log(Function):
 
     @staticmethod
     def forward(ctx, X):
-        # Compute Cholesky decomposition
-        L = torch.linalg.cholesky(X)
+        # ponytail: eigendecomposition fallback only on non-PD batches, switch to adaptive diagonal shift if d > 256 throughput matters
+        L, info = torch.linalg.cholesky_ex(X)
+        if bool((info != 0).any()):
+            floor = get_epsilon(X.dtype, "eigval_clamp")
+            L = torch.linalg.cholesky(clamp_eigvals.apply(ensure_sym(X), floor))
 
         # Extract diagonal
         diag_L = torch.diagonal(L, dim1=-2, dim2=-1)

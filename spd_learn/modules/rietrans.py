@@ -214,17 +214,6 @@ class SPDRMLR(nn.Module):
         if hasattr(self, "gamma"):
             nn.init.zeros_(self.gamma)
 
-    def _safe_cholesky_log(self, M: torch.Tensor) -> torch.Tensor:
-        eps = get_epsilon(M.dtype, "eigval_log")
-        eye = torch.eye(self.n_features, device=M.device, dtype=M.dtype)
-        M_reg = ensure_sym(M) + eps * eye
-        with torch.no_grad():
-            _, info = torch.linalg.cholesky_ex(M_reg)
-            needs_clamp = bool((info != 0).any())
-        if needs_clamp:
-            M_reg = clamp_eigvals.apply(ensure_sym(M), max(self.eps, eps))
-        return cholesky_log.apply(M_reg)
-
     def _to_tangent(self, X: torch.Tensor) -> torch.Tensor:
         """Map SPD matrices to tangent space at the reference point or identity."""
         if self.act_power is not None and self.act_power != 1.0:
@@ -245,7 +234,7 @@ class SPDRMLR(nn.Module):
                 return (matrix_power.apply(X, 2.0 * self.theta) - eye) / abs(
                     self.theta
                 )
-            return self._safe_cholesky_log(X)
+            return cholesky_log.apply(X)
 
         P = self.reference
         if self.metric == "LEM" or (self.metric == "PEM" and self.theta == 0.0):
@@ -271,7 +260,7 @@ class SPDRMLR(nn.Module):
             return (sqrt_term + sqrt_term.mT - 2.0 * (P_pow @ P_pow)) / (
                 2.0 * abs(self.theta)
             )
-        return self._safe_cholesky_log(X) - self._safe_cholesky_log(P)
+        return cholesky_log.apply(X) - cholesky_log.apply(P)
 
     def _vectorize(self, V: torch.Tensor) -> torch.Tensor:
         """Vectorize tangent matrix under the configured metric and (alpha, beta) inner product."""
@@ -555,6 +544,7 @@ class SPDLinear(nn.Module):
         if self.return_tangent:
             return Y_tan
         if self.metric == "LCM":
+            # ponytail: [-8, 8] log-Cholesky diagonal clamp caps condition number at exp(16), widen if extreme dynamic range is required
             log_diag = torch.diagonal(Y_tan, dim1=-2, dim2=-1).clamp(min=-8.0, max=8.0)
             Y_safe = Y_tan.tril(-1) + torch.diag_embed(log_diag)
             eps = get_epsilon(Y_tan.dtype, "eigval_log")
