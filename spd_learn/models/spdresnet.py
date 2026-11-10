@@ -195,13 +195,7 @@ class SPDResNet(nn.Module):
         )
         if is_raw:
             x = self.cov(x)
-        d = x.shape[-1]
-        mean_trace = (
-            x.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
-        )
-        eye = torch.eye(d, device=x.device, dtype=x.dtype)
-        x = x / (mean_trace + 1e-8) + 1e-3 * eye
-        x = self.shrinkage(x)
+        x = self.shrinkage(self.trace_norm(x))
         x = self.stages(x)
         if self.use_alem:
             x = self.alem(x)
@@ -331,6 +325,7 @@ class SPDResBlock(nn.Module):
         s_flat = self.cnn(log_flat)
         s = s_flat.view(*batch_shape, d)
 
+        # ponytail: shared-eigenbasis addition assumes commuting residual, switch to full Baker-Campbell-Hausdorff series if non-commuting off-diagonal residual is added
         scaled_s = torch.clamp(self.alpha_res * s, min=-20.0, max=20.0)
         combined_log = torch.clamp(log_eigvals + scaled_s, min=-30.0, max=30.0)
         return ensure_sym(

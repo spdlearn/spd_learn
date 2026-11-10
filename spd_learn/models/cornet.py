@@ -17,6 +17,7 @@ from spd_learn.functional import (
     log_map_lsm,
     log_map_olm,
     sample_covariance,
+    trace_normalization,
     tril_embed,
 )
 from spd_learn.modules import BiMap, CovLayer, ReEig, Shrinkage
@@ -122,20 +123,9 @@ class CorNet(nn.Module):
 
     def _regularized_cov_to_corr(self, S: torch.Tensor) -> torch.Tensor:
         """Apply scale normalization and diagonal shrinkage before cov_to_corr."""
-        d = S.shape[-1]
-        mean_diag = (
-            S.diagonal(dim1=-2, dim2=-1)
-            .abs()
-            .sum(dim=-1, keepdim=True)
-            .unsqueeze(-1)
-            / d
-        )
-        S_scaled = S / (mean_diag + 1e-12)
-        diag_S = torch.diag_embed(
-            torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6)
-        )
-        S_reg = (1.0 - self.gamma) * S_scaled + self.gamma * diag_S
-        return cov_to_corr(S_reg)
+        S_scaled = trace_normalization(S.abs() if S.diagonal(dim1=-2, dim2=-1).min() < 0 else S, epsilon=1e-6)
+        diag_S = torch.diag_embed(torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6))
+        return cov_to_corr((1.0 - self.gamma) * S_scaled + self.gamma * diag_S)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of CorNet.
@@ -158,14 +148,7 @@ class CorNet(nn.Module):
             or not torch.allclose(x, x.mT, atol=1e-4)
         )
         if is_raw:
-            x = self.cov(x)
-            d = x.shape[-1]
-            mean_trace = (
-                x.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
-            )
-            eye = torch.eye(d, device=x.device, dtype=x.dtype)
-            x = x / (mean_trace + 1e-8) + 1e-3 * eye
-            x = self.shrinkage(x)
+            x = self.shrinkage(trace_normalization(self.cov(x), epsilon=1e-3))
 
         x = self._regularized_cov_to_corr(x)
 

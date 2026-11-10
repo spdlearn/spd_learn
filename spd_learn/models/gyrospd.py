@@ -181,13 +181,7 @@ class GyroSPD(nn.Module):
         )
         if is_raw:
             x = self.cov(x)
-        d = x.shape[-1]
-        mean_trace = (
-            x.diagonal(dim1=-2, dim2=-1).sum(dim=-1, keepdim=True).unsqueeze(-1) / d
-        )
-        eye = torch.eye(d, device=x.device, dtype=x.dtype)
-        x = x / (mean_trace + 1e-8) + 1e-3 * eye
-        x = self.shrinkage(x)
+        x = self.shrinkage(self.trace_norm(x))
         x = self.layers(x)
         if x.shape[0] > 1 or not self.training:
             x = self.batch_norm(x)

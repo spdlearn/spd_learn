@@ -37,8 +37,9 @@ def trace_normalization(covariances: Tensor, epsilon: Optional[float] = None) ->
     trace = trace.unsqueeze(-1)
 
     diagonal_dim = covariances.shape[-1]
-
-    covariances = covariances / (trace / diagonal_dim)
+    denom = trace / diagonal_dim
+    denom = denom.real.clamp(min=1e-12) if denom.is_complex() else denom.clamp(min=1e-12)
+    covariances = covariances / denom
 
     identity = torch.eye(
         diagonal_dim, device=covariances.device, dtype=covariances.dtype
