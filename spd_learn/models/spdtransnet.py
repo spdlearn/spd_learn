@@ -219,9 +219,7 @@ class SPDTransNet(nn.Module):
             )
         self.classifier[0].bias.fill_(0.05)
 
-        self.classifier[3].weight.mul_(0.02).add_(
-            torch.eye(classifier_dim, **factory)
-        )
+        self.classifier[3].weight.mul_(0.02).add_(torch.eye(classifier_dim, **factory))
         self.classifier[3].bias.fill_(0.05)
         self.classifier[6].bias.zero_()
 
@@ -230,7 +228,7 @@ class SPDTransNet(nn.Module):
             raise ValueError("Empty inputs are not supported by SPDTransNet")
         b, c, t = x.shape
         x_zm = x - x.mean(dim=-1, keepdim=True)
-        # ponytail: cascaded avg_pool1d pseudo-bands for raw 3D EEG, replace with SosFiltbank when sfreq metadata is passed
+        # ponytail: avg_pool1d pseudo-bands for 3D EEG, use SosFiltbank with sfreq
         band_list = [x_zm]
         prev = x_zm
         for b_idx in range(1, self.n_bands):

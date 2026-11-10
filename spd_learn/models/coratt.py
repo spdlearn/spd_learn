@@ -120,21 +120,13 @@ class CorrAttention(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Reset layer parameters."""
-        eye = torch.eye(
-            self.dim,
-            device=self.bias.device,
-            dtype=self.bias.dtype,
-        )
+        eye = torch.eye(self.dim, device=self.bias.device, dtype=self.bias.dtype)
         for proj in (self.q_proj, self.k_proj, self.v_proj):
             proj.reset_parameters()
-            if hasattr(proj, "parametrizations") and hasattr(
-                proj.parametrizations, "weight"
-            ):
-                orth_param = proj.parametrizations.weight[0]
-                if hasattr(orth_param, "base"):
-                    orth_param.base.copy_(eye.unsqueeze(0))
+            if hasattr(proj, "parametrizations"):
+                setattr(proj, "weight", eye.unsqueeze(0))
                 nn.init.kaiming_uniform_(
-                    proj.parametrizations.weight.original, a=0.01
+                    getattr(proj.parametrizations, "weight").original, a=0.01
                 )
         nn.init.zeros_(self.bias)
 
@@ -288,9 +280,7 @@ class CorAtt(MAtt):
         self.temporal_filters = (
             temporal_filters if temporal_filters is not None else n_chans
         )
-        self.patch_cov_layer[2] = TraceNorm(
-            epsilon=1e-4, device=device, dtype=dtype
-        )
+        self.patch_cov_layer[2] = TraceNorm(epsilon=1e-4, device=device, dtype=dtype)
 
         self.manifold_attention = CorrAttention(  # type: ignore[assignment]
             dim=attention_out_features,

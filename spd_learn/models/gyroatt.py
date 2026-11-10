@@ -168,26 +168,16 @@ class GyroSPDAttention(nn.Module):
     @torch.no_grad()
     def reset_parameters(self) -> None:
         """Reset layer parameters to initial state."""
-        eye = torch.eye(
-            self.dim,
-            device=self.q_proj.weight.device,
-            dtype=self.q_proj.weight.dtype,
-        )
+        eye = torch.eye(self.dim, device=self.bias.device, dtype=self.bias.dtype)
         for proj in (self.q_proj, self.k_proj, self.v_proj):
             proj.reset_parameters()
             if is_parametrized(proj, "weight"):
-                orth_param = proj.parametrizations.weight[0]
-                if hasattr(orth_param, "base"):
-                    orth_param.base.copy_(eye.unsqueeze(0))
+                setattr(proj, "weight", eye.unsqueeze(0))
                 nn.init.kaiming_uniform_(
-                    proj.parametrizations.weight.original, a=0.01
+                    getattr(proj.parametrizations, "weight").original, a=0.01
                 )
         if is_parametrized(self, "bias"):
-            setattr(
-                self,
-                "bias",
-                torch.eye(self.dim, device=self.bias.device, dtype=self.bias.dtype),
-            )
+            setattr(self, "bias", eye)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of GyroSPDAttention.

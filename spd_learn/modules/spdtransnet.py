@@ -633,6 +633,3 @@ class SPDInterEpochEncoder(nn.Module):
             )
         b, epochs, features, d = x.shape
         return self.encoder(x.reshape(b, epochs * features, d)).reshape_as(x)
-
-
-SPDPositionEmbedding = LearnedSinusoidalPosition

@@ -186,9 +186,7 @@ class SPDMetaFormer(MAtt):
         )
 
         param_dtype = dtype if dtype is not None else torch.float32
-        self.patch_cov_layer[2] = TraceNorm(
-            epsilon=eps, device=device, dtype=dtype
-        )
+        self.patch_cov_layer[2] = TraceNorm(epsilon=eps, device=device, dtype=dtype)
 
         # Regularized shrinkage for patch covariances
         self.shrinkage = Shrinkage(
