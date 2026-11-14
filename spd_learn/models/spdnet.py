@@ -132,7 +132,8 @@ class SPDNet(nn.Module):
         Returns
         -------
         torch.Tensor
-            Scores with shape `(n,)`, `n = max(n_chans, subspacedim)`, summing to `subspacedim`.
+            Scores with shape `(n,)`, `n = max(n_chans, subspacedim)`, summing
+            to `subspacedim`.
         """
         return self.projection_matrix().diagonal()
 
