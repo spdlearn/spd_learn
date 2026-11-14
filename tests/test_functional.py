@@ -402,3 +402,44 @@ def test_sym_to_upper_norm_preservation():
     off_diag_ratio = v_scaled[off_diag_mask] / v_unscaled[off_diag_mask]
     expected_ratio = torch.full_like(off_diag_ratio, math.sqrt(2))
     assert off_diag_ratio.allclose(expected_ratio)
+
+
+GRASSMANN_MAX = {  # for k = 2 mutually orthogonal subspaces
+    "geodesic": 2**0.5 * torch.pi / 2,
+    "chordal": 2**0.5,
+    "fubini_study": torch.pi / 2,
+    "binet_cauchy": 1.0,
+}
+
+
+@pytest.mark.parametrize("metric", GRASSMANN_MAX)
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+def test_grassmann_distance_values(metric, dtype):
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    eye = torch.eye(5, dtype=dtype)
+    U, V = eye[:, :2], eye[:, 2:4]
+    A = torch.randn(2, 2, dtype=dtype)  # invertible change of basis
+    assert torch.allclose(
+        grassmann_distance(U, U @ A, metric), U.new_zeros(()), atol=1e-5
+    )
+    assert torch.allclose(
+        grassmann_distance(U, V, metric), U.new_tensor(GRASSMANN_MAX[metric]), atol=1e-5
+    )
+    W1, W2 = torch.randn(2, 3, 5, 2, dtype=dtype).unbind(0)
+    d = grassmann_distance(W1, W2, metric)
+    assert d.shape == (3,)
+    assert torch.allclose(d, grassmann_distance(W2, W1 @ A, metric), atol=1e-5)
+    assert torch.allclose(
+        grassmann_distance(eye, eye.flip(0), metric), U.new_zeros(()), atol=1e-5
+    )
+
+
+def test_grassmann_distance_errors():
+    from spd_learn.functional import grassmann_distance
+
+    with pytest.raises(ValueError):
+        grassmann_distance(torch.eye(5)[:, :2], torch.eye(5)[:, :3])
+    with pytest.raises(ValueError):
+        grassmann_distance(torch.eye(5)[:, :2], torch.eye(5)[:, :2], metric="airm")
