@@ -4,7 +4,7 @@
 import pytest
 import torch
 
-from spd_learn.models import Green, PhaseSPDNet
+from spd_learn.models import Green, PhaseSPDNet, SPDNet
 
 
 def test_green_model_initialization_and_forward():
@@ -74,3 +74,28 @@ def test_delay_order(order, lag):
     assert output.shape == expected_shape, (
         f"Failed for {order}→{lag} with input {x.shape}"
     )
+
+
+def test_spdnet_projection_and_diversity():
+    def make(seed, k=3):
+        torch.manual_seed(seed)
+        return SPDNet(input_type="cov", n_chans=8, subspacedim=k, n_outputs=2)
+
+    a, b = make(0), make(1)
+    P, diag = a.projection_matrix(), a.projection_diagonal()
+    assert P.shape == (8, 8) and diag.shape == (8,)
+    assert not P.requires_grad and not diag.requires_grad
+    assert torch.allclose(diag, P.diagonal()) and torch.allclose(
+        diag.sum(), torch.tensor(3.0), atol=1e-5
+    )
+    assert torch.allclose(make(0, k=8).projection_matrix(), torch.eye(8), atol=1e-5)
+
+    d = a.diversity(b)
+    assert d.ndim == 0 and not d.requires_grad and d > 0
+    assert torch.allclose(d, b.diversity(a), atol=1e-5)
+    assert torch.allclose(a.diversity(a), torch.tensor(0.0), atol=1e-5)
+    assert a.diversity(b, metric="chordal") <= 3**0.5 + 1e-5
+    with pytest.raises(ValueError):
+        a.diversity(make(2, k=4))
+    with pytest.raises(ValueError):
+        a.diversity(b, metric="airm")

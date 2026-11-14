@@ -5,7 +5,7 @@ from warnings import warn
 import torch
 import torch.nn as nn
 
-from spd_learn.functional import covariance
+from spd_learn.functional import covariance, grassmann_distance
 from spd_learn.modules import BiMap, CovLayer, LogEig, ReEig, TraceNorm
 
 
@@ -112,3 +112,43 @@ class SPDNet(nn.Module):
         X = self.classifier(X)
 
         return X
+
+    @torch.no_grad()
+    def projection_matrix(self) -> torch.Tensor:
+        """Orthogonal projector onto the subspace learned by the BiMap layer.
+
+        Returns
+        -------
+        torch.Tensor
+            Projector with shape `(n_chans, n_chans)`.
+        """
+        return self.bimap.projection_matrix()[0]
+
+    @torch.no_grad()
+    def projection_diagonal(self) -> torch.Tensor:
+        """Per-channel leverage scores, the diagonal of the projector.
+
+        Returns
+        -------
+        torch.Tensor
+            Scores with shape `(n_chans,)`, summing to `subspacedim`.
+        """
+        return self.projection_matrix().diagonal()
+
+    @torch.no_grad()
+    def diversity(self, other: "SPDNet", metric: str = "geodesic") -> torch.Tensor:
+        """Grassmann distance between the subspaces of two SPDNet models.
+
+        Parameters
+        ----------
+        other : SPDNet
+            Model to compare with, with the same `n_chans` and `subspacedim`.
+        metric : str, default="geodesic"
+            Metric of :func:`spd_learn.functional.grassmann_distance`.
+
+        Returns
+        -------
+        torch.Tensor
+            Scalar distance between the two subspaces.
+        """
+        return grassmann_distance(self.bimap.weight[0], other.bimap.weight[0], metric)

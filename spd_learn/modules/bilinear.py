@@ -272,6 +272,18 @@ class BiMap(nn.Module):
             X = self.increase_dim(X)
         return bimap_transform(X, self.weight)
 
+    def projection_matrix(self) -> torch.Tensor:
+        """Orthogonal projector onto the column space of each weight.
+
+        Returns
+        -------
+        torch.Tensor
+            Projectors with shape `(depthwise, n, n)`, equal to `W W^T` when
+            `W` has orthonormal columns.
+        """
+        Q = torch.linalg.qr(self.weight).Q
+        return Q @ Q.mT
+
 
 class BiMapIncreaseDim(nn.Module):
     r"""Bilinear Mapping Layer for SPD Matrix Dimensionality Expansion.
