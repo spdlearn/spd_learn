@@ -120,7 +120,8 @@ class SPDNet(nn.Module):
         Returns
         -------
         torch.Tensor
-            Projector with shape `(n_chans, n_chans)`.
+            Projector with shape `(n, n)`, `n = max(n_chans, subspacedim)`.
+            It is the identity when `subspacedim >= n_chans`.
         """
         return self.bimap.projection_matrix()[0]
 
@@ -131,13 +132,16 @@ class SPDNet(nn.Module):
         Returns
         -------
         torch.Tensor
-            Scores with shape `(n_chans,)`, summing to `subspacedim`.
+            Scores with shape `(n,)`, `n = max(n_chans, subspacedim)`, summing to `subspacedim`.
         """
         return self.projection_matrix().diagonal()
 
     @torch.no_grad()
     def diversity(self, other: "SPDNet", metric: str = "geodesic") -> torch.Tensor:
         """Grassmann distance between the subspaces of two SPDNet models.
+
+        The result is zero whenever `subspacedim >= n_chans`, because both
+        models then span the whole space.
 
         Parameters
         ----------

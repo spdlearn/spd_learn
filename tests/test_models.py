@@ -77,6 +77,8 @@ def test_delay_order(order, lag):
 
 
 def test_spdnet_projection_and_diversity():
+    """SPDNet exposes its projector, leverage scores and a Grassmann diversity."""
+
     def make(seed, k=3):
         torch.manual_seed(seed)
         return SPDNet(input_type="cov", n_chans=8, subspacedim=k, n_outputs=2)

@@ -791,8 +791,7 @@ def test_bimap_orthogonal_initialization_per_channel():
 
 @pytest.mark.parametrize("parametrized", [True, False])
 def test_bimap_projection_matrix(parametrized):
-    from spd_learn.modules import BiMap
-
+    """BiMap projector has the expected shape and is a rank-k orthogonal projector."""
     torch.manual_seed(0)
     bimap = BiMap(8, 3, depthwise=2, parametrized=parametrized)
     P = bimap.projection_matrix()

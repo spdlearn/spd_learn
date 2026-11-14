@@ -54,6 +54,7 @@ def grassmann_distance(U: Tensor, V: Tensor, metric: str = "geodesic") -> Tensor
     if metric == "chordal":
         return theta.sin().norm(dim=-1)
     # 1 - prod(cos^2) without cancellation at small angles
+    # (the clamp keeps log1p and its gradient finite when an angle is pi/2)
     s2 = -torch.expm1(
         torch.log1p(
             -(theta.sin() ** 2).clamp(max=1 - torch.finfo(theta.dtype).eps)
