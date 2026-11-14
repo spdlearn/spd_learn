@@ -443,3 +443,16 @@ def test_grassmann_distance_errors():
         grassmann_distance(torch.eye(5)[:, :2], torch.eye(5)[:, :3])
     with pytest.raises(ValueError):
         grassmann_distance(torch.eye(5)[:, :2], torch.eye(5)[:, :2], metric="airm")
+
+
+@pytest.mark.parametrize("metric", GRASSMANN_MAX)
+def test_grassmann_distance_small_angle_float32(metric):
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    U = torch.linalg.qr(torch.randn(6, 2)).Q
+    V = U + 1e-5 * torch.randn(6, 2)
+    ref = grassmann_distance(U.double(), V.double())
+    d = grassmann_distance(U, V, metric)
+    assert d > 0
+    assert torch.allclose(d.double(), ref, rtol=5e-2)

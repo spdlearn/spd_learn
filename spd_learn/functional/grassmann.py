@@ -49,11 +49,13 @@ def grassmann_distance(U: Tensor, V: Tensor, metric: str = "geodesic") -> Tensor
     # sines sorted descending pair with cosines sorted descending once flipped
     sin = torch.linalg.svdvals(Qv - Qu @ (Qu.mT @ Qv)).flip(-1)
     theta = torch.atan2(sin, cos)
-    c = theta.cos().prod(-1)
     if metric == "geodesic":
         return theta.norm(dim=-1)
     if metric == "chordal":
         return theta.sin().norm(dim=-1)
-    if metric == "fubini_study":
-        return c.clamp(max=1).acos()
-    return (1 - c**2).clamp(min=0).sqrt()
+    # 1 - prod(cos^2) without cancellation at small angles
+    s2 = -torch.expm1(torch.log1p(-(theta.sin() ** 2)).sum(-1))
+    s = s2.clamp(min=0).sqrt()
+    if metric == "binet_cauchy":
+        return s
+    return torch.atan2(s, theta.cos().prod(-1))
