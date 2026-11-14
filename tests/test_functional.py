@@ -456,3 +456,16 @@ def test_grassmann_distance_small_angle_float32(metric):
     d = grassmann_distance(U, V, metric)
     assert d > 0
     assert torch.allclose(d.double(), ref, rtol=5e-2)
+
+
+@pytest.mark.parametrize("metric", GRASSMANN_MAX)
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+def test_grassmann_distance_gradient_finite_at_orthogonality(metric, dtype):
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    eye = torch.eye(5, dtype=dtype)
+    for V in (eye[:, 2:4], eye[:, 2:4] + 1e-5 * torch.randn(5, 2, dtype=dtype)):
+        U = eye[:, :2].clone().requires_grad_()
+        grassmann_distance(U, V, metric).backward()
+        assert torch.isfinite(U.grad).all()

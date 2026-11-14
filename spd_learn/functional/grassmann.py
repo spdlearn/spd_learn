@@ -54,7 +54,11 @@ def grassmann_distance(U: Tensor, V: Tensor, metric: str = "geodesic") -> Tensor
     if metric == "chordal":
         return theta.sin().norm(dim=-1)
     # 1 - prod(cos^2) without cancellation at small angles
-    s2 = -torch.expm1(torch.log1p(-(theta.sin() ** 2)).sum(-1))
+    s2 = -torch.expm1(
+        torch.log1p(
+            -(theta.sin() ** 2).clamp(max=1 - torch.finfo(theta.dtype).eps)
+        ).sum(-1)
+    )
     s = s2.clamp(min=0).sqrt()
     if metric == "binet_cauchy":
         return s
