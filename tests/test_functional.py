@@ -469,3 +469,21 @@ def test_grassmann_distance_gradient_finite_at_orthogonality(metric, dtype):
         U = eye[:, :2].clone().requires_grad_()
         grassmann_distance(U, V, metric).backward()
         assert torch.isfinite(U.grad).all()
+
+
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+def test_grassmann_distance_projection(dtype):
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    eye = torch.eye(5, dtype=dtype)
+    U, V = eye[:, :2], eye[:, 2:4]
+    A = torch.randn(2, 2, dtype=dtype)  # invertible change of basis
+    zero, four = U.new_zeros(()), U.new_tensor(4.0)
+    assert torch.allclose(grassmann_distance(U, U @ A, "projection"), zero, atol=1e-5)
+    assert torch.allclose(grassmann_distance(U, V, "projection"), four, atol=1e-5)
+    W1, W2 = torch.randn(2, 3, 5, 2, dtype=dtype).unbind(0)
+    d = grassmann_distance(W1, W2, "projection")
+    assert d.shape == (3,)
+    # ||P_u - P_v||_F^2 = 2 sum(sin^2 theta) = 2 * chordal^2
+    assert torch.allclose(d, 2 * grassmann_distance(W1, W2, "chordal") ** 2, atol=1e-5)
