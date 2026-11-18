@@ -21,21 +21,19 @@ def grassmann_distance(U: Tensor, V: Tensor, metric: str = "geodesic") -> Tensor
         d_{\text{FS}} = \arccos\prod_i \cos\theta_i, \quad
         d_{\text{BC}} = \sqrt{1 - \prod_i \cos^2\theta_i}.
 
-    ``"projection"`` is computed directly from the orthogonal projectors
-    :math:`P_U`, :math:`P_V`, without principal angles, and is a squared
-    distance:
+    The chordal distance equals the projection distance
+    :math:`\|P_U - P_V\|_F / \sqrt{2}` between the orthogonal projectors.
 
-    .. math::
-
-        d_{\text{projection}} = \|P_U - P_V\|_F^2 = 2\, d_{\text{chordal}}^2.
-
-    Bases are orthonormalised by QR; full column rank is assumed.
+    Bases are orthonormalised by QR; full column rank is assumed. Complex
+    bases are supported. The computation runs outside autocast, because
+    half-precision matmuls destroy the small-angle accuracy. First derivatives
+    are finite everywhere; second derivatives are not at repeated angles.
 
     Parameters
     ----------
     U, V : Tensor
-        Bases of shape ``(..., n, k)``, with identical shapes.
-    metric : {"geodesic", "chordal", "fubini_study", "binet_cauchy", "projection"}
+        Bases of shape ``(..., n, k)`` with ``k <= n``, with identical shapes.
+    metric : {"geodesic", "chordal", "fubini_study", "binet_cauchy"}
         Distance to compute.
 
     Returns
@@ -46,24 +44,28 @@ def grassmann_distance(U: Tensor, V: Tensor, metric: str = "geodesic") -> Tensor
     Raises
     ------
     ValueError
-        If the shapes differ or ``metric`` is unknown.
+        If the shapes differ, ``k > n`` (bases passed as rows), or ``metric``
+        is unknown.
     """
     if U.shape != V.shape:
         raise ValueError(f"U and V must have the same shape, got {U.shape}, {V.shape}")
-    if metric not in (
-        "geodesic",
-        "chordal",
-        "fubini_study",
-        "binet_cauchy",
-        "projection",
-    ):
+    if U.shape[-1] > U.shape[-2]:
+        raise ValueError(
+            f"bases must be (..., n, k) with k <= n, got {tuple(U.shape)}; "
+            "pass column bases, e.g. components_.T"
+        )
+    if metric not in ("geodesic", "chordal", "fubini_study", "binet_cauchy"):
         raise ValueError(f"Unknown Grassmann metric: {metric!r}")
+    with torch.autocast(U.device.type, enabled=False):
+        return _grassmann(U, V, metric)
+
+
+def _grassmann(U: Tensor, V: Tensor, metric: str) -> Tensor:
     Qu, Qv = torch.linalg.qr(U).Q, torch.linalg.qr(V).Q
-    if metric == "projection":
-        return (Qu @ Qu.mT - Qv @ Qv.mT).square().sum(dim=(-2, -1))
-    cos = torch.linalg.svdvals(Qu.mT @ Qv)
+    M = Qu.mH @ Qv
+    cos = torch.linalg.svdvals(M)
     # sines sorted descending pair with cosines sorted descending once flipped
-    sin = torch.linalg.svdvals(Qv - Qu @ (Qu.mT @ Qv)).flip(-1)
+    sin = torch.linalg.svdvals(Qv - Qu @ M).flip(-1)
     theta = torch.atan2(sin, cos)
     if metric == "geodesic":
         return theta.norm(dim=-1)
@@ -76,7 +78,9 @@ def grassmann_distance(U: Tensor, V: Tensor, metric: str = "geodesic") -> Tensor
             -(theta.sin() ** 2).clamp(max=1 - torch.finfo(theta.dtype).eps)
         ).sum(-1)
     )
-    s = s2.clamp(min=0).sqrt()
+    # sqrt with a zero subgradient at coincident subspaces (sqrt'(0) is inf)
+    positive = s2 > 0
+    s = torch.where(positive, torch.where(positive, s2, 1.0).sqrt(), 0.0)
     if metric == "binet_cauchy":
         return s
     return torch.atan2(s, theta.cos().prod(-1))

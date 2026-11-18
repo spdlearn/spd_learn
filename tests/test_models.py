@@ -84,13 +84,11 @@ def test_spdnet_projection_and_diversity():
         return SPDNet(input_type="cov", n_chans=8, subspacedim=k, n_outputs=2)
 
     a, b = make(0), make(1)
-    P, diag = a.projection_matrix(), a.projection_diagonal()
-    assert P.shape == (8, 8) and diag.shape == (8,)
-    assert not P.requires_grad and not diag.requires_grad
-    assert torch.allclose(diag, P.diagonal()) and torch.allclose(
-        diag.sum(), torch.tensor(3.0), atol=1e-5
-    )
-    assert torch.allclose(make(0, k=8).projection_matrix(), torch.eye(8), atol=1e-5)
+    lev = a.leverage_scores()
+    assert lev.shape == (8,) and not lev.requires_grad
+    assert torch.allclose(lev, a.bimap.subspace_projector()[0].diagonal(), atol=1e-6)
+    assert torch.allclose(lev.sum(), torch.tensor(3.0), atol=1e-5)
+    assert torch.allclose(make(0, k=8).leverage_scores(), torch.ones(8), atol=1e-5)
 
     d = a.diversity(b)
     assert d.ndim == 0 and not d.requires_grad and d > 0
@@ -101,3 +99,23 @@ def test_spdnet_projection_and_diversity():
         a.diversity(make(2, k=4))
     with pytest.raises(ValueError):
         a.diversity(b, metric="airm")
+    # padded models (subspacedim >= n_chans) over different channel sets
+    wide = SPDNet(input_type="cov", n_chans=4, subspacedim=8, n_outputs=2)
+    with pytest.raises(ValueError, match="n_chans"):
+        wide.diversity(SPDNet(input_type="cov", n_chans=6, subspacedim=8, n_outputs=2))
+
+
+def test_spdnet_analysis_does_not_freeze_bimap():
+    """Analysis calls inside parametrize.cached() must not detach the BiMap."""
+    from torch.nn.utils import parametrize
+
+    torch.manual_seed(0)
+    a = SPDNet(input_type="cov", n_chans=8, subspacedim=3, n_outputs=2)
+    b = SPDNet(input_type="cov", n_chans=8, subspacedim=3, n_outputs=2)
+    X = torch.randn(4, 8, 8)
+    X = X @ X.mT + torch.eye(8)
+    with parametrize.cached():
+        a.leverage_scores()
+        a.diversity(b)
+        a(X).sum().backward()
+    assert a.bimap.parametrizations.weight.original.grad is not None

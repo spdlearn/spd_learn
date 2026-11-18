@@ -14,9 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   effective parameters and restarting only their optimizer state.
   TensorCSPNet can opt in to orthogonal BiMaps with `parametrized=True`.
 - Add `grassmann_distance` between subspaces (geodesic, chordal, Fubini-Study
-  and Binet-Cauchy metrics, and the squared projection distance), and the `BiMap.projection_matrix`,
-  `SPDNet.projection_matrix`, `SPDNet.projection_diagonal` and
-  `SPDNet.diversity` methods to analyze learned subspaces.
+  and Binet-Cauchy metrics), and the `BiMap.subspace_projector`,
+  `BiMap.leverage_scores`, `SPDNet.leverage_scores` and `SPDNet.diversity`
+  methods to analyze learned subspaces.
 
 ### Changed
 

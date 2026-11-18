@@ -790,11 +790,14 @@ def test_bimap_orthogonal_initialization_per_channel():
 
 
 @pytest.mark.parametrize("parametrized", [True, False])
-def test_bimap_projection_matrix(parametrized):
+def test_bimap_subspace_projector(parametrized):
     """BiMap projector has the expected shape and is a rank-k orthogonal projector."""
     torch.manual_seed(0)
     bimap = BiMap(8, 3, depthwise=2, parametrized=parametrized)
-    P = bimap.projection_matrix()
+    P = bimap.subspace_projector()
+    lev = bimap.leverage_scores()
+    assert lev.shape == (2, 8)
+    assert torch.allclose(lev, P.diagonal(dim1=-2, dim2=-1), atol=1e-6)
     assert P.shape == (2, 8, 8)
     assert torch.allclose(P @ P, P, atol=1e-5)
     assert torch.allclose(P, P.mT, atol=1e-6)

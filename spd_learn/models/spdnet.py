@@ -113,36 +113,26 @@ class SPDNet(nn.Module):
 
         return X
 
-    @torch.no_grad()
-    def projection_matrix(self) -> torch.Tensor:
-        """Orthogonal projector onto the subspace learned by the BiMap layer.
+    def leverage_scores(self) -> torch.Tensor:
+        """Per-channel leverage scores of the BiMap subspace.
 
-        Returns
-        -------
-        torch.Tensor
-            Projector with shape `(n, n)`, `n = max(n_chans, subspacedim)`.
-            It is the identity when `subspacedim >= n_chans`.
-        """
-        return self.bimap.projection_matrix()[0]
-
-    @torch.no_grad()
-    def projection_diagonal(self) -> torch.Tensor:
-        """Per-channel leverage scores, the diagonal of the projector.
+        Analysis only (detached). See :meth:`BiMap.leverage_scores`.
 
         Returns
         -------
         torch.Tensor
             Scores with shape `(n,)`, `n = max(n_chans, subspacedim)`, summing
-            to `subspacedim`.
+            to `subspacedim`. All ones when `subspacedim >= n_chans`.
         """
-        return self.projection_matrix().diagonal()
+        return self.bimap.leverage_scores()[0]
 
     @torch.no_grad()
     def diversity(self, other: "SPDNet", metric: str = "geodesic") -> torch.Tensor:
         """Grassmann distance between the subspaces of two SPDNet models.
 
-        The result is zero whenever `subspacedim >= n_chans`, because both
-        models then span the whole space.
+        Analysis only: the result is detached from autograd. It is zero
+        whenever `subspacedim >= n_chans`, because both models then span the
+        whole space.
 
         Parameters
         ----------
@@ -156,4 +146,18 @@ class SPDNet(nn.Module):
         torch.Tensor
             Scalar distance between the two subspaces.
         """
-        return grassmann_distance(self.bimap.weight[0], other.bimap.weight[0], metric)
+
+        def dims(model):
+            pad = model.bimap.increase_dim
+            n_in = (
+                model.bimap._in_features
+                if pad is None
+                else pad.projection_matrix.shape[-1]
+            )
+            return n_in, model.bimap._out_features
+
+        a, b = dims(self), dims(other)
+        if a != b:
+            raise ValueError(f"models must share n_chans and subspacedim, got {a}, {b}")
+        U, V = self.bimap._basis()[0], other.bimap._basis()[0]
+        return grassmann_distance(U, V.to(U.dtype), metric)

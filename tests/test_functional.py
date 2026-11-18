@@ -472,18 +472,57 @@ def test_grassmann_distance_gradient_finite_at_orthogonality(metric, dtype):
 
 
 @pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
-def test_grassmann_distance_projection(dtype):
+def test_grassmann_chordal_is_projection_distance(dtype):
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    W1, W2 = torch.randn(2, 3, 5, 2, dtype=dtype).unbind(0)
+    Q1, Q2 = torch.linalg.qr(W1).Q, torch.linalg.qr(W2).Q
+    proj = (Q1 @ Q1.mT - Q2 @ Q2.mT).norm(dim=(-2, -1)) / 2**0.5
+    assert torch.allclose(grassmann_distance(W1, W2, "chordal"), proj, atol=1e-5)
+
+
+@pytest.mark.parametrize("metric", GRASSMANN_MAX)
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+def test_grassmann_distance_gradient_finite_at_coincidence(metric, dtype):
     from spd_learn.functional import grassmann_distance
 
     torch.manual_seed(0)
     eye = torch.eye(5, dtype=dtype)
-    U, V = eye[:, :2], eye[:, 2:4]
-    A = torch.randn(2, 2, dtype=dtype)  # invertible change of basis
-    zero, four = U.new_zeros(()), U.new_tensor(4.0)
-    assert torch.allclose(grassmann_distance(U, U @ A, "projection"), zero, atol=1e-5)
-    assert torch.allclose(grassmann_distance(U, V, "projection"), four, atol=1e-5)
-    W1, W2 = torch.randn(2, 3, 5, 2, dtype=dtype).unbind(0)
-    d = grassmann_distance(W1, W2, "projection")
-    assert d.shape == (3,)
-    # ||P_u - P_v||_F^2 = 2 sum(sin^2 theta) = 2 * chordal^2
-    assert torch.allclose(d, 2 * grassmann_distance(W1, W2, "chordal") ** 2, atol=1e-5)
+    A = torch.randn(2, 2, dtype=dtype)
+    U = eye[:, :2].clone().requires_grad_()
+    d = grassmann_distance(U, eye[:, :2] @ A, metric)
+    d.backward()
+    assert torch.isfinite(U.grad).all()
+    assert not torch.signbit(d)
+
+
+def test_grassmann_distance_rejects_row_bases():
+    from spd_learn.functional import grassmann_distance
+
+    with pytest.raises(ValueError, match="k <= n"):
+        grassmann_distance(torch.eye(64)[:3], torch.eye(64)[3:6])
+
+
+@pytest.mark.parametrize("metric", GRASSMANN_MAX)
+def test_grassmann_distance_complex(metric):
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    U = torch.randn(5, 2, dtype=torch.complex128)
+    A = torch.randn(2, 2, dtype=torch.complex128)
+    assert grassmann_distance(U, U @ A, metric).abs() < 1e-6
+    V = torch.randn(5, 2, dtype=torch.complex128)
+    d = grassmann_distance(U, V, metric)
+    assert not d.is_complex() and 0 < d <= GRASSMANN_MAX[metric] + 1e-6
+
+
+def test_grassmann_distance_ignores_autocast():
+    from spd_learn.functional import grassmann_distance
+
+    torch.manual_seed(0)
+    U = torch.linalg.qr(torch.randn(8, 3)).Q
+    V = U @ torch.randn(3, 3)
+    with torch.autocast("cpu", dtype=torch.bfloat16):
+        d = grassmann_distance(U, V)
+    assert d.dtype == torch.float32 and d < 1e-5
