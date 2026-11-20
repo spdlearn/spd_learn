@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and Binet-Cauchy metrics), and the `BiMap.subspace_projector`,
   `BiMap.leverage_scores`, `SPDNet.leverage_scores` and `SPDNet.diversity`
   methods to analyze learned subspaces.
+- Add `subspace_basis` to compose the BiMap bases of stacked layers into the
+  input space, to compare the subspaces kept at each depth across models.
 
 ### Changed
 

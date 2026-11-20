@@ -314,6 +314,54 @@ class BiMap(nn.Module):
         return self._basis().abs().square().sum(-1)
 
 
+@torch.no_grad()
+def subspace_basis(module: nn.Module, depth: Optional[int] = None) -> torch.Tensor:
+    r"""Orthonormal basis of the input subspace kept by stacked BiMap layers.
+
+    With :math:`Q_i` the orthonormal basis of the :math:`i`-th BiMap weight, in
+    registration order, returns :math:`B_k = Q_1 Q_2 \cdots Q_k`, of shape
+    :math:`n_0 \times n_k`. Its projector
+    :math:`P_k = B_k B_k^H = Q_1 \cdots Q_k Q_k^H \cdots Q_1^H` lives in the
+    input space of the first layer, so the subspaces kept at a given depth by
+    models trained with different seeds can be compared with
+    :func:`~spd_learn.functional.grassmann_distance`, whatever the layer sizes.
+
+    Layers between the BiMaps (ReEig, dropout, normalization) are ignored.
+    Within one model the spans are nested,
+    :math:`\operatorname{span}(B_k) \subseteq \operatorname{span}(B_{k-1})`,
+    hence :math:`\|P_{k-1} - P_k\|_F^2 = n_{k-1} - n_k` for any weights.
+
+    Analysis only: the result is detached from autograd.
+
+    Parameters
+    ----------
+    module : nn.Module
+        Model or sub-module whose BiMap layers form a single chain, e.g.
+        ``EEGSPDNet().spdnet`` or ``CorNet().bimaps``.
+    depth : int, optional
+        Number of leading BiMap layers to compose; all of them by default.
+
+    Returns
+    -------
+    torch.Tensor
+        Basis with shape `(depthwise, n_0, n_k)`.
+
+    Raises
+    ------
+    ValueError
+        If no BiMap is selected, or one of them increases the dimension.
+    """
+    bimaps = [m for m in module.modules() if isinstance(m, BiMap)][:depth]
+    if not bimaps:
+        raise ValueError("no BiMap layer selected")
+    if any(m.increase_dim is not None for m in bimaps):
+        raise ValueError("BiMap layers that increase the dimension are not supported")
+    basis = bimaps[0]._basis()
+    for m in bimaps[1:]:
+        basis = basis @ m._basis()
+    return basis
+
+
 class BiMapIncreaseDim(nn.Module):
     r"""Bilinear Mapping Layer for SPD Matrix Dimensionality Expansion.
 

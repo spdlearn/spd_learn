@@ -604,6 +604,7 @@ acting as analogous operations to linear layers in Euclidean space.
    BiMap
    BiMapIncreaseDim
    GraphBiMap
+   subspace_basis
 
 
 Batch Normalization
