@@ -8,7 +8,7 @@ from .batchnorm import (
     SPDBatchNormMean,
     SPDBatchNormMeanVar,
 )
-from .bilinear import BiMap, BiMapIncreaseDim, subspace_basis
+from .bilinear import BiMap, BiMapIncreaseDim
 from .covariance import CovLayer
 from .dropout import SPDDropout
 from .gbw import GBWAttention, GBWGeometry, GBWPatchCovariance  # noqa: F401
@@ -55,7 +55,6 @@ __all__ = [
     # bilinear
     "BiMap",
     "BiMapIncreaseDim",
-    "subspace_basis",
     # batchnorm
     "SPDBatchNormMean",
     "BatchReNorm",

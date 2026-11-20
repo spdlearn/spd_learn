@@ -8,7 +8,7 @@ from torch.testing import assert_close
 
 from spd_learn.functional import sym_to_upper
 from spd_learn.models.phase_spdnet import PhaseDelay
-from spd_learn.modules.bilinear import BiMap, BiMapIncreaseDim, subspace_basis
+from spd_learn.modules.bilinear import BiMap, BiMapIncreaseDim
 from spd_learn.modules.modeig import ExpEig, LogEig
 from spd_learn.modules.residual import LogEuclideanResidual
 
@@ -806,23 +806,3 @@ def test_bimap_subspace_projector(parametrized):
     )
     if parametrized:
         assert torch.allclose(P, bimap.weight @ bimap.weight.mT, atol=1e-5)
-
-
-def test_subspace_basis_stacked():
-    """Composed bases are orthonormal, nested, and padding BiMaps are rejected."""
-    from spd_learn.functional import grassmann_distance
-    from spd_learn.modules import ReEig
-
-    torch.manual_seed(0)
-    net = torch.nn.Sequential(BiMap(8, 6), ReEig(), BiMap(6, 4))
-    B1, B2 = subspace_basis(net, depth=1), subspace_basis(net)
-    assert B1.shape == (1, 8, 6) and B2.shape == (1, 8, 4)
-    assert_close(B2.mT @ B2, torch.eye(4).expand(1, -1, -1), atol=1e-5, rtol=0)
-    P1, P2 = B1 @ B1.mT, B2 @ B2.mT
-    assert_close(P1 @ P2, P2, atol=1e-5, rtol=0)
-    assert_close(torch.linalg.matrix_norm(P1 - P2) ** 2, torch.tensor([2.0]))
-    assert grassmann_distance(B2, subspace_basis(net)).abs().max() < 1e-3
-    with pytest.raises(ValueError, match="increase"):
-        subspace_basis(torch.nn.Sequential(BiMap(4, 6)))
-    with pytest.raises(ValueError, match="no BiMap"):
-        subspace_basis(net, depth=0)
