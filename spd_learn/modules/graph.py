@@ -21,6 +21,7 @@ from spd_learn.functional import (
     shrinkage_covariance,
 )
 from spd_learn.functional.graph import normalize_spd_adjacency, spd_graph_aggregate
+from spd_learn.functional.numerical import numerical_config
 from spd_learn.functional.utils import ensure_sym
 from spd_learn.modules.bilinear import BiMap
 
@@ -102,7 +103,8 @@ class TimeFrequencyCovariances(nn.Module):
         """
         if input.ndim != 4 or not input.is_floating_point():
             raise ValueError("expected floating (trials, bands, channels, samples)")
-        if not torch.isfinite(input).all():
+        check_values = input.device.type == "cpu" or numerical_config.strict_spd_check
+        if check_values and not torch.isfinite(input).all():
             raise ValueError("signals must be finite")
         eye = torch.eye(input.shape[-2], device=input.device, dtype=input.dtype)
         alpha = torch.tensor(self.shrinkage, device=input.device, dtype=input.dtype)
@@ -117,7 +119,7 @@ class TimeFrequencyCovariances(nn.Module):
                 + self.ridge * eye
             )
         output = ensure_sym(torch.stack(nodes, dim=1))
-        if not torch.isfinite(output).all():
+        if check_values and not torch.isfinite(output).all():
             raise ValueError("covariance overflow; rescale signal units or use float64")
         return output
 
@@ -433,20 +435,21 @@ class GraphBiMap(nn.Module):
         if input.shape[-3:] != (self.n_nodes, self.in_features, self.in_features):
             raise ValueError("input node/channel shape does not match GraphBiMap")
         output = ensure_sym(self.projection(spd_graph_aggregate(input, propagation)))
-        with torch.no_grad():
-            valid = bool(torch.isfinite(output).all())
-            if valid:
-                try:
-                    valid = (
-                        bool((torch.linalg.eigvalsh(output) > 0).all())
-                        and bool((torch.linalg.eigh(output).eigenvalues > 0).all())
-                        and bool((torch.linalg.cholesky_ex(output).info == 0).all())
+        if output.device.type == "cpu" or numerical_config.strict_spd_check:
+            with torch.no_grad():
+                valid = bool(torch.isfinite(output).all())
+                if valid:
+                    try:
+                        valid = (
+                            bool((torch.linalg.eigvalsh(output) > 0).all())
+                            and bool((torch.linalg.eigh(output).eigenvalues > 0).all())
+                            and bool((torch.linalg.cholesky_ex(output).info == 0).all())
+                        )
+                    except RuntimeError:
+                        valid = False
+                if not valid:
+                    raise ValueError(
+                        "GraphBiMap lost SPD in finite precision; use float64 or "
+                        "explicit regularization/rescaling of covariance units"
                     )
-                except RuntimeError:
-                    valid = False
-            if not valid:
-                raise ValueError(
-                    "GraphBiMap lost SPD in finite precision; use float64 or "
-                    "explicit regularization/rescaling of covariance units"
-                )
         return output

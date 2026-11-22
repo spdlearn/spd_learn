@@ -330,3 +330,29 @@ def test_cornet_invalid_metric():
     """CorNet must reject invalid metric strings."""
     with pytest.raises(ValueError, match="Unknown metric"):
         CorNet(n_chans=8, metric="invalid")
+
+
+@pytest.mark.parametrize("negative_diag", [False, True])
+def test_cornet_regularized_cov_to_corr_negative_diag_parity_and_grad(negative_diag):
+    """_regularized_cov_to_corr must handle negative diagonals without host syncs."""
+    from spd_learn.functional import trace_normalization
+
+    model = CorNet(n_chans=4, n_outputs=2, bimap_dims=(3,))
+    base = _make_spd((2, 4, 4), dtype=torch.float64)
+    if negative_diag:
+        base = base.clone()
+        base[0, 0, 0] = -0.25
+    S = base.clone().requires_grad_()
+    actual = model._regularized_cov_to_corr(S)
+
+    with torch.no_grad():
+        S_ref_in = base.abs() if negative_diag else base
+        S_scaled = trace_normalization(S_ref_in, epsilon=1e-6)
+        diag_S = torch.diag_embed(
+            torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6)
+        )
+        expected = cov_to_corr((1.0 - model.gamma) * S_scaled + model.gamma * diag_S)
+
+    torch.testing.assert_close(actual, expected)
+    actual.sum().backward()
+    assert S.grad is not None and torch.isfinite(S.grad).all()
