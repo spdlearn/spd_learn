@@ -8,6 +8,8 @@ import torch
 
 from torch import Tensor
 
+from spd_learn.functional.numerical import numerical_config
+
 
 def normalize_spd_adjacency(adjacency: Tensor) -> Tensor:
     r"""Normalize nonnegative adjacency weights with unit self-loops.
@@ -34,10 +36,13 @@ def normalize_spd_adjacency(adjacency: Tensor) -> Tensor:
         or adjacency.shape[-1] != adjacency.shape[-2]
     ):
         raise ValueError("adjacency must have shape (..., nodes, nodes)")
-    if not adjacency.is_floating_point() or not torch.isfinite(adjacency).all():
+    if not adjacency.is_floating_point():
         raise ValueError("adjacency must be finite and floating point")
-    if (adjacency < 0).any():
-        raise ValueError("SPD aggregation requires nonnegative edge weights")
+    if adjacency.device.type == "cpu" or numerical_config.strict_spd_check:
+        if not torch.isfinite(adjacency).all():
+            raise ValueError("adjacency must be finite and floating point")
+        if (adjacency < 0).any():
+            raise ValueError("SPD aggregation requires nonnegative edge weights")
     augmented = adjacency + torch.eye(
         adjacency.shape[-1], device=adjacency.device, dtype=adjacency.dtype
     )
@@ -81,10 +86,13 @@ def spd_graph_aggregate(input: Tensor, propagation: Tensor) -> Tensor:
         or input.device != propagation.device
     ):
         raise ValueError("input and propagation must share floating dtype/device")
-    if not torch.isfinite(propagation).all() or (propagation < 0).any():
-        raise ValueError("propagation must be finite and nonnegative")
-    if not torch.allclose(propagation.sum(-1), torch.ones_like(propagation.sum(-1))):
-        raise ValueError("propagation rows must sum to one")
+    if propagation.device.type == "cpu" or numerical_config.strict_spd_check:
+        if not torch.isfinite(propagation).all() or (propagation < 0).any():
+            raise ValueError("propagation must be finite and nonnegative")
+        if not torch.allclose(
+            propagation.sum(-1), torch.ones_like(propagation.sum(-1))
+        ):
+            raise ValueError("propagation rows must sum to one")
     return (propagation @ input.flatten(-2)).reshape(
         *torch.broadcast_shapes(input.shape[:-3], propagation.shape[:-2]),
         *input.shape[-3:],

@@ -170,9 +170,10 @@ class matrix_log(Function):
 
     Notes
     -----
-    Clamping warnings are skipped for CUDA inputs requiring gradients to avoid
-    host synchronization during training. Detached CUDA inputs and CPU inputs
-    retain the diagnostic when ``warn_on_clamp=True``.
+    Clamping warnings are skipped for non-CPU inputs (except CUDA inputs not
+    requiring gradients) to avoid host synchronization during training. CPU
+    inputs and detached CUDA inputs retain the diagnostic when
+    ``warn_on_clamp=True``.
 
     See Also
     --------
@@ -203,7 +204,7 @@ class matrix_log(Function):
         # Custom Function.forward runs with grad mode disabled, even during
         # training. Input gradient requirements are available on the context.
         if numerical_config.warn_on_clamp and (
-            not s.is_cuda or not ctx.needs_input_grad[0]
+            s.device.type == "cpu" or (s.is_cuda and not ctx.needs_input_grad[0])
         ):
             min_eigenvalue = s.min()
             if threshold > min_eigenvalue:

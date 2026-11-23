@@ -13,6 +13,7 @@ import torch
 from torch import Tensor, nn
 
 from spd_learn.functional import trace_normalization
+from spd_learn.functional.numerical import numerical_config
 from spd_learn.modules import LogEig, ReEig, SPDBatchNormMean
 from spd_learn.modules.graph import (
     GraphBiMap,
@@ -252,7 +253,9 @@ class GraphCSPNet(nn.Module):
         output = TimeFrequencyCovariances(
             segments, ridge=self.ridge, shrinkage=self.shrinkage, center=self.center
         )(input)
-        if torch.linalg.eigvalsh(output.detach()).median() < self.rectify.threshold_:
+        if (
+            output.device.type == "cpu" or numerical_config.strict_spd_check
+        ) and torch.linalg.eigvalsh(output.detach()).median() < self.rectify.threshold_:
             warn(
                 "Covariance scale is below the absolute ReEig floor; ridge and "
                 "rectification can erase EEG variation. Pre-scale signal units "
@@ -351,7 +354,7 @@ class GraphCSPNet(nn.Module):
         if input.ndim != 4:
             raise ValueError("expected (trials, nodes, channels, channels)")
         if self.require_fitted_graph and (
-            not bool(self.graph.fitted)
+            (self.graph.fitted.device.type == "cpu" and not bool(self.graph.fitted))
             or self.graph.lattice.shape
             != (len(self.graph.coordinates), self.n_chans, self.n_chans)
         ):
@@ -386,7 +389,13 @@ class GraphCSPNet(nn.Module):
             input.ndim == 3
             and input.shape[1] == self.n_chans
             and input.shape[-1] >= 2 * max(self.window_counts)
-            and not bool(self.graph.fitted)
+            and (
+                self.graph.lattice.shape[-1] == 0
+                or (
+                    self.graph.fitted.device.type == "cpu"
+                    and not bool(self.graph.fitted)
+                )
+            )
         ):
             self.fit_graph(input)
         return self.forward_covariances(self.covariances(input))

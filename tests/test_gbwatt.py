@@ -514,3 +514,57 @@ def test_geometry_broadcast_frozen_state_and_single_key():
         torch.testing.assert_close(
             out[i], gbw_mean(values[i], weights[i], metric[i], 1.5, n_iter=3)
         )
+
+
+def test_gbw_check_spd_and_strict_spd_check_policy():
+    """SPD validation must run on CPU by default and respect strict_spd_check/check_spd."""
+    from types import SimpleNamespace
+
+    from spd_learn.functional.metrics.generalized_bures_wasserstein import (
+        _should_validate_spd,
+    )
+    from spd_learn.functional.numerical import NumericalContext
+
+    cpu_tensor = torch.eye(2)
+    hpu_like = SimpleNamespace(device=SimpleNamespace(type="hpu"))
+
+    assert _should_validate_spd(cpu_tensor) is True
+    assert _should_validate_spd(cpu_tensor, check_spd=False) is False
+    assert _should_validate_spd(hpu_like) is False
+    assert _should_validate_spd(hpu_like, check_spd=True) is True
+    with NumericalContext(strict_spd_check=True):
+        assert _should_validate_spd(hpu_like) is True
+        assert _should_validate_spd(hpu_like, check_spd=False) is False
+
+    x = spd(2, 3, 3, dtype=torch.float64)
+    y = spd(2, 3, 3, dtype=torch.float64)
+    metric = spd(3, 3, dtype=torch.float64)
+    weights = torch.tensor([[0.4, 0.6]], dtype=torch.float64)
+
+    torch.testing.assert_close(
+        gbw_chart(x, metric, 1.5, check_spd=False),
+        gbw_chart(x, metric, 1.5, check_spd=True),
+    )
+    torch.testing.assert_close(
+        gbw_inverse_chart(x, metric, 1.5, check_spd=False),
+        gbw_inverse_chart(x, metric, 1.5, check_spd=True),
+    )
+    torch.testing.assert_close(
+        gbw_distance(x, y, metric, 1.5, check_spd=False),
+        gbw_distance(x, y, metric, 1.5, check_spd=True),
+    )
+    torch.testing.assert_close(
+        bw_attention_mean(x, weights, n_iter=3, check_spd=False),
+        bw_attention_mean(x, weights, n_iter=3, check_spd=True),
+    )
+    torch.testing.assert_close(
+        gbw_mean(x, weights, metric, 1.5, n_iter=3, check_spd=False),
+        gbw_mean(x, weights, metric, 1.5, n_iter=3, check_spd=True),
+    )
+
+    non_spd = torch.diag(torch.tensor([-1.0, 1.0], dtype=torch.float64))
+    with pytest.raises(ValueError, match="SPD"):
+        gbw_chart(non_spd, torch.eye(2, dtype=torch.float64), check_spd=True)
+    # Skipping validation avoids host checks while still enforcing shape/dtype/sym.
+    out = gbw_chart(non_spd, torch.eye(2, dtype=torch.float64), check_spd=False)
+    assert out.shape == (2, 2)

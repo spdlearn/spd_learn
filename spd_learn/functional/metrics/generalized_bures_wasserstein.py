@@ -11,6 +11,7 @@ import torch
 from torch.autograd.function import once_differentiable
 
 from ..core import matrix_inv_sqrt, matrix_power, matrix_sqrt
+from ..numerical import numerical_config
 from ..utils import ensure_sym
 
 
@@ -22,12 +23,23 @@ def _domain_error(stage):
     )
 
 
-def _require_spd(x, stage):
+def _should_validate_spd(
+    tensor: torch.Tensor, *, check_spd: bool | None = None
+) -> bool:
+    """Return whether runtime value and spectrum SPD checks should execute."""
+    if check_spd is not None:
+        return bool(check_spd)
+    return tensor.device.type == "cpu" or numerical_config.strict_spd_check
+
+
+def _require_spd(x, stage, *, check_spd: bool | None = None):
     """Certify numerical SPD without repairing spectra or changing dtype."""
     if x.dtype not in (torch.float32, torch.float64):
         raise TypeError("GBW geometry requires real float32/float64 matrices")
     if x.ndim < 2 or x.shape[-1] != x.shape[-2] or x.shape[-1] < 1 or x.numel() == 0:
         raise ValueError("GBW geometry requires nonempty square matrices")
+    if not _should_validate_spd(x, check_spd=check_spd):
+        return ensure_sym(x)
     if not torch.isfinite(x).all():
         raise ValueError(_domain_error(stage))
     scale = x.detach().abs().amax(dim=(-2, -1), keepdim=True)
@@ -50,28 +62,33 @@ def _require_spd(x, stage):
     return x
 
 
-def _spectral_spd(operator, x, stage, *parameters):
+def _spectral_spd(operator, x, stage, *parameters, check_spd: bool | None = None):
     try:
         result = operator.apply(x, *parameters)
     except RuntimeError as error:
         raise ValueError(_domain_error(stage)) from error
-    return _require_spd(ensure_sym(result), stage)
+    return _require_spd(ensure_sym(result), stage, check_spd=check_spd)
 
 
-def _positive_power(power):
+def _positive_power(power, *, check_spd: bool | None = None):
     if isinstance(power, torch.Tensor):
-        if (
-            power.ndim != 0
-            or power.is_complex()
-            or not torch.isfinite(power)
-            or power <= 0
+        if power.ndim != 0 or power.is_complex():
+            raise ValueError("power must be a finite positive scalar")
+        if _should_validate_spd(power, check_spd=check_spd) and (
+            not torch.isfinite(power) or power <= 0
         ):
             raise ValueError("power must be a finite positive scalar")
     elif not math.isfinite(power) or power <= 0:
         raise ValueError("power must be a finite positive scalar")
 
 
-def gbw_chart(x: torch.Tensor, metric: torch.Tensor, power=1.0) -> torch.Tensor:
+def gbw_chart(
+    x: torch.Tensor,
+    metric: torch.Tensor,
+    power=1.0,
+    *,
+    check_spd: bool | None = None,
+) -> torch.Tensor:
     r"""Map SPD matrices into power-deformed BW coordinates.
 
     Parameters
@@ -82,6 +99,9 @@ def gbw_chart(x: torch.Tensor, metric: torch.Tensor, power=1.0) -> torch.Tensor:
         SPD metric of shape (..., n, n), broadcastable with x.
     power : float or torch.Tensor, default=1.0
         Positive scalar deformation exponent.
+    check_spd : bool, optional
+        Override whether runtime SPD/value validation checks execute. If None,
+        checks run on CPU or when ``numerical_config.strict_spd_check`` is True.
 
     Returns
     -------
@@ -93,15 +113,29 @@ def gbw_chart(x: torch.Tensor, metric: torch.Tensor, power=1.0) -> torch.Tensor:
     Computes M^(-1/2) X^power M^(-1/2). The common metric must broadcast
     against the input; host spectral floors apply.
     """
-    _positive_power(power)
-    x = _require_spd(x, "chart input")
-    metric = _require_spd(metric, "metric")
-    whitening = _spectral_spd(matrix_inv_sqrt, metric, "inverse metric square root")
-    powered = _spectral_spd(matrix_power, x, "forward power", power)
-    return _require_spd(ensure_sym(whitening @ powered @ whitening), "chart output")
+    _positive_power(power, check_spd=check_spd)
+    x = _require_spd(x, "chart input", check_spd=check_spd)
+    metric = _require_spd(metric, "metric", check_spd=check_spd)
+    whitening = _spectral_spd(
+        matrix_inv_sqrt, metric, "inverse metric square root", check_spd=check_spd
+    )
+    powered = _spectral_spd(
+        matrix_power, x, "forward power", power, check_spd=check_spd
+    )
+    return _require_spd(
+        ensure_sym(whitening @ powered @ whitening),
+        "chart output",
+        check_spd=check_spd,
+    )
 
 
-def gbw_inverse_chart(x: torch.Tensor, metric: torch.Tensor, power=1.0):
+def gbw_inverse_chart(
+    x: torch.Tensor,
+    metric: torch.Tensor,
+    power=1.0,
+    *,
+    check_spd: bool | None = None,
+):
     r"""Invert the power-deformed BW chart.
 
     Parameters
@@ -112,6 +146,9 @@ def gbw_inverse_chart(x: torch.Tensor, metric: torch.Tensor, power=1.0):
         SPD metric of shape (..., n, n), broadcastable with x.
     power : float or torch.Tensor, default=1.0
         Positive scalar deformation exponent.
+    check_spd : bool, optional
+        Override whether runtime SPD/value validation checks execute. If None,
+        checks run on CPU or when ``numerical_config.strict_spd_check`` is True.
 
     Returns
     -------
@@ -123,12 +160,22 @@ def gbw_inverse_chart(x: torch.Tensor, metric: torch.Tensor, power=1.0):
     Computes (M^(1/2) X M^(1/2))^(1/power). Use the same metric and power as
     the forward chart.
     """
-    _positive_power(power)
-    x = _require_spd(x, "inverse chart input")
-    metric = _require_spd(metric, "metric")
-    root = _spectral_spd(matrix_sqrt, metric, "metric square root")
-    congruence = _require_spd(ensure_sym(root @ x @ root), "inverse chart congruence")
-    return _spectral_spd(matrix_power, congruence, "inverse chart output", 1 / power)
+    _positive_power(power, check_spd=check_spd)
+    x = _require_spd(x, "inverse chart input", check_spd=check_spd)
+    metric = _require_spd(metric, "metric", check_spd=check_spd)
+    root = _spectral_spd(matrix_sqrt, metric, "metric square root", check_spd=check_spd)
+    congruence = _require_spd(
+        ensure_sym(root @ x @ root),
+        "inverse chart congruence",
+        check_spd=check_spd,
+    )
+    return _spectral_spd(
+        matrix_power,
+        congruence,
+        "inverse chart output",
+        1 / power,
+        check_spd=check_spd,
+    )
 
 
 class _AlignedSquaredDistance(torch.autograd.Function):
@@ -164,12 +211,20 @@ class _AlignedSquaredDistance(torch.autograd.Function):
         )
 
 
-def _bw_squared(x: torch.Tensor, y: torch.Tensor):
-    a = _spectral_spd(matrix_sqrt, x, "distance x square root")
-    b = _spectral_spd(matrix_sqrt, y, "distance y square root")
+def _bw_squared(
+    x: torch.Tensor,
+    y: torch.Tensor,
+    *,
+    check_spd: bool | None = None,
+):
+    a = _spectral_spd(matrix_sqrt, x, "distance x square root", check_spd=check_spd)
+    b = _spectral_spd(matrix_sqrt, y, "distance y square root", check_spd=check_spd)
     same = (x == y).all(dim=(-2, -1), keepdim=True)
     squared = _AlignedSquaredDistance.apply(a, b, same)
-    if not torch.isfinite(squared).all():
+    if (
+        _should_validate_spd(squared, check_spd=check_spd)
+        and not torch.isfinite(squared).all()
+    ):
         raise ValueError(_domain_error("squared distance"))
     return squared
 
@@ -182,7 +237,15 @@ def _safe_distance(squared: torch.Tensor):
     return torch.where(positive, safe, torch.zeros_like(squared))
 
 
-def gbw_distance(x, y, metric, power=1.0, *, squared=False):
+def gbw_distance(
+    x,
+    y,
+    metric,
+    power=1.0,
+    *,
+    squared=False,
+    check_spd: bool | None = None,
+):
     r"""Compute the power-deformed generalized BW distance.
 
     Parameters
@@ -197,6 +260,9 @@ def gbw_distance(x, y, metric, power=1.0, *, squared=False):
         Positive scalar deformation exponent.
     squared : bool, default=False
         Return squared distances instead of distances.
+    check_spd : bool, optional
+        Override whether runtime SPD/value validation checks execute. If None,
+        checks run on CPU or when ``numerical_config.strict_spd_check`` is True.
 
     Returns
     -------
@@ -209,13 +275,24 @@ def gbw_distance(x, y, metric, power=1.0, *, squared=False):
     The distance includes division by power. First-order derivatives are
     supported; coincident points use a zero subgradient.
     """
-    value = _bw_squared(gbw_chart(x, metric, power), gbw_chart(y, metric, power))
+    value = _bw_squared(
+        gbw_chart(x, metric, power, check_spd=check_spd),
+        gbw_chart(y, metric, power, check_spd=check_spd),
+        check_spd=check_spd,
+    )
     value = torch.where((x == y).all(dim=(-2, -1)), torch.zeros_like(value), value)
     scale = torch.as_tensor(power, dtype=value.dtype, device=value.device)
     return value / scale**2 if squared else _safe_distance(value) / scale
 
 
-def bw_attention_mean(values, weights, *, n_iter=10, method="fixed_point"):
+def bw_attention_mean(
+    values,
+    weights,
+    *,
+    n_iter=10,
+    method="fixed_point",
+    check_spd: bool | None = None,
+):
     r"""Aggregate SPD values using convex attention weights.
 
     Parameters
@@ -229,6 +306,9 @@ def bw_attention_mean(values, weights, *, n_iter=10, method="fixed_point"):
         Positive number of fixed-point updates.
     method : {'fixed_point', 'root'}, default='fixed_point'
         Fixed-point BW iterations or the weighted-root approximation.
+    check_spd : bool, optional
+        Override whether runtime SPD/value validation checks execute. If None,
+        checks run on CPU or when ``numerical_config.strict_spd_check`` is True.
 
     Returns
     -------
@@ -251,10 +331,10 @@ def bw_attention_mean(values, weights, *, n_iter=10, method="fixed_point"):
         )
     if weights.shape[-1] != values.shape[-3] or values.shape[-3] == 0:
         raise ValueError("weights must match a nonempty key axis")
-    values = _require_spd(values, "mean input")
+    values = _require_spd(values, "mean input", check_spd=check_spd)
     if weights.dtype != values.dtype or weights.device != values.device:
         raise ValueError("weights and values must share dtype and device")
-    if (
+    if _should_validate_spd(weights, check_spd=check_spd) and (
         not torch.isfinite(weights).all()
         or (weights < 0).any()
         or not torch.allclose(weights.sum(-1), torch.ones_like(weights.sum(-1)))
@@ -264,31 +344,58 @@ def bw_attention_mean(values, weights, *, n_iter=10, method="fixed_point"):
         mean_root = torch.einsum(
             "...qk,...kij->...qij",
             weights,
-            _spectral_spd(matrix_sqrt, values, "value square roots"),
+            _spectral_spd(
+                matrix_sqrt, values, "value square roots", check_spd=check_spd
+            ),
         )
-        return _require_spd(ensure_sym(mean_root @ mean_root.mT), "root mean output")
+        return _require_spd(
+            ensure_sym(mean_root @ mean_root.mT),
+            "root mean output",
+            check_spd=check_spd,
+        )
     output_dtype = values.dtype
     if output_dtype == torch.float32:
         values, weights = values.double(), weights.double()
     mean = _require_spd(
-        torch.einsum("...qk,...kij->...qij", weights, values), "mean initialization"
+        torch.einsum("...qk,...kij->...qij", weights, values),
+        "mean initialization",
+        check_spd=check_spd,
     )
     for _ in range(n_iter):
-        root = _spectral_spd(matrix_sqrt, mean, "mean square root")
-        inv = _spectral_spd(matrix_inv_sqrt, mean, "inverse mean square root")
+        root = _spectral_spd(matrix_sqrt, mean, "mean square root", check_spd=check_spd)
+        inv = _spectral_spd(
+            matrix_inv_sqrt, mean, "inverse mean square root", check_spd=check_spd
+        )
         cross = root.unsqueeze(-3) @ values.unsqueeze(-4) @ root.unsqueeze(-3)
-        cross = _require_spd(ensure_sym(cross), "mean cross product")
+        cross = _require_spd(
+            ensure_sym(cross), "mean cross product", check_spd=check_spd
+        )
         total = torch.einsum(
             "...qk,...qkij->...qij",
             weights,
-            _spectral_spd(matrix_sqrt, cross, "mean cross square root"),
+            _spectral_spd(
+                matrix_sqrt, cross, "mean cross square root", check_spd=check_spd
+            ),
         )
         factor = inv @ total
-        mean = _require_spd(ensure_sym(factor @ factor.mT), "mean iteration output")
-    return _require_spd(mean.to(dtype=output_dtype), "mean output")
+        mean = _require_spd(
+            ensure_sym(factor @ factor.mT),
+            "mean iteration output",
+            check_spd=check_spd,
+        )
+    return _require_spd(mean.to(dtype=output_dtype), "mean output", check_spd=check_spd)
 
 
-def gbw_mean(values, weights, metric, power=1.0, *, n_iter=10, method="fixed_point"):
+def gbw_mean(
+    values,
+    weights,
+    metric,
+    power=1.0,
+    *,
+    n_iter=10,
+    method="fixed_point",
+    check_spd: bool | None = None,
+):
     r"""Aggregate SPD values using convex attention weights.
 
     Parameters
@@ -307,6 +414,9 @@ def gbw_mean(values, weights, metric, power=1.0, *, n_iter=10, method="fixed_poi
         Positive number of fixed-point updates.
     method : {'fixed_point', 'root'}, default='fixed_point'
         Fixed-point BW iterations or the weighted-root approximation.
+    check_spd : bool, optional
+        Override whether runtime SPD/value validation checks execute. If None,
+        checks run on CPU or when ``numerical_config.strict_spd_check`` is True.
 
     Returns
     -------
@@ -320,6 +430,10 @@ def gbw_mean(values, weights, metric, power=1.0, *, n_iter=10, method="fixed_poi
     implementation; root aggregation retains its input dtype.
     """
     mean = bw_attention_mean(
-        gbw_chart(values, metric, power), weights, n_iter=n_iter, method=method
+        gbw_chart(values, metric, power, check_spd=check_spd),
+        weights,
+        n_iter=n_iter,
+        method=method,
+        check_spd=check_spd,
     )
-    return gbw_inverse_chart(mean, metric, power)
+    return gbw_inverse_chart(mean, metric, power, check_spd=check_spd)

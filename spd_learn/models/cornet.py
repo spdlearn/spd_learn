@@ -123,9 +123,9 @@ class CorNet(nn.Module):
 
     def _regularized_cov_to_corr(self, S: torch.Tensor) -> torch.Tensor:
         """Apply scale normalization and diagonal shrinkage before cov_to_corr."""
-        S_scaled = trace_normalization(
-            S.abs() if S.diagonal(dim1=-2, dim2=-1).min() < 0 else S, epsilon=1e-6
-        )
+        has_neg_diag = (S.diagonal(dim1=-2, dim2=-1) < 0).any()
+        S_pos = torch.where(has_neg_diag, S.abs(), S)
+        S_scaled = trace_normalization(S_pos, epsilon=1e-6)
         diag_S = torch.diag_embed(
             torch.diagonal(S_scaled, dim1=-2, dim2=-1).clamp(min=1e-6)
         )

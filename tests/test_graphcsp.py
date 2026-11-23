@@ -560,3 +560,49 @@ def test_valid_transactional_model_checkpoint_load(assign):
     target = GraphCSPNet(3, 2, n_freqs=1, n_patches=2, dtype=torch.float64).eval()
     target.load_state_dict(source.state_dict(), assign=assign)
     torch.testing.assert_close(target(x), source(x), atol=0, rtol=0)
+
+
+def test_graphcsp_unfitted_lattice_check_without_cpu_fitted_read():
+    """Unfitted lattice shape must guard forward_covariances without reading non-CPU fitted."""
+    model = GraphCSPNet(3, 2, n_freqs=2, n_patches=2)
+    cov = torch.eye(3).expand(2, len(model.graph.coordinates), 3, 3).clone()
+    with patch.object(
+        type(model.graph.fitted),
+        "device",
+        new_callable=lambda: property(lambda self: torch.device("meta")),
+    ):
+        with pytest.raises(RuntimeError, match="Fit the LGT"):
+            model.forward_covariances(cov)
+    with patch.object(
+        type(model.graph.fitted),
+        "__bool__",
+        side_effect=AssertionError("non-CPU fitted flag must not be read on host"),
+    ):
+        with patch.object(
+            type(model.graph.fitted),
+            "device",
+            new_callable=lambda: property(lambda self: torch.device("meta")),
+        ):
+            with pytest.raises(RuntimeError, match="Fit the LGT"):
+                model.forward_covariances(cov)
+
+
+def test_spd_graph_aggregate_non_cpu_validation_policy():
+    """spd_graph_aggregate must validate on CPU by default and respect strict_spd_check."""
+    from spd_learn.functional.numerical import NumericalContext
+
+    x = make_spd((2, 4, 3, 3), dtype=torch.float64)
+    bad_prop = torch.full((4, 4), -0.5, dtype=torch.float64)
+    with pytest.raises(ValueError, match="nonnegative"):
+        spd_graph_aggregate(x, bad_prop)
+
+    with patch.object(
+        torch.Tensor,
+        "device",
+        new_callable=lambda: property(lambda self: torch.device("meta")),
+    ):
+        out = spd_graph_aggregate(x, bad_prop)
+        assert out.shape == x.shape
+        with NumericalContext(strict_spd_check=True):
+            with pytest.raises(ValueError, match="nonnegative"):
+                spd_graph_aggregate(x, bad_prop)

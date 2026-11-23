@@ -457,3 +457,34 @@ def test_matrix_log_cuda_warning_policy(cuda_device):
         with torch.no_grad(), warnings.catch_warnings(record=True) as caught:
             matrix_log.apply(x)
         assert not caught
+
+
+def test_matrix_log_non_cpu_non_cuda_skips_host_sync_warning():
+    """Non-CPU, non-CUDA accelerators must not run s.min() host sync for warnings."""
+    from types import SimpleNamespace
+    from unittest.mock import patch
+
+    from spd_learn.functional import matrix_log
+
+    class _NoMinTensor:
+        dtype = torch.float32
+        is_cuda = False
+        device = SimpleNamespace(type="hpu")
+
+        def min(self):
+            raise AssertionError("s.min() must not be called on non-CPU accelerators")
+
+    x = torch.eye(2, requires_grad=False)
+    fake_s = _NoMinTensor()
+    dummy_out = torch.zeros(2, 2)
+    with (
+        NumericalContext(warn_on_clamp=True),
+        patch(
+            "spd_learn.functional.core.modeig_forward",
+            return_value=(dummy_out, fake_s, dummy_out, fake_s),
+        ),
+        warnings.catch_warnings(record=True) as caught,
+    ):
+        result = matrix_log.apply(x)
+    assert result.shape == (2, 2)
+    assert not caught
