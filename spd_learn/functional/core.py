@@ -652,9 +652,9 @@ def sym_to_upper(X, preserve_norm=True, upper=True):
     ndim = X.shape[-1]
 
     if upper:
-        ixs = torch.triu_indices(ndim, ndim, offset=0)
+        ixs = torch.triu_indices(ndim, ndim, offset=0, device=X.device)
     else:
-        ixs = torch.tril_indices(ndim, ndim, offset=0)
+        ixs = torch.tril_indices(ndim, ndim, offset=0, device=X.device)
 
     x_vec = X[..., ixs[0], ixs[1]]
 
@@ -716,9 +716,9 @@ def vec_to_sym(x_vec, preserve_norm=True, upper=True):
     ndim = int(ndim)
 
     if upper:
-        ixs = torch.triu_indices(ndim, ndim, offset=0)
+        ixs = torch.triu_indices(ndim, ndim, offset=0, device=x_vec.device)
     else:
-        ixs = torch.tril_indices(ndim, ndim, offset=0)
+        ixs = torch.tril_indices(ndim, ndim, offset=0, device=x_vec.device)
 
     od_mask = ixs[0] != ixs[1]
 
