@@ -55,9 +55,13 @@ more details.
 
 import torch
 
-from pyriemann.geometry.geodesic import geodesic_riemann
-
-from ..core import matrix_exp, matrix_inv_sqrt, matrix_log, matrix_sqrt_inv
+from ..core import (
+    matrix_exp,
+    matrix_inv_sqrt,
+    matrix_log,
+    matrix_power,
+    matrix_sqrt_inv,
+)
 from ..numerical import get_epsilon
 from ..utils import ensure_sym
 
@@ -187,8 +191,10 @@ def airm_geodesic(A, B, t):
     A, B = ensure_sym(A), ensure_sym(B)
     if torch.is_tensor(t) and t.ndim == 0 and A.ndim > 2:
         t = t.expand(A.shape[:-2])
-    # Delegated to pyriemann (Array API, runs on torch tensors with autograd).
-    return ensure_sym(geodesic_riemann(A, B, alpha=t))
+    A_sqrt, A_invsqrt = matrix_sqrt_inv.apply(A)
+    C = ensure_sym(A_invsqrt @ B @ A_invsqrt)
+    exponent = t.unsqueeze(-1) if torch.is_tensor(t) else t
+    return ensure_sym(A_sqrt @ matrix_power.apply(C, exponent) @ A_sqrt)
 
 
 def exp_map_airm(P, V, t=1.0):
