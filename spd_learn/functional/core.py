@@ -720,7 +720,10 @@ def vec_to_sym(x_vec, preserve_norm=True, upper=True):
     else:
         ixs = torch.tril_indices(ndim, ndim, offset=0, device=x_vec.device)
 
-    od_mask = ixs[0] != ixs[1]
+    if upper:
+        off_ixs = torch.triu_indices(ndim, ndim, offset=1, device=x_vec.device)
+    else:
+        off_ixs = torch.tril_indices(ndim, ndim, offset=-1, device=x_vec.device)
 
     X = torch.empty(
         (*x_vec.shape[:-1], ndim, ndim), device=x_vec.device, dtype=x_vec.dtype
@@ -729,10 +732,10 @@ def vec_to_sym(x_vec, preserve_norm=True, upper=True):
 
     if preserve_norm:
         # divide off-diagonal elements to undo norm-preserving scaling
-        X[..., ixs[0, od_mask], ixs[1, od_mask]] /= sqrt(2)
+        X[..., off_ixs[0], off_ixs[1]] /= sqrt(2)
 
     # Mirror to make symmetric
-    X[..., ixs[1, od_mask], ixs[0, od_mask]] = X[..., ixs[0, od_mask], ixs[1, od_mask]]
+    X[..., off_ixs[1], off_ixs[0]] = X[..., off_ixs[0], off_ixs[1]]
     return X
 
 
