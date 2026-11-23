@@ -213,9 +213,7 @@ def log_map_lsm(
             L = matrix_log.apply(D_C_D)
             diag_L = torch.diagonal(L, dim1=-2, dim2=-1)
             should_update = torch.max(torch.abs(diag_L)) >= tol
-            d = torch.where(
-                should_update, d * torch.exp(-0.5 * diag_L), d
-            )
+            d = torch.where(should_update, d * torch.exp(-0.5 * diag_L), d)
 
     D_C_D = d.unsqueeze(-1) * C_sym * d.unsqueeze(-2)
     return off_diag(matrix_log.apply(D_C_D))
