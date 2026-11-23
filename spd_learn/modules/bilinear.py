@@ -272,6 +272,47 @@ class BiMap(nn.Module):
             X = self.increase_dim(X)
         return bimap_transform(X, self.weight)
 
+    @torch.no_grad()
+    def _basis(self) -> torch.Tensor:
+        # Re-evaluate the parametrization instead of reading `self.weight`:
+        # inside `parametrize.cached()` a no-grad first read would be cached and
+        # silently detach the weight from the next forward pass.
+        weight = (
+            getattr(self.parametrizations, "weight")()
+            if parametrize.is_parametrized(self, "weight")
+            else self.weight
+        )
+        return torch.linalg.qr(weight).Q
+
+    def subspace_projector(self) -> torch.Tensor:
+        """Orthogonal projector onto the subspace spanned by each weight.
+
+        Analysis only: the result is detached from autograd. Full column rank
+        is assumed; for a rank-deficient weight (``parametrized=False``) the
+        projector includes arbitrary completion directions.
+
+        Returns
+        -------
+        torch.Tensor
+            Projectors with shape `(depthwise, n, n)`, equal to `W W^H` when
+            `W` has orthonormal columns.
+        """
+        Q = self._basis()
+        return Q @ Q.mH
+
+    def leverage_scores(self) -> torch.Tensor:
+        """Per-input-dimension leverage scores, the projector's diagonal.
+
+        Analysis only: the result is detached from autograd. Each row sums to
+        `k`, the output dimension.
+
+        Returns
+        -------
+        torch.Tensor
+            Real scores with shape `(depthwise, n)`.
+        """
+        return self._basis().abs().square().sum(-1)
+
 
 class BiMapIncreaseDim(nn.Module):
     r"""Bilinear Mapping Layer for SPD Matrix Dimensionality Expansion.

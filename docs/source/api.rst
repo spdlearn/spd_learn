@@ -271,6 +271,16 @@ manifold, essential for operations like domain adaptation.
    transport_tangent_vector
 
 
+Grassmann
+---------
+Distances between linear subspaces, computed from principal angles.
+
+.. autosummary::
+   :toctree: generated/grassmann
+
+   grassmann_distance
+
+
 Fréchet Derivatives
 -------------------
 Directional (Fréchet) derivatives of the matrix logarithm and exponential,
