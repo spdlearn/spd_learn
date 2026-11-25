@@ -65,8 +65,12 @@ def test_pairwise_riemann_illconditioned_and_guards():
     assert got.diagonal().eq(0).all()
     with pytest.raises(RuntimeError, match="not SPD|ill-conditioned"):
         _pairwise_riemann_squared(torch.diag(torch.tensor([1.0, 0.0])).unsqueeze(0))
-    extreme = torch.stack([torch.diag(torch.tensor([1.0, 1e-30], dtype=torch.float64)),
-                           torch.eye(2, dtype=torch.float64)])
+    extreme = torch.stack(
+        [
+            torch.diag(torch.tensor([1.0, 1e-30], dtype=torch.float64)),
+            torch.eye(2, dtype=torch.float64),
+        ]
+    )
     out = _pairwise_riemann_squared(extreme)
     assert torch.isfinite(out).all() and out[0, 1] > 4000
 
@@ -82,8 +86,14 @@ def test_covariance_uneven_window_lengths_grouped():
         window = window - window.mean(dim=-1, keepdim=True)
         cov = window @ window.mT / (stop - start)
         trace_scaled = torch.diagonal(cov, dim1=-2, dim2=-1).sum(-1) / 4
-        want = 0.8 * cov + 0.2 * trace_scaled[..., None, None] * torch.eye(4) + 0.05 * torch.eye(4)
-        torch.testing.assert_close(actual[:, node], (want + want.mT) / 2, atol=1e-9, rtol=1e-9)
+        want = (
+            0.8 * cov
+            + 0.2 * trace_scaled[..., None, None] * torch.eye(4)
+            + 0.05 * torch.eye(4)
+        )
+        torch.testing.assert_close(
+            actual[:, node], (want + want.mT) / 2, atol=1e-9, rtol=1e-9
+        )
 
 
 def test_graph_topology_fit_reference_and_serialization():

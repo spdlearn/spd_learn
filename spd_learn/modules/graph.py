@@ -7,7 +7,7 @@
 from collections.abc import Sequence
 from copy import deepcopy
 from math import isfinite
-from typing import Literal
+from typing import Literal, cast
 
 import torch
 
@@ -45,16 +45,19 @@ def _pairwise_riemann_squared(lattice: Tensor, chunk_rows: int = 32) -> Tensor:
         stop = min(start + chunk_rows, nodes)
         # pair (i, j): eigenvalues of chol_i^-1 lattice_j chol_i^-T, the generalized
         # eigenvalues of (lattice_j, lattice_i), as in pyriemann's _eigvalsh
-        solved = torch.linalg.solve_triangular(chol[start:stop].unsqueeze(1), work.unsqueeze(0),
-                                               upper=False)
-        pairs = torch.linalg.solve_triangular(chol[start:stop].unsqueeze(1), solved.mT,
-                                              upper=False).mT
+        solved = torch.linalg.solve_triangular(
+            chol[start:stop].unsqueeze(1), work.unsqueeze(0), upper=False
+        )
+        pairs = torch.linalg.solve_triangular(
+            chol[start:stop].unsqueeze(1), solved.mT, upper=False
+        ).mT
         pairs = (pairs + pairs.mT) / 2
         pair_values = torch.linalg.eigvalsh(pairs)
         if not torch.isfinite(pair_values).all() or (pair_values < -1e-9).any():
             raise RuntimeError(
                 "pairwise AIRM distance is not finite: the lattice is too "
-                "ill-conditioned for the batched whitening; rescale the covariances")
+                "ill-conditioned for the batched whitening; rescale the covariances"
+            )
         pair_values = pair_values.clamp(min=torch.finfo(torch.float64).tiny)
         out[start:stop] = torch.log(pair_values).square().sum(-1)
     out.fill_diagonal_(0)
@@ -151,21 +154,28 @@ class TimeFrequencyCovariances(nn.Module):
         groups: dict[tuple[int, int], list[int]] = {}
         for index, (band, start, stop) in enumerate(self.segments):
             groups.setdefault((band, stop - start), []).append(index)
-        nodes: list[Tensor] = [None] * len(self.segments)  # type: ignore[list-item]
+        nodes: list[Tensor | None] = [None] * len(self.segments)
         for (band, length), indexes in groups.items():
             starts = [self.segments[i][1] for i in indexes]
             if starts == [j * length for j in range(len(indexes))]:
                 # windows tile the band contiguously: a strided view, no copy
-                windows = input[:, band, :, :len(indexes) * length].reshape(
-                    input.shape[0], input.shape[-2], len(indexes), length).movedim(-2, 1)
+                windows = (
+                    input[:, band, :, : len(indexes) * length]
+                    .reshape(input.shape[0], input.shape[-2], len(indexes), length)
+                    .movedim(-2, 1)
+                )
             else:
                 windows = torch.stack(
-                    [input[:, band, :, s:s + length] for s in starts], dim=1)
+                    [input[:, band, :, s : s + length] for s in starts], dim=1
+                )
             covs = covariance(windows) if self.center else real_covariance(windows)
-            covs = shrinkage_covariance(covs, alpha, input.shape[-2], eye) + self.ridge * eye
+            covs = (
+                shrinkage_covariance(covs, alpha, input.shape[-2], eye)
+                + self.ridge * eye
+            )
             for j, i in enumerate(indexes):
                 nodes[i] = covs[:, j]
-        output = ensure_sym(torch.stack(nodes, dim=1))
+        output = ensure_sym(torch.stack(cast("list[Tensor]", nodes), dim=1))
         if check_values and not torch.isfinite(output).all():
             raise ValueError("covariance overflow; rescale signal units or use float64")
         return output
@@ -487,10 +497,9 @@ class GraphBiMap(nn.Module):
                 valid = bool(torch.isfinite(output).all())
                 if valid:
                     try:
-                        valid = (
-                            bool((torch.linalg.eigvalsh(output) > 0).all())
-                            and bool((torch.linalg.eigh(output).eigenvalues > 0).all())
-                            and bool((torch.linalg.cholesky_ex(output).info == 0).all())
+                        eigenvalues = torch.linalg.eigh(output).eigenvalues
+                        valid = bool((eigenvalues > 0).all()) and bool(
+                            (torch.linalg.cholesky_ex(output).info == 0).all()
                         )
                     except RuntimeError:
                         valid = False
