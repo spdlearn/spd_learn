@@ -56,7 +56,7 @@ def test_pairwise_riemann_illconditioned_and_guards():
     from spd_learn.modules.graph import _pairwise_riemann_squared
 
     torch.manual_seed(25)
-    q, _ = torch.linalg.qr(torch.randn(4, 4))
+    q, _ = torch.linalg.qr(torch.randn(4, 4, 4))
     lat = (q * torch.logspace(0, -8, 4) @ q.mT).float()
     lat = (lat + lat.mT) / 2
     got = _pairwise_riemann_squared(lat)
