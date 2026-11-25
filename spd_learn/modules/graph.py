@@ -25,17 +25,40 @@ from spd_learn.functional.utils import ensure_sym
 from spd_learn.modules.bilinear import BiMap
 
 
-def _pairwise_riemann_squared(lattice: Tensor) -> Tensor:
-    """All-pairs squared AIRM distances of ``lattice`` (nodes, C, C) in one batched
-    eigendecomposition, instead of one ``pairwise_distance`` call per pair."""
-    values, vectors = torch.linalg.eigh(lattice)
-    whitened = vectors * values.clamp(min=torch.finfo(values.dtype).tiny).rsqrt().unsqueeze(-2)
-    # pair (i, j): whitened_i^T lattice_j whitened_i, whose eigenvalues are the
-    # generalized eigenvalues of (lattice_j, lattice_i)
-    pairs = whitened.mT.unsqueeze(1) @ lattice.unsqueeze(0) @ whitened.unsqueeze(1)
-    pairs = (pairs + pairs.mT) / 2
-    logs = torch.log(torch.linalg.eigvalsh(pairs).clamp(min=torch.finfo(values.dtype).tiny))
-    return logs.square().sum(-1)
+def _pairwise_riemann_squared(lattice: Tensor, chunk_rows: int = 32) -> Tensor:
+    """All-pairs squared AIRM distances of ``lattice`` (nodes, C, C), batched in row
+    chunks of ``chunk_rows`` instead of one ``pairwise_distance`` call per pair.
+
+    Whitening runs in float64 (the generalized eigenvalues are ill-conditioned in
+    float32), and a non-positive or non-finite pair eigenvalue raises instead of
+    saturating a clamp: the per-pair loop this replaces fails loudly there."""
+    work = lattice.to(torch.float64)
+    if not torch.isfinite(work).all():
+        raise RuntimeError("lattice is not SPD: non-finite entry")
+    try:
+        chol = torch.linalg.cholesky(work)
+    except RuntimeError:
+        raise RuntimeError("lattice is not SPD: Cholesky failed") from None
+    nodes = lattice.shape[0]
+    out = lattice.new_empty((nodes, nodes), dtype=torch.float64)
+    for start in range(0, nodes, chunk_rows):
+        stop = min(start + chunk_rows, nodes)
+        # pair (i, j): eigenvalues of chol_i^-1 lattice_j chol_i^-T, the generalized
+        # eigenvalues of (lattice_j, lattice_i), as in pyriemann's _eigvalsh
+        solved = torch.linalg.solve_triangular(chol[start:stop].unsqueeze(1), work.unsqueeze(0),
+                                               upper=False)
+        pairs = torch.linalg.solve_triangular(chol[start:stop].unsqueeze(1), solved.mT,
+                                              upper=False).mT
+        pairs = (pairs + pairs.mT) / 2
+        pair_values = torch.linalg.eigvalsh(pairs)
+        if not torch.isfinite(pair_values).all() or (pair_values < -1e-9).any():
+            raise RuntimeError(
+                "pairwise AIRM distance is not finite: the lattice is too "
+                "ill-conditioned for the batched whitening; rescale the covariances")
+        pair_values = pair_values.clamp(min=torch.finfo(torch.float64).tiny)
+        out[start:stop] = torch.log(pair_values).square().sum(-1)
+    out.fill_diagonal_(0)
+    return out.to(lattice.dtype)
 
 
 def _atomic_load_state_dict(module, state_dict, strict=True, assign=False):
