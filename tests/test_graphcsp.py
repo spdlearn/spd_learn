@@ -52,6 +52,21 @@ def test_covariance_node_channel_and_trial_order():
     )
 
 
+def test_covariance_uneven_window_lengths_grouped():
+    # windows of length 33, 33 and 34 in one band: grouped batching must keep node order
+    segments = [(0, 0, 33), (0, 33, 66), (0, 66, 100), (1, 0, 50), (1, 50, 100)]
+    x = torch.randn(2, 2, 4, 100, dtype=torch.float64)
+    layer = TimeFrequencyCovariances(segments, center=True, shrinkage=0.2, ridge=0.05)
+    actual = layer(x)
+    for node, (band, start, stop) in enumerate(segments):
+        window = x[:, band, :, start:stop]
+        window = window - window.mean(dim=-1, keepdim=True)
+        cov = window @ window.mT / (stop - start)
+        trace_scaled = torch.diagonal(cov, dim1=-2, dim2=-1).sum(-1) / 4
+        want = 0.8 * cov + 0.2 * trace_scaled[..., None, None] * torch.eye(4) + 0.05 * torch.eye(4)
+        torch.testing.assert_close(actual[:, node], (want + want.mT) / 2, atol=1e-12, rtol=1e-12)
+
+
 def test_graph_topology_fit_reference_and_serialization():
     g = graph()
     assert not g.topology.diagonal().any()
