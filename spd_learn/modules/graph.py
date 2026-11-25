@@ -16,7 +16,6 @@ from torch import Tensor, nn
 from spd_learn.functional import (
     covariance,
     mean_euclid,
-    pairwise_distance,
     real_covariance,
     shrinkage_covariance,
 )
@@ -24,6 +23,19 @@ from spd_learn.functional.graph import normalize_spd_adjacency, spd_graph_aggreg
 from spd_learn.functional.numerical import numerical_config
 from spd_learn.functional.utils import ensure_sym
 from spd_learn.modules.bilinear import BiMap
+
+
+def _pairwise_riemann_squared(lattice: Tensor) -> Tensor:
+    """All-pairs squared AIRM distances of ``lattice`` (nodes, C, C) in one batched
+    eigendecomposition, instead of one ``pairwise_distance`` call per pair."""
+    values, vectors = torch.linalg.eigh(lattice)
+    whitened = vectors * values.clamp(min=torch.finfo(values.dtype).tiny).rsqrt().unsqueeze(-2)
+    # pair (i, j): whitened_i^T lattice_j whitened_i, whose eigenvalues are the
+    # generalized eigenvalues of (lattice_j, lattice_i)
+    pairs = whitened.mT.unsqueeze(1) @ lattice.unsqueeze(0) @ whitened.unsqueeze(1)
+    pairs = (pairs + pairs.mT) / 2
+    logs = torch.log(torch.linalg.eigvalsh(pairs).clamp(min=torch.finfo(values.dtype).tiny))
+    return logs.square().sum(-1)
 
 
 def _atomic_load_state_dict(module, state_dict, strict=True, assign=False):
@@ -108,16 +120,28 @@ class TimeFrequencyCovariances(nn.Module):
             raise ValueError("signals must be finite")
         eye = torch.eye(input.shape[-2], device=input.device, dtype=input.dtype)
         alpha = torch.tensor(self.shrinkage, device=input.device, dtype=input.dtype)
-        nodes = []
         for band, start, stop in self.segments:
             if band >= input.shape[1] or stop > input.shape[-1]:
                 raise ValueError("segment lies outside the signal")
-            window = input[:, band, :, start:stop]
-            cov = covariance(window) if self.center else real_covariance(window)
-            nodes.append(
-                shrinkage_covariance(cov, alpha, input.shape[-2], eye)
-                + self.ridge * eye
-            )
+        # One batched covariance per (band, window length) group instead of one call
+        # per segment: the estimators already broadcast over leading dimensions.
+        groups: dict[tuple[int, int], list[int]] = {}
+        for index, (band, start, stop) in enumerate(self.segments):
+            groups.setdefault((band, stop - start), []).append(index)
+        nodes: list[Tensor] = [None] * len(self.segments)  # type: ignore[list-item]
+        for (band, length), indexes in groups.items():
+            starts = [self.segments[i][1] for i in indexes]
+            if starts == [j * length for j in range(len(indexes))]:
+                # windows tile the band contiguously: a strided view, no copy
+                windows = input[:, band, :, :len(indexes) * length].reshape(
+                    input.shape[0], input.shape[-2], len(indexes), length).movedim(-2, 1)
+            else:
+                windows = torch.stack(
+                    [input[:, band, :, s:s + length] for s in starts], dim=1)
+            covs = covariance(windows) if self.center else real_covariance(windows)
+            covs = shrinkage_covariance(covs, alpha, input.shape[-2], eye) + self.ridge * eye
+            for j, i in enumerate(indexes):
+                nodes[i] = covs[:, j]
         output = ensure_sym(torch.stack(nodes, dim=1))
         if check_values and not torch.isfinite(output).all():
             raise ValueError("covariance overflow; rescale signal units or use float64")
@@ -247,7 +271,7 @@ class TimeFrequencyGraph(nn.Module):
         lattice = mean_euclid(input.movedim(0, -3))
         if not torch.isfinite(lattice).all():
             raise ValueError("training lattice overflow; rescale or use float64")
-        distance_squared = pairwise_distance(lattice, metric="riemann", squared=True)
+        distance_squared = _pairwise_riemann_squared(lattice)
         # Roundoff can make the two independently computed AIRM distances differ.
         distance_squared = (distance_squared + distance_squared.mT) / 2
         adjacency = (-distance_squared / self.bandwidth).exp() * self.topology.to(input)
