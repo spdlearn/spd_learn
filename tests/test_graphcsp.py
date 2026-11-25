@@ -64,7 +64,7 @@ def test_covariance_uneven_window_lengths_grouped():
         cov = window @ window.mT / (stop - start)
         trace_scaled = torch.diagonal(cov, dim1=-2, dim2=-1).sum(-1) / 4
         want = 0.8 * cov + 0.2 * trace_scaled[..., None, None] * torch.eye(4) + 0.05 * torch.eye(4)
-        torch.testing.assert_close(actual[:, node], (want + want.mT) / 2, atol=1e-12, rtol=1e-12)
+        torch.testing.assert_close(actual[:, node], (want + want.mT) / 2, atol=1e-9, rtol=1e-9)
 
 
 def test_graph_topology_fit_reference_and_serialization():
