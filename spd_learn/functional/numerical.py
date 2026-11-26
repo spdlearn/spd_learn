@@ -332,8 +332,12 @@ def get_epsilon(
         scale = config.get_scale(name)
         threshold = scale * machine_eps
 
-    # Cache and return
-    config._threshold_cache[cache_key] = threshold
+    # Cache and return (ponytail: no cache write while torch.compile traces -
+    # the dict mutation is a graph break in every spectral op)
+    if not (
+        torch.compiler.is_compiling() or torch._guards.detect_fake_mode() is not None
+    ):
+        config._threshold_cache[cache_key] = threshold
     return threshold
 
 

@@ -10,7 +10,7 @@ import torch
 
 from torch.autograd.function import once_differentiable
 
-from ..core import matrix_inv_sqrt, matrix_power, matrix_sqrt
+from ..core import matrix_inv_sqrt, matrix_power, matrix_sqrt, matrix_sqrt_inv
 from ..numerical import numerical_config
 from ..utils import ensure_sym
 
@@ -362,9 +362,15 @@ def bw_attention_mean(
         check_spd=check_spd,
     )
     for _ in range(n_iter):
-        root = _spectral_spd(matrix_sqrt, mean, "mean square root", check_spd=check_spd)
-        inv = _spectral_spd(
-            matrix_inv_sqrt, mean, "inverse mean square root", check_spd=check_spd
+        # ponytail: one eigh for both roots of the same mean - matrix_sqrt_inv
+        # is matrix_sqrt and matrix_inv_sqrt sharing one decomposition
+        try:
+            root, inv = matrix_sqrt_inv.apply(mean)
+        except RuntimeError as error:
+            raise ValueError(_domain_error("mean square root")) from error
+        root = _require_spd(ensure_sym(root), "mean square root", check_spd=check_spd)
+        inv = _require_spd(
+            ensure_sym(inv), "inverse mean square root", check_spd=check_spd
         )
         cross = root.unsqueeze(-3) @ values.unsqueeze(-4) @ root.unsqueeze(-3)
         cross = _require_spd(
