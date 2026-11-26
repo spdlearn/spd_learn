@@ -7,7 +7,7 @@
 from collections.abc import Sequence
 from copy import deepcopy
 from math import isfinite
-from typing import Literal
+from typing import Literal, cast
 
 import torch
 
@@ -16,7 +16,6 @@ from torch import Tensor, nn
 from spd_learn.functional import (
     covariance,
     mean_euclid,
-    pairwise_distance,
     real_covariance,
     shrinkage_covariance,
 )
@@ -24,6 +23,45 @@ from spd_learn.functional.graph import normalize_spd_adjacency, spd_graph_aggreg
 from spd_learn.functional.numerical import numerical_config
 from spd_learn.functional.utils import ensure_sym
 from spd_learn.modules.bilinear import BiMap
+
+
+def _pairwise_riemann_squared(lattice: Tensor, chunk_rows: int = 32) -> Tensor:
+    """All-pairs squared AIRM distances of ``lattice`` (nodes, C, C), batched in row
+    chunks of ``chunk_rows`` instead of one ``pairwise_distance`` call per pair.
+
+    Whitening runs in float64 (the generalized eigenvalues are ill-conditioned in
+    float32), and a non-positive or non-finite pair eigenvalue raises instead of
+    saturating a clamp: the per-pair loop this replaces fails loudly there."""
+    work = lattice.to(torch.float64)
+    if not torch.isfinite(work).all():
+        raise RuntimeError("lattice is not SPD: non-finite entry")
+    try:
+        chol = torch.linalg.cholesky(work)
+    except RuntimeError:
+        raise RuntimeError("lattice is not SPD: Cholesky failed") from None
+    nodes = lattice.shape[0]
+    out = lattice.new_empty((nodes, nodes), dtype=torch.float64)
+    for start in range(0, nodes, chunk_rows):
+        stop = min(start + chunk_rows, nodes)
+        # pair (i, j): eigenvalues of chol_i^-1 lattice_j chol_i^-T, the generalized
+        # eigenvalues of (lattice_j, lattice_i), as in pyriemann's _eigvalsh
+        solved = torch.linalg.solve_triangular(
+            chol[start:stop].unsqueeze(1), work.unsqueeze(0), upper=False
+        )
+        pairs = torch.linalg.solve_triangular(
+            chol[start:stop].unsqueeze(1), solved.mT, upper=False
+        ).mT
+        pairs = (pairs + pairs.mT) / 2
+        pair_values = torch.linalg.eigvalsh(pairs)
+        if not torch.isfinite(pair_values).all() or (pair_values < -1e-9).any():
+            raise RuntimeError(
+                "pairwise AIRM distance is not finite: the lattice is too "
+                "ill-conditioned for the batched whitening; rescale the covariances"
+            )
+        pair_values = pair_values.clamp(min=torch.finfo(torch.float64).tiny)
+        out[start:stop] = torch.log(pair_values).square().sum(-1)
+    out.fill_diagonal_(0)
+    return out.to(lattice.dtype)
 
 
 def _atomic_load_state_dict(module, state_dict, strict=True, assign=False):
@@ -108,17 +146,36 @@ class TimeFrequencyCovariances(nn.Module):
             raise ValueError("signals must be finite")
         eye = torch.eye(input.shape[-2], device=input.device, dtype=input.dtype)
         alpha = torch.tensor(self.shrinkage, device=input.device, dtype=input.dtype)
-        nodes = []
         for band, start, stop in self.segments:
             if band >= input.shape[1] or stop > input.shape[-1]:
                 raise ValueError("segment lies outside the signal")
-            window = input[:, band, :, start:stop]
-            cov = covariance(window) if self.center else real_covariance(window)
-            nodes.append(
-                shrinkage_covariance(cov, alpha, input.shape[-2], eye)
+        # One batched covariance per (band, window length) group instead of one call
+        # per segment: the estimators already broadcast over leading dimensions.
+        groups: dict[tuple[int, int], list[int]] = {}
+        for index, (band, start, stop) in enumerate(self.segments):
+            groups.setdefault((band, stop - start), []).append(index)
+        nodes: list[Tensor | None] = [None] * len(self.segments)
+        for (band, length), indexes in groups.items():
+            starts = [self.segments[i][1] for i in indexes]
+            if starts == [j * length for j in range(len(indexes))]:
+                # windows tile the band contiguously: a strided view, no copy
+                windows = (
+                    input[:, band, :, : len(indexes) * length]
+                    .reshape(input.shape[0], input.shape[-2], len(indexes), length)
+                    .movedim(-2, 1)
+                )
+            else:
+                windows = torch.stack(
+                    [input[:, band, :, s : s + length] for s in starts], dim=1
+                )
+            covs = covariance(windows) if self.center else real_covariance(windows)
+            covs = (
+                shrinkage_covariance(covs, alpha, input.shape[-2], eye)
                 + self.ridge * eye
             )
-        output = ensure_sym(torch.stack(nodes, dim=1))
+            for j, i in enumerate(indexes):
+                nodes[i] = covs[:, j]
+        output = ensure_sym(torch.stack(cast("list[Tensor]", nodes), dim=1))
         if check_values and not torch.isfinite(output).all():
             raise ValueError("covariance overflow; rescale signal units or use float64")
         return output
@@ -247,7 +304,7 @@ class TimeFrequencyGraph(nn.Module):
         lattice = mean_euclid(input.movedim(0, -3))
         if not torch.isfinite(lattice).all():
             raise ValueError("training lattice overflow; rescale or use float64")
-        distance_squared = pairwise_distance(lattice, metric="riemann", squared=True)
+        distance_squared = _pairwise_riemann_squared(lattice)
         # Roundoff can make the two independently computed AIRM distances differ.
         distance_squared = (distance_squared + distance_squared.mT) / 2
         adjacency = (-distance_squared / self.bandwidth).exp() * self.topology.to(input)
@@ -440,10 +497,9 @@ class GraphBiMap(nn.Module):
                 valid = bool(torch.isfinite(output).all())
                 if valid:
                     try:
-                        valid = (
-                            bool((torch.linalg.eigvalsh(output) > 0).all())
-                            and bool((torch.linalg.eigh(output).eigenvalues > 0).all())
-                            and bool((torch.linalg.cholesky_ex(output).info == 0).all())
+                        eigenvalues = torch.linalg.eigh(output).eigenvalues
+                        valid = bool((eigenvalues > 0).all()) and bool(
+                            (torch.linalg.cholesky_ex(output).info == 0).all()
                         )
                     except RuntimeError:
                         valid = False

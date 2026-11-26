@@ -203,8 +203,10 @@ class matrix_log(Function):
         threshold = get_epsilon(s.dtype, "eigval_log")
         # Custom Function.forward runs with grad mode disabled, even during
         # training. Input gradient requirements are available on the context.
-        if numerical_config.warn_on_clamp and (
-            s.device.type == "cpu" or (s.is_cuda and not ctx.needs_input_grad[0])
+        if (
+            numerical_config.warn_on_clamp
+            and not torch.compiler.is_compiling()
+            and (s.device.type == "cpu" or (s.is_cuda and not ctx.needs_input_grad[0]))
         ):
             min_eigenvalue = s.min()
             if threshold > min_eigenvalue:

@@ -354,7 +354,7 @@ class GraphCSPNet(nn.Module):
         if input.ndim != 4:
             raise ValueError("expected (trials, nodes, channels, channels)")
         if self.require_fitted_graph and (
-            (self.graph.fitted.device.type == "cpu" and not bool(self.graph.fitted))
+            (self.graph.lattice.shape[-1] == 0)
             or self.graph.lattice.shape
             != (len(self.graph.coordinates), self.n_chans, self.n_chans)
         ):
@@ -389,13 +389,7 @@ class GraphCSPNet(nn.Module):
             input.ndim == 3
             and input.shape[1] == self.n_chans
             and input.shape[-1] >= 2 * max(self.window_counts)
-            and (
-                self.graph.lattice.shape[-1] == 0
-                or (
-                    self.graph.fitted.device.type == "cpu"
-                    and not bool(self.graph.fitted)
-                )
-            )
+            and self.graph.lattice.shape[-1] == 0
         ):
             self.fit_graph(input)
         return self.forward_covariances(self.covariances(input))

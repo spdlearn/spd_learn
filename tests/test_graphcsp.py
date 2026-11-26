@@ -52,6 +52,50 @@ def test_covariance_node_channel_and_trial_order():
     )
 
 
+def test_pairwise_riemann_illconditioned_and_guards():
+    from spd_learn.modules.graph import _pairwise_riemann_squared
+
+    torch.manual_seed(25)
+    q, _ = torch.linalg.qr(torch.randn(4, 4, 4))
+    lat = (q * torch.logspace(0, -8, 4) @ q.mT).float()
+    lat = (lat + lat.mT) / 2
+    got = _pairwise_riemann_squared(lat)
+    want = _pairwise_riemann_squared(lat.double()).float()
+    torch.testing.assert_close(got, want, atol=5e-2, rtol=5e-2)
+    assert got.diagonal().eq(0).all()
+    with pytest.raises(RuntimeError, match="not SPD|ill-conditioned"):
+        _pairwise_riemann_squared(torch.diag(torch.tensor([1.0, 0.0])).unsqueeze(0))
+    extreme = torch.stack(
+        [
+            torch.diag(torch.tensor([1.0, 1e-30], dtype=torch.float64)),
+            torch.eye(2, dtype=torch.float64),
+        ]
+    )
+    out = _pairwise_riemann_squared(extreme)
+    assert torch.isfinite(out).all() and out[0, 1] > 4000
+
+
+def test_covariance_uneven_window_lengths_grouped():
+    # windows of length 33, 33 and 34 in one band: grouped batching must keep node order
+    segments = [(0, 0, 33), (0, 33, 66), (0, 66, 100), (1, 0, 50), (1, 50, 100)]
+    x = torch.randn(2, 2, 4, 100, dtype=torch.float64)
+    layer = TimeFrequencyCovariances(segments, center=True, shrinkage=0.2, ridge=0.05)
+    actual = layer(x)
+    for node, (band, start, stop) in enumerate(segments):
+        window = x[:, band, :, start:stop]
+        window = window - window.mean(dim=-1, keepdim=True)
+        cov = window @ window.mT / (stop - start)
+        trace_scaled = torch.diagonal(cov, dim1=-2, dim2=-1).sum(-1) / 4
+        want = (
+            0.8 * cov
+            + 0.2 * trace_scaled[..., None, None] * torch.eye(4)
+            + 0.05 * torch.eye(4)
+        )
+        torch.testing.assert_close(
+            actual[:, node], (want + want.mT) / 2, atol=1e-9, rtol=1e-9
+        )
+
+
 def test_graph_topology_fit_reference_and_serialization():
     g = graph()
     assert not g.topology.diagonal().any()
