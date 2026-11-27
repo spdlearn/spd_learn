@@ -152,6 +152,45 @@ def test_matrix_power():
     assert e_tiny.grad.abs().item() < 1.0
 
 
+def test_matrix_power_batched_exponent_grad():
+    from spd_learn.functional import airm_geodesic, ensure_sym, matrix_power
+
+    def safe_matrix_power(matrix, exponent):
+        return matrix_power.apply(ensure_sym(matrix), exponent)
+
+    torch.manual_seed(0)
+    batch, ndim = 4, 3
+    A = torch.randn((batch, ndim, ndim), dtype=torch.double)
+    A = A @ A.mT + torch.eye(ndim, dtype=torch.double)
+    B = torch.randn((batch, ndim, ndim), dtype=torch.double)
+    B = B @ B.mT + torch.eye(ndim, dtype=torch.double)
+
+    exp_per_sample = torch.tensor(
+        [[0.2], [0.4], [0.6], [0.8]], dtype=torch.double, requires_grad=True
+    )
+    assert gradcheck(
+        safe_matrix_power, (A.clone().requires_grad_(True), exp_per_sample)
+    )
+
+    exp_per_eig = torch.linspace(0.2, 0.8, batch * ndim, dtype=torch.double).reshape(
+        batch, ndim
+    )
+    exp_per_eig.requires_grad_(True)
+    assert gradcheck(safe_matrix_power, (A.clone().requires_grad_(True), exp_per_eig))
+
+    t_scalar = torch.tensor(0.35, dtype=torch.double, requires_grad=True)
+    assert gradcheck(
+        lambda a, b, t: airm_geodesic(ensure_sym(a), ensure_sym(b), t),
+        (A.clone().requires_grad_(True), B.clone().requires_grad_(True), t_scalar),
+    )
+
+    t_batch = torch.tensor([0.2, 0.4, 0.6, 0.8], dtype=torch.double, requires_grad=True)
+    assert gradcheck(
+        lambda a, b, t: airm_geodesic(ensure_sym(a), ensure_sym(b), t),
+        (A.clone().requires_grad_(True), B.clone().requires_grad_(True), t_batch),
+    )
+
+
 def test_matrix_sqrt():
     from spd_learn.functional import ensure_sym, matrix_sqrt
 
