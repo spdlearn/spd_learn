@@ -226,13 +226,17 @@ def test_wide_scale_outputs_are_spd_or_raise_actionable_error(
     # These are genuine SPD inputs; this checks representability, not bad input.
     assert torch.linalg.cholesky_ex(values).info.eq(0).all()
     metric = torch.eye(18, device=device)
-    functions = [lambda: gbw_chart(values, metric, 1.5)]
+    # Exercise the checked contract on both devices. CUDA skips validation
+    # by default to avoid synchronizing the training path.
+    functions = [lambda: gbw_chart(values, metric, 1.5, check_spd=True)]
     for method in ("fixed_point", "root"):
         functions.extend(
             [
-                lambda method=method: bw_attention_mean(values, weights, method=method),
+                lambda method=method: bw_attention_mean(
+                    values, weights, method=method, check_spd=True
+                ),
                 lambda method=method: gbw_mean(
-                    values, weights, metric, 1.5, method=method
+                    values, weights, metric, 1.5, method=method, check_spd=True
                 ),
             ]
         )

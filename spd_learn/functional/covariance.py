@@ -21,9 +21,7 @@ def covariance(input: torch.Tensor) -> torch.Tensor:
     """
     mean = input.mean(dim=-1, keepdim=True)
     input_centered = input - mean
-    covariances = torch.einsum(
-        "...ik,...jk->...ij", input_centered, input_centered
-    ) / input.size(-1)
+    covariances = (input_centered @ input_centered.mT) / input.size(-1)
     return covariances
 
 
@@ -47,9 +45,7 @@ def sample_covariance(input: torch.Tensor) -> torch.Tensor:
     mean = input.mean(dim=-1, keepdim=True)
     input_centered = input - mean
     n_times = input_centered.shape[-1]
-    covariances = torch.einsum("...ik,...jk->...ij", input_centered, input_centered) / (
-        n_times - 1
-    )
+    covariances = (input_centered @ input_centered.mT) / (n_times - 1)
     return covariances
 
 
