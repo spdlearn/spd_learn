@@ -28,9 +28,8 @@ def softplus(s):
     torch.Tensor
         SoftPlus of s
     """
-    return torch.log2(
-        1.0 + torch.pow(torch.tensor(2.0, dtype=s.dtype, device=s.device), s)
-    )
+    # A scalar base preserves pow's rounding without copying a tensor to CUDA.
+    return torch.log2(1.0 + torch.pow(2.0, s))
 
 
 def inv_softplus(s):
@@ -47,9 +46,7 @@ def inv_softplus(s):
     torch.Tensor
         Inverse of SoftPlus of s
     """
-    return torch.log2(
-        torch.pow(torch.tensor(2.0, device=s.device, dtype=s.dtype), s) - 1.0
-    )
+    return torch.log2(torch.pow(2.0, s) - 1.0)
 
 
 class matrix_softplus(Function):
@@ -75,9 +72,7 @@ class matrix_softplus(Function):
 
     @staticmethod
     def derivative(s):
-        return 1 / (
-            1.0 + torch.pow(torch.tensor(2.0, device=s.device, dtype=s.dtype), -s)
-        )
+        return 1.0 / (1.0 + torch.pow(2.0, -s))
 
     @staticmethod
     def forward(ctx, X):
@@ -114,9 +109,7 @@ class matrix_inv_softplus(Function):
 
     @staticmethod
     def derivative(s):
-        return 1 / (
-            1.0 - torch.pow(torch.tensor(2.0, device=s.device, dtype=s.dtype), -s)
-        )
+        return 1.0 / (1.0 - torch.pow(2.0, -s))
 
     @staticmethod
     def forward(ctx, X):
@@ -192,10 +185,8 @@ class matrix_log(Function):
     @staticmethod
     def derivative(s):
         threshold = get_epsilon(s.dtype, "eigval_log")
-        s_deriv = s.reciprocal()
-        # pick subgradient 0 for clamped eigenvalues
-        s_deriv[s <= threshold] = 0
-        return s_deriv
+        # Zero clamped eigenvalues while letting NaN derivatives propagate.
+        return torch.where(s <= threshold, 0.0, s.reciprocal())
 
     @staticmethod
     def forward(ctx, X):
@@ -319,9 +310,7 @@ class clamp_eigvals(Function):
 
     @staticmethod
     def derivative(s, threshold):
-        s_deriv = torch.zeros_like(s)
-        s_deriv[s > threshold] = 1
-        return s_deriv
+        return (s > threshold).to(dtype=s.dtype)
 
     @staticmethod
     def forward(ctx, X, threshold):
@@ -424,8 +413,7 @@ class matrix_power(Function):
         s_clamped = s.clamp(min=threshold)
         s_deriv = exponent * s_clamped.pow(exponent=exponent - 1.0)
         # pick subgradient 0 for clamped eigenvalues
-        s_deriv[s <= threshold] = 0
-        return s_deriv
+        return torch.where(s <= threshold, 0.0, s_deriv)
 
     @staticmethod
     def forward(ctx, X, exponent):
@@ -488,10 +476,9 @@ class matrix_sqrt(Function):
     @staticmethod
     def derivative(s):
         threshold = get_epsilon(s.dtype, "eigval_sqrt")
-        sder = s.rsqrt() / 2
+        sder = s.rsqrt() * 0.5
         # pick subgradient 0 for clamped eigenvalues
-        sder[s <= threshold] = 0
-        return sder
+        return torch.where(s <= threshold, 0.0, sder)
 
     @staticmethod
     def forward(ctx, X):
@@ -532,8 +519,7 @@ class matrix_inv_sqrt(Function):
         threshold = get_epsilon(s.dtype, "eigval_inv_sqrt")
         sder = -0.5 * s.pow(-1.5)
         # pick subgradient 0 for clamped eigenvalues
-        sder[s <= threshold] = 0
-        return sder
+        return torch.where(s <= threshold, 0.0, sder)
 
     @staticmethod
     def forward(ctx, X):
@@ -661,10 +647,9 @@ def sym_to_upper(X, preserve_norm=True, upper=True):
     x_vec = X[..., ixs[0], ixs[1]]
 
     if preserve_norm:
-        # multiply off-diagonal elements to preserve the norm
-        off_diagonal_mask = ixs[0] != ixs[1]
-        multipliers = torch.ones_like(x_vec)
-        multipliers[..., off_diagonal_mask] = sqrt(2)
+        # Fill the weights on-device and round sqrt(2) to the input dtype.
+        multipliers = torch.ones_like(ixs[0], dtype=X.dtype)
+        multipliers.masked_fill_(ixs[0] != ixs[1], sqrt(2))
         x_vec = x_vec * multipliers
 
     return x_vec

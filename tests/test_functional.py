@@ -19,6 +19,34 @@ def test_matrix_log_gradient_independent_of_batch_scale(dtype):
     torch.testing.assert_close(batched.grad[0], x.grad)
 
 
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+@pytest.mark.parametrize("device", ["cpu", pytest.param("cuda", marks=pytest.mark.gpu)])
+@pytest.mark.parametrize(
+    "operation, threshold_name, args, expected_valid",
+    [
+        ("matrix_log", "eigval_log", (), 0.25),
+        ("matrix_sqrt", "eigval_sqrt", (), 0.25),
+        ("matrix_inv_sqrt", "eigval_inv_sqrt", (), -0.0625),
+        ("matrix_power", "eigval_power", (1.5,), 3.0),
+    ],
+)
+def test_spectral_derivative_preserves_nan(
+    dtype, device, operation, threshold_name, args, expected_valid, request
+):
+    from spd_learn import functional
+    from spd_learn.functional.numerical import get_epsilon
+
+    if device == "cuda":
+        device = request.getfixturevalue("cuda_device")
+    threshold = get_epsilon(dtype, threshold_name)
+    spectrum = torch.tensor(
+        [torch.nan, threshold / 2, threshold, 4.0], dtype=dtype, device=device
+    )
+    derivative = getattr(functional, operation).derivative(spectrum, *args)
+    expected = spectrum.new_tensor([torch.nan, 0.0, 0.0, expected_valid])
+    torch.testing.assert_close(derivative, expected, rtol=0, atol=0, equal_nan=True)
+
+
 def test_matrix_log():
     from spd_learn.functional import ensure_sym, matrix_log
 
