@@ -68,14 +68,14 @@ def dropout_spd(
         torch.empty(*batch_shape, dim, device=device).bernoulli_(1 - p).to(dtype=dtype)
     )
 
-    mask_outer = torch.einsum("...i,...j->...ij", mask, mask)
+    mask_outer = mask.unsqueeze(-1) * mask.unsqueeze(-2)
 
     dropped = 1 - mask
     # Set dropped diagonals to epsilon (independent of original diagonal values).
     diag_scale = dropped * epsilon
-    mask_diag = torch.diag_embed(diag_scale)
 
-    output = input_mat * mask_outer + mask_diag
+    output = input_mat * mask_outer
+    output.diagonal(dim1=-2, dim2=-1).add_(diag_scale)
 
     if use_scaling and p != 1.0:
         output = output.mul_(1.0 / (1.0 - p))
